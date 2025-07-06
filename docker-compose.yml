@@ -1,0 +1,224 @@
+services:
+  # Service Discovery
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "${EUREKA_PORT}:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 1
+
+  # API Gateway
+  api-gateway:
+    build:
+        context: ./api-gateway
+    container_name: api-gateway
+    ports:
+        - "${API_GATEWAY_PORT}:8090"
+    depends_on:
+        eureka-server:
+          condition: service_healthy
+    environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+        - ctuconnect-network
+    healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8090/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
+
+  # Authentication Service
+  auth-service:
+    build:
+        context: ./auth-service
+    container_name: auth-service
+    ports:
+        - "${AUTH_SERVICE_PORT}:8080"
+    depends_on:
+        auth_db:
+          condition: service_healthy
+        redis:
+          condition: service_healthy
+        eureka-server:
+          condition: service_healthy
+    environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://auth_db:5432/auth_db
+        - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+        - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+        - SPRING_DATA_REDIS_HOST=redis
+        - SPRING_DATA_REDIS_PORT=${REDIS_PORT}
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - MAIL_HOST=${MAIL_HOST}
+        - MAIL_PORT=${MAIL_PORT}
+        - MAIL_USERNAME=${MAIL_USERNAME}
+        - MAIL_PASSWORD=${MAIL_PASSWORD}
+    restart: on-failure
+    networks:
+        - ctuconnect-network
+    healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
+
+  # User Service
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_NEO4J_URI=neo4j://neo4j:7687
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health ; exit $?"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Neo4j Graph Database for User Service
+  neo4j:
+    image: neo4j:5.13.0
+    container_name: neo4j-graph-db
+    hostname: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - ./database/neo4j/conf/neo4j.conf:/conf/neo4j.conf
+      - ./database/neo4j/logs:/logs
+      - ./database/neo4j/plugins:/plugins
+      - ./database/neo4j/import:/import
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+      - NEO4J_server_config_strict__validation_enabled=false
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # Kafka for Event Streaming
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo srvr | nc localhost 2181 ; exit $?"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server kafka:9092 --list ; exit $?"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Auth Database
+  auth_db:
+    image: postgres:15-alpine
+    container_name: postgres_auth_db
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+      - ./database/auth_db:/docker-entrypoint-initdb.d
+    ports:
+      - "${AUTH_DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=auth_db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ctuconnect-network
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+
+networks:
+  ctuconnect-network:
+    driver: bridge
+
+volumes:
+  auth_db_data:
+  redis-data:
+  neo4j-data:
