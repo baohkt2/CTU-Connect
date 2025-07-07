@@ -23,7 +23,9 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${app.frontend-url:http://localhost:3000}")
+    @Value("${app.frontend-url:http://localhost:8090/api/auth}")
+
+    // Default to localhost for development; change in production
     private String frontendUrl;
 
     /**

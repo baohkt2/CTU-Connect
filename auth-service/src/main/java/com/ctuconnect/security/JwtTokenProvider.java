@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret:default}")
+    @Value("${jwt.secret:XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=}")
     private String jwtSecret;
 
     @Value("${jwt.expiration.ms}")

@@ -5,10 +5,7 @@ import com.ctuconnect.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestBody String token) {
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
         authService.verifyEmail(token);
         return ResponseEntity.ok("Email verified successfully.");
     }
@@ -56,7 +53,7 @@ public class AuthController {
         return ResponseEntity.ok("Logged out successfully.");
     }
 
-    @PostMapping("/test")
+    @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Auth service is running!");
     }

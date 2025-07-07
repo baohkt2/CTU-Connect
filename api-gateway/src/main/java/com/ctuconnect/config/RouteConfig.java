@@ -23,11 +23,6 @@ public class RouteConfig {
                         .path("/api/auth/**")
                         .uri("lb://auth-service"))
 
-                // Test Route - Public endpoint for testing
-                .route("test-route", r -> r
-                        .path("/api/test")
-                        .uri("lb://auth-service"))
-
                 // User Service Routes - Protected endpoints that require JWT validation
                 .route("user-service-profile-route", r -> r
                         .path("/api/users/{userId}/profile")

@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
     // Inject secretKey from application.properties or application.yml
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=}")
     private String secretKey;
 
     // Paths that don't require authentication

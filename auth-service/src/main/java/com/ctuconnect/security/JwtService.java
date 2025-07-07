@@ -24,15 +24,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Sử dụng giá trị cố định thay vì đọc từ file cấu hình
-    private String secretKey = "EfTV^5&78aBcDeFgHiJkLmNoPqRsTuVwXyZ123456#_+";
-
-    // 24 giờ (tính bằng milliseconds)
-    private long jwtExpiration = 86400000;
-
-    // 7 ngày (tính bằng milliseconds)
-    private long refreshExpiration = 604800000;
-
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -51,10 +42,14 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        // 24 giờ (tính bằng milliseconds)
+        long jwtExpiration = 86400000;
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
+        // 7 ngày (tính bằng milliseconds)
+        long refreshExpiration = 604800000;
         return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
@@ -117,6 +112,8 @@ public class JwtService {
 
     private Key getSignInKey() {
         // Ensure jwtSecret is Base64 encoded in application.properties/yml
+        // Sử dụng giá trị cố định thay vì đọc từ file cấu hình
+        String secretKey = "XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=";
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
