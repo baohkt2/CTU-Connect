@@ -100,10 +100,10 @@ public class UserService {
                 .anyMatch(f -> f.getId().equals(userId));
 
         if (!requestExists) {
-            throw new RuntimeException("No friend request found from user: " + friendId);
+            throw new IllegalStateException("No friend request found from " + friendId);
         }
 
-        // Create the bidirectional relationship
+        // Make relationship bidirectional
         user.getFriends().add(friend);
         userRepository.save(user);
     }
@@ -111,141 +111,176 @@ public class UserService {
     /**
      * Reject a friend request
      */
+    @Transactional
     public void rejectFriendInvite(String userId, String friendId) {
-        // No action needed as we're not establishing the relationship
+        UserEntity friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
+
+        // Remove the friend request (unidirectional relationship)
+        friend.getFriends().removeIf(f -> f.getId().equals(userId));
+        userRepository.save(friend);
     }
 
     /**
      * Get all friends of a user
      */
     public FriendsDTO getFriends(String userId) {
-        List<UserEntity> friends = userRepository.findFriends(userId);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        FriendsDTO friendsDTO = new FriendsDTO();
-        friendsDTO.setUserId(userId);
-        friendsDTO.setFriends(friends.stream().map(this::mapToDTO).collect(Collectors.toList()));
-        friendsDTO.setFriendIds(friends.stream().map(UserEntity::getId).collect(Collectors.toList()));
+        List<UserDTO> friends = user.getFriends().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
 
-        return friendsDTO;
+        return new FriendsDTO(friends);
     }
 
     /**
      * Get mutual friends between two users
      */
-    public FriendsDTO getMutualFriends(String userId1, String userId2) {
-        List<UserEntity> mutualFriends = userRepository.findMutualFriends(userId1, userId2);
+    public FriendsDTO getMutualFriends(String userId, String otherUserId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        FriendsDTO friendsDTO = new FriendsDTO();
-        friendsDTO.setUserId(userId1);
-        friendsDTO.setMutualFriends(mutualFriends.stream().map(this::mapToDTO).collect(Collectors.toList()));
-        friendsDTO.setMutualFriendsCount(mutualFriends.size());
+        UserEntity otherUser = userRepository.findById(otherUserId)
+                .orElseThrow(() -> new RuntimeException("Other user not found with id: " + otherUserId));
 
-        return friendsDTO;
+        Set<String> userFriendIds = user.getFriends().stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<UserDTO> mutualFriends = otherUser.getFriends().stream()
+                .filter(friend -> userFriendIds.contains(friend.getId()))
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+
+        return FriendsDTO.ofMutualFriends(mutualFriends);
     }
 
     /**
-     * Get friend suggestions based on various criteria:
-     * 1. Friends of friends
-     * 2. Same college
-     * 3. Same faculty
-     * 4. Same major
+     * Get friend suggestions based on mutual connections and similar attributes
      */
     public FriendsDTO getFriendSuggestions(String userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Get all users for now - in a real implementation, you'd want to optimize this
-        List<UserEntity> allUsers = userRepository.findAll();
-        List<UserEntity> friends = userRepository.findFriends(userId);
-
-        // Filter out existing friends and self
-        Set<String> friendIds = friends.stream()
+        // Get existing friend IDs to exclude them from suggestions
+        Set<String> existingFriendIds = user.getFriends().stream()
                 .map(UserEntity::getId)
                 .collect(Collectors.toSet());
+        existingFriendIds.add(userId); // Exclude self
 
-        // Calculate suggestions with their scores
+        // Find users with similar attributes or mutual friends
+        List<UserEntity> allUsers = userRepository.findAll();
+
         List<UserDTO> suggestions = allUsers.stream()
-                .filter(u -> !u.getId().equals(userId) && !friendIds.contains(u.getId()))
+                .filter(u -> !existingFriendIds.contains(u.getId()))
                 .map(u -> {
                     UserDTO dto = mapToDTO(u);
-
-                    // Calculate matching criteria
-                    dto.setSameCollege(Objects.equals(u.getCollege(), user.getCollege()));
-                    dto.setSameFaculty(Objects.equals(u.getFaculty(), user.getFaculty()));
-                    dto.setSameMajor(Objects.equals(u.getMajor(), user.getMajor()));
-
-                    // Calculate mutual friends
-                    List<UserEntity> mutual = userRepository.findMutualFriends(userId, u.getId());
-                    dto.setMutualFriendsCount(mutual.size());
-
+                    // Calculate similarity score
+                    calculateSimilarityScore(user, u, dto);
                     return dto;
                 })
-                // Sort by "most matching" - mutual friends count first, then other criteria
-                .sorted(Comparator
-                        .comparingInt(UserDTO::getMutualFriendsCount).reversed()
-                        .thenComparing((UserDTO u) -> u.isSameCollege() ? 1 : 0, Comparator.reverseOrder())
-                        .thenComparing((UserDTO u) -> u.isSameFaculty() ? 1 : 0, Comparator.reverseOrder())
-                        .thenComparing((UserDTO u) -> u.isSameMajor() ? 1 : 0, Comparator.reverseOrder())
-                )
-                .limit(10) // Limit to top 10 suggestions
+                .sorted((a, b) -> Integer.compare(b.getMutualFriendsCount(), a.getMutualFriendsCount()))
+                .limit(10)
                 .collect(Collectors.toList());
 
-        FriendsDTO friendsDTO = new FriendsDTO();
-        friendsDTO.setUserId(userId);
-        friendsDTO.setFriendSuggestions(suggestions);
-
-        return friendsDTO;
+        return FriendsDTO.ofSuggestions(suggestions);
     }
 
     /**
-     * Get users based on relationship filters
+     * Filter users by relationship criteria
      */
     public List<UserDTO> getUsersByRelationshipFilters(String userId, RelationshipFilterDTO filters) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        List<UserEntity> filteredUsers;
+        List<UserEntity> allUsers = userRepository.findAll();
 
-        if (filters.isFriend()) {
-            // Get friends with filters
-            filteredUsers = userRepository.findFriendsWithFilters(
-                    userId,
-                    filters.isSameCollege(),
-                    filters.isSameFaculty(),
-                    filters.isSameMajor(),
-                    filters.isSameBatch()
-            );
-        } else {
-            // Get all users with filters
-            filteredUsers = userRepository.findUsersWithFilters(
-                    userId,
-                    filters.isSameCollege(),
-                    filters.isSameFaculty(),
-                    filters.isSameMajor(),
-                    filters.isSameBatch()
-            );
-        }
-
-        return filteredUsers.stream()
-                .map(entity -> {
-                    UserDTO dto = mapToDTO(entity);
-
-                    // Add relationship context
-                    dto.setSameCollege(Objects.equals(entity.getCollege(), user.getCollege()));
-                    dto.setSameFaculty(Objects.equals(entity.getFaculty(), user.getFaculty()));
-                    dto.setSameMajor(Objects.equals(entity.getMajor(), user.getMajor()));
-
-                    // Calculate mutual friends if needed
-                    List<UserEntity> mutual = userRepository.findMutualFriends(userId, entity.getId());
-                    dto.setMutualFriendsCount(mutual.size());
-
-                    return dto;
-                })
+        return allUsers.stream()
+                .filter(u -> !u.getId().equals(userId)) // Exclude self
+                .filter(u -> matchesFilters(user, u, filters))
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Map entity to DTO
+     * Get all users (Admin only)
+     */
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Delete user (Admin only)
+     */
+    @Transactional
+    public void deleteUser(String userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Remove all friend relationships
+        user.getFriends().clear();
+        userRepository.save(user);
+
+        // Remove this user from other users' friend lists
+        List<UserEntity> allUsers = userRepository.findAll();
+        for (UserEntity otherUser : allUsers) {
+            otherUser.getFriends().removeIf(friend -> friend.getId().equals(userId));
+            userRepository.save(otherUser);
+        }
+
+        // Delete the user
+        userRepository.deleteById(userId);
+    }
+
+    /**
+     * Calculate similarity score for friend suggestions
+     */
+    private void calculateSimilarityScore(UserEntity user, UserEntity candidate, UserDTO candidateDTO) {
+        // Count mutual friends
+        Set<String> userFriendIds = user.getFriends().stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
+
+        int mutualFriendsCount = (int) candidate.getFriends().stream()
+                .mapToLong(friend -> userFriendIds.contains(friend.getId()) ? 1 : 0)
+                .sum();
+
+        candidateDTO.setMutualFriendsCount(mutualFriendsCount);
+
+        // Check similarity attributes
+        candidateDTO.setSameCollege(Objects.equals(user.getCollege(), candidate.getCollege()));
+        candidateDTO.setSameFaculty(Objects.equals(user.getFaculty(), candidate.getFaculty()));
+        candidateDTO.setSameMajor(Objects.equals(user.getMajor(), candidate.getMajor()));
+    }
+
+    /**
+     * Check if user matches relationship filters
+     */
+    private boolean matchesFilters(UserEntity user, UserEntity candidate, RelationshipFilterDTO filters) {
+        if (filters.getCollege() != null && !filters.getCollege().equals(candidate.getCollege())) {
+            return false;
+        }
+        if (filters.getFaculty() != null && !filters.getFaculty().equals(candidate.getFaculty())) {
+            return false;
+        }
+        if (filters.getMajor() != null && !filters.getMajor().equals(candidate.getMajor())) {
+            return false;
+        }
+        if (filters.getBatch() != null && !filters.getBatch().equals(candidate.getBatch())) {
+            return false;
+        }
+        if (filters.getGender() != null && !filters.getGender().equals(candidate.getGender())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Map UserEntity to UserDTO
      */
     private UserDTO mapToDTO(UserEntity entity) {
         UserDTO dto = new UserDTO();
@@ -263,17 +298,17 @@ public class UserService {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
-        if (entity.getFriends() != null) {
-            dto.setFriendIds(entity.getFriends().stream()
-                    .map(UserEntity::getId)
-                    .collect(Collectors.toSet()));
-        }
+        // Set friend IDs
+        Set<String> friendIds = entity.getFriends().stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
+        dto.setFriendIds(friendIds);
 
         return dto;
     }
 
     /**
-     * Map DTO to entity
+     * Map UserDTO to UserEntity
      */
     private UserEntity mapToEntity(UserDTO dto) {
         UserEntity entity = new UserEntity();
@@ -288,9 +323,6 @@ public class UserService {
         entity.setMajor(dto.getMajor());
         entity.setGender(dto.getGender());
         entity.setBio(dto.getBio());
-        entity.setCreatedAt(dto.getCreatedAt());
-        entity.setUpdatedAt(dto.getUpdatedAt());
-
         return entity;
     }
 }

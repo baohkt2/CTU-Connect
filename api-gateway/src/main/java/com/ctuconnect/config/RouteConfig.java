@@ -25,7 +25,7 @@ public class RouteConfig {
 
                 // User Service Routes - Protected endpoints that require JWT validation
                 .route("user-service-profile-route", r -> r
-                        .path("/api/users/{userId}/profile")
+                        .path("/api/users/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://user-service"))
                 .route("user-service-friends-route", r -> r
