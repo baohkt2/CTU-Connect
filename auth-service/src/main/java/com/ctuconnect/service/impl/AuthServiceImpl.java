@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -135,14 +137,14 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Generate tokens
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+        UserDetails userDetails = new User(
                 user.getEmail(),
                 user.getPassword(),
                 user.isActive(),
                 true,
                 true,
                 true,
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_" + user.getRole())
+                AuthorityUtils.createAuthorityList("ROLE_" + user.getRole())
         );
 
         String jwtToken = jwtService.generateToken(Map.of("role", user.getRole()), userDetails);
@@ -154,6 +156,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .role(user.getRole())
+                .tokenType("Bearer")
                 .build();
     }
 
