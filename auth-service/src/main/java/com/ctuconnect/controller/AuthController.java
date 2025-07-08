@@ -19,7 +19,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.register(request);
-
+        clearAllTokenCookies(response);
         // Set tokens in cookies
         setTokenCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.login(request);
-
+        clearAllTokenCookies(response); // Clear any existing cookies before setting new ones
         // Set tokens in cookies
         setTokenCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
@@ -47,7 +47,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.refreshToken(request.getRefreshToken());
-
+        clearAllTokenCookies(response);
         // Set tokens in cookies
         setTokenCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
@@ -80,8 +80,8 @@ public class AuthController {
     public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequest request, HttpServletResponse response) {
         authService.logout(request.getRefreshToken());
 
-        // Clear cookies
-        clearTokenCookies(response);
+        // Clear all possible token cookies (both naming conventions)
+        clearAllTokenCookies(response);
 
         return ResponseEntity.ok("Logged out successfully");
     }
@@ -104,21 +104,35 @@ public class AuthController {
         response.addCookie(refreshTokenCookie);
     }
 
-    private void clearTokenCookies(HttpServletResponse response) {
-        // Clear access token cookie
-        Cookie accessTokenCookie = new Cookie("accessToken", "");
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(0);
-        response.addCookie(accessTokenCookie);
+    private void clearAllTokenCookies(HttpServletResponse response) {
+        // Clear new naming convention cookies
+        Cookie clearAccessToken = new Cookie("accessToken", "");
+        clearAccessToken.setHttpOnly(true);
+        clearAccessToken.setSecure(true);
+        clearAccessToken.setPath("/");
+        clearAccessToken.setMaxAge(0);
+        response.addCookie(clearAccessToken);
 
-        // Clear refresh token cookie
-        Cookie refreshTokenCookie = new Cookie("refreshToken", "");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(0);
-        response.addCookie(refreshTokenCookie);
+        Cookie clearRefreshToken = new Cookie("refreshToken", "");
+        clearRefreshToken.setHttpOnly(true);
+        clearRefreshToken.setSecure(true);
+        clearRefreshToken.setPath("/");
+        clearRefreshToken.setMaxAge(0);
+        response.addCookie(clearRefreshToken);
+
+        // Clear old naming convention cookies for backward compatibility
+        Cookie clearOldAccessToken = new Cookie("access_token", "");
+        clearOldAccessToken.setHttpOnly(true);
+        clearOldAccessToken.setSecure(true);
+        clearOldAccessToken.setPath("/");
+        clearOldAccessToken.setMaxAge(0);
+        response.addCookie(clearOldAccessToken);
+
+        Cookie clearOldRefreshToken = new Cookie("refresh_token", "");
+        clearOldRefreshToken.setHttpOnly(true);
+        clearOldRefreshToken.setSecure(true);
+        clearOldRefreshToken.setPath("/");
+        clearOldRefreshToken.setMaxAge(0);
+        response.addCookie(clearOldRefreshToken);
     }
 }

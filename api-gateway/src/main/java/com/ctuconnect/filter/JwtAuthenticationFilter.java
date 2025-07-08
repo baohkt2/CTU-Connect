@@ -65,16 +65,26 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // Extract tokens from cookies
             MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-            HttpCookie accessTokenCookie = cookies.getFirst("access_token");
-            HttpCookie refreshTokenCookie = cookies.getFirst("refresh_token");
+
+            // Try new naming convention first (camelCase)
+            HttpCookie accessTokenCookie = cookies.getFirst("accessToken");
+            HttpCookie refreshTokenCookie = cookies.getFirst("refreshToken");
+
+            // Fallback to old naming convention (snake_case) for backward compatibility
+            if (accessTokenCookie == null) {
+                accessTokenCookie = cookies.getFirst("access_token");
+            }
+            if (refreshTokenCookie == null) {
+                refreshTokenCookie = cookies.getFirst("refresh_token");
+            }
 
             if (accessTokenCookie != null) {
                 accessToken = accessTokenCookie.getValue();
-                System.out.println("JwtAuthenticationFilter: Access token extracted from 'access_token' cookie.");
+                System.out.println("JwtAuthenticationFilter: Access token extracted from cookie.");
             }
             if (refreshTokenCookie != null && path.equals("/api/auth/refresh-token")) {
                 refreshToken = refreshTokenCookie.getValue();
-                System.out.println("JwtAuthenticationFilter: Refresh token extracted from 'refresh_token' cookie.");
+                System.out.println("JwtAuthenticationFilter: Refresh token extracted from cookie.");
             }
 
             // Fallback to Authorization header for access token
