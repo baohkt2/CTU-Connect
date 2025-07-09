@@ -1,6 +1,9 @@
 package com.ctuconnect.entity;
 
 import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -11,14 +14,24 @@ import java.util.Set;
 
 @Node("User")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
     @Id
     private String id;
 
-    // Đã thêm: Trường email là cần thiết cho các phương thức của repository như findByEmail
-    private String email;
+    // Auth service user ID for linking
+    private Long authId;
 
-    // Đã đổi tên: Tuân thủ quy ước đặt tên camelCase của Java (student_ID -> studentId)
+    // Username from auth service
+    private String username;
+
+    // Active status
+    private Boolean isActive;
+
+    // Existing fields
+    private String email;
     private String studentId;
 
     private String batch;

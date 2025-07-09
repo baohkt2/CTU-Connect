@@ -54,7 +54,6 @@ public class RouteConfig {
                         .path("/api/users/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://user-service"))
-
                 .build();
     }
 }

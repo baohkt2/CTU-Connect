@@ -1260,3 +1260,356 @@ Caused by: java.lang.IllegalArgumentException: Unknown serialization format vers
 2025-07-08 13:11:07.305+0000 INFO  name: system
 2025-07-08 13:11:07.306+0000 INFO  creationDate: 2025-07-08T12:50:33.337Z
 2025-07-08 13:11:07.307+0000 INFO  Started.
+2025-07-08 13:49:39.102+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-08 13:49:39.123+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-08 13:49:39.128+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-08 13:49:39.130+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-08 13:49:39.132+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-08 13:49:39.134+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-08 13:49:39.136+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-08 13:49:39.137+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-08 13:49:39.140+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-08 13:49:39.147+0000 INFO  Starting...
+2025-07-08 13:49:40.196+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-08 13:49:40.865+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-08 13:49:50.262+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-08 13:49:50.413+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-08 13:49:51.177+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-08 13:49:51.180+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-08 13:49:51.186+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-08 13:49:51.188+0000 INFO  name: system
+2025-07-08 13:49:51.189+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-08 13:49:51.191+0000 INFO  Started.
+2025-07-09 10:53:19.278+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 10:53:19.315+0000 INFO  Stopping...
+2025-07-09 10:53:25.027+0000 INFO  Stopped.
+2025-07-09 10:53:46.796+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 10:53:46.803+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 10:53:46.804+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 10:53:46.805+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 10:53:46.806+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 10:53:46.807+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 10:53:46.807+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 10:53:46.808+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 10:53:46.809+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 10:53:46.812+0000 INFO  Starting...
+2025-07-09 10:53:48.004+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-09 10:53:48.739+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 10:54:00.407+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 10:54:00.464+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 10:54:01.103+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 10:54:01.104+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 10:54:01.108+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-09 10:54:01.109+0000 INFO  name: system
+2025-07-09 10:54:01.110+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-09 10:54:01.111+0000 INFO  Started.
+2025-07-09 11:42:03.530+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 11:42:03.538+0000 INFO  Stopping...
+2025-07-09 11:42:09.221+0000 INFO  Stopped.
+2025-07-09 11:54:19.308+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 11:54:19.365+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 11:54:19.366+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 11:54:19.366+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 11:54:19.367+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 11:54:19.368+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 11:54:19.368+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 11:54:19.369+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 11:54:19.369+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 11:54:19.371+0000 INFO  Starting...
+2025-07-09 11:54:20.802+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-09 11:54:22.095+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 11:54:36.948+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 11:54:37.001+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 11:54:37.611+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 11:54:37.613+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 11:54:37.616+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-09 11:54:37.617+0000 INFO  name: system
+2025-07-09 11:54:37.618+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-09 11:54:37.619+0000 INFO  Started.
+2025-07-09 11:58:42.896+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 11:58:42.899+0000 INFO  Stopping...
+2025-07-09 11:58:48.879+0000 INFO  Stopped.
+2025-07-09 11:58:55.910+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 11:58:55.914+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 11:58:55.915+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 11:58:55.915+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 11:58:55.916+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 11:58:55.917+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 11:58:55.917+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 11:58:55.918+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 11:58:55.918+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 11:58:55.921+0000 INFO  Starting...
+2025-07-09 11:58:56.629+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-09 11:58:57.250+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 11:59:05.352+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 11:59:05.430+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 11:59:06.270+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 11:59:06.272+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 11:59:06.278+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-09 11:59:06.279+0000 INFO  name: system
+2025-07-09 11:59:06.282+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-09 11:59:06.282+0000 INFO  Started.
+2025-07-09 12:00:28.288+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 12:00:28.289+0000 INFO  Stopping...
+2025-07-09 12:00:33.624+0000 INFO  Stopped.
+2025-07-09 12:55:24.287+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 12:55:24.304+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 12:55:24.306+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 12:55:24.307+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 12:55:24.308+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 12:55:24.310+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 12:55:24.310+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 12:55:24.311+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 12:55:24.312+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 12:55:24.318+0000 INFO  Starting...
+2025-07-09 12:55:25.527+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-09 12:55:26.141+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 12:55:37.353+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 12:55:37.598+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 12:55:38.646+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 12:55:38.648+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 12:55:38.652+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-09 12:55:38.653+0000 INFO  name: system
+2025-07-09 12:55:38.654+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-09 12:55:38.655+0000 INFO  Started.
+2025-07-09 12:57:44.829+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 12:57:44.831+0000 INFO  Stopping...
+2025-07-09 12:57:50.162+0000 INFO  Stopped.
+2025-07-09 12:58:46.298+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 12:58:46.314+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 12:58:46.315+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 12:58:46.316+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 12:58:46.317+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 12:58:46.317+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 12:58:46.318+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 12:58:46.319+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 12:58:46.320+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 12:58:46.325+0000 INFO  Starting...
+2025-07-09 12:58:47.583+0000 INFO  This instance is ServerId{a1158522} (a1158522-3f6d-4ebb-a061-3b8b670423c6)
+2025-07-09 12:58:48.238+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 12:58:57.059+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 12:58:57.111+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 12:58:57.667+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 12:58:57.669+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 12:58:57.672+0000 INFO  id: A181455B669672458006542A7B4DAC35F24FE547858048D0165F4EC4C3751226
+2025-07-09 12:58:57.673+0000 INFO  name: system
+2025-07-09 12:58:57.675+0000 INFO  creationDate: 2025-07-08T13:49:41.889Z
+2025-07-09 12:58:57.675+0000 INFO  Started.
+2025-07-09 12:59:10.643+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 12:59:10.644+0000 INFO  Stopping...
+2025-07-09 12:59:16.274+0000 INFO  Stopped.
+2025-07-09 14:26:32.786+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 14:26:32.797+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 14:26:32.798+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 14:26:32.799+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 14:26:32.800+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 14:26:32.801+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 14:26:32.801+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 14:26:32.802+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 14:26:32.803+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 14:26:32.808+0000 INFO  Starting...
+2025-07-09 14:26:33.909+0000 INFO  This instance is ServerId{3a14dc33} (3a14dc33-1cd5-4d95-b7e5-9806c2b7627a)
+2025-07-09 14:26:34.456+0000 INFO  ======== Neo4j 5.17.0 ========
+2025-07-09 14:26:34.554+0000 ERROR Failed to start Neo4j on 0.0.0.0:7474.
+java.lang.RuntimeException: Error starting Neo4j database server at /data/databases
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:274) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:209) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:38) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:187) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:99) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) [neo4j-5.17.0.jar:5.17.0]
+Caused by: org.neo4j.kernel.lifecycle.LifecycleException: Component 'org.neo4j.kernel.extension.GlobalExtensions@736ac09a' failed to initialize. Please see the attached cause exception "org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found".
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:334) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: org.neo4j.kernel.extension.FailedToBuildExtensionException: Failed to build kernel extension Extension:ApocConfigExtensionFactory[ApocConfig] because it is compiled with a reference to a class, method, or field, that is not in the class path: 'org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found'. The most common cause of this problem, is that Neo4j has been upgraded without also upgrading all installed extensions, such as APOC. Make sure that all of your extensions are build against your specific version of Neo4j.
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies.wrap(ExtensionFailureStrategies.java:56) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies$1.handle(ExtensionFailureStrategies.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found
+	at apoc.ApocConfig.<clinit>(ApocConfig.java:84) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:51) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:34) ~[apoc.jar:5.13.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.newInstance(AbstractExtensions.java:124) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:62) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+2025-07-09 14:26:34.559+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 14:26:34.560+0000 INFO  Stopped.
+2025-07-09 14:27:29.579+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 14:27:29.583+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 14:27:29.584+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 14:27:29.584+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 14:27:29.585+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 14:27:29.585+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 14:27:29.586+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 14:27:29.586+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 14:27:29.587+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 14:27:29.590+0000 INFO  Starting...
+2025-07-09 14:27:30.398+0000 INFO  This instance is ServerId{3a14dc33} (3a14dc33-1cd5-4d95-b7e5-9806c2b7627a)
+2025-07-09 14:27:30.899+0000 INFO  ======== Neo4j 5.17.0 ========
+2025-07-09 14:27:31.001+0000 ERROR Failed to start Neo4j on 0.0.0.0:7474.
+java.lang.RuntimeException: Error starting Neo4j database server at /data/databases
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:274) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:209) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:38) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:187) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:99) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) [neo4j-5.17.0.jar:5.17.0]
+Caused by: org.neo4j.kernel.lifecycle.LifecycleException: Component 'org.neo4j.kernel.extension.GlobalExtensions@45394b31' failed to initialize. Please see the attached cause exception "org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found".
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:334) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: org.neo4j.kernel.extension.FailedToBuildExtensionException: Failed to build kernel extension Extension:ApocConfigExtensionFactory[ApocConfig] because it is compiled with a reference to a class, method, or field, that is not in the class path: 'org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found'. The most common cause of this problem, is that Neo4j has been upgraded without also upgrading all installed extensions, such as APOC. Make sure that all of your extensions are build against your specific version of Neo4j.
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies.wrap(ExtensionFailureStrategies.java:56) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies$1.handle(ExtensionFailureStrategies.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found
+	at apoc.ApocConfig.<clinit>(ApocConfig.java:84) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:51) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:34) ~[apoc.jar:5.13.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.newInstance(AbstractExtensions.java:124) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:62) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+2025-07-09 14:27:31.006+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 14:27:31.007+0000 INFO  Stopped.
+2025-07-09 14:37:15.228+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 14:37:15.243+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 14:37:15.244+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 14:37:15.245+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 14:37:15.246+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 14:37:15.247+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 14:37:15.248+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 14:37:15.249+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 14:37:15.250+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 14:37:15.254+0000 INFO  Starting...
+2025-07-09 14:37:16.620+0000 INFO  This instance is ServerId{3a14dc33} (3a14dc33-1cd5-4d95-b7e5-9806c2b7627a)
+2025-07-09 14:37:17.500+0000 INFO  ======== Neo4j 5.17.0 ========
+2025-07-09 14:37:17.636+0000 ERROR Failed to start Neo4j on 0.0.0.0:7474.
+java.lang.RuntimeException: Error starting Neo4j database server at /data/databases
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:274) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:209) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:38) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:187) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:99) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) [neo4j-5.17.0.jar:5.17.0]
+Caused by: org.neo4j.kernel.lifecycle.LifecycleException: Component 'org.neo4j.kernel.extension.GlobalExtensions@45394b31' failed to initialize. Please see the attached cause exception "org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found".
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:334) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: org.neo4j.kernel.extension.FailedToBuildExtensionException: Failed to build kernel extension Extension:ApocConfigExtensionFactory[ApocConfig] because it is compiled with a reference to a class, method, or field, that is not in the class path: 'org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found'. The most common cause of this problem, is that Neo4j has been upgraded without also upgrading all installed extensions, such as APOC. Make sure that all of your extensions are build against your specific version of Neo4j.
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies.wrap(ExtensionFailureStrategies.java:56) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies$1.handle(ExtensionFailureStrategies.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found
+	at apoc.ApocConfig.<clinit>(ApocConfig.java:84) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:51) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:34) ~[apoc.jar:5.13.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.newInstance(AbstractExtensions.java:124) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:62) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+2025-07-09 14:37:17.641+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 14:37:17.642+0000 INFO  Stopped.
+2025-07-09 14:38:51.386+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 14:38:51.392+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 14:38:51.393+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 14:38:51.394+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 14:38:51.395+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 14:38:51.396+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 14:38:51.397+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 14:38:51.397+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 14:38:51.398+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 14:38:51.401+0000 INFO  Starting...
+2025-07-09 14:38:52.248+0000 INFO  This instance is ServerId{3a14dc33} (3a14dc33-1cd5-4d95-b7e5-9806c2b7627a)
+2025-07-09 14:38:52.827+0000 INFO  ======== Neo4j 5.17.0 ========
+2025-07-09 14:38:52.923+0000 ERROR Failed to start Neo4j on 0.0.0.0:7474.
+java.lang.RuntimeException: Error starting Neo4j database server at /data/databases
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:274) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:209) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:38) ~[neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:187) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:99) [neo4j-5.17.0.jar:5.17.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) [neo4j-5.17.0.jar:5.17.0]
+Caused by: org.neo4j.kernel.lifecycle.LifecycleException: Component 'org.neo4j.kernel.extension.GlobalExtensions@45394b31' failed to initialize. Please see the attached cause exception "org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found".
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:334) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: org.neo4j.kernel.extension.FailedToBuildExtensionException: Failed to build kernel extension Extension:ApocConfigExtensionFactory[ApocConfig] because it is compiled with a reference to a class, method, or field, that is not in the class path: 'org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found'. The most common cause of this problem, is that Neo4j has been upgraded without also upgrading all installed extensions, such as APOC. Make sure that all of your extensions are build against your specific version of Neo4j.
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies.wrap(ExtensionFailureStrategies.java:56) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.ExtensionFailureStrategies$1.handle(ExtensionFailureStrategies.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:68) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAccessRule: method 'void <init>()' not found
+	at apoc.ApocConfig.<clinit>(ApocConfig.java:84) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:51) ~[apoc.jar:5.13.0]
+	at apoc.ApocConfigExtensionFactory.newInstance(ApocConfigExtensionFactory.java:34) ~[apoc.jar:5.13.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.newInstance(AbstractExtensions.java:124) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.extension.AbstractExtensions.init(AbstractExtensions.java:62) ~[neo4j-kernel-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport$LifecycleInstance.init(LifeSupport.java:317) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.init(LifeSupport.java:56) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.kernel.lifecycle.LifeSupport.start(LifeSupport.java:85) ~[neo4j-common-5.17.0.jar:5.17.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.startDatabaseServer(DatabaseManagementServiceFactory.java:265) ~[neo4j-5.17.0.jar:5.17.0]
+	... 5 more
+2025-07-09 14:38:52.928+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 14:38:52.929+0000 INFO  Stopped.
+2025-07-09 14:45:16.248+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-09 14:45:16.252+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-09 14:45:16.253+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-09 14:45:16.254+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-09 14:45:16.254+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-09 14:45:16.255+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-09 14:45:16.255+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-09 14:45:16.256+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-09 14:45:16.256+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-09 14:45:16.260+0000 INFO  Starting...
+2025-07-09 14:45:17.082+0000 INFO  This instance is ServerId{3a14dc33} (3a14dc33-1cd5-4d95-b7e5-9806c2b7627a)
+2025-07-09 14:45:17.644+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-09 14:45:26.127+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-09 14:45:26.503+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-09 14:45:27.087+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-09 14:45:27.089+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-09 14:45:27.093+0000 INFO  id: 9A9D533FA719E34BD81DB94C8743DA061BC735BA97EBC9ED34B46D00D79233D3
+2025-07-09 14:45:27.094+0000 INFO  name: system
+2025-07-09 14:45:27.095+0000 INFO  creationDate: 2025-07-09T14:45:18.537Z
+2025-07-09 14:45:27.097+0000 INFO  Started.
+2025-07-09 15:30:24.059+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-09 15:30:24.072+0000 INFO  Stopping...
+2025-07-09 15:30:29.760+0000 INFO  Stopped.

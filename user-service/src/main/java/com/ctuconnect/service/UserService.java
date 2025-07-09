@@ -19,6 +19,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserEventPublisher userEventPublisher;
+
     /**
      * Create a new user
      */
@@ -61,6 +64,18 @@ public class UserService {
 
         userEntity.setUpdatedAt(LocalDateTime.now());
         UserEntity updatedUser = userRepository.save(userEntity);
+
+        // Publish user profile updated event
+        userEventPublisher.publishUserProfileUpdatedEvent(
+            Long.parseLong(userId),
+            updatedUser.getEmail(),
+            updatedUser.getFullName(),
+            updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
+            "", // lastName - empty as we're using fullName
+            updatedUser.getBio(),
+            "" // profilePicture - not implemented yet
+        );
+
         return mapToDTO(updatedUser);
     }
 
@@ -82,6 +97,14 @@ public class UserService {
         // Neo4j will automatically create the FRIEND relationship
         user.getFriends().add(friend);
         userRepository.save(user);
+
+        // Publish friend request event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+            Long.parseLong(userId),
+            Long.parseLong(friendId),
+            "FRIEND_REQUEST",
+            "CREATED"
+        );
     }
 
     /**
@@ -106,6 +129,14 @@ public class UserService {
         // Make relationship bidirectional
         user.getFriends().add(friend);
         userRepository.save(user);
+
+        // Publish friend accepted event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+            Long.parseLong(userId),
+            Long.parseLong(friendId),
+            "FRIEND_ACCEPTED",
+            "UPDATED"
+        );
     }
 
     /**
@@ -119,6 +150,41 @@ public class UserService {
         // Remove the friend request (unidirectional relationship)
         friend.getFriends().removeIf(f -> f.getId().equals(userId));
         userRepository.save(friend);
+
+        // Publish friend rejected event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+            Long.parseLong(userId),
+            Long.parseLong(friendId),
+            "FRIEND_REQUEST",
+            "DELETED"
+        );
+    }
+
+    /**
+     * Remove a friend (unfriend)
+     */
+    @Transactional
+    public void removeFriend(String userId, String friendId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        UserEntity friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
+
+        // Remove bidirectional friendship
+        user.getFriends().removeIf(f -> f.getId().equals(friendId));
+        friend.getFriends().removeIf(f -> f.getId().equals(userId));
+
+        userRepository.save(user);
+        userRepository.save(friend);
+
+        // Publish friend removed event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+            Long.parseLong(userId),
+            Long.parseLong(friendId),
+            "FRIEND_REMOVED",
+            "DELETED"
+        );
     }
 
     /**

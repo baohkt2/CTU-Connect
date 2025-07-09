@@ -224,6 +224,14 @@ public class AuthServiceImpl implements AuthService {
 
         // Send password reset email
         emailService.sendPasswordResetEmail(email, resetToken);
+
+        // Publish password reset event
+        Map<String, Object> passwordResetEvent = new HashMap<>();
+        passwordResetEvent.put("userId", user.getId());
+        passwordResetEvent.put("email", user.getEmail());
+        passwordResetEvent.put("resetToken", resetToken);
+        passwordResetEvent.put("eventType", "REQUESTED");
+        kafkaTemplate.send("password-reset", user.getId().toString(), passwordResetEvent);
     }
 
     @Override
@@ -248,6 +256,23 @@ public class AuthServiceImpl implements AuthService {
         // Delete token
         resetToken.setExpiryDate(0L); // Invalidate token
         emailVerificationRepository.save(resetToken);
+
+        // Publish password reset completed event
+        Map<String, Object> passwordResetEvent = new HashMap<>();
+        passwordResetEvent.put("userId", user.getId());
+        passwordResetEvent.put("email", user.getEmail());
+        passwordResetEvent.put("resetToken", token);
+        passwordResetEvent.put("eventType", "COMPLETED");
+        kafkaTemplate.send("password-reset", user.getId().toString(), passwordResetEvent);
+
+        // Publish user updated event
+        Map<String, Object> userUpdatedEvent = new HashMap<>();
+        userUpdatedEvent.put("userId", user.getId());
+        userUpdatedEvent.put("email", user.getEmail());
+        userUpdatedEvent.put("username", user.getUsername());
+        userUpdatedEvent.put("role", user.getRole());
+        userUpdatedEvent.put("isActive", user.isActive());
+        kafkaTemplate.send("user-updated", user.getId().toString(), userUpdatedEvent);
     }
 
     @Override
@@ -265,6 +290,15 @@ public class AuthServiceImpl implements AuthService {
         // Mark email as verified
         verification.setVerified(true);
         emailVerificationRepository.save(verification);
+
+        // Publish user verification event
+        UserEntity user = verification.getUser();
+        Map<String, Object> userVerificationEvent = new HashMap<>();
+        userVerificationEvent.put("userId", user.getId());
+        userVerificationEvent.put("email", user.getEmail());
+        userVerificationEvent.put("verificationToken", token);
+        userVerificationEvent.put("isVerified", true);
+        kafkaTemplate.send("user-verification", user.getId().toString(), userVerificationEvent);
     }
 
     @Override

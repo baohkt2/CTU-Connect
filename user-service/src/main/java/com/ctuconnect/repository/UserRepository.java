@@ -13,6 +13,9 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     Optional<UserEntity> findByEmail(String email);
     boolean existsByEmail(String email);
 
+    // Add method to find by auth ID
+    Optional<UserEntity> findByAuthId(Long authId);
+
     // Đã cải tiến: Sử dụng @Param để liên kết tường minh tham số với biến trong truy vấn
     @Query("MATCH (u:User {id: $userId})-[:FRIEND]->(friend:User) RETURN friend")
     List<UserEntity> findFriends(@Param("userId") String userId);
