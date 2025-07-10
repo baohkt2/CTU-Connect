@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRelationshipChangedEvent {
-    private Long userId;
-    private Long targetUserId;
+    private String userId;
+    private String targetUserId;
     private String relationshipType; // FRIEND_REQUEST, FRIEND_ACCEPTED, FRIEND_REMOVED, BLOCKED, UNBLOCKED
     private String eventType; // CREATED, UPDATED, DELETED
 }

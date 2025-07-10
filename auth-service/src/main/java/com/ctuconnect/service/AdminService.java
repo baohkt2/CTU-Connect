@@ -6,6 +6,7 @@ import com.ctuconnect.dto.AdminUpdateUserRequest;
 import com.ctuconnect.dto.UserManagementDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public interface AdminService {
      * Get user by ID
      */
     UserManagementDTO getUserById(Long id);
+
+    UserManagementDTO getUserById(String id);
 
     /**
      * Create a new user (Admin only)
@@ -56,6 +59,21 @@ public interface AdminService {
      */
     void resetUserPassword(Long id, String newPassword);
 
+    @Transactional
+    UserManagementDTO updateUser(String id, AdminUpdateUserRequest request);
+
+    @Transactional
+    void deleteUser(String id);
+
+    @Transactional
+    void toggleUserStatus(String id);
+
+    @Transactional
+    void forceVerifyUser(String id);
+
+    @Transactional
+    void resetUserPassword(String id, String newPassword);
+
     /**
      * Get users by role
      */
@@ -85,4 +103,12 @@ public interface AdminService {
      * Update user role
      */
     void updateUserRole(Long id, String newRole);
+
+    @Transactional
+    void forceLogoutUser(String id);
+
+    List<Object> getUserLoginHistory(String id);
+
+    @Transactional
+    void updateUserRole(String id, String newRole);
 }

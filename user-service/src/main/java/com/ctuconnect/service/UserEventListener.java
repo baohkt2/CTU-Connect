@@ -33,7 +33,7 @@ public class UserEventListener {
 
             // Create user in Neo4j
             UserEntity user = UserEntity.builder()
-                    .authId(Long.valueOf(event.get("userId").toString()))
+                    .id(event.get("userId").toString())
                     .email(event.get("email").toString())
                     .username(event.get("username").toString())
                     .role(event.get("role").toString())
@@ -42,7 +42,7 @@ public class UserEventListener {
 
             userRepository.save(user);
 
-            log.info("User created successfully in Neo4j with authId: {}", user.getAuthId());
+            log.info("User created successfully in Neo4j with id: {}", user.getId());
             acknowledgment.acknowledge();
 
         } catch (Exception e) {
@@ -59,9 +59,9 @@ public class UserEventListener {
         try {
             log.info("Received user updated event: {}", event);
 
-            Long authId = Long.valueOf(event.get("userId").toString());
-            UserEntity user = userRepository.findByAuthId(authId)
-                    .orElseThrow(() -> new RuntimeException("User not found with authId: " + authId));
+            String userId = event.get("userId").toString();
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
             user.setEmail(event.get("email").toString());
             user.setUsername(event.get("username").toString());
@@ -70,7 +70,7 @@ public class UserEventListener {
 
             userRepository.save(user);
 
-            log.info("User updated successfully in Neo4j with authId: {}", authId);
+            log.info("User updated successfully in Neo4j with id: {}", userId);
             acknowledgment.acknowledge();
 
         } catch (Exception e) {
@@ -87,13 +87,13 @@ public class UserEventListener {
         try {
             log.info("Received user deleted event: {}", event);
 
-            Long authId = Long.valueOf(event.get("userId").toString());
-            UserEntity user = userRepository.findByAuthId(authId)
-                    .orElseThrow(() -> new RuntimeException("User not found with authId: " + authId));
+            String userId = event.get("userId").toString();
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
             userRepository.delete(user);
 
-            log.info("User deleted successfully from Neo4j with authId: {}", authId);
+            log.info("User deleted successfully from Neo4j with id: {}", userId);
             acknowledgment.acknowledge();
 
         } catch (Exception e) {

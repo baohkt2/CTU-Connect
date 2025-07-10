@@ -27,7 +27,7 @@ public class UserSyncService {
     @Transactional
     public UserDTO syncUserFromAuth(String userId, String email, String role) {
         // Kiểm tra xem user đã tồn tại chưa
-        if (userRepository.existsById(userId)) {
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalStateException("User already exists in user database: " + userId);
         }
 

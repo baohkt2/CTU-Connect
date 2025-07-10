@@ -13,14 +13,11 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     Optional<UserEntity> findByEmail(String email);
     boolean existsByEmail(String email);
 
-    // Add method to find by auth ID
-    Optional<UserEntity> findByAuthId(Long authId);
-
-    // Đã cải tiến: Sử dụng @Param để liên kết tường minh tham số với biến trong truy vấn
+    // Đã cải tiến: Sử dụng String UUID thay vì Long
     @Query("MATCH (u:User {id: $userId})-[:FRIEND]->(friend:User) RETURN friend")
     List<UserEntity> findFriends(@Param("userId") String userId);
 
-    // Đã cải tiến: Sử dụng @Param để tăng tính rõ ràng
+    // Đã cải tiến: Sử dụng String UUID cho cả hai user ID
     @Query("MATCH (u1:User {id: $userId1})-[:FRIEND]->(friend:User)<-[:FRIEND]-(u2:User {id: $userId2}) RETURN friend")
     List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
@@ -40,15 +37,15 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     @Query("MATCH (u:User) WHERE u.batch = $batch RETURN u")
     List<UserEntity> findByBatch(@Param("batch") String batch);
 
-    // Find users with same college as the specified user
+    // Find users with same college as the specified user - Updated to use String UUID
     @Query("MATCH (u:User {id: $userId}), (other:User) WHERE other.college = u.college AND other.id <> $userId RETURN other")
     List<UserEntity> findUsersWithSameCollege(@Param("userId") String userId);
 
-    // Find users with same faculty as the specified user
+    // Find users with same faculty as the specified user - Updated to use String UUID
     @Query("MATCH (u:User {id: $userId}), (other:User) WHERE other.faculty = u.faculty AND other.id <> $userId RETURN other")
     List<UserEntity> findUsersWithSameFaculty(@Param("userId") String userId);
 
-    // Find users with same major as the specified user
+    // Find users with same major as the specified user - Updated to use String UUID
     @Query("MATCH (u:User {id: $userId}), (other:User) WHERE other.major = u.major AND other.id <> $userId RETURN other")
     List<UserEntity> findUsersWithSameMajor(@Param("userId") String userId);
 
@@ -84,4 +81,14 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
             @Param("isSameFaculty") boolean isSameFaculty,
             @Param("isSameMajor") boolean isSameMajor,
             @Param("isSameBatch") boolean isSameBatch);
+
+    // Friend relationship queries - Updated to use String UUID
+    @Query("MATCH (u1:User {id: $userId1}), (u2:User {id: $userId2}) CREATE (u1)-[:FRIEND]->(u2)")
+    void createFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    @Query("MATCH (u1:User {id: $userId1})-[r:FRIEND]->(u2:User {id: $userId2}) DELETE r")
+    void deleteFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    @Query("MATCH (u1:User {id: $userId1})-[:FRIEND]->(u2:User {id: $userId2}) RETURN COUNT(*) > 0")
+    boolean areFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
 }

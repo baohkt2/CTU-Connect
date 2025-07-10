@@ -17,7 +17,7 @@ public class UserEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void publishUserProfileUpdatedEvent(Long userId, String email, String username,
+    public void publishUserProfileUpdatedEvent(String userId, String email, String username,
                                              String firstName, String lastName, String bio, String profilePicture) {
         try {
             Map<String, Object> event = new HashMap<>();
@@ -29,7 +29,7 @@ public class UserEventPublisher {
             event.put("bio", bio);
             event.put("profilePicture", profilePicture);
 
-            kafkaTemplate.send("user-profile-updated", userId.toString(), event);
+            kafkaTemplate.send("user-profile-updated", userId, event);
             log.info("Published user profile updated event for user: {}", userId);
 
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class UserEventPublisher {
         }
     }
 
-    public void publishUserRelationshipChangedEvent(Long userId, Long targetUserId,
+    public void publishUserRelationshipChangedEvent(String userId, String targetUserId,
                                                   String relationshipType, String eventType) {
         try {
             Map<String, Object> event = new HashMap<>();
@@ -46,7 +46,7 @@ public class UserEventPublisher {
             event.put("relationshipType", relationshipType);
             event.put("eventType", eventType);
 
-            kafkaTemplate.send("user-relationship-changed", userId.toString(), event);
+            kafkaTemplate.send("user-relationship-changed", userId, event);
             log.info("Published user relationship changed event: user {} -> {}, type: {}",
                     userId, targetUserId, relationshipType);
 

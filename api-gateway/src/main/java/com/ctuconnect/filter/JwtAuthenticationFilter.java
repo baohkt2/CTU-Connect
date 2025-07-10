@@ -97,7 +97,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             }
 
             // Require refresh token for /api/auth/refresh-token, access token for others
-            if (accessToken == null && (refreshToken == null || !path.equals("/api/auth/refresh-token"))) {
+            if (accessToken == null && refreshToken == null) {
                 System.err.println("JwtAuthenticationFilter: No authentication token found for path: " + path);
                 return onError(exchange, "Authentication token is missing", HttpStatus.UNAUTHORIZED);
             }
@@ -114,12 +114,22 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     return onError(exchange, "Token has expired", HttpStatus.UNAUTHORIZED);
                 }
 
+                // Extract user information from JWT claims
+                String userId = claims.getSubject();
+                String userRole = claims.get("role", String.class);
+                String userEmail = claims.get("email", String.class);
+
+                // Add headers with consistent naming for user-service
                 ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                        .header("X-Auth-User-Id", claims.getSubject())
-                        .header("X-Auth-User-Role", claims.get("role", String.class))
+                        .header("X-User-Id", userId)
+                        .header("X-User-Email", userEmail != null ? userEmail : "")
+                        .header("X-User-Role", userRole != null ? userRole : "USER")
+                        // Keep old headers for backward compatibility
+                        .header("X-Auth-User-Id", userId)
+                        .header("X-Auth-User-Role", userRole != null ? userRole : "USER")
                         .build();
 
-                System.out.println("JwtAuthenticationFilter: Token validated for user: " + claims.getSubject() + ", role: " + claims.get("role", String.class));
+                System.out.println("JwtAuthenticationFilter: Token validated for user: " + userId + ", role: " + userRole + ", email: " + userEmail);
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
             } catch (ExpiredJwtException e) {
                 System.err.println("JwtAuthenticationFilter: JWT token is expired: " + e.getMessage());

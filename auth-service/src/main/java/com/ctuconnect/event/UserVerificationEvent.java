@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserVerificationEvent {
-    private Long userId;
+    private String userId;
     private String email;
     private String verificationToken;
     private boolean isVerified;

@@ -5,7 +5,6 @@ import com.ctuconnect.dto.AdminDashboardDTO;
 import com.ctuconnect.dto.AdminUpdateUserRequest;
 import com.ctuconnect.dto.UserManagementDTO;
 import com.ctuconnect.entity.EmailVerificationEntity;
-import com.ctuconnect.entity.RefreshTokenEntity;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.repository.EmailVerificationRepository;
 import com.ctuconnect.repository.RefreshTokenRepository;
@@ -102,6 +101,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public UserManagementDTO getUserById(Long id) {
+        return null;
+    }
+
+    @Override
+    public UserManagementDTO getUserById(String id) {
         log.info("Fetching user by ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -127,9 +131,7 @@ public class AdminServiceImpl implements AdminService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .isActive(request.isActive())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+                .build(); // Remove createdAt and updatedAt - they will be set by @PrePersist
 
         UserEntity savedUser = userRepository.save(user);
 
@@ -152,8 +154,33 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional
     public UserManagementDTO updateUser(Long id, AdminUpdateUserRequest request) {
+        return null;
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+
+    }
+
+    @Override
+    public void toggleUserStatus(Long id) {
+
+    }
+
+    @Override
+    public void forceVerifyUser(Long id) {
+
+    }
+
+    @Override
+    public void resetUserPassword(Long id, String newPassword) {
+
+    }
+
+    @Transactional
+    @Override
+    public UserManagementDTO updateUser(String id, AdminUpdateUserRequest request) {
         log.info("Admin updating user with ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -205,9 +232,9 @@ public class AdminServiceImpl implements AdminService {
         return convertToUserManagementDTO(updatedUser);
     }
 
-    @Override
     @Transactional
-    public void deleteUser(Long id) {
+    @Override
+    public void deleteUser(String id) {
         log.info("Admin deleting user with ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -224,9 +251,9 @@ public class AdminServiceImpl implements AdminService {
         userRepository.delete(user);
     }
 
-    @Override
     @Transactional
-    public void toggleUserStatus(Long id) {
+    @Override
+    public void toggleUserStatus(String id) {
         log.info("Admin toggling user status for ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -240,9 +267,9 @@ public class AdminServiceImpl implements AdminService {
         publishUserUpdatedEvent(user);
     }
 
-    @Override
     @Transactional
-    public void forceVerifyUser(Long id) {
+    @Override
+    public void forceVerifyUser(String id) {
         log.info("Admin force verifying user with ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -263,9 +290,9 @@ public class AdminServiceImpl implements AdminService {
         publishUserVerificationEvent(user, true);
     }
 
-    @Override
     @Transactional
-    public void resetUserPassword(Long id, String newPassword) {
+    @Override
+    public void resetUserPassword(String id, String newPassword) {
         log.info("Admin resetting password for user ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -313,8 +340,23 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional
     public void forceLogoutUser(Long id) {
+
+    }
+
+    @Override
+    public List<Object> getUserLoginHistory(Long id) {
+        return List.of();
+    }
+
+    @Override
+    public void updateUserRole(Long id, String newRole) {
+
+    }
+
+    @Transactional
+    @Override
+    public void forceLogoutUser(String id) {
         log.info("Admin forcing logout for user ID: {}", id);
 
         UserEntity user = userRepository.findById(id)
@@ -325,16 +367,16 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Object> getUserLoginHistory(Long id) {
+    public List<Object> getUserLoginHistory(String id) {
         log.info("Fetching login history for user ID: {}", id);
 
         // This would require a login history table - placeholder for now
         return List.of();
     }
 
-    @Override
     @Transactional
-    public void updateUserRole(Long id, String newRole) {
+    @Override
+    public void updateUserRole(String id, String newRole) {
         log.info("Admin updating role for user ID: {} to role: {}", id, newRole);
 
         UserEntity user = userRepository.findById(id)

@@ -30,7 +30,7 @@ public class AuthEventListener {
         try {
             log.info("Received user profile updated event: {}", event);
 
-            Long userId = Long.valueOf(event.get("userId").toString());
+            String userId = event.get("userId").toString();
             UserEntity user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
@@ -60,8 +60,8 @@ public class AuthEventListener {
 
             // This could be used for analytics, notifications, etc.
             // For now, we'll just log it
-            Long userId = Long.valueOf(event.get("userId").toString());
-            Long targetUserId = Long.valueOf(event.get("targetUserId").toString());
+            String userId = event.get("userId").toString();
+            String targetUserId = event.get("targetUserId").toString();
             String relationshipType = event.get("relationshipType").toString();
             String eventType = event.get("eventType").toString();
 

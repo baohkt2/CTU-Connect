@@ -35,8 +35,21 @@ public class JwtTokenProvider {
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // Cast to CustomUserPrincipal to get additional user info
+        String email = "";
+        String role = "USER";
+
+        if (userDetails instanceof CustomUserPrincipal) {
+            CustomUserPrincipal customUser = (CustomUserPrincipal) userDetails;
+            email = customUser.getEmail();
+            role = customUser.getRole();
+        }
+
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(userDetails.getUsername()) // This is typically the userId
+                .claim("email", email)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey())
@@ -45,8 +58,21 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // Include basic info in refresh token as well
+        String email = "";
+        String role = "USER";
+
+        if (userDetails instanceof CustomUserPrincipal) {
+            CustomUserPrincipal customUser = (CustomUserPrincipal) userDetails;
+            email = customUser.getEmail();
+            role = customUser.getRole();
+        }
+
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("email", email)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
                 .signWith(getSigningKey())

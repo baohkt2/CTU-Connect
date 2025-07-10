@@ -4,7 +4,6 @@ import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,13 +24,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return new User(
+        return new CustomUserPrincipal(
+                user.getId(), // userId
                 user.getEmail(),
                 user.getPassword(),
+                user.getRole(),
                 user.isActive(),
-                true, // account non-expired
-                true, // credentials non-expired
-                true, // account non-locked
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
     }

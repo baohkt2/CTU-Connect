@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,7 +36,7 @@ public class UserController {
     @GetMapping("/me/profile")
     @RequireAuth // Endpoint mới để user xem profile của chính mình
     public ResponseEntity<UserDTO> getMyProfile() {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getUserProfile(currentUserId));
     }
 
@@ -48,7 +49,7 @@ public class UserController {
     @PutMapping("/me/profile")
     @RequireAuth // Endpoint mới để user cập nhật profile của chính mình
     public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO userDTO) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.updateUserProfile(currentUserId, userDTO));
     }
 
@@ -63,7 +64,7 @@ public class UserController {
     @PostMapping("/me/invite/{friendId}")
     @RequireAuth // Endpoint mới để user gửi lời mời kết bạn
     public ResponseEntity<String> sendFriendRequest(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.addFriend(currentUserId, friendId);
         return ResponseEntity.ok("Friend request sent successfully");
     }
@@ -78,7 +79,7 @@ public class UserController {
     @PostMapping("/me/accept-invite/{friendId}")
     @RequireAuth // Endpoint mới để user chấp nhận lời mời kết bạn
     public ResponseEntity<String> acceptMyFriendInvite(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.acceptFriendInvite(currentUserId, friendId);
         return ResponseEntity.ok("Friend request accepted successfully");
     }
@@ -93,7 +94,7 @@ public class UserController {
     @PostMapping("/me/reject-invite/{friendId}")
     @RequireAuth // Endpoint mới để user từ chối lời mời kết bạn
     public ResponseEntity<String> rejectMyFriendInvite(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.rejectFriendInvite(currentUserId, friendId);
         return ResponseEntity.ok("Friend request rejected successfully");
     }
@@ -108,7 +109,7 @@ public class UserController {
     @GetMapping("/me/friends")
     @RequireAuth // Endpoint mới để user xem danh sách bạn bè của mình
     public ResponseEntity<FriendsDTO> getMyFriends() {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getFriends(currentUserId));
     }
 
@@ -123,7 +124,7 @@ public class UserController {
     @GetMapping("/me/mutual-friends/{otherUserId}")
     @RequireAuth // Endpoint mới để user xem bạn chung với người khác
     public ResponseEntity<FriendsDTO> getMyMutualFriends(@PathVariable String otherUserId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getMutualFriends(currentUserId, otherUserId));
     }
 
@@ -136,7 +137,7 @@ public class UserController {
     @GetMapping("/me/friend-suggestions")
     @RequireAuth // Endpoint mới để user xem gợi ý kết bạn
     public ResponseEntity<FriendsDTO> getMyFriendSuggestions() {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getFriendSuggestions(currentUserId));
     }
 
@@ -154,7 +155,7 @@ public class UserController {
     @PostMapping("/me/filter-relationships")
     @RequireAuth // Endpoint mới để user filter relationships
     public ResponseEntity<List<UserDTO>> filterMyRelationships(@RequestBody RelationshipFilterDTO filters) {
-        String currentUserId = SecurityContextHolder.getCurrentUserId();
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getUsersByRelationshipFilters(currentUserId, filters));
     }
 

@@ -24,7 +24,7 @@ public class UserDTO {
     private String bio;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Set<String> friendIds;
+    private Set<String> friendIds; // Changed from Long to String for UUID consistency
 
     // For mutual friend and recommendation features
     private int mutualFriendsCount;

@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         userCreatedEvent.put("email", user.getEmail());
         userCreatedEvent.put("username", user.getUsername());
         userCreatedEvent.put("role", user.getRole());
-        kafkaTemplate.send("user-registration", user.getId().toString(), userCreatedEvent);
+        kafkaTemplate.send("user-registration", user.getId(), userCreatedEvent);
 
         // Generate tokens
         String jwtToken = jwtService.generateToken(

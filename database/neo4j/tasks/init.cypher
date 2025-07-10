@@ -1,138 +1,164 @@
 // =================================================================
-// Enhanced Neo4j Initialization Script for "Compathi"
+// MERGED & ENHANCED NEO4J INITIALIZATION SCRIPT
+// Author: Grok 3
+// Date: 2025-07-10
+// Description: Initializes the hierarchical structure for Can Tho University (CTU)
+// in Neo4j, including University, Colleges, Faculties, Majors, Batches, and Genders.
+// Optimized for CTU Connect project, with user creation handled dynamically via Kafka.
+// Uses graph-native best practices (MERGE, UNWIND, Constraints).
 // =================================================================
-// This script demonstrates a more graph-native approach to modeling the data.
-// Key Improvements:
-// 1. Categorical Nodes: College, Faculty, Major, and Batch are now distinct nodes,
-//    allowing for more powerful and efficient graph traversals.
-// 2. Clearer Relationships: Uses distinct relationship types for confirmed friendships
-//    (:IS_FRIENDS_WITH) and pending requests (:SENT_FRIEND_REQUEST_TO).
-// 3. Efficient Data Loading: Uses UNWIND to create nodes and relationships from lists,
-//    which is cleaner and more performant than individual CREATE statements.
-// 4. Idempotency: Uses MERGE to prevent creating duplicate category nodes if the
-//    script is run multiple times.
 
-// To start with a clean slate (optional, use with caution)
+// -----------------------------------------------------------------
+// 0. CLEAN SLATE (Optional: Use with caution to reset the database)
+// -----------------------------------------------------------------
 // MATCH (n) DETACH DELETE n;
-
 
 // =================================================================
 // 1. CONSTRAINTS & INDEXES
 // =================================================================
-// Constraints ensure data integrity and uniqueness. They also create backing indexes automatically.
+// Ensure data integrity and uniqueness for all relevant nodes
 CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (uni:University) REQUIRE uni.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (c:College) REQUIRE c.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (f:Faculty) REQUIRE f.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (m:Major) REQUIRE m.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (b:Batch) REQUIRE b.year IS UNIQUE;
-
+CREATE CONSTRAINT IF NOT EXISTS FOR (g:Gender) REQUIRE g.name IS UNIQUE;
 
 // =================================================================
-// 2. CREATE CATEGORICAL NODES
+// 2. CREATE HIERARCHICAL UNIVERSITY STRUCTURE
 // =================================================================
-// Create shared context nodes. Using MERGE prevents duplicates.
+// Create the University node and its hierarchy (Colleges, Faculties, Majors)
+MERGE (uni:University {name: 'Đại học Cần Thơ', established: 1966})
 
-// Colleges
-WITH ["College of Information Technology", "College of Economics", "College of Engineering"] AS colleges
-UNWIND colleges AS collegeName
-MERGE (c:College {name: collegeName});
+// Define the university structure as a list of maps
+WITH uni, [
+{ college: 'Khoa Công nghệ Thông tin và Truyền thông', faculties: [
+{ faculty: 'Bộ môn Công nghệ Phần mềm', majors: ['Công nghệ Phần mềm', 'Khoa học Máy tính'] },
+{ faculty: 'Bộ môn Hệ thống Thông tin', majors: ['Hệ thống Thông tin', 'Kinh doanh Kỹ thuật Số'] },
+{ faculty: 'Bộ môn Truyền thông Dữ liệu và Mạng máy tính', majors: ['Mạng máy tính và Truyền thông dữ liệu'] }
+]},
+{ college: 'Khoa Kinh tế', faculties: [
+{ faculty: 'Bộ môn Kinh tế học', majors: ['Kinh tế học'] },
+{ faculty: 'Bộ môn Quản trị Kinh doanh', majors: ['Marketing', 'Quản trị Kinh doanh'] },
+{ faculty: 'Bộ môn Tài chính Ngân hàng', majors: ['Tài chính - Ngân hàng'] }
+]},
+{ college: 'Khoa Kỹ thuật', faculties: [
+{ faculty: 'Bộ môn Kỹ thuật Xây dựng', majors: ['Kỹ thuật Xây dựng'] },
+{ faculty: 'Bộ môn Kỹ thuật Cơ khí', majors: ['Kỹ thuật Cơ khí', 'Robot và Trí tuệ nhân tạo'] }
+]},
+{ college: 'Khoa Nông nghiệp', faculties: [] },
+{ college: 'Khoa Y Dược', faculties: [] },
+{ college: 'Khoa Sư phạm', faculties: [] },
+{ college: 'Khoa Khoa học Tự nhiên', faculties: [] },
+{ college: 'Khoa Khoa học Xã hội và Nhân văn', faculties: [] },
+{ college: 'Khoa Luật', faculties: [] }
+] AS universityStructure
 
-// Faculties
-WITH ["Software Engineering", "Computer Science", "Business Administration", "Civil Engineering", "Mechanical Engineering"] AS faculties
-UNWIND faculties AS facultyName
-MERGE (f:Faculty {name: facultyName});
+// Create Colleges and link to University
+UNWIND universityStructure AS collegeData
+MERGE (c:College {name: collegeData.college})
+MERGE (uni)-[:HAS_COLLEGE]->(c)
 
-// Majors
-WITH ["Web Development", "Artificial Intelligence", "Data Science", "Marketing", "Finance", "Structural Engineering", "Robotics"] AS majors
-UNWIND majors AS majorName
-MERGE (m:Major {name: majorName});
+// Create Faculties and link to their College
+WITH collegeData, c
+WHERE size(collegeData.faculties) > 0
+UNWIND collegeData.faculties AS facultyData
+MERGE (f:Faculty {name: facultyData.faculty, college: collegeData.college})
+MERGE (c)-[:HAS_FACULTY]->(f)
 
-// Batches
-WITH ["2019", "2020", "2021"] AS batches
+// Create Majors and link to their Faculty
+WITH facultyData, f
+UNWIND facultyData.majors AS majorName
+MERGE (m:Major {name: majorName, faculty: facultyData.faculty})
+MERGE (f)-[:HAS_MAJOR]->(m);
+
+// =================================================================
+// 3. CREATE BATCH (COURSE YEAR) NODES
+// =================================================================
+// Create Batch nodes for years 2021–2025
+WITH [2021, 2022, 2023, 2024, 2025] AS batches
+MATCH (uni:University {name: 'Đại học Cần Thơ'})
 UNWIND batches AS batchYear
-MERGE (b:Batch {year: batchYear});
-
+MERGE (b:Batch {year: toInteger(batchYear)})
+MERGE (uni)-[:HAS_BATCH]->(b);
 
 // =================================================================
-// 3. CREATE USERS AND CONNECT THEM TO CATEGORIES
+// 4. CREATE GENDER NODES
 // =================================================================
-// We use UNWIND on a list of user data maps. This is the standard way to bulk-import data.
+// Create Gender nodes for Male and Female
+MERGE (g1:Gender {name: 'Nam'})
+MERGE (g2:Gender {name: 'Nữ'});
+
+// =================================================================
+// 5. CREATE SAMPLE USERS AND CONNECT TO STRUCTURE
+// =================================================================
+// Sample users to demonstrate structure (dynamic user creation handled by user-service via Kafka)
 WITH [
-{id: "user1", email: "john.doe@student.ctu.edu.vn", studentId: "B1906001", batch: "2019", fullName: "John Doe", gender: "Male", bio: "Computer science student passionate about web development", college: "College of Information Technology", faculty: "Software Engineering", major: "Web Development"},
-{id: "user2", email: "jane.smith@student.ctu.edu.vn", studentId: "B1906002", batch: "2019", fullName: "Jane Smith", gender: "Female", bio: "Software engineer with a focus on front-end development", college: "College of Information Technology", faculty: "Software Engineering", major: "Web Development"},
-{id: "user3", email: "michael.johnson@student.ctu.edu.vn", studentId: "B1906003", batch: "2019", fullName: "Michael Johnson", gender: "Male", bio: "AI enthusiast and researcher", college: "College of Information Technology", faculty: "Computer Science", major: "Artificial Intelligence"},
-{id: "user4", email: "emily.williams@student.ctu.edu.vn", studentId: "B2006001", batch: "2020", fullName: "Emily Williams", gender: "Female", bio: "Data scientist with a passion for machine learning", college: "College of Information Technology", faculty: "Computer Science", major: "Data Science"},
-{id: "user5", email: "david.brown@student.ctu.edu.vn", studentId: "B2006002", batch: "2020", fullName: "David Brown", gender: "Male", bio: "Business student focusing on digital marketing strategies", college: "College of Economics", faculty: "Business Administration", major: "Marketing"},
-{id: "user6", email: "sarah.miller@student.ctu.edu.vn", studentId: "B2006003", batch: "2020", fullName: "Sarah Miller", gender: "Female", bio: "Finance student interested in investment analysis", college: "College of Economics", faculty: "Business Administration", major: "Finance"},
-{id: "user7", email: "kevin.jones@student.ctu.edu.vn", studentId: "B2106001", batch: "2021", fullName: "Kevin Jones", gender: "Male", bio: "Civil engineering student with a focus on sustainable structures", college: "College of Engineering", faculty: "Civil Engineering", major: "Structural Engineering"},
-{id: "user8", email: "lisa.davis@student.ctu.edu.vn", studentId: "B2106002", batch: "2021", fullName: "Lisa Davis", gender: "Female", bio: "Mechanical engineer specializing in robotics and automation", college: "College of Engineering", faculty: "Mechanical Engineering", major: "Robotics"}
+{id: 'user1', email: 'nguyenvana@ctu.edu.vn', studentId: 'B2106001', batch: 2021, fullName: 'Nguyễn Văn A', gender: 'Nam', bio: 'Sinh viên đam mê phát triển web', major: 'Công nghệ Phần mềm'},
+{id: 'user2', email: 'tranthib@ctu.edu.vn', studentId: 'B2106002', batch: 2021, fullName: 'Trần Thị B', gender: 'Nữ', bio: 'Kỹ sư phần mềm tập trung vào front-end', major: 'Công nghệ Phần mềm'},
+{id: 'user3', email: 'leminhc@ctu.edu.vn', studentId: 'B2106003', batch: 2021, fullName: 'Lê Minh C', gender: 'Nam', bio: 'Người đam mê AI và học máy', major: 'Khoa học Máy tính'},
+{id: 'user4', email: 'phamthid@ctu.edu.vn', studentId: 'B2206001', batch: 2022, fullName: 'Phạm Thị D', gender: 'Nữ', bio: 'Nhà khoa học dữ liệu', major: 'Hệ thống Thông tin'},
+{id: 'user5', email: 'nguyenvane@ctu.edu.vn', studentId: 'B2206002', batch: 2022, fullName: 'Nguyễn Văn E', gender: 'Nam', bio: 'Sinh viên kinh doanh tập trung vào marketing', major: 'Marketing'},
+{id: 'user6', email: 'tranthif@ctu.edu.vn', studentId: 'B2306001', batch: 2023, fullName: 'Trần Thị F', gender: 'Nữ', bio: 'Sinh viên tài chính quan tâm đến đầu tư', major: 'Tài chính - Ngân hàng'},
+{id: 'user7', email: 'levang@ctu.edu.vn', studentId: 'B2406001', batch: 2024, fullName: 'Lê Văn G', gender: 'Nam', bio: 'Sinh viên kỹ thuật xây dựng', major: 'Kỹ thuật Xây dựng'},
+{id: 'user8', email: 'phamthih@ctu.edu.vn', studentId: 'B2506001', batch: 2025, fullName: 'Phạm Thị H', gender: 'Nữ', bio: 'Kỹ sư cơ khí chuyên về robot', major: 'Robot và Trí tuệ nhân tạo'}
 ] AS usersData
 UNWIND usersData AS data
 
-// Create the User node
-CREATE (u:User {
-id: data.id,
-email: data.email,
-studentId: data.studentId,
-fullName: data.fullName,
-role: "STUDENT",
-gender: data.gender,
-bio: data.bio,
-createdAt: datetime(),
-updatedAt: datetime()
-})
+// Create User node
+MERGE (u:User {id: data.id, email: data.email})
+ON CREATE SET
+u.studentId = data.studentId,
+u.fullName = data.fullName,
+u.role = 'STUDENT',
+u.bio = data.bio,
+u.createdAt = datetime(),
+u.updatedAt = datetime()
+ON MATCH SET
+u.fullName = data.fullName,
+u.bio = data.bio,
+u.updatedAt = datetime()
 
-// Match the corresponding category nodes and create relationships
+// Link User to Batch, Major, and Gender
 WITH u, data
-MATCH (c:College {name: data.college})
-MATCH (f:Faculty {name: data.faculty})
+MATCH (b:Batch {year: toInteger(data.batch)})
 MATCH (m:Major {name: data.major})
-MATCH (b:Batch {year: data.batch})
+MATCH (g:Gender {name: data.gender})
 MERGE (u)-[:IN_BATCH]->(b)
-MERGE (u)-[:BELONGS_TO_COLLEGE]->(c)
-MERGE (u)-[:IN_FACULTY]->(f)
-MERGE (u)-[:HAS_MAJOR]->(m);
-
+MERGE (u)-[:ENROLLED_IN]->(m)
+MERGE (u)-[:HAS_GENDER]->(g);
 
 // =================================================================
-// 4. CREATE RELATIONSHIPS BETWEEN USERS
+// 6. CREATE RELATIONSHIPS BETWEEN USERS
 // =================================================================
-
-// --- Accepted Friendships ---
-// We model this as a single, undirected relationship for simplicity and efficiency.
+// Create accepted friendships
 WITH [
-["user1", "user2"],
-["user1", "user3"],
-["user2", "u4"], // Corrected from original script to match user IDs
-["user3", "u5"], // Corrected
-["user3", "user2"],
-["user5", "user2"],
-["user4", "user3"]
+['user1', 'user2'],
+['user1', 'user3'],
+['user2', 'user4'],
+['user3', 'user5'],
+['user4', 'user5'],
+['user6', 'user7']
 ] AS friendships
 UNWIND friendships AS friendship
 MATCH (u1:User {id: friendship[0]})
 MATCH (u2:User {id: friendship[1]})
-// MERGE ensures we don't create the same friendship twice. The direction doesn't matter here.
-MERGE (u1)-[r:IS_FRIENDS_WITH]-(u2)
-ON CREATE SET r.since = datetime();
+MERGE (u1)-[r:IS_FRIENDS_WITH {since: datetime()}]->(u2);
 
-
-// --- Pending Friend Requests ---
-// This is a directed relationship: (Sender)-[:SENT_FRIEND_REQUEST_TO]->(Receiver)
+// Create pending friend requests
 WITH [
-{sender: "user1", receiver: "user4"},
-{sender: "user6", receiver: "user1"},
-{sender: "user7", receiver: "user2"}
+{sender: 'user1', receiver: 'user4'},
+{sender: 'user6', receiver: 'user1'},
+{sender: 'user7', receiver: 'user2'}
 ] AS requests
 UNWIND requests AS request
 MATCH (sender:User {id: request.sender})
 MATCH (receiver:User {id: request.receiver})
-MERGE (sender)-[r:SENT_FRIEND_REQUEST_TO]->(receiver)
-ON CREATE SET r.requestedAt = datetime();
+MERGE (sender)-[r:SENT_FRIEND_REQUEST_TO {requestedAt: datetime()}]->(receiver);
 
 // =================================================================
-// 5. FINALIZATION
+// 7. FINALIZATION
 // =================================================================
-RETURN "Database initialization complete. Created 8 users, 4 category types, and established friend/request relationships using a graph model.";
-
+RETURN 'Database initialization complete. Created CTU structure with 9 colleges, faculties, majors, batches (2021-2025), gender nodes, 8 sample users, and relationships.' AS status;

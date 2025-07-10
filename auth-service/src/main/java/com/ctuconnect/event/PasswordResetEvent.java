@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordResetEvent {
-    private Long userId;
+    private String userId;
     private String email;
     private String resetToken;
     private String eventType; // REQUESTED, COMPLETED

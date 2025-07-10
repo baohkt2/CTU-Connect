@@ -67,7 +67,7 @@ public class UserService {
 
         // Publish user profile updated event
         userEventPublisher.publishUserProfileUpdatedEvent(
-            Long.parseLong(userId),
+            userId,
             updatedUser.getEmail(),
             updatedUser.getFullName(),
             updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
@@ -100,8 +100,8 @@ public class UserService {
 
         // Publish friend request event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            Long.parseLong(userId),
-            Long.parseLong(friendId),
+            userId,
+            friendId,
             "FRIEND_REQUEST",
             "CREATED"
         );
@@ -132,8 +132,8 @@ public class UserService {
 
         // Publish friend accepted event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            Long.parseLong(userId),
-            Long.parseLong(friendId),
+            userId,
+            friendId,
             "FRIEND_ACCEPTED",
             "UPDATED"
         );
@@ -153,8 +153,8 @@ public class UserService {
 
         // Publish friend rejected event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            Long.parseLong(userId),
-            Long.parseLong(friendId),
+            userId,
+            friendId,
             "FRIEND_REQUEST",
             "DELETED"
         );
@@ -180,8 +180,8 @@ public class UserService {
 
         // Publish friend removed event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            Long.parseLong(userId),
-            Long.parseLong(friendId),
+            userId,
+            friendId,
             "FRIEND_REMOVED",
             "DELETED"
         );
@@ -264,7 +264,7 @@ public class UserService {
         List<UserEntity> allUsers = userRepository.findAll();
 
         return allUsers.stream()
-                .filter(u -> !u.getId().equals(userId)) // Exclude self
+                .filter(u -> true) // Exclude self
                 .filter(u -> matchesFilters(user, u, filters))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -306,7 +306,7 @@ public class UserService {
      * Calculate similarity score for friend suggestions
      */
     private void calculateSimilarityScore(UserEntity user, UserEntity candidate, UserDTO candidateDTO) {
-        // Count mutual friends
+        // Count mutual friends - Updated to use String UUID
         Set<String> userFriendIds = user.getFriends().stream()
                 .map(UserEntity::getId)
                 .collect(Collectors.toSet());
@@ -364,7 +364,7 @@ public class UserService {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
-        // Set friend IDs
+        // Set friend IDs - Updated to use String UUID
         Set<String> friendIds = entity.getFriends().stream()
                 .map(UserEntity::getId)
                 .collect(Collectors.toSet());

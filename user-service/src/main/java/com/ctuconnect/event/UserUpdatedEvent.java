@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserUpdatedEvent {
-    private Long userId;
+    private String userId;
     private String email;
     private String username;
     private String role;

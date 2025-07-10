@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminUserActivityDTO {
-    private Long userId;
+    private String userId;
     private String email;
     private String username;
     private String activity; // LOGIN, LOGOUT, PASSWORD_RESET, etc.
