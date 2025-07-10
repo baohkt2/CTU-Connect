@@ -397,7 +397,7 @@ public class AdminServiceImpl implements AdminService {
                 .orElse(false);
 
         return new UserManagementDTO(
-                user.getId(),
+                user.getId().toString(),
                 user.getEmail(),
                 user.getUsername(),
                 user.getRole(),
