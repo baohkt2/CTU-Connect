@@ -35,20 +35,39 @@ public class UserService {
     }
 
     /**
-     * Get user profile by ID
+     * Get user profile by ID or email (fallback for compatibility)
      */
-    public UserDTO getUserProfile(String userId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        return mapToDTO(userEntity);
+    public UserDTO getUserProfile(String userIdOrEmail) {
+        Optional<UserEntity> userEntity = userRepository.findById(userIdOrEmail);
+
+        // If not found by ID, try to find by email (fallback for compatibility)
+        if (userEntity.isEmpty()) {
+            userEntity = userRepository.findByEmail(userIdOrEmail);
+        }
+
+        if (userEntity.isEmpty()) {
+            throw new RuntimeException("User not found with id or email: " + userIdOrEmail);
+        }
+
+        return mapToDTO(userEntity.get());
     }
 
     /**
-     * Update user profile
+     * Update user profile by ID or email (fallback for compatibility)
      */
-    public UserDTO updateUserProfile(String userId, UserDTO userDTO) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    public UserDTO updateUserProfile(String userIdOrEmail, UserDTO userDTO) {
+        Optional<UserEntity> userEntityOpt = userRepository.findById(userIdOrEmail);
+
+        // If not found by ID, try to find by email (fallback for compatibility)
+        if (userEntityOpt.isEmpty()) {
+            userEntityOpt = userRepository.findByEmail(userIdOrEmail);
+        }
+
+        if (userEntityOpt.isEmpty()) {
+            throw new RuntimeException("User not found with id or email: " + userIdOrEmail);
+        }
+
+        UserEntity userEntity = userEntityOpt.get();
 
         // Update only profile fields (not system fields like id, createdAt)
         if (userDTO.getFullName() != null) userEntity.setFullName(userDTO.getFullName());
@@ -67,7 +86,7 @@ public class UserService {
 
         // Publish user profile updated event
         userEventPublisher.publishUserProfileUpdatedEvent(
-            userId,
+            userIdOrEmail,
             updatedUser.getEmail(),
             updatedUser.getFullName(),
             updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names

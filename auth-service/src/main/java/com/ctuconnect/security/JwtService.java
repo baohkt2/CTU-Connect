@@ -29,13 +29,30 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", String.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> extraClaims = new HashMap<>();
+
+        // Add user ID and role to claims if userDetails is CustomUserPrincipal
+        if (userDetails instanceof CustomUserPrincipal) {
+            CustomUserPrincipal principal = (CustomUserPrincipal) userDetails;
+            extraClaims.put("userId", principal.getUserId());
+            extraClaims.put("role", principal.getRole());
+        }
+
+        return generateToken(extraClaims, userDetails);
     }
 
     public String generateToken(
@@ -59,11 +76,11 @@ public class JwtService {
             long expiration
     ) {
         return Jwts.builder()
-                .claims(extraClaims) // Use claims() instead of setClaims() in 0.12.x+ for cleaner syntax
+                .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey()) // HS256 is default if not specified, or use SignatureAlgorithm.HS256 if you prefer
+                .signWith(getSignInKey())
                 .compact();
     }
 

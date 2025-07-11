@@ -23,11 +23,10 @@ import org.hibernate.type.SqlTypes;
 public class UserEntity {
 
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
-
-
-
 
     @Column(nullable = false, unique = true, length = 50)
     private String email;
@@ -35,20 +34,20 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 25)
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 20)
-    private String role;
+    private String role = "USER";
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private Boolean isActive = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RefreshTokenEntity> refreshTokens = new ArrayList<>();
@@ -56,20 +55,27 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<EmailVerificationEntity> emailVerifications = new ArrayList<>();
 
-
     @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-        if (this.id == null) {
-            this.id = UUID.randomUUID(); // Không cần toString()
+    protected void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID();
         }
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-
     @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    // Custom getter for isActive to follow naming convention
+    public boolean isActive() {
+        return isActive != null && isActive;
+    }
+
+    // Custom setter for isActive
+    public void setActive(Boolean active) {
+        this.isActive = active;
     }
 }

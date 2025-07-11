@@ -9,6 +9,7 @@ import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.repository.EmailVerificationRepository;
 import com.ctuconnect.repository.RefreshTokenRepository;
 import com.ctuconnect.repository.UserRepository;
+import com.ctuconnect.security.CustomUserPrincipal;
 import com.ctuconnect.security.JwtService;
 import com.ctuconnect.service.AuthService;
 import com.ctuconnect.service.EmailService;
@@ -27,6 +28,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -88,19 +90,16 @@ public class AuthServiceImpl implements AuthService {
         kafkaTemplate.send("user-registration", user.getId().toString(), userCreatedEvent);
 
         // Generate tokens
-        String jwtToken = jwtService.generateToken(
-                Map.of("role", user.getRole()),
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.isActive(),
-                        true,
-                        true,
-                        true,
-                        org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_" + user.getRole())
-                )
+        CustomUserPrincipal userPrincipal = new CustomUserPrincipal(
+                user.getId().toString(), // Convert Long to String for JWT
+                user.getEmail(),
+                user.getPassword(),
+                user.getRole(),
+                user.getIsActive(),
+                List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
 
+        String jwtToken = jwtService.generateToken(userPrincipal);
         String refreshToken = createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -137,17 +136,16 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Generate tokens
-        UserDetails userDetails = new User(
+        CustomUserPrincipal userPrincipal = new CustomUserPrincipal(
+                user.getId().toString(), // Convert Long to String for JWT
                 user.getEmail(),
                 user.getPassword(),
+                user.getRole(),
                 user.isActive(),
-                true,
-                true,
-                true,
-                AuthorityUtils.createAuthorityList("ROLE_" + user.getRole())
+                List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
 
-        String jwtToken = jwtService.generateToken(Map.of("role", user.getRole()), userDetails);
+        String jwtToken = jwtService.generateToken(userPrincipal);
         String refreshToken = createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -175,17 +173,16 @@ public class AuthServiceImpl implements AuthService {
         UserEntity user = token.getUser();
 
         // Generate new access token
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+        CustomUserPrincipal userPrincipal = new CustomUserPrincipal(
+                user.getId().toString(), // Convert Long to String for JWT
                 user.getEmail(),
                 user.getPassword(),
+                user.getRole(),
                 user.isActive(),
-                true,
-                true,
-                true,
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_" + user.getRole())
+                List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
 
-        String jwtToken = jwtService.generateToken(Map.of("role", user.getRole()), userDetails);
+        String jwtToken = jwtService.generateToken(userPrincipal);
 
         // Generate new refresh token
         refreshTokenRepository.delete(token);

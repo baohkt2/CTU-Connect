@@ -29,7 +29,7 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userId; // Use userId as username for JWT subject
+        return email; // Use email as username for JWT subject
     }
 
     @Override

@@ -33,10 +33,10 @@ public class UserEventListener {
 
             // Create user in Neo4j
             UserEntity user = UserEntity.builder()
-                    .id(event.get("userId").toString())
-                    .email(event.get("email").toString())
-                    .username(event.get("username").toString())
-                    .role(event.get("role").toString())
+                    .id(String.valueOf(event.get("userId"))) // Ensure String conversion
+                    .email(String.valueOf(event.get("email")))
+                    .username(String.valueOf(event.get("username")))
+                    .role(String.valueOf(event.get("role")))
                     .isActive(true)
                     .build();
 
@@ -59,14 +59,14 @@ public class UserEventListener {
         try {
             log.info("Received user updated event: {}", event);
 
-            String userId = event.get("userId").toString();
+            String userId = String.valueOf(event.get("userId")); // Ensure String conversion
             UserEntity user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-            user.setEmail(event.get("email").toString());
-            user.setUsername(event.get("username").toString());
-            user.setRole(event.get("role").toString());
-            user.setIsActive(Boolean.valueOf(event.get("isActive").toString()));
+            user.setEmail(String.valueOf(event.get("email")));
+            user.setUsername(String.valueOf(event.get("username")));
+            user.setRole(String.valueOf(event.get("role")));
+            user.setIsActive(Boolean.valueOf(String.valueOf(event.get("isActive"))));
 
             userRepository.save(user);
 

@@ -120,17 +120,19 @@ public class UserSyncService {
         UserDTO dto = new UserDTO();
         dto.setId(entity.getId());
         dto.setEmail(entity.getEmail());
+        dto.setUsername(entity.getUsername());
+        dto.setFullName(entity.getFullName());
         dto.setStudentId(entity.getStudentId());
         dto.setBatch(entity.getBatch());
-        dto.setFullName(entity.getFullName());
-        dto.setRole(entity.getRole());
         dto.setCollege(entity.getCollege());
         dto.setFaculty(entity.getFaculty());
         dto.setMajor(entity.getMajor());
         dto.setGender(entity.getGender());
         dto.setBio(entity.getBio());
+        dto.setRole(entity.getRole());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
+        dto.setIsActive(entity.getIsActive());
         return dto;
     }
 }

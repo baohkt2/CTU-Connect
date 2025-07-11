@@ -20,6 +20,7 @@ import org.springframework.http.HttpCookie;
 import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
@@ -109,23 +110,30 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 }
 
                 Claims claims = extractAllClaims(tokenToValidate);
-                if (claims.getExpiration().before(new Date())) {
+
+                // Check token expiration
+                if (claims.getExpiration() != null && claims.getExpiration().before(new Date())) {
                     System.err.println("JwtAuthenticationFilter: Token has expired for user: " + claims.getSubject());
                     return onError(exchange, "Token has expired", HttpStatus.UNAUTHORIZED);
                 }
 
                 // Extract user information from JWT claims
-                String userId = claims.getSubject();
+                String userId = claims.get("userId", String.class); // Extract userId from claims
+                String userEmail = claims.getSubject(); // Subject contains email
                 String userRole = claims.get("role", String.class);
-                String userEmail = claims.get("email", String.class);
+
+                // Fallback to subject if userId claim is not present (backward compatibility)
+                if (userId == null || userId.trim().isEmpty()) {
+                    userId = userEmail;
+                }
 
                 // Add headers with consistent naming for user-service
                 ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                        .header("X-User-Id", userId)
+                        .header("X-User-Id", userId != null ? userId : "")
                         .header("X-User-Email", userEmail != null ? userEmail : "")
                         .header("X-User-Role", userRole != null ? userRole : "USER")
                         // Keep old headers for backward compatibility
-                        .header("X-Auth-User-Id", userId)
+                        .header("X-Auth-User-Id", userId != null ? userId : "")
                         .header("X-Auth-User-Role", userRole != null ? userRole : "USER")
                         .build();
 
@@ -170,11 +178,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        // Correct way for JJWT 0.12.x+
+        return Jwts.parser() // Changed from parserBuilder() to parser()
+                .verifyWith((SecretKey) getSigningKey()) // Changed from setSigningKey() to verifyWith()
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token) // Correct for 0.12.x+
+                .getPayload(); // Correct for 0.12.x+
     }
 
     private Key getSigningKey() {

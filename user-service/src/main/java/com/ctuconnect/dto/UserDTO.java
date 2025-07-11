@@ -13,6 +13,7 @@ import java.util.Set;
 public class UserDTO {
     private String id;
     private String email;
+    private String username; // Added missing username field
     private String studentId;
     private String batch;
     private String fullName;
@@ -22,6 +23,7 @@ public class UserDTO {
     private String major;
     private String gender;
     private String bio;
+    private Boolean isActive; // Added missing isActive field
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<String> friendIds; // Changed from Long to String for UUID consistency
