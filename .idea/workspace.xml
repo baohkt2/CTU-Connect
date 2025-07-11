@@ -4,35 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Dang fix profile v3">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/auth_db.ddJ22Q.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/auth_db.ddJ22Q/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/auth_db.ddJ22Q/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/postgres.edMnLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/postgres.edMnLQ/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/postgres.edMnLQ/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a022e110-7b8a-4084-a4c6-756b8d511735/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="init client-frontend and admin-frontend">
+      <change afterPath="$PROJECT_DIR$/database/neo4j/init.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/filter/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/filter/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/security/CustomUserPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/security/CustomUserPrincipal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/security/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/security/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/UserDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserEventListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserSyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserSyncService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/tasks/init.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/import/init.cypher" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,6 +90,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "SHELLCHECK.PATH": "C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
     "Spring Boot.AuthServiceApplication.executor": "Run",
     "Spring Boot.EurekaServerApplication.executor": "Run",
@@ -149,6 +126,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect\database\neo4j\import" />
       <recent name="D:\LVTN\ctu-connect\database\neo4j\tasks" />
       <recent name="D:\LVTN\ctu-connect\database\neo4j\task" />
       <recent name="D:\LVTN\ctu-connect\database" />
@@ -393,7 +371,7 @@
       <workItem from="1752221972038" duration="3744000" />
       <workItem from="1752225820873" duration="176000" />
       <workItem from="1752226008708" duration="4905000" />
-      <workItem from="1752237308014" duration="863000" />
+      <workItem from="1752237308014" duration="4172000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -467,7 +445,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752160112022</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="init client-frontend and admin-frontend">
+      <option name="closed" value="true" />
+      <created>1752238605526</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1752238605526</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -493,7 +479,8 @@
     <MESSAGE value="Dang fix profile" />
     <MESSAGE value="Dang fix profile v2" />
     <MESSAGE value="Dang fix profile v3" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dang fix profile v3" />
+    <MESSAGE value="init client-frontend and admin-frontend" />
+    <option name="LAST_COMMIT_MESSAGE" value="init client-frontend and admin-frontend" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
