@@ -17,7 +17,7 @@ WORKDIR /app
 
 # Install wget and curl for health checks on Alpine Linux
 # Use apk package manager instead of apt-get
-RUN apk update && apk add --no-cache wget curl && rm -rf /var/lib/apk/lists/*
+RUN apk update ; apk add --no-cache wget curl ; rm -rf /var/lib/apk/lists/*
 
 # Copy the built artifact from the build stage
 COPY --from=build /app/target/*.jar app.jar

@@ -15,7 +15,7 @@ public class RelationshipFilterDTO {
     private String college;
     private String faculty;
     private String major;
-    private String batch;
+    private Integer batch; // Changed to Integer to match Neo4j dataset
     private String gender;
     private String role;
 

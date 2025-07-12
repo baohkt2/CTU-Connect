@@ -1,175 +1,403 @@
 package com.ctuconnect.controller;
 
-import com.ctuconnect.dto.FriendsDTO;
-import com.ctuconnect.dto.RelationshipFilterDTO;
-import com.ctuconnect.dto.UserDTO;
-import com.ctuconnect.security.SecurityContextHolder;
-import com.ctuconnect.security.annotation.RequireAuth;
+import com.ctuconnect.dto.UserProfileDTO;
+import com.ctuconnect.dto.UserUpdateDTO;
+import com.ctuconnect.dto.UserSearchDTO;
+import com.ctuconnect.dto.FriendRequestDTO;
 import com.ctuconnect.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ctuconnect.exception.ErrorResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/users")
-@RequireAuth // Yêu cầu xác thực cho tất cả endpoints
+@RequiredArgsConstructor
+@Slf4j
+@Validated
+@Tag(name = "User Management", description = "APIs for managing user profiles and relationships")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @PostMapping("/register")
-    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể tạo user mới
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.createUser(userDTO));
+    // Health check endpoint for microservice
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> health() {
+        return ResponseEntity.ok(Map.of(
+            "status", "UP",
+            "service", "user-service",
+            "timestamp", LocalDateTime.now().toString()
+        ));
     }
 
-    @GetMapping("/{userId}/profile")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem profile của chính mình hoặc admin có thể xem tất cả
-    public ResponseEntity<UserDTO> getUserProfile(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getUserProfile(userId));
+    // User Profile Management
+
+    @Operation(summary = "Get user profile by ID",
+               description = "Retrieve detailed user profile information including academic and social data")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User profile retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                                     schema = @Schema(implementation = UserProfileDTO.class))),
+        @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = "application/json",
+                                     schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileDTO> getUserProfile(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        log.info("GET /api/users/{} - Getting user profile", userId);
+        UserProfileDTO userProfile = userService.getUserProfile(userId);
+        return ResponseEntity.ok(userProfile);
     }
 
-    @GetMapping("/me/profile")
-    @RequireAuth // Endpoint mới để user xem profile của chính mình
-    public ResponseEntity<UserDTO> getMyProfile() {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getUserProfile(currentUserId));
+    @Operation(summary = "Get user profile by email",
+               description = "Retrieve user profile using email address")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User profile retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserProfileDTO> getUserProfileByEmail(
+            @Parameter(description = "User email", required = true)
+            @PathVariable @NotBlank String email) {
+
+        log.info("GET /users/email/{} - Getting user profile by email", email);
+        UserProfileDTO userProfile = userService.getUserProfileByEmail(email);
+        return ResponseEntity.ok(userProfile);
     }
 
-    @PutMapping("/{userId}/profile")
-    @RequireAuth(selfOnly = true) // User chỉ có thể cập nhật profile của chính mình
-    public ResponseEntity<UserDTO> updateUserProfile(@PathVariable String userId, @RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.updateUserProfile(userId, userDTO));
+    @Operation(summary = "Create new user",
+               description = "Create a new user from authentication service data")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "User created successfully"),
+        @ApiResponse(responseCode = "409", description = "User already exists")
+    })
+    @PostMapping
+    public ResponseEntity<Map<String, String>> createUser(
+            @RequestBody @Valid Map<String, String> userRequest) {
+
+        String authUserId = userRequest.get("authUserId");
+        String email = userRequest.get("email");
+        String username = userRequest.get("username");
+        String role = userRequest.get("role");
+
+        log.info("POST /users - Creating user with email: {}", email);
+
+        userService.createUser(authUserId, email, username, role);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "User created successfully", "userId", authUserId));
     }
 
-    @PutMapping("/me/profile")
-    @RequireAuth // Endpoint mới để user cập nhật profile của chính mình
-    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO userDTO) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.updateUserProfile(currentUserId, userDTO));
+    @Operation(summary = "Update user profile",
+               description = "Update user profile information including academic details")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User profile updated successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserProfileDTO> updateUserProfile(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId,
+            @RequestBody @Valid UserUpdateDTO updateDTO) {
+
+        log.info("PUT /users/{} - Updating user profile", userId);
+        UserProfileDTO updatedProfile = userService.updateUserProfile(userId, updateDTO);
+        return ResponseEntity.ok(updatedProfile);
     }
 
-    // Friend request management
-    @PostMapping("/{userId}/invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể gửi lời mời từ chính tài khoản của mình
-    public ResponseEntity<String> addFriend(@PathVariable String userId, @PathVariable String friendId) {
-        userService.addFriend(userId, friendId);
-        return ResponseEntity.ok("Friend request sent successfully");
+    @Operation(summary = "Deactivate user",
+               description = "Deactivate user account")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User deactivated successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PatchMapping("/{userId}/deactivate")
+    public ResponseEntity<Map<String, String>> deactivateUser(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        log.info("PATCH /users/{}/deactivate - Deactivating user", userId);
+        userService.deactivateUser(userId);
+        return ResponseEntity.ok(Map.of("message", "User deactivated successfully"));
     }
 
-    @PostMapping("/me/invite/{friendId}")
-    @RequireAuth // Endpoint mới để user gửi lời mời kết bạn
-    public ResponseEntity<String> sendFriendRequest(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        userService.addFriend(currentUserId, friendId);
-        return ResponseEntity.ok("Friend request sent successfully");
+    @Operation(summary = "Activate user",
+               description = "Activate user account")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User activated successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PatchMapping("/{userId}/activate")
+    public ResponseEntity<Map<String, String>> activateUser(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        log.info("PATCH /users/{}/activate - Activating user", userId);
+        userService.activateUser(userId);
+        return ResponseEntity.ok(Map.of("message", "User activated successfully"));
     }
 
-    @PostMapping("/{userId}/accept-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể chấp nhận lời mời gửi đến mình
-    public ResponseEntity<String> acceptFriendInvite(@PathVariable String userId, @PathVariable String friendId) {
-        userService.acceptFriendInvite(userId, friendId);
-        return ResponseEntity.ok("Friend request accepted successfully");
+    // User Search and Discovery
+
+    @Operation(summary = "Search users",
+               description = "Search for users by name, email, username, or student ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Search completed successfully")
+    })
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserSearchDTO>> searchUsers(
+            @Parameter(description = "Search term")
+            @RequestParam @NotBlank String q,
+            @Parameter(description = "Current user ID for relationship context")
+            @RequestParam(required = false) String currentUserId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/search - Searching users with term: {}", q);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> searchResults = userService.searchUsers(q, currentUserId, pageable);
+        return ResponseEntity.ok(searchResults);
     }
 
-    @PostMapping("/me/accept-invite/{friendId}")
-    @RequireAuth // Endpoint mới để user chấp nhận lời mời kết bạn
-    public ResponseEntity<String> acceptMyFriendInvite(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        userService.acceptFriendInvite(currentUserId, friendId);
-        return ResponseEntity.ok("Friend request accepted successfully");
+    @Operation(summary = "Find users by college",
+               description = "Find all users belonging to a specific college")
+    @GetMapping("/college/{collegeName}")
+    public ResponseEntity<Page<UserSearchDTO>> findUsersByCollege(
+            @Parameter(description = "College name", required = true)
+            @PathVariable @NotBlank String collegeName,
+            @Parameter(description = "Current user ID for relationship context")
+            @RequestParam(required = false) String currentUserId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/college/{} - Finding users by college", collegeName);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> users = userService.findUsersByCollege(collegeName, currentUserId, pageable);
+        return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/{userId}/reject-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể từ chối lời mời gửi đến mình
-    public ResponseEntity<String> rejectFriendInvite(@PathVariable String userId, @PathVariable String friendId) {
-        userService.rejectFriendInvite(userId, friendId);
-        return ResponseEntity.ok("Friend request rejected successfully");
+    @Operation(summary = "Find users by faculty",
+               description = "Find all users belonging to a specific faculty")
+    @GetMapping("/faculty/{facultyName}")
+    public ResponseEntity<Page<UserSearchDTO>> findUsersByFaculty(
+            @Parameter(description = "Faculty name", required = true)
+            @PathVariable @NotBlank String facultyName,
+            @Parameter(description = "Current user ID for relationship context")
+            @RequestParam(required = false) String currentUserId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/faculty/{} - Finding users by faculty", facultyName);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> users = userService.findUsersByFaculty(facultyName, currentUserId, pageable);
+        return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/me/reject-invite/{friendId}")
-    @RequireAuth // Endpoint mới để user từ chối lời mời kết bạn
-    public ResponseEntity<String> rejectMyFriendInvite(@PathVariable String friendId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        userService.rejectFriendInvite(currentUserId, friendId);
-        return ResponseEntity.ok("Friend request rejected successfully");
+    @Operation(summary = "Find users by major",
+               description = "Find all users belonging to a specific major")
+    @GetMapping("/major/{majorName}")
+    public ResponseEntity<Page<UserSearchDTO>> findUsersByMajor(
+            @Parameter(description = "Major name", required = true)
+            @PathVariable @NotBlank String majorName,
+            @Parameter(description = "Current user ID for relationship context")
+            @RequestParam(required = false) String currentUserId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/major/{} - Finding users by major", majorName);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> users = userService.findUsersByMajor(majorName, currentUserId, pageable);
+        return ResponseEntity.ok(users);
     }
 
-    // Friend listing and suggestions
+    @Operation(summary = "Find users by batch",
+               description = "Find all users belonging to a specific batch year")
+    @GetMapping("/batch/{batchYear}")
+    public ResponseEntity<Page<UserSearchDTO>> findUsersByBatch(
+            @Parameter(description = "Batch year", required = true)
+            @PathVariable @NotNull Integer batchYear,
+            @Parameter(description = "Current user ID for relationship context")
+            @RequestParam(required = false) String currentUserId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/batch/{} - Finding users by batch", batchYear);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> users = userService.findUsersByBatch(batchYear, currentUserId, pageable);
+        return ResponseEntity.ok(users);
+    }
+
+    // Friend Management
+
+    @Operation(summary = "Get user's friends",
+               description = "Get paginated list of user's friends")
     @GetMapping("/{userId}/friends")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem danh sách bạn bè của mình
-    public ResponseEntity<FriendsDTO> getFriends(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getFriends(userId));
+    public ResponseEntity<Page<UserSearchDTO>> getFriends(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId,
+            @Parameter(description = "Page number (0-based)")
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        log.info("GET /users/{}/friends - Getting friends", userId);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserSearchDTO> friends = userService.getFriends(userId, pageable);
+        return ResponseEntity.ok(friends);
     }
 
-    @GetMapping("/me/friends")
-    @RequireAuth // Endpoint mới để user xem danh sách bạn bè của mình
-    public ResponseEntity<FriendsDTO> getMyFriends() {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getFriends(currentUserId));
+    @Operation(summary = "Get sent friend requests",
+               description = "Get list of friend requests sent by user")
+    @GetMapping("/{userId}/friend-requests/sent")
+    public ResponseEntity<List<FriendRequestDTO>> getSentFriendRequests(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        log.info("GET /users/{}/friend-requests/sent - Getting sent friend requests", userId);
+        List<FriendRequestDTO> sentRequests = userService.getSentFriendRequests(userId);
+        return ResponseEntity.ok(sentRequests);
     }
 
-    @GetMapping("/{userId}/mutual-friends/{otherUserId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem bạn chung với người khác từ tài khoản của mình
-    public ResponseEntity<FriendsDTO> getMutualFriends(
-            @PathVariable String userId,
-            @PathVariable String otherUserId) {
-        return ResponseEntity.ok(userService.getMutualFriends(userId, otherUserId));
+    @Operation(summary = "Get received friend requests",
+               description = "Get list of friend requests received by user")
+    @GetMapping("/{userId}/friend-requests/received")
+    public ResponseEntity<List<FriendRequestDTO>> getReceivedFriendRequests(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        log.info("GET /users/{}/friend-requests/received - Getting received friend requests", userId);
+        List<FriendRequestDTO> receivedRequests = userService.getReceivedFriendRequests(userId);
+        return ResponseEntity.ok(receivedRequests);
     }
 
-    @GetMapping("/me/mutual-friends/{otherUserId}")
-    @RequireAuth // Endpoint mới để user xem bạn chung với người khác
-    public ResponseEntity<FriendsDTO> getMyMutualFriends(@PathVariable String otherUserId) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getMutualFriends(currentUserId, otherUserId));
+    @Operation(summary = "Send friend request",
+               description = "Send a friend request to another user")
+    @PostMapping("/{senderId}/friend-requests/{receiverId}")
+    public ResponseEntity<Map<String, String>> sendFriendRequest(
+            @Parameter(description = "Sender user ID", required = true)
+            @PathVariable @NotBlank String senderId,
+            @Parameter(description = "Receiver user ID", required = true)
+            @PathVariable @NotBlank String receiverId) {
+
+        log.info("POST /users/{}/friend-requests/{} - Sending friend request", senderId, receiverId);
+        userService.sendFriendRequest(senderId, receiverId);
+        return ResponseEntity.ok(Map.of("message", "Friend request sent successfully"));
     }
 
-    @GetMapping("/{userId}/friend-suggestions")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem gợi ý kết bạn cho mình
-    public ResponseEntity<FriendsDTO> getFriendSuggestions(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getFriendSuggestions(userId));
+    @Operation(summary = "Accept friend request",
+               description = "Accept a friend request from another user")
+    @PatchMapping("/{accepterId}/friend-requests/{requesterId}/accept")
+    public ResponseEntity<Map<String, String>> acceptFriendRequest(
+            @Parameter(description = "Accepter user ID", required = true)
+            @PathVariable @NotBlank String accepterId,
+            @Parameter(description = "Requester user ID", required = true)
+            @PathVariable @NotBlank String requesterId) {
+
+        log.info("PATCH /users/{}/friend-requests/{}/accept - Accepting friend request", accepterId, requesterId);
+        userService.acceptFriendRequest(requesterId, accepterId);
+        return ResponseEntity.ok(Map.of("message", "Friend request accepted successfully"));
     }
 
-    @GetMapping("/me/friend-suggestions")
-    @RequireAuth // Endpoint mới để user xem gợi ý kết bạn
-    public ResponseEntity<FriendsDTO> getMyFriendSuggestions() {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getFriendSuggestions(currentUserId));
+    @Operation(summary = "Reject friend request",
+               description = "Reject a friend request from another user")
+    @PatchMapping("/{rejecterId}/friend-requests/{requesterId}/reject")
+    public ResponseEntity<Map<String, String>> rejectFriendRequest(
+            @Parameter(description = "Rejecter user ID", required = true)
+            @PathVariable @NotBlank String rejecterId,
+            @Parameter(description = "Requester user ID", required = true)
+            @PathVariable @NotBlank String requesterId) {
+
+        log.info("PATCH /users/{}/friend-requests/{}/reject - Rejecting friend request", rejecterId, requesterId);
+        userService.rejectFriendRequest(requesterId, rejecterId);
+        return ResponseEntity.ok(Map.of("message", "Friend request rejected successfully"));
     }
 
-    /**
-     * Filter users by relationship criteria
-     */
-    @PostMapping("/{userId}/filter-relationships")
-    @RequireAuth(selfOnly = true) // User chỉ có thể filter từ tài khoản của mình
-    public ResponseEntity<List<UserDTO>> filterRelationships(
-            @PathVariable String userId,
-            @RequestBody RelationshipFilterDTO filters) {
-        return ResponseEntity.ok(userService.getUsersByRelationshipFilters(userId, filters));
+    @Operation(summary = "Remove friend",
+               description = "Remove a friend from user's friend list")
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<Map<String, String>> removeFriend(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId,
+            @Parameter(description = "Friend ID", required = true)
+            @PathVariable @NotBlank String friendId) {
+
+        log.info("DELETE /users/{}/friends/{} - Removing friend", userId, friendId);
+        userService.removeFriend(userId, friendId);
+        return ResponseEntity.ok(Map.of("message", "Friend removed successfully"));
     }
 
-    @PostMapping("/me/filter-relationships")
-    @RequireAuth // Endpoint mới để user filter relationships
-    public ResponseEntity<List<UserDTO>> filterMyRelationships(@RequestBody RelationshipFilterDTO filters) {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getUsersByRelationshipFilters(currentUserId, filters));
+    // Utility Endpoints
+
+    @Operation(summary = "Check if user exists",
+               description = "Check if a user exists by ID")
+    @GetMapping("/{userId}/exists")
+    public ResponseEntity<Map<String, Boolean>> userExists(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+
+        boolean exists = userService.userExists(userId);
+        return ResponseEntity.ok(Map.of("exists", exists));
     }
 
-    // Admin endpoints
-    @GetMapping("/admin/all")
-    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem tất cả users
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @Operation(summary = "Check if email exists",
+               description = "Check if an email is already registered")
+    @GetMapping("/email/{email}/exists")
+    public ResponseEntity<Map<String, Boolean>> emailExists(
+            @Parameter(description = "Email address", required = true)
+            @PathVariable @NotBlank String email) {
+
+        boolean exists = userService.emailExists(email);
+        return ResponseEntity.ok(Map.of("exists", exists));
     }
 
-    @DeleteMapping("/admin/{userId}")
-    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xóa user
-    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.ok("User deleted successfully");
+    @Operation(summary = "Check if student ID exists",
+               description = "Check if a student ID is already registered")
+    @GetMapping("/student-id/{studentId}/exists")
+    public ResponseEntity<Map<String, Boolean>> studentIdExists(
+            @Parameter(description = "Student ID", required = true)
+            @PathVariable @NotBlank String studentId) {
+
+        boolean exists = userService.studentIdExists(studentId);
+        return ResponseEntity.ok(Map.of("exists", exists));
     }
 }

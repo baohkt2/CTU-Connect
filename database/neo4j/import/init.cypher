@@ -74,7 +74,7 @@ MERGE (g1:Gender {name: 'Nam'})
 MERGE (g2:Gender {name: 'Nữ'});
 
 // =================================================================
-// 5. CREATE SAMPLE USERS (UUID FIXED)
+// 5. CREATE SAMPLE USERS (UUID FIXED) - WITH ALL REQUIRED FIELDS
 // =================================================================
 WITH [
 {id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', email: 'nguyenvana@ctu.edu.vn', studentId: 'B2106001', batch: 2021, fullName: 'Nguyễn Văn A', gender: 'Nam', bio: 'Sinh viên đam mê phát triển web', major: 'Công nghệ Phần mềm'},
@@ -94,11 +94,15 @@ u.studentId = data.studentId,
 u.fullName = data.fullName,
 u.role = 'STUDENT',
 u.bio = data.bio,
+u.username = split(data.email, '@')[0],
+u.isActive = true,
 u.createdAt = datetime(),
 u.updatedAt = datetime()
 ON MATCH SET
 u.fullName = data.fullName,
 u.bio = data.bio,
+u.username = COALESCE(u.username, split(data.email, '@')[0]),
+u.isActive = COALESCE(u.isActive, true),
 u.updatedAt = datetime()
 
 WITH u, data
@@ -110,7 +114,16 @@ MERGE (u)-[:ENROLLED_IN]->(m)
 MERGE (u)-[:HAS_GENDER]->(g);
 
 // =================================================================
-// 6. FRIEND RELATIONS
+// 6. UPDATE EXISTING USERS WITH MISSING FIELDS (MIGRATION)
+// =================================================================
+MATCH (u:User)
+WHERE u.username IS NULL OR u.isActive IS NULL
+SET u.username = COALESCE(u.username, split(u.email, '@')[0]),
+    u.isActive = COALESCE(u.isActive, true),
+    u.updatedAt = datetime();
+
+// =================================================================
+// 7. FRIEND RELATIONS
 // =================================================================
 WITH [
 ['3fa85f64-5717-4562-b3fc-2c963f66afa6', '3fa85f64-5717-4562-b3fc-2c963f66afa7'],
@@ -121,10 +134,10 @@ WITH [
 UNWIND friendships AS pair
 MATCH (u1:User {id: pair[0]})
 MATCH (u2:User {id: pair[1]})
-MERGE (u1)-[:IS_FRIENDS_WITH {since: datetime()}]->(u2);
+MERGE (u1)-[:IS_FRIENDS_WITH {since: datetime()}]-(u2);
 
 // =================================================================
-// 7. PENDING FRIEND REQUESTS
+// 8. PENDING FRIEND REQUESTS
 // =================================================================
 WITH [
 {sender: '3fa85f64-5717-4562-b3fc-2c963f66afab', receiver: '3fa85f64-5717-4562-b3fc-2c963f66afac'},
@@ -136,6 +149,6 @@ MATCH (receiver:User {id: request.receiver})
 MERGE (sender)-[:SENT_FRIEND_REQUEST_TO {requestedAt: datetime()}]->(receiver);
 
 // =================================================================
-// 8. DONE
+// 9. DONE
 // =================================================================
 RETURN '✅ Neo4j initialized with fixed UUID users, structure, and relationships.' AS status;

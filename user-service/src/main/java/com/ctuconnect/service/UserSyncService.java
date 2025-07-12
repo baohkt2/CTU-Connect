@@ -10,10 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-/**
- * Service để đồng bộ dữ liệu user giữa auth-db và user-db
- * Đảm bảo user ID ở cả 2 database luôn nhất quán
- */
 @Service
 public class UserSyncService {
 
@@ -21,118 +17,128 @@ public class UserSyncService {
     private UserRepository userRepository;
 
     /**
-     * Tạo user profile trong user-db khi user được tạo ở auth-db
-     * Được gọi từ auth-service thông qua message queue hoặc API call
+     * Đồng bộ user từ auth-service khi tạo mới.
      */
     @Transactional
     public UserDTO syncUserFromAuth(String userId, String email, String role) {
-        // Kiểm tra xem user đã tồn tại chưa
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalStateException("User already exists in user database: " + userId);
+            throw new IllegalStateException("User already exists: " + userId);
         }
 
-        // Tạo user entity mới với thông tin cơ bản từ auth-db
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(userId); // ID đồng bộ với auth-db
-        userEntity.setEmail(email);
-        userEntity.setRole(role);
-        userEntity.setCreatedAt(LocalDateTime.now());
-        userEntity.setUpdatedAt(LocalDateTime.now());
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        user.setEmail(email);
+        user.setRole(role);
+        user.setIsActive(true);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
-        UserEntity savedUser = userRepository.save(userEntity);
-        return mapToDTO(savedUser);
+        return mapToDTO(userRepository.save(user));
     }
 
     /**
-     * Cập nhật thông tin user khi có thay đổi từ auth-db
+     * Cập nhật thông tin user từ auth-db
      */
     @Transactional
     public UserDTO updateUserFromAuth(String userId, String email, String role) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found in user database: " + userId));
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        // Chỉ cập nhật những field được đồng bộ từ auth-db
-        userEntity.setEmail(email);
-        userEntity.setRole(role);
-        userEntity.setUpdatedAt(LocalDateTime.now());
+        user.setEmail(email);
+        user.setRole(role);
+        user.setUpdatedAt(LocalDateTime.now());
 
-        UserEntity updatedUser = userRepository.save(userEntity);
-        return mapToDTO(updatedUser);
+        return mapToDTO(userRepository.save(user));
     }
 
     /**
-     * Xóa user khỏi user-db khi user bị xóa ở auth-db
+     * Tạo hoặc cập nhật user từ auth-service (email, username, role)
+     */
+    @Transactional
+    public UserDTO createUserFromAuthService(String userId, String email, String username, String role) {
+        if (userRepository.existsById(userId)) {
+            return updateUserFromAuth(userId, email, role);
+        }
+
+        UserEntity user = UserEntity.fromAuthService(userId, email, username, role);
+        return mapToDTO(userRepository.save(user));
+    }
+
+    /**
+     * Xóa user và các mối quan hệ liên quan (friendship, friend requests).
      */
     @Transactional
     public void deleteUserFromAuth(String userId) {
         if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found in user database: " + userId);
+            throw new RuntimeException("User not found: " + userId);
         }
 
-        // Xóa tất cả relationships trước khi xóa user
-        UserEntity user = userRepository.findById(userId).get();
-        user.getFriends().clear();
-        userRepository.save(user);
+        // Xóa mối quan hệ bạn bè
+        var friends = userRepository.findFriends(userId, null).getContent(); // Pageable=null nghĩa là tất cả
+        for (var friendProj : friends) {
+            String friendId = friendProj.getUser().getId();
+            userRepository.removeFriend(userId, friendId);
+        }
 
-        // Xóa user khỏi friend lists của những user khác
-        userRepository.findAll().forEach(otherUser -> {
-            otherUser.getFriends().removeIf(friend -> friend.getId().equals(userId));
-            userRepository.save(otherUser);
-        });
+        // Xóa lời mời đã gửi
+        var sentRequests = userRepository.findSentFriendRequests(userId);
+        for (var req : sentRequests) {
+            userRepository.rejectFriendRequest(userId, req.getUser().getId());
+        }
 
-        // Xóa user
+        // Xóa lời mời đã nhận
+        var receivedRequests = userRepository.findReceivedFriendRequests(userId);
+        for (var req : receivedRequests) {
+            userRepository.rejectFriendRequest(req.getUser().getId(), userId);
+        }
+
         userRepository.deleteById(userId);
     }
 
     /**
-     * Kiểm tra tính nhất quán dữ liệu giữa auth-db và user-db
+     * Kiểm tra dữ liệu đồng bộ từ auth-db
      */
     public boolean isUserSynced(String userId, String email, String role) {
-        UserEntity userEntity = userRepository.findById(userId).orElse(null);
-
-        if (userEntity == null) {
-            return false;
-        }
-
-        return email.equals(userEntity.getEmail()) && role.equals(userEntity.getRole());
+        return userRepository.findById(userId)
+                .map(user -> email.equals(user.getEmail()) && role.equals(user.getRole()))
+                .orElse(false);
     }
 
     /**
-     * Đảm bảo user hiện tại có quyền truy cập vào dữ liệu
+     * Kiểm tra quyền truy cập user
      */
-    public void validateUserAccess(String targetUserId) {
+    public void validateUserAccess(String userId) {
         String currentUserId = SecurityContextHolder.getCurrentUserId();
-        boolean isAdmin = SecurityContextHolder.isCurrentUserAdmin();
-
-        if (currentUserId == null) {
-            throw new SecurityException("Authentication required");
-        }
-
-        if (!isAdmin && !currentUserId.equals(targetUserId)) {
-            throw new SecurityException("Access denied: Can only access own data");
+        if (!userId.equals(currentUserId)) {
+            throw new SecurityException("Access denied: User can only access their own data");
         }
     }
 
     /**
-     * Map UserEntity to UserDTO
+     * Mapping UserEntity sang UserDTO
      */
-    private UserDTO mapToDTO(UserEntity entity) {
+    private UserDTO mapToDTO(UserEntity userEntity) {
         UserDTO dto = new UserDTO();
-        dto.setId(entity.getId());
-        dto.setEmail(entity.getEmail());
-        dto.setUsername(entity.getUsername());
-        dto.setFullName(entity.getFullName());
-        dto.setStudentId(entity.getStudentId());
-        dto.setBatch(entity.getBatch());
-        dto.setCollege(entity.getCollege());
-        dto.setFaculty(entity.getFaculty());
-        dto.setMajor(entity.getMajor());
-        dto.setGender(entity.getGender());
-        dto.setBio(entity.getBio());
-        dto.setRole(entity.getRole());
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setUpdatedAt(entity.getUpdatedAt());
-        dto.setIsActive(entity.getIsActive());
+        dto.setId(userEntity.getId());
+        dto.setEmail(userEntity.getEmail());
+        dto.setUsername(userEntity.getUsername());
+        dto.setFullName(userEntity.getFullName());
+        dto.setStudentId(userEntity.getStudentId());
+        dto.setRole(userEntity.getRole());
+        dto.setBio(userEntity.getBio());
+        dto.setIsActive(userEntity.isActive());
+        dto.setCreatedAt(userEntity.getCreatedAt());
+        dto.setUpdatedAt(userEntity.getUpdatedAt());
+
+        var profile = userRepository.findUserProfileById(userEntity.getId()).orElse(null);
+        if (profile != null) {
+            dto.setCollege(profile.getCollege());
+            dto.setFaculty(profile.getFaculty());
+            dto.setMajor(profile.getMajor());
+            dto.setBatch(profile.getBatch());
+            dto.setGender(profile.getGender());
+        }
+
         return dto;
     }
 }

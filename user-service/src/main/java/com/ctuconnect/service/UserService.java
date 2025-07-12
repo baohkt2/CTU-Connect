@@ -1,413 +1,393 @@
 package com.ctuconnect.service;
 
-import com.ctuconnect.dto.FriendsDTO;
-import com.ctuconnect.dto.RelationshipFilterDTO;
-import com.ctuconnect.dto.UserDTO;
+import com.ctuconnect.dto.UserProfileDTO;
+import com.ctuconnect.dto.UserUpdateDTO;
+import com.ctuconnect.dto.UserSearchDTO;
+import com.ctuconnect.dto.FriendRequestDTO;
 import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.exception.UserNotFoundException;
+import com.ctuconnect.exception.InvalidOperationException;
+import com.ctuconnect.exception.DuplicateResourceException;
+import com.ctuconnect.mapper.UserMapper;
 import com.ctuconnect.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ctuconnect.repository.MajorRepository;
+import com.ctuconnect.repository.BatchRepository;
+import com.ctuconnect.repository.GenderRepository;
+import com.ctuconnect.event.UserCreatedEvent;
+import com.ctuconnect.event.UserUpdatedEvent;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
+@Validated
+@Transactional
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final MajorRepository majorRepository;
+    private final BatchRepository batchRepository;
+    private final GenderRepository genderRepository;
+    private final UserMapper userMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Autowired
-    private UserEventPublisher userEventPublisher;
+    private static final String USER_CREATED_TOPIC = "user-created";
+    private static final String USER_UPDATED_TOPIC = "user-updated";
 
-    /**
-     * Create a new user
-     */
-    public UserDTO createUser(UserDTO userDTO) {
-        UserEntity userEntity = mapToEntity(userDTO);
-        userEntity.setCreatedAt(LocalDateTime.now());
-        userEntity.setUpdatedAt(LocalDateTime.now());
+    // User Profile Management
 
-        UserEntity savedUser = userRepository.save(userEntity);
-        return mapToDTO(savedUser);
+    @Transactional(readOnly = true)
+    public UserProfileDTO getUserProfile(@NotBlank String userId) {
+        log.info("Fetching user profile for userId: {}", userId);
+
+        var profileProjection = userRepository.findUserProfileById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        return userMapper.toUserProfileDTO(profileProjection);
     }
 
-    /**
-     * Get user profile by ID or email (fallback for compatibility)
-     */
-    public UserDTO getUserProfile(String userIdOrEmail) {
-        Optional<UserEntity> userEntity = userRepository.findById(userIdOrEmail);
+    @Transactional(readOnly = true)
+    public UserProfileDTO getUserProfileByEmail(@NotBlank String email) {
+        log.info("Fetching user profile for email: {}", email);
 
-        // If not found by ID, try to find by email (fallback for compatibility)
-        if (userEntity.isEmpty()) {
-            userEntity = userRepository.findByEmail(userIdOrEmail);
-        }
+        var user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
 
-        if (userEntity.isEmpty()) {
-            throw new RuntimeException("User not found with id or email: " + userIdOrEmail);
-        }
-
-        return mapToDTO(userEntity.get());
+        return getUserProfile(user.getId());
     }
 
-    /**
-     * Update user profile by ID or email (fallback for compatibility)
-     */
-    public UserDTO updateUserProfile(String userIdOrEmail, UserDTO userDTO) {
-        Optional<UserEntity> userEntityOpt = userRepository.findById(userIdOrEmail);
+    public UserEntity createUser(@NotBlank String authUserId,
+                                @NotBlank String email,
+                                String username,
+                                @NotBlank String role) {
+        log.info("Creating user with authUserId: {}, email: {}", authUserId, email);
 
-        // If not found by ID, try to find by email (fallback for compatibility)
-        if (userEntityOpt.isEmpty()) {
-            userEntityOpt = userRepository.findByEmail(userIdOrEmail);
+        // Check if user already exists
+        if (userRepository.existsById(authUserId)) {
+            throw new DuplicateResourceException("User already exists with ID: " + authUserId);
         }
 
-        if (userEntityOpt.isEmpty()) {
-            throw new RuntimeException("User not found with id or email: " + userIdOrEmail);
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateResourceException("User already exists with email: " + email);
         }
 
-        UserEntity userEntity = userEntityOpt.get();
+        // Create user entity
+        var user = UserEntity.fromAuthService(authUserId, email, username, role);
+        var savedUser = userRepository.save(user);
 
-        // Update only profile fields (not system fields like id, createdAt)
-        if (userDTO.getFullName() != null) userEntity.setFullName(userDTO.getFullName());
-        if (userDTO.getEmail() != null) userEntity.setEmail(userDTO.getEmail());
-        if (userDTO.getStudentId() != null) userEntity.setStudentId(userDTO.getStudentId());
-        if (userDTO.getBatch() != null) userEntity.setBatch(userDTO.getBatch());
-        if (userDTO.getCollege() != null) userEntity.setCollege(userDTO.getCollege());
-        if (userDTO.getFaculty() != null) userEntity.setFaculty(userDTO.getFaculty());
-        if (userDTO.getMajor() != null) userEntity.setMajor(userDTO.getMajor());
-        if (userDTO.getGender() != null) userEntity.setGender(userDTO.getGender());
-        if (userDTO.getBio() != null) userEntity.setBio(userDTO.getBio());
-        if (userDTO.getRole() != null) userEntity.setRole(userDTO.getRole());
+        // Publish user created event
+        publishUserCreatedEvent(savedUser);
 
-        userEntity.setUpdatedAt(LocalDateTime.now());
-        UserEntity updatedUser = userRepository.save(userEntity);
-
-        // Publish user profile updated event
-        userEventPublisher.publishUserProfileUpdatedEvent(
-            userIdOrEmail,
-            updatedUser.getEmail(),
-            updatedUser.getFullName(),
-            updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
-            "", // lastName - empty as we're using fullName
-            updatedUser.getBio(),
-            "" // profilePicture - not implemented yet
-        );
-
-        return mapToDTO(updatedUser);
+        log.info("User created successfully with ID: {}", savedUser.getId());
+        return savedUser;
     }
 
-    /**
-     * Send a friend request (unidirectional relationship)
-     */
-    @Transactional
-    public void addFriend(String userId, String friendId) {
-        if (userId.equals(friendId)) {
-            throw new IllegalArgumentException("Cannot add yourself as a friend");
+    public UserProfileDTO updateUserProfile(@NotBlank String userId,
+                                          @Valid UserUpdateDTO updateDTO) {
+        log.info("Updating user profile for userId: {}", userId);
+
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        // Update basic profile information
+        if (updateDTO.getFullName() != null) {
+            user.setFullName(updateDTO.getFullName());
         }
 
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if (updateDTO.getBio() != null) {
+            user.setBio(updateDTO.getBio());
+        }
 
-        UserEntity friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
+        if (updateDTO.getStudentId() != null) {
+            // Check if student ID is already taken
+            if (!updateDTO.getStudentId().equals(user.getStudentId()) &&
+                userRepository.existsByStudentId(updateDTO.getStudentId())) {
+                throw new DuplicateResourceException("Student ID already exists: " + updateDTO.getStudentId());
+            }
+            user.setStudentId(updateDTO.getStudentId());
+        }
 
-        // Neo4j will automatically create the FRIEND relationship
-        user.getFriends().add(friend);
+        // Update academic information
+        if (updateDTO.getMajorName() != null) {
+            var major = majorRepository.findByName(updateDTO.getMajorName())
+                .orElseThrow(() -> new UserNotFoundException("Major not found: " + updateDTO.getMajorName()));
+            user.setMajor(major);
+        }
+
+        if (updateDTO.getBatchYear() != null) {
+            var batch = batchRepository.findByYear(updateDTO.getBatchYear())
+                .orElseThrow(() -> new UserNotFoundException("Batch not found: " + updateDTO.getBatchYear()));
+            user.setBatch(batch);
+        }
+
+        if (updateDTO.getGenderName() != null) {
+            var gender = genderRepository.findByName(updateDTO.getGenderName())
+                .orElseThrow(() -> new UserNotFoundException("Gender not found: " + updateDTO.getGenderName()));
+            user.setGender(gender);
+        }
+
+        user.setUpdatedAt(LocalDateTime.now());
+        var savedUser = userRepository.save(user);
+
+        // Publish user updated event
+        publishUserUpdatedEvent(savedUser);
+
+        log.info("User profile updated successfully for userId: {}", userId);
+        return getUserProfile(userId);
+    }
+
+    public void deactivateUser(@NotBlank String userId) {
+        log.info("Deactivating user with userId: {}", userId);
+
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        user.deactivate();
         userRepository.save(user);
 
-        // Publish friend request event
-        userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REQUEST",
-            "CREATED"
-        );
+        publishUserUpdatedEvent(user);
+
+        log.info("User deactivated successfully for userId: {}", userId);
     }
 
-    /**
-     * Accept a friend request (make relationship bidirectional)
-     */
-    @Transactional
-    public void acceptFriendInvite(String userId, String friendId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    public void activateUser(@NotBlank String userId) {
+        log.info("Activating user with userId: {}", userId);
 
-        UserEntity friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
-        // Check if friend request exists
-        boolean requestExists = friend.getFriends().stream()
-                .anyMatch(f -> f.getId().equals(userId));
-
-        if (!requestExists) {
-            throw new IllegalStateException("No friend request found from " + friendId);
-        }
-
-        // Make relationship bidirectional
-        user.getFriends().add(friend);
+        user.activate();
         userRepository.save(user);
 
-        // Publish friend accepted event
-        userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_ACCEPTED",
-            "UPDATED"
-        );
+        publishUserUpdatedEvent(user);
+
+        log.info("User activated successfully for userId: {}", userId);
     }
 
-    /**
-     * Reject a friend request
-     */
-    @Transactional
-    public void rejectFriendInvite(String userId, String friendId) {
-        UserEntity friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
+    // User Search and Discovery
 
-        // Remove the friend request (unidirectional relationship)
-        friend.getFriends().removeIf(f -> f.getId().equals(userId));
-        userRepository.save(friend);
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> searchUsers(@NotBlank String searchTerm,
+                                         String currentUserId,
+                                         @NotNull Pageable pageable) {
+        log.info("Searching users with term: {}, currentUserId: {}", searchTerm, currentUserId);
 
-        // Publish friend rejected event
-        userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REQUEST",
-            "DELETED"
-        );
+        var searchResults = userRepository.searchUsers(searchTerm, currentUserId, pageable);
+        return searchResults.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Remove a friend (unfriend)
-     */
-    @Transactional
-    public void removeFriend(String userId, String friendId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> findUsersByCollege(@NotBlank String collegeName,
+                                                String currentUserId,
+                                                @NotNull Pageable pageable) {
+        log.info("Finding users by college: {}, currentUserId: {}", collegeName, currentUserId);
 
-        UserEntity friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
-
-        // Remove bidirectional friendship
-        user.getFriends().removeIf(f -> f.getId().equals(friendId));
-        friend.getFriends().removeIf(f -> f.getId().equals(userId));
-
-        userRepository.save(user);
-        userRepository.save(friend);
-
-        // Publish friend removed event
-        userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REMOVED",
-            "DELETED"
-        );
+        var searchResults = userRepository.findUsersByCollege(collegeName, currentUserId, pageable);
+        return searchResults.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Get all friends of a user
-     */
-    public FriendsDTO getFriends(String userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> findUsersByFaculty(@NotBlank String facultyName,
+                                                String currentUserId,
+                                                @NotNull Pageable pageable) {
+        log.info("Finding users by faculty: {}, currentUserId: {}", facultyName, currentUserId);
 
-        List<UserDTO> friends = user.getFriends().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-
-        return new FriendsDTO(friends);
+        var searchResults = userRepository.findUsersByFaculty(facultyName, currentUserId, pageable);
+        return searchResults.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Get mutual friends between two users
-     */
-    public FriendsDTO getMutualFriends(String userId, String otherUserId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> findUsersByMajor(@NotBlank String majorName,
+                                              String currentUserId,
+                                              @NotNull Pageable pageable) {
+        log.info("Finding users by major: {}, currentUserId: {}", majorName, currentUserId);
 
-        UserEntity otherUser = userRepository.findById(otherUserId)
-                .orElseThrow(() -> new RuntimeException("Other user not found with id: " + otherUserId));
-
-        Set<String> userFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-
-        List<UserDTO> mutualFriends = otherUser.getFriends().stream()
-                .filter(friend -> userFriendIds.contains(friend.getId()))
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-
-        return FriendsDTO.ofMutualFriends(mutualFriends);
+        var searchResults = userRepository.findUsersByMajor(majorName, currentUserId, pageable);
+        return searchResults.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Get friend suggestions based on mutual connections and similar attributes
-     */
-    public FriendsDTO getFriendSuggestions(String userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> findUsersByBatch(@NotNull Integer batchYear,
+                                              String currentUserId,
+                                              @NotNull Pageable pageable) {
+        log.info("Finding users by batch: {}, currentUserId: {}", batchYear, currentUserId);
 
-        // Get existing friend IDs to exclude them from suggestions
-        Set<String> existingFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-        existingFriendIds.add(userId); // Exclude self
-
-        // Find users with similar attributes or mutual friends
-        List<UserEntity> allUsers = userRepository.findAll();
-
-        List<UserDTO> suggestions = allUsers.stream()
-                .filter(u -> !existingFriendIds.contains(u.getId()))
-                .map(u -> {
-                    UserDTO dto = mapToDTO(u);
-                    // Calculate similarity score
-                    calculateSimilarityScore(user, u, dto);
-                    return dto;
-                })
-                .sorted((a, b) -> Integer.compare(b.getMutualFriendsCount(), a.getMutualFriendsCount()))
-                .limit(10)
-                .collect(Collectors.toList());
-
-        return FriendsDTO.ofSuggestions(suggestions);
+        var searchResults = userRepository.findUsersByBatch(batchYear, currentUserId, pageable);
+        return searchResults.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Filter users by relationship criteria
-     */
-    public List<UserDTO> getUsersByRelationshipFilters(String userId, RelationshipFilterDTO filters) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    // Friend Management
 
-        List<UserEntity> allUsers = userRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> getFriends(@NotBlank String userId, @NotNull Pageable pageable) {
+        log.info("Getting friends for userId: {}", userId);
 
-        return allUsers.stream()
-                .filter(u -> true) // Exclude self
-                .filter(u -> matchesFilters(user, u, filters))
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        var friends = userRepository.findFriends(userId, pageable);
+        return friends.map(userMapper::toUserSearchDTO);
     }
 
-    /**
-     * Get all users (Admin only)
-     */
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public List<FriendRequestDTO> getSentFriendRequests(@NotBlank String userId) {
+        log.info("Getting sent friend requests for userId: {}", userId);
+
+        var sentRequests = userRepository.findSentFriendRequests(userId);
+        return sentRequests.stream()
+            .map(userMapper::toFriendRequestDTO)
+            .collect(Collectors.toList());
     }
 
-    /**
-     * Delete user (Admin only)
-     */
-    @Transactional
-    public void deleteUser(String userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional(readOnly = true)
+    public List<FriendRequestDTO> getReceivedFriendRequests(@NotBlank String userId) {
+        log.info("Getting received friend requests for userId: {}", userId);
 
-        // Remove all friend relationships
-        user.getFriends().clear();
-        userRepository.save(user);
+        var receivedRequests = userRepository.findReceivedFriendRequests(userId);
+        return receivedRequests.stream()
+            .map(userMapper::toFriendRequestDTO)
+            .collect(Collectors.toList());
+    }
 
-        // Remove this user from other users' friend lists
-        List<UserEntity> allUsers = userRepository.findAll();
-        for (UserEntity otherUser : allUsers) {
-            otherUser.getFriends().removeIf(friend -> friend.getId().equals(userId));
-            userRepository.save(otherUser);
+    public void sendFriendRequest(@NotBlank String senderId, @NotBlank String receiverId) {
+        log.info("Sending friend request from userId: {} to userId: {}", senderId, receiverId);
+
+        if (senderId.equals(receiverId)) {
+            throw new InvalidOperationException("Cannot send friend request to yourself");
         }
 
-        // Delete the user
-        userRepository.deleteById(userId);
+        // Verify both users exist and are active
+        var sender = userRepository.findById(senderId)
+            .orElseThrow(() -> new UserNotFoundException("Sender not found with ID: " + senderId));
+
+        var receiver = userRepository.findById(receiverId)
+            .orElseThrow(() -> new UserNotFoundException("Receiver not found with ID: " + receiverId));
+
+        if (!sender.isActive() || !receiver.isActive()) {
+            throw new InvalidOperationException("Both users must be active to send friend request");
+        }
+
+        boolean success = userRepository.sendFriendRequest(senderId, receiverId);
+
+        if (!success) {
+            throw new InvalidOperationException("Unable to send friend request. Users may already be friends or request already exists");
+        }
+
+        log.info("Friend request sent successfully from userId: {} to userId: {}", senderId, receiverId);
     }
 
-    /**
-     * Calculate similarity score for friend suggestions
-     */
-    private void calculateSimilarityScore(UserEntity user, UserEntity candidate, UserDTO candidateDTO) {
-        // Count mutual friends - Updated to use String UUID
-        Set<String> userFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
+    public void acceptFriendRequest(@NotBlank String requesterId, @NotBlank String accepterId) {
+        log.info("Accepting friend request from userId: {} by userId: {}", requesterId, accepterId);
 
-        int mutualFriendsCount = (int) candidate.getFriends().stream()
-                .mapToLong(friend -> userFriendIds.contains(friend.getId()) ? 1 : 0)
-                .sum();
+        boolean success = userRepository.acceptFriendRequest(requesterId, accepterId);
 
-        candidateDTO.setMutualFriendsCount(mutualFriendsCount);
+        if (!success) {
+            throw new InvalidOperationException("Unable to accept friend request. Request may not exist or users may be inactive");
+        }
 
-        // Check similarity attributes
-        candidateDTO.setSameCollege(Objects.equals(user.getCollege(), candidate.getCollege()));
-        candidateDTO.setSameFaculty(Objects.equals(user.getFaculty(), candidate.getFaculty()));
-        candidateDTO.setSameMajor(Objects.equals(user.getMajor(), candidate.getMajor()));
+        log.info("Friend request accepted successfully from userId: {} by userId: {}", requesterId, accepterId);
     }
 
-    /**
-     * Check if user matches relationship filters
-     */
-    private boolean matchesFilters(UserEntity user, UserEntity candidate, RelationshipFilterDTO filters) {
-        if (filters.getCollege() != null && !filters.getCollege().equals(candidate.getCollege())) {
-            return false;
+    public void rejectFriendRequest(@NotBlank String requesterId, @NotBlank String rejecterId) {
+        log.info("Rejecting friend request from userId: {} by userId: {}", requesterId, rejecterId);
+
+        boolean success = userRepository.rejectFriendRequest(requesterId, rejecterId);
+
+        if (!success) {
+            throw new InvalidOperationException("Unable to reject friend request. Request may not exist");
         }
-        if (filters.getFaculty() != null && !filters.getFaculty().equals(candidate.getFaculty())) {
-            return false;
-        }
-        if (filters.getMajor() != null && !filters.getMajor().equals(candidate.getMajor())) {
-            return false;
-        }
-        if (filters.getBatch() != null && !filters.getBatch().equals(candidate.getBatch())) {
-            return false;
-        }
-        if (filters.getGender() != null && !filters.getGender().equals(candidate.getGender())) {
-            return false;
-        }
-        return true;
+
+        log.info("Friend request rejected successfully from userId: {} by userId: {}", requesterId, rejecterId);
     }
 
-    /**
-     * Map UserEntity to UserDTO
-     */
-    private UserDTO mapToDTO(UserEntity entity) {
-        UserDTO dto = new UserDTO();
-        dto.setId(entity.getId());
-        dto.setEmail(entity.getEmail());
-        dto.setStudentId(entity.getStudentId());
-        dto.setBatch(entity.getBatch());
-        dto.setFullName(entity.getFullName());
-        dto.setRole(entity.getRole());
-        dto.setCollege(entity.getCollege());
-        dto.setFaculty(entity.getFaculty());
-        dto.setMajor(entity.getMajor());
-        dto.setGender(entity.getGender());
-        dto.setBio(entity.getBio());
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setUpdatedAt(entity.getUpdatedAt());
+    public void removeFriend(@NotBlank String userId1, @NotBlank String userId2) {
+        log.info("Removing friendship between userId: {} and userId: {}", userId1, userId2);
 
-        // Set friend IDs - Updated to use String UUID
-        Set<String> friendIds = entity.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-        dto.setFriendIds(friendIds);
+        boolean success = userRepository.removeFriend(userId1, userId2);
 
-        return dto;
+        if (!success) {
+            throw new InvalidOperationException("Unable to remove friendship. Users may not be friends");
+        }
+
+        log.info("Friendship removed successfully between userId: {} and userId: {}", userId1, userId2);
     }
 
-    /**
-     * Map UserDTO to UserEntity
-     */
-    private UserEntity mapToEntity(UserDTO dto) {
-        UserEntity entity = new UserEntity();
-        entity.setId(dto.getId());
-        entity.setEmail(dto.getEmail());
-        entity.setStudentId(dto.getStudentId());
-        entity.setBatch(dto.getBatch());
-        entity.setFullName(dto.getFullName());
-        entity.setRole(dto.getRole());
-        entity.setCollege(dto.getCollege());
-        entity.setFaculty(dto.getFaculty());
-        entity.setMajor(dto.getMajor());
-        entity.setGender(dto.getGender());
-        entity.setBio(dto.getBio());
-        return entity;
+    // Utility Methods
+
+    @Transactional(readOnly = true)
+    public boolean userExists(@NotBlank String userId) {
+        return userRepository.existsById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean emailExists(@NotBlank String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean studentIdExists(@NotBlank String studentId) {
+        return userRepository.existsByStudentId(studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserEntity> getAllActiveUsers() {
+        return userRepository.findByIsActiveTrue();
+    }
+
+    // Event Publishing
+
+    private void publishUserCreatedEvent(UserEntity user) {
+        try {
+            var event = UserCreatedEvent.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
+                .build();
+
+            kafkaTemplate.send(USER_CREATED_TOPIC, user.getId(), event);
+            log.info("Published user created event for userId: {}", user.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish user created event for userId: {}", user.getId(), e);
+        }
+    }
+
+    private void publishUserUpdatedEvent(UserEntity user) {
+        try {
+            var event = UserUpdatedEvent.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .bio(user.getBio())
+                .studentId(user.getStudentId())
+                .role(user.getRole())
+                .isActive(user.getIsActive())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+
+            kafkaTemplate.send(USER_UPDATED_TOPIC, user.getId(), event);
+            log.info("Published user updated event for userId: {}", user.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish user updated event for userId: {}", user.getId(), e);
+        }
     }
 }
