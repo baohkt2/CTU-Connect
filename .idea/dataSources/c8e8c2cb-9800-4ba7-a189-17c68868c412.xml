@@ -3,7 +3,7 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>840</IntrospectionStateNumber>
+      <IntrospectionStateNumber>887</IntrospectionStateNumber>
       <ServerVersion>15.13</ServerVersion>
       <StartupTime>1752407272</StartupTime>
       <TimeZones>true ACDT
@@ -802,7 +802,7 @@ true posixrules
 13270||10|C|G
 13270||-9223372036854775808|U|G
 13270||10|U|G</Grants>
-      <IntrospectionStateNumber>840</IntrospectionStateNumber>
+      <IntrospectionStateNumber>887</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4220,25 +4220,25 @@ true posixrules
     <schema id="262" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>840</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2025-07-13.12:18:48</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>887</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-07-13.12:26:10</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>518</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <sequence id="263" parent="262" name="email_verification_id_seq">
-      <ObjectId>24714</ObjectId>
+      <ObjectId>24785</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>826</StateNumber>
+      <StateNumber>872</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="264" parent="262" name="refresh_tokens_id_seq">
-      <ObjectId>24720</ObjectId>
+      <ObjectId>24791</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>827</StateNumber>
+      <StateNumber>873</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>

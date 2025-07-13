@@ -29,7 +29,7 @@ public class Init implements CommandLineRunner {
 
     private void createDefaultAdminAccount() {
         String adminEmail = "nbaocs13@gmail.com";
-        String adminUsername = "Admin123@";
+        String adminUsername = "Admin";
         String adminPassword = "Admin123@";
 
         // Kiểm tra xem admin đã tồn tại chưa
@@ -64,21 +64,13 @@ public class Init implements CommandLineRunner {
         emailVerificationRepository.save(emailVerification);
         System.out.println("Created email verification for admin user with verified status: true");
 
-        // Gửi thông báo qua Kafka (tùy chọn)
-        try {
-            Map<String, Object> message = new HashMap<>();
-            message.put("userId", savedUser.getId().toString());
-            message.put("email", savedUser.getEmail());
-            message.put("username", savedUser.getUsername());
-            message.put("role", savedUser.getRole());
-            message.put("action", "ADMIN_ACCOUNT_CREATED");
-            message.put("timestamp", LocalDateTime.now().toString());
+        Map<String, Object> userCreatedEvent = new HashMap<>();
+        userCreatedEvent.put("userId", adminUser.getId());
+        userCreatedEvent.put("email", adminUser.getEmail());
+        userCreatedEvent.put("username", adminUser.getUsername());
+        userCreatedEvent.put("role", adminUser.getRole());
+        kafkaTemplate.send("user-registration", adminUser.getId().toString(), userCreatedEvent);
 
-            kafkaTemplate.send("user-events", message);
-            System.out.println("Sent admin account creation event to Kafka");
-        } catch (Exception e) {
-            System.err.println("Failed to send Kafka message: " + e.getMessage());
-        }
 
         System.out.println("Default admin account created successfully!");
         System.out.println("Email: " + adminEmail);

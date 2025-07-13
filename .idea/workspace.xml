@@ -4,36 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="config friends v0.1">
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/init/Init.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="add admin-frontend">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/AuthServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/AuthServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/admin-frontend.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/eslint.config.mjs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/next.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/postcss.config.mjs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/public/file.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/public/globe.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/public/next.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/public/vercel.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/public/window.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/src/app/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/src/app/globals.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/src/app/layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/src/app/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/admin-frontend/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/auth_db/01-init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/auth_db/01-init.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/import/init.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/import/init.cypher" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/init/Init.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/init/Init.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -420,7 +394,7 @@
       <workItem from="1752226008708" duration="4905000" />
       <workItem from="1752237308014" duration="8324000" />
       <workItem from="1752313828329" duration="22841000" />
-      <workItem from="1752403158153" duration="5839000" />
+      <workItem from="1752403158153" duration="6219000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -510,7 +484,23 @@
       <option name="project" value="LOCAL" />
       <updated>1752242107224</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="user-service fix v2">
+      <option name="closed" value="true" />
+      <created>1752409182622</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1752409182622</updated>
+    </task>
+    <task id="LOCAL-00013" summary="add admin-frontend">
+      <option name="closed" value="true" />
+      <created>1752409210449</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1752409210449</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -538,7 +528,9 @@
     <MESSAGE value="Dang fix profile v3" />
     <MESSAGE value="init client-frontend and admin-frontend" />
     <MESSAGE value="config friends v0" />
-    <option name="LAST_COMMIT_MESSAGE" value="config friends v0" />
+    <MESSAGE value="user-service fix v2" />
+    <MESSAGE value="add admin-frontend" />
+    <option name="LAST_COMMIT_MESSAGE" value="add admin-frontend" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
