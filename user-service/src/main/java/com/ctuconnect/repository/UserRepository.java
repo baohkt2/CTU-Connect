@@ -16,32 +16,32 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     // ========================= FRIENDSHIPS =========================
 
     @Query("""
-        MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)
+        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)
         RETURN friend
     """)
     List<UserEntity> findFriends(@Param("userId") String userId);
 
     @Query("""
-        MATCH (u1:User {id: $userId1})-[:IS_FRIENDS_WITH]-(friend:User),
-              (u2:User {id: $userId2})-[:IS_FRIENDS_WITH]-(friend)
+        MATCH (u1:User {id: $userId1})-[:FRIEND]-(friend:User),
+              (u2:User {id: $userId2})-[:FRIEND]-(friend)
         RETURN DISTINCT friend
     """)
     List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     @Query("""
         MATCH (u1:User {id: $userId1}), (u2:User {id: $userId2})
-        MERGE (u1)-[:IS_FRIENDS_WITH {since: datetime()}]-(u2)
+        MERGE (u1)-[:FRIEND {since: datetime()}]-(u2)
     """)
     void createFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     @Query("""
-        MATCH (u1:User {id: $userId1})-[r:IS_FRIENDS_WITH]-(u2:User {id: $userId2})
+        MATCH (u1:User {id: $userId1})-[r:FRIEND]-(u2:User {id: $userId2})
         DELETE r
     """)
     void deleteFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     @Query("""
-        MATCH (u1:User {id: $userId1})-[:IS_FRIENDS_WITH]-(u2:User {id: $userId2})
+        MATCH (u1:User {id: $userId1})-[:FRIEND]-(u2:User {id: $userId2})
         RETURN COUNT(*) > 0
     """)
     boolean areFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
@@ -130,7 +130,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     );
 
     @Query("""
-        MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)
+        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)
         OPTIONAL MATCH (u)-[:ENROLLED_IN]->(uMajor:Major)
         OPTIONAL MATCH (friend)-[:ENROLLED_IN]->(fMajor:Major)
         OPTIONAL MATCH (uMajor)-[:BELONGS_TO]->(uFaculty:Faculty)

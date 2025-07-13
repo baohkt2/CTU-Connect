@@ -17,9 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,17 +111,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        // Authenticate user
+        // Tìm user bằng email hoặc username
+        UserEntity user = userRepository.findByEmailOrUsername(request.getIdentifier())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Authenticate user - sử dụng email làm username principal
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        user.getEmail(), // Luôn sử dụng email làm username principal
                         request.getPassword()
                 )
         );
-
-        // Get user
-        UserEntity user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if email is verified
         boolean isVerified = emailVerificationRepository.findByUser(user)

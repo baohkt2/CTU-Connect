@@ -126,6 +126,35 @@ public class UserService {
         );
     }
 
+
+    /**
+     * Get friend requests for a user
+     */
+    public List<UserDTO> getFriendRequests(String userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Get users who have sent friend requests to this user
+        return user.getFriends().stream()
+                .filter(friend -> !user.getFriends().contains(friend)) // Only include unidirectional requests
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get users who have sent friend requests to the user
+     */
+    public List<UserDTO> getFriendRequested(String userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Get users who have sent friend requests to this user
+        return userRepository.findAll().stream()
+                .filter(friend -> friend.getFriends().contains(user) && !user.getFriends().contains(friend)) // Only include unidirectional requests
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     /**
      * Accept a friend request (make relationship bidirectional)
      */

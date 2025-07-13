@@ -69,6 +69,20 @@ public class UserController {
         return ResponseEntity.ok("Friend request sent successfully");
     }
 
+    @GetMapping("/me/friend-requests")
+    @RequireAuth(selfOnly = true) // User chỉ có thể xem lời mời kết bạn của mình
+    public ResponseEntity<List<UserDTO>> getMyFriendRequests() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return ResponseEntity.ok(userService.getFriendRequests(currentUserId));
+    }
+
+    @GetMapping("/me/friend-requested")
+    @RequireAuth(selfOnly = true) // User chỉ có thể xem những người đã gửi lời mời kết bạn đến mình
+    public ResponseEntity<List<UserDTO>> getMyFriendRequested() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return ResponseEntity.ok(userService.getFriendRequested(currentUserId));
+    }
+
     @PostMapping("/{userId}/accept-invite/{friendId}")
     @RequireAuth(selfOnly = true) // User chỉ có thể chấp nhận lời mời gửi đến mình
     public ResponseEntity<String> acceptFriendInvite(@PathVariable String userId, @PathVariable String friendId) {

@@ -48,6 +48,9 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     List<UserEntity> findByIsActive(boolean isActive);
 
+    @Query("SELECT u FROM UserEntity u WHERE u.email = :identifier OR u.username = :identifier")
+    Optional<UserEntity> findByEmailOrUsername(@Param("identifier") String identifier);
+
     @Query("SELECT u FROM UserEntity u WHERE u.id NOT IN " +
            "(SELECT ev.user.id FROM EmailVerificationEntity ev WHERE ev.isVerified = true)")
     List<UserEntity> findUnverifiedUsers();
