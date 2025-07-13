@@ -3,17 +3,9 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <Grants>1||-9223372036854775808|c|G
-1||10|c|G
-1||10|C|G
-1||10|T|G
-4||-9223372036854775808|c|G
-4||10|c|G
-4||10|C|G
-4||10|T|G</Grants>
-      <IntrospectionStateNumber>753</IntrospectionStateNumber>
+      <IntrospectionStateNumber>840</IntrospectionStateNumber>
       <ServerVersion>15.13</ServerVersion>
-      <StartupTime>1752222866</StartupTime>
+      <StartupTime>1752407272</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -810,7 +802,7 @@ true posixrules
 13270||10|C|G
 13270||-9223372036854775808|U|G
 13270||10|U|G</Grants>
-      <IntrospectionStateNumber>753</IntrospectionStateNumber>
+      <IntrospectionStateNumber>840</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4228,37 +4220,29 @@ true posixrules
     <schema id="262" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>753</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2025-07-11.08:41:29</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>840</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-07-13.12:18:48</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>518</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <sequence id="263" parent="262" name="email_verification_id_seq">
-      <ObjectId>16399</ObjectId>
+      <ObjectId>24714</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>727</StateNumber>
+      <StateNumber>826</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
-    <sequence id="264" parent="262" name="password_reset_tokens_id_seq">
-      <ObjectId>16430</ObjectId>
+    <sequence id="264" parent="262" name="refresh_tokens_id_seq">
+      <ObjectId>24720</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>729</StateNumber>
+      <StateNumber>827</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
-    <sequence id="265" parent="262" name="refresh_tokens_id_seq">
-      <ObjectId>16415</ObjectId>
-      <SequenceIdentity>1</SequenceIdentity>
-      <StartValue>1</StartValue>
-      <StateNumber>728</StateNumber>
-      <StoredType>bigint|0s</StoredType>
-      <OwnerName>postgres</OwnerName>
-    </sequence>
-    <sequence id="266" parent="262" name="users_seq">
+    <sequence id="265" parent="262" name="users_seq">
       <ObjectId>16452</ObjectId>
       <SequenceIdentity>1+50</SequenceIdentity>
       <StartValue>1</StartValue>
@@ -4266,415 +4250,5 @@ true posixrules
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
-    <table id="267" parent="262" name="email_verification">
-      <ObjectId>16400</ObjectId>
-      <StateNumber>727</StateNumber>
-      <AccessMethodId>2</AccessMethodId>
-      <OwnerName>postgres</OwnerName>
-    </table>
-    <table id="268" parent="262" name="password_reset_tokens">
-      <ObjectId>16431</ObjectId>
-      <StateNumber>729</StateNumber>
-      <AccessMethodId>2</AccessMethodId>
-      <OwnerName>postgres</OwnerName>
-    </table>
-    <table id="269" parent="262" name="refresh_tokens">
-      <ObjectId>16416</ObjectId>
-      <StateNumber>728</StateNumber>
-      <AccessMethodId>2</AccessMethodId>
-      <OwnerName>postgres</OwnerName>
-    </table>
-    <table id="270" parent="262" name="users">
-      <ObjectId>16385</ObjectId>
-      <StateNumber>727</StateNumber>
-      <AccessMethodId>2</AccessMethodId>
-      <OwnerName>postgres</OwnerName>
-    </table>
-    <column id="271" parent="267" name="id">
-      <DefaultExpression>nextval(&apos;email_verification_id_seq&apos;::regclass)</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>bigint|0s</StoredType>
-      <SequenceId>16399</SequenceId>
-      <TypeId>20</TypeId>
-    </column>
-    <column id="272" parent="267" name="token">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>varchar(255)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="273" parent="267" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>uuid|0s</StoredType>
-      <TypeId>2950</TypeId>
-    </column>
-    <column id="274" parent="267" name="expiry_date">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>bigint|0s</StoredType>
-      <TypeId>20</TypeId>
-    </column>
-    <column id="275" parent="267" name="is_verified">
-      <DefaultExpression>false</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>boolean|0s</StoredType>
-      <TypeId>16</TypeId>
-    </column>
-    <column id="276" parent="267" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-      <StateNumber>727</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <foreign-key id="277" parent="267" name="email_verification_user_id_fkey">
-      <ColNames>user_id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16410</ObjectId>
-      <OnDelete>cascade</OnDelete>
-      <StateNumber>727</StateNumber>
-      <RefKeyColPositions>1</RefKeyColPositions>
-      <RefTableId>16385</RefTableId>
-    </foreign-key>
-    <index id="278" parent="267" name="email_verification_pkey">
-      <ColNames>id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16406</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>727</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-    </index>
-    <index id="279" parent="267" name="email_verification_token_key">
-      <ColNames>token</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16408</ObjectId>
-      <StateNumber>727</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <index id="280" parent="267" name="idx_email_verification_token">
-      <ColNames>token</ColNames>
-      <ObjectId>16445</ObjectId>
-      <StateNumber>730</StateNumber>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <key id="281" parent="267" name="email_verification_pkey">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16407</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>727</StateNumber>
-      <UnderlyingIndexId>16406</UnderlyingIndexId>
-    </key>
-    <key id="282" parent="267" name="email_verification_token_key">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16409</ObjectId>
-      <StateNumber>727</StateNumber>
-      <UnderlyingIndexId>16408</UnderlyingIndexId>
-    </key>
-    <column id="283" parent="268" name="id">
-      <DefaultExpression>nextval(&apos;password_reset_tokens_id_seq&apos;::regclass)</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StateNumber>729</StateNumber>
-      <StoredType>bigint|0s</StoredType>
-      <SequenceId>16430</SequenceId>
-      <TypeId>20</TypeId>
-    </column>
-    <column id="284" parent="268" name="token">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StateNumber>729</StateNumber>
-      <StoredType>varchar(255)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="285" parent="268" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StateNumber>729</StateNumber>
-      <StoredType>uuid|0s</StoredType>
-      <TypeId>2950</TypeId>
-    </column>
-    <column id="286" parent="268" name="expiry_date">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StateNumber>729</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <column id="287" parent="268" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-      <StateNumber>729</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <foreign-key id="288" parent="268" name="password_reset_tokens_user_id_fkey">
-      <ColNames>user_id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16440</ObjectId>
-      <OnDelete>cascade</OnDelete>
-      <StateNumber>729</StateNumber>
-      <RefKeyColPositions>1</RefKeyColPositions>
-      <RefTableId>16385</RefTableId>
-    </foreign-key>
-    <index id="289" parent="268" name="password_reset_tokens_pkey">
-      <ColNames>id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16436</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>729</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-    </index>
-    <index id="290" parent="268" name="password_reset_tokens_token_key">
-      <ColNames>token</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16438</ObjectId>
-      <StateNumber>729</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <index id="291" parent="268" name="idx_password_reset_tokens_token">
-      <ColNames>token</ColNames>
-      <ObjectId>16447</ObjectId>
-      <StateNumber>732</StateNumber>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <key id="292" parent="268" name="password_reset_tokens_pkey">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16437</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>729</StateNumber>
-      <UnderlyingIndexId>16436</UnderlyingIndexId>
-    </key>
-    <key id="293" parent="268" name="password_reset_tokens_token_key">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16439</ObjectId>
-      <StateNumber>729</StateNumber>
-      <UnderlyingIndexId>16438</UnderlyingIndexId>
-    </key>
-    <column id="294" parent="269" name="id">
-      <DefaultExpression>nextval(&apos;refresh_tokens_id_seq&apos;::regclass)</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StateNumber>728</StateNumber>
-      <StoredType>bigint|0s</StoredType>
-      <SequenceId>16415</SequenceId>
-      <TypeId>20</TypeId>
-    </column>
-    <column id="295" parent="269" name="token">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StateNumber>728</StateNumber>
-      <StoredType>varchar(255)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="296" parent="269" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StateNumber>728</StateNumber>
-      <StoredType>uuid|0s</StoredType>
-      <TypeId>2950</TypeId>
-    </column>
-    <column id="297" parent="269" name="expiry_date">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StateNumber>728</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <column id="298" parent="269" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-      <StateNumber>728</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <foreign-key id="299" parent="269" name="refresh_tokens_user_id_fkey">
-      <ColNames>user_id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16425</ObjectId>
-      <OnDelete>cascade</OnDelete>
-      <StateNumber>728</StateNumber>
-      <RefKeyColPositions>1</RefKeyColPositions>
-      <RefTableId>16385</RefTableId>
-    </foreign-key>
-    <index id="300" parent="269" name="refresh_tokens_pkey">
-      <ColNames>id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16421</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>728</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-    </index>
-    <index id="301" parent="269" name="refresh_tokens_token_key">
-      <ColNames>token</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16423</ObjectId>
-      <StateNumber>728</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <index id="302" parent="269" name="idx_refresh_tokens_token">
-      <ColNames>token</ColNames>
-      <ObjectId>16446</ObjectId>
-      <StateNumber>731</StateNumber>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <key id="303" parent="269" name="refresh_tokens_pkey">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16422</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>728</StateNumber>
-      <UnderlyingIndexId>16421</UnderlyingIndexId>
-    </key>
-    <key id="304" parent="269" name="refresh_tokens_token_key">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16424</ObjectId>
-      <StateNumber>728</StateNumber>
-      <UnderlyingIndexId>16423</UnderlyingIndexId>
-    </key>
-    <column id="305" parent="270" name="id">
-      <DefaultExpression>gen_random_uuid()</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>uuid|0s</StoredType>
-      <TypeId>2950</TypeId>
-    </column>
-    <column id="306" parent="270" name="email">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>varchar(50)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="307" parent="270" name="username">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>varchar(25)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="308" parent="270" name="password">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>varchar(255)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="309" parent="270" name="role">
-      <DefaultExpression>&apos;USER&apos;::character varying</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>5</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>varchar(20)|0s</StoredType>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="310" parent="270" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <column id="311" parent="270" name="updated_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>7</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>timestamp|0s</StoredType>
-      <TypeId>1114</TypeId>
-    </column>
-    <column id="312" parent="270" name="is_active">
-      <DefaultExpression>true</DefaultExpression>
-      <NotNull>1</NotNull>
-      <Position>8</Position>
-      <StateNumber>726</StateNumber>
-      <StoredType>boolean|0s</StoredType>
-      <TypeId>16</TypeId>
-    </column>
-    <index id="313" parent="270" name="users_pkey">
-      <ColNames>id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16393</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>726</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-    </index>
-    <index id="314" parent="270" name="users_email_key">
-      <ColNames>email</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16395</ObjectId>
-      <StateNumber>726</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <index id="315" parent="270" name="users_username_key">
-      <ColNames>username</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16397</ObjectId>
-      <StateNumber>726</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationNames>default</CollationNames>
-      <CollationIds>100</CollationIds>
-      <CollationParentNames>pg_catalog</CollationParentNames>
-    </index>
-    <key id="316" parent="270" name="users_pkey">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16394</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>726</StateNumber>
-      <UnderlyingIndexId>16393</UnderlyingIndexId>
-    </key>
-    <key id="317" parent="270" name="users_email_key">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16396</ObjectId>
-      <StateNumber>726</StateNumber>
-      <UnderlyingIndexId>16395</UnderlyingIndexId>
-    </key>
-    <key id="318" parent="270" name="users_username_key">
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16398</ObjectId>
-      <StateNumber>726</StateNumber>
-      <UnderlyingIndexId>16397</UnderlyingIndexId>
-    </key>
   </database-model>
 </dataSource>
