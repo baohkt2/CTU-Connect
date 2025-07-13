@@ -28,32 +28,7 @@ public class RouteConfig {
                         .path("/api/users/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://user-service"))
-                .route("user-service-friends-route", r -> r
-                        .path("/api/users/{userId}/friends/**",
-                              "/api/users/{userId}/mutual-friends/**",
-                              "/api/users/{userId}/friend-suggestions")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://user-service"))
-                .route("user-service-friend-request-route", r -> r
-                        .path("/api/users/{userId}/invite/**",
-                              "/api/users/{userId}/accept-invite/**",
-                              "/api/users/{userId}/reject-invite/**")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://user-service"))
-                .route("user-service-filter-route", r -> r
-                        .path("/api/users/{userId}/filter-relationships")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://user-service"))
-                .route("user-service-register-route", r -> r
-                        .path("/api/users/register")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://user-service"))
 
-                // Fallback route for any other user service endpoints
-                .route("user-service-general-route", r -> r
-                        .path("/api/users/**")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://user-service"))
                 .build();
     }
 }

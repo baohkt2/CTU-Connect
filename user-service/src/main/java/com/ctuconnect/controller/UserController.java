@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,6 +20,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // ===================== USER PROFILE MANAGEMENT =====================
+
     @PostMapping("/register")
     @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể tạo user mới
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
@@ -28,152 +29,137 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/profile")
-    @RequireAuth// User chỉ có thể xem profile của chính mình hoặc admin có thể xem tất cả
+    @RequireAuth // Có thể xem profile của người khác
     public ResponseEntity<UserDTO> getUserProfile(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 
     @GetMapping("/me/profile")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user xem profile của chính mình
+    @RequireAuth(selfOnly = true) // Xem profile của chính mình
     public ResponseEntity<UserDTO> getMyProfile() {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getUserProfile(currentUserId));
     }
 
-    @PutMapping("/{userId}/profile")
-    @RequireAuth // User chỉ có thể cập nhật profile của chính mình
-    public ResponseEntity<UserDTO> updateUserProfile(@PathVariable String userId, @RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.updateUserProfile(userId, userDTO));
-    }
-
     @PutMapping("/me/profile")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user cập nhật profile của chính mình
+    @RequireAuth(selfOnly = true) // Cập nhật profile của chính mình
     public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO userDTO) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.updateUserProfile(currentUserId, userDTO));
     }
 
-    // Friend request management
+    // ===================== FRIEND REQUEST MANAGEMENT =====================
+
     @PostMapping("/{userId}/invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể gửi lời mời từ chính tài khoản của mình
-    public ResponseEntity<String> addFriend(@PathVariable String userId, @PathVariable String friendId) {
+    @RequireAuth // Gửi lời mời kết bạn
+    public ResponseEntity<String> sendFriendRequest(@PathVariable String userId, @PathVariable String friendId) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+        // Chỉ cho phép gửi lời mời từ chính tài khoản của mình
+        if (!userId.equals(currentUserId)) {
+            return ResponseEntity.status(403).body("Can only send friend requests from your own account");
+        }
+
         userService.addFriend(userId, friendId);
         return ResponseEntity.ok("Friend request sent successfully");
     }
 
     @PostMapping("/me/invite/{friendId}")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user gửi lời mời kết bạn
-    public ResponseEntity<String> sendFriendRequest(@PathVariable String friendId) {
+    @RequireAuth // Gửi lời mời kết bạn từ tài khoản của mình
+    public ResponseEntity<String> sendMyFriendRequest(@PathVariable String friendId) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.addFriend(currentUserId, friendId);
         return ResponseEntity.ok("Friend request sent successfully");
     }
 
-    @GetMapping("/me/friend-requests")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem lời mời kết bạn của mình
-    public ResponseEntity<List<UserDTO>> getMyFriendRequests() {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getFriendRequests(currentUserId));
-    }
-
-    @GetMapping("/me/friend-requested")
-    @RequireAuth(selfOnly = true) // User chỉ có thể xem những người đã gửi lời mời kết bạn đến mình
-    public ResponseEntity<List<UserDTO>> getMyFriendRequested() {
-        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.getFriendRequested(currentUserId));
-    }
-
-    @PostMapping("/{userId}/accept-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể chấp nhận lời mời gửi đến mình
-    public ResponseEntity<String> acceptFriendInvite(@PathVariable String userId, @PathVariable String friendId) {
-        userService.acceptFriendInvite(userId, friendId);
-        return ResponseEntity.ok("Friend request accepted successfully");
-    }
 
     @PostMapping("/me/accept-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user chấp nhận lời mời kết bạn
-    public ResponseEntity<String> acceptMyFriendInvite(@PathVariable String friendId) {
+    @RequireAuth // Chấp nhận lời mời kết bạn
+    public ResponseEntity<String> acceptMyFriendRequest(@PathVariable String friendId) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.acceptFriendInvite(currentUserId, friendId);
         return ResponseEntity.ok("Friend request accepted successfully");
     }
 
     @PostMapping("/{userId}/reject-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // User chỉ có thể từ chối lời mời gửi đến mình
-    public ResponseEntity<String> rejectFriendInvite(@PathVariable String userId, @PathVariable String friendId) {
+    @RequireAuth // Từ chối lời mời kết bạn
+    public ResponseEntity<String> rejectFriendRequest(@PathVariable String userId, @PathVariable String friendId) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+        // Chỉ cho phép từ chối lời mời gửi đến chính mình
+        if (!userId.equals(currentUserId)) {
+            return ResponseEntity.status(403).body("Can only reject friend requests sent to your own account");
+        }
+
         userService.rejectFriendInvite(userId, friendId);
         return ResponseEntity.ok("Friend request rejected successfully");
     }
 
     @PostMapping("/me/reject-invite/{friendId}")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user từ chối lời mời kết bạn
-    public ResponseEntity<String> rejectMyFriendInvite(@PathVariable String friendId) {
+    @RequireAuth // Từ chối lời mời kết bạn
+    public ResponseEntity<String> rejectMyFriendRequest(@PathVariable String friendId) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userService.rejectFriendInvite(currentUserId, friendId);
         return ResponseEntity.ok("Friend request rejected successfully");
     }
 
-    // Friend listing and suggestions
-    @GetMapping("/{userId}/friends")
-    @RequireAuth // User chỉ có thể xem danh sách bạn bè của mình
-    public ResponseEntity<FriendsDTO> getFriends(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getFriends(userId));
+    @DeleteMapping("/me/friends/{friendId}")
+    @RequireAuth // Hủy kết bạn
+    public ResponseEntity<String> removeMyFriend(@PathVariable String friendId) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        userService.removeFriend(currentUserId, friendId);
+        return ResponseEntity.ok("Friend removed successfully");
     }
 
+    // ===================== FRIEND REQUESTS VIEWING =====================
+    @GetMapping("/me/friend-requests")
+    @RequireAuth(selfOnly = true) // Xem lời mời kết bạn nhận được
+    public ResponseEntity<List<UserDTO>> getMyFriendRequests() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return ResponseEntity.ok(userService.getFriendRequests(currentUserId));
+    }
+
+    @GetMapping("/me/friend-requested")
+    @RequireAuth(selfOnly = true) // Xem lời mời kết bạn đã gửi
+    public ResponseEntity<List<UserDTO>> getMyFriendRequested() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return ResponseEntity.ok(userService.getFriendRequested(currentUserId));
+    }
+
+    // ===================== FRIENDS LISTING =====================
+
     @GetMapping("/me/friends")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user xem danh sách bạn bè của mình
+    @RequireAuth(selfOnly = true) // Xem danh sách bạn bè của mình
     public ResponseEntity<FriendsDTO> getMyFriends() {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getFriends(currentUserId));
     }
 
-    @GetMapping("/{userId}/mutual-friends/{otherUserId}")
-    @RequireAuth// User chỉ có thể xem bạn chung với người khác từ tài khoản của mình
-    public ResponseEntity<FriendsDTO> getMutualFriends(
-            @PathVariable String userId,
-            @PathVariable String otherUserId) {
-        return ResponseEntity.ok(userService.getMutualFriends(userId, otherUserId));
-    }
-
     @GetMapping("/me/mutual-friends/{otherUserId}")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user xem bạn chung với người khác
+    @RequireAuth(selfOnly = true) // Xem bạn chung với người khác
     public ResponseEntity<FriendsDTO> getMyMutualFriends(@PathVariable String otherUserId) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getMutualFriends(currentUserId, otherUserId));
     }
 
-    @GetMapping("/{userId}/friend-suggestions")
-    @RequireAuth // User chỉ có thể xem gợi ý kết bạn cho mình
-    public ResponseEntity<FriendsDTO> getFriendSuggestions(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getFriendSuggestions(userId));
-    }
-
+    // ===================== FRIEND SUGGESTIONS =====================
     @GetMapping("/me/friend-suggestions")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user xem gợi ý kết bạn
+    @RequireAuth(selfOnly = true) // Xem gợi ý kết bạn
     public ResponseEntity<FriendsDTO> getMyFriendSuggestions() {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getFriendSuggestions(currentUserId));
     }
 
-    /**
-     * Filter users by relationship criteria
-     */
-    @PostMapping("/{userId}/filter-relationships")
-    @RequireAuth // User chỉ có thể filter từ tài khoản của mình
-    public ResponseEntity<List<UserDTO>> filterRelationships(
-            @PathVariable String userId,
-            @RequestBody RelationshipFilterDTO filters) {
-        return ResponseEntity.ok(userService.getUsersByRelationshipFilters(userId, filters));
-    }
-
+    // ===================== USER FILTERING =====================
     @PostMapping("/me/filter-relationships")
-    @RequireAuth(selfOnly = true) // Endpoint mới để user filter relationships
+    @RequireAuth(selfOnly = true) // Lọc người dùng theo tiêu chí
     public ResponseEntity<List<UserDTO>> filterMyRelationships(@RequestBody RelationshipFilterDTO filters) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         return ResponseEntity.ok(userService.getUsersByRelationshipFilters(currentUserId, filters));
     }
 
-    // Admin endpoints
+    // ===================== ADMIN ENDPOINTS =====================
+
     @GetMapping("/admin/all")
     @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem tất cả users
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -185,5 +171,79 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok("User deleted successfully");
+    }
+
+    @PutMapping("/{userId}/profile")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể cập nhật profile của user khác
+    public ResponseEntity<UserDTO> updateUserProfile(@PathVariable String userId, @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.updateUserProfile(userId, userDTO));
+    }
+
+    @PostMapping("/{userId}/filter-relationships")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể lọc người dùng theo tiêu chí
+    public ResponseEntity<List<UserDTO>> filterRelationships(
+            @PathVariable String userId,
+            @RequestBody RelationshipFilterDTO filters) {
+        return ResponseEntity.ok(userService.getUsersByRelationshipFilters(userId, filters));
+    }
+
+    @GetMapping("/{userId}/friend-suggestions")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem gợi ý kết bạn của người khác
+    public ResponseEntity<FriendsDTO> getFriendSuggestions(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getFriendSuggestions(userId));
+    }
+
+    @GetMapping("/{userId}/mutual-friends/{otherUserId}")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem bạn chung của người khác
+    public ResponseEntity<FriendsDTO> getMutualFriends(
+            @PathVariable String userId,
+            @PathVariable String otherUserId) {
+        return ResponseEntity.ok(userService.getMutualFriends(userId, otherUserId));
+    }
+
+    @GetMapping("/{userId}/friends")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem danh sách bạn bè của người khác
+    public ResponseEntity<FriendsDTO> getFriends(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getFriends(userId));
+    }
+
+    @GetMapping("/{userId}/friend-requested")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem lời mời kết bạn đã gửi của người khác
+    public ResponseEntity<List<UserDTO>> getFriendRequested(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getFriendRequested(userId));
+    }
+
+    @GetMapping("/{userId}/friend-requests")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể xem lời mời kết bạn nhận được của người khác
+    public ResponseEntity<List<UserDTO>> getFriendRequests(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getFriendRequests(userId));
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể hủy kết bạn của người khác
+    public ResponseEntity<String> removeFriend(@PathVariable String userId, @PathVariable String friendId) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+        // Chỉ cho phép hủy kết bạn từ chính tài khoản của mình
+        if (!userId.equals(currentUserId)) {
+            return ResponseEntity.status(403).body("Can only remove friends from your own account");
+        }
+
+        userService.removeFriend(userId, friendId);
+        return ResponseEntity.ok("Friend removed successfully");
+    }
+
+    @PostMapping("/{userId}/accept-invite/{friendId}")
+    @RequireAuth(roles = {"ADMIN"})  // Chỉ admin mới có thể chấp nhận lời mời kết bạn của người khác
+    public ResponseEntity<String> acceptFriendRequest(@PathVariable String userId, @PathVariable String friendId) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+        // Chỉ cho phép chấp nhận lời mời gửi đến chính mình
+        if (!userId.equals(currentUserId)) {
+            return ResponseEntity.status(403).body("Can only accept friend requests sent to your own account");
+        }
+
+        userService.acceptFriendInvite(userId, friendId);
+        return ResponseEntity.ok("Friend request accepted successfully");
     }
 }

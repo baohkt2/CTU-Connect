@@ -33,4 +33,6 @@ public class UserDTO {
     private boolean sameCollege;
     private boolean sameFaculty;
     private boolean sameMajor;
+    private boolean sameBatch;
+
 }

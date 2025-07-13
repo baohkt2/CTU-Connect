@@ -11,7 +11,12 @@ import java.util.Optional;
 public interface UserRepository extends Neo4jRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByUsername(String username);
     boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
+
+    @Query("MATCH (u:User) WHERE u.email = $identifier OR u.username = $identifier RETURN u")
+    Optional<UserEntity> findByEmailOrUsername(@Param("identifier") String identifier);
 
     // ========================= FRIENDSHIPS =========================
 
@@ -24,15 +29,30 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     @Query("""
         MATCH (u1:User {id: $userId1})-[:FRIEND]-(friend:User),
               (u2:User {id: $userId2})-[:FRIEND]-(friend)
+        WHERE friend.id <> $userId1 AND friend.id <> $userId2
         RETURN DISTINCT friend
     """)
     List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     @Query("""
         MATCH (u1:User {id: $userId1}), (u2:User {id: $userId2})
+        WHERE u1.id <> u2.id
+        MERGE (u1)-[:FRIEND_REQUEST {createdAt: datetime(), status: 'PENDING'}]->(u2)
+    """)
+    void sendFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[r:FRIEND_REQUEST {status: 'PENDING'}]->(u2:User {id: $userId2})
+        DELETE r
         MERGE (u1)-[:FRIEND {since: datetime()}]-(u2)
     """)
-    void createFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
+    void acceptFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[r:FRIEND_REQUEST]->(u2:User {id: $userId2})
+        DELETE r
+    """)
+    void rejectFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     @Query("""
         MATCH (u1:User {id: $userId1})-[r:FRIEND]-(u2:User {id: $userId2})
@@ -45,6 +65,26 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         RETURN COUNT(*) > 0
     """)
     boolean areFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[:FRIEND_REQUEST {status: 'PENDING'}]->(u2:User {id: $userId2})
+        RETURN COUNT(*) > 0
+    """)
+    boolean hasPendingFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    // Get friend requests sent TO this user
+    @Query("""
+        MATCH (sender:User)-[:FRIEND_REQUEST {status: 'PENDING'}]->(u:User {id: $userId})
+        RETURN sender
+    """)
+    List<UserEntity> findIncomingFriendRequests(@Param("userId") String userId);
+
+    // Get friend requests sent BY this user
+    @Query("""
+        MATCH (u:User {id: $userId})-[:FRIEND_REQUEST {status: 'PENDING'}]->(receiver:User)
+        RETURN receiver
+    """)
+    List<UserEntity> findOutgoingFriendRequests(@Param("userId") String userId);
 
     // ========================= FILTER QUERIES =========================
 
@@ -154,4 +194,17 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
             @Param("isSameMajor") boolean isSameMajor,
             @Param("isSameBatch") boolean isSameBatch
     );
+
+    // ========================= FRIEND SUGGESTIONS =========================
+
+    @Query("""
+        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)-[:FRIEND]-(suggestion:User)
+        WHERE u.id <> suggestion.id 
+          AND NOT (u)-[:FRIEND]-(suggestion)
+          AND NOT (u)-[:FRIEND_REQUEST]-(suggestion)
+        RETURN suggestion, COUNT(*) as mutualFriends
+        ORDER BY mutualFriends DESC
+        LIMIT 10
+    """)
+    List<UserEntity> findFriendSuggestions(@Param("userId") String userId);
 }
