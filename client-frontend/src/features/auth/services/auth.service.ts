@@ -47,7 +47,7 @@ export class AuthService {
   /**
    * Get current user profile
    */
-  async getCurrentUser(): Promise<User> {
+  async getCurrentUser(): Promise<ApiResponse<User>> {
     return apiClient.get<User>(API_ENDPOINTS.AUTH.ME);
   }
 

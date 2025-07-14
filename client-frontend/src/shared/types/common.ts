@@ -1,19 +1,26 @@
-// Base types
+// ============================
+// Base Entity
+// ============================
 export interface BaseEntity {
   id: string;
-  createdAt: string;
+  createdAt: string; // ISO string
   updatedAt: string;
 }
 
-// API Response types
-export interface ApiResponse<T = any> {
+// ============================
+// Generic API Response
+// ============================
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
-  errors?: Record<string, string[]>;
+  errors?: Record<string, string[]>; // key = field, value = list of error messages
 }
 
+// ============================
+// Paginated Response
+// ============================
 export interface PaginatedResponse<T> {
   content: T[];
   totalElements: number;
@@ -25,24 +32,30 @@ export interface PaginatedResponse<T> {
   empty: boolean;
 }
 
-// Error types
+// ============================
+// API Error Object
+// ============================
 export interface ApiError {
   status: number;
   message: string;
   code?: string;
-  details?: any;
+  details?: unknown;
 }
 
-// Form types
+// ============================
+// Form Field Error (optional use in UI)
+// ============================
 export interface FormFieldError {
   field: string;
   message: string;
 }
 
-// Upload types
+// ============================
+// File Upload Response
+// ============================
 export interface FileUploadResponse {
   url: string;
   filename: string;
-  size: number;
-  type: string;
+  size: number; // bytes
+  type: string; // MIME type
 }

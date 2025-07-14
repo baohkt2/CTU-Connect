@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -133,7 +135,7 @@ const LoginForm: React.FC = () => {
                     placeholder={getInputPlaceholder()}
                     autoComplete="username"
                     {...register('emailOrUsername')}
-                    className={errors.emailOrUsername ? 'border-red-500' : ''}
+                    className={errors.emailOrUsername ? 'border-red-500 text-gray-500' : 'text-gray-500'}
                 />
                 {errors.emailOrUsername && (
                     <p className="text-sm text-red-600 mt-1">{errors.emailOrUsername.message}</p>
@@ -142,13 +144,13 @@ const LoginForm: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-                <div className="relative">
+                <div className="relative ">
                   <Input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Nhập mật khẩu"
                       autoComplete="current-password"
                       {...register('password')}
-                      className={errors.password ? 'border-red-500' : ''}
+                      className={errors.password ? 'border-red-500 text-gray-500' : 'text-gray-500'}
                   />
                   <button
                       type="button"
@@ -166,7 +168,6 @@ const LoginForm: React.FC = () => {
                   Quên mật khẩu?
                 </Link>
               </div>
-
               <div>
                 <Button
                   type="submit"

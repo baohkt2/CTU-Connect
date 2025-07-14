@@ -1,6 +1,8 @@
 import { BaseEntity } from './common';
 
-// User entity
+// ============================
+// User Model
+// ============================
 export interface User extends BaseEntity {
   email: string;
   username: string;
@@ -16,7 +18,9 @@ export interface User extends BaseEntity {
   postsCount?: number;
 }
 
-// User creation/update types
+// ============================
+// Create / Update DTOs
+// ============================
 export interface CreateUserRequest {
   email: string;
   username: string;
@@ -31,7 +35,9 @@ export interface UpdateUserRequest {
   yearOfStudy?: number;
 }
 
-// User relationship types
+// ============================
+// Relationship
+// ============================
 export interface UserRelationship {
   id: string;
   followerId: string;
@@ -39,7 +45,9 @@ export interface UserRelationship {
   createdAt: string;
 }
 
-// User stats
+// ============================
+// Stats Object
+// ============================
 export interface UserStats {
   postsCount: number;
   followersCount: number;

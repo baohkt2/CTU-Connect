@@ -7,7 +7,11 @@ import { authService } from '@/services/authService';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: { identifier: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string; recaptchaToken: string } | {
+    username: string;
+    password: string;
+    recaptchaToken: string
+  }) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;

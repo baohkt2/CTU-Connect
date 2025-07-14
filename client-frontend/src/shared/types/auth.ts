@@ -1,7 +1,9 @@
 import { User } from './user';
 import { ApiResponse } from './common';
 
-// Authentication request types
+// ==========================
+// Authentication Request DTOs
+// ==========================
 export interface LoginRequest {
   email: string;
   password: string;
@@ -30,19 +32,32 @@ export interface VerifyEmailRequest {
   token: string;
 }
 
-// Authentication response types
+// ==========================
+// Authentication Response DTOs
+// ==========================
 export interface AuthResponse {
   token: string;
-  refreshToken?: string;
+  refreshToken: string;
   user: User;
-  expiresIn?: number;
+  expiresIn: number;
 }
 
 export interface TokenResponse {
   token: string;
-  refreshToken?: string;
-  expiresIn?: number;
+  refreshToken: string;
+  expiresIn: number;
 }
 
-// Re-export commonly used types for convenience
+// JWT payload (optional)
+export interface TokenPayload {
+  sub: string;
+  email: string;
+  exp: number;
+  iat: number;
+  roles?: string[];
+}
+
+// ==========================
+// Re-exports
+// ==========================
 export type { User, ApiResponse };
