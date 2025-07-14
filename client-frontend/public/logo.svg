@@ -1,0 +1,20 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="60" fill="#4F46E5"/>
+
+  <!-- CTU letters -->
+  <text x="60" y="45" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="bold">CTU</text>
+
+  <!-- Connect text -->
+  <text x="60" y="65" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="normal">CONNECT</text>
+
+  <!-- Connection lines -->
+  <g stroke="white" stroke-width="2" fill="none">
+    <circle cx="30" cy="80" r="3" fill="white"/>
+    <circle cx="60" cy="80" r="3" fill="white"/>
+    <circle cx="90" cy="80" r="3" fill="white"/>
+    <line x1="33" y1="80" x2="57" y2="80"/>
+    <line x1="63" y1="80" x2="87" y2="80"/>
+  </g>
+</svg>
+

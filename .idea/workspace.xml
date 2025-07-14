@@ -4,19 +4,91 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="addFriend v1">
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="AuthService and UserService OK">
+      <change afterPath="$PROJECT_DIR$/client-frontend/API_MAPPING.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/SERVICES_MIGRATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/public/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/forgot-password/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/login/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/messages/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/profile/[userId]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/register/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/reset-password/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/search/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ForgotPasswordForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ProtectedRoute.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ResetPasswordForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/chat/ChatList.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/chat/ChatWindow.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Avatar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Button.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Card.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Input.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/LoadingSpinner.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Modal.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Textarea.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/user/UserProfile.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/contexts/QueryProvider.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/auth/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/auth/services/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/auth/services/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/chat/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/chat/services/chat.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/chat/services/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/posts/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/posts/services/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/posts/services/post.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/search/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/services/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/services/user.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useChatHooks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/hooks/usePostHooks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useUserHooks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/lib/api.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/authService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/chatService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/config/api-client.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/constants/api.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/constants/app.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/constants/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/analytics.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/chat.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/notification.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/post.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/settings.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/upload.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/user.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/auth.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/chat.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/common.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/post.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/user.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/utils/api.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/utils/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/utils/storage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/shared/utils/validation.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/utils/helpers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/UserServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/UserServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/UserDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,6 +208,7 @@
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;settings.editor.splitter.proportion&quot;: &quot;0.28134558&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -152,11 +225,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect\client-frontend\public" />
+      <recent name="D:\LVTN\ctu-connect\client-frontend\src\assets" />
       <recent name="D:\LVTN\ctu-connect" />
       <recent name="D:\LVTN\ctu-connect\database\neo4j\import" />
       <recent name="D:\LVTN\ctu-connect\database\neo4j\tasks" />
-      <recent name="D:\LVTN\ctu-connect\database\neo4j\task" />
-      <recent name="D:\LVTN\ctu-connect\database" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -403,7 +476,9 @@
       <workItem from="1752226008708" duration="4905000" />
       <workItem from="1752237308014" duration="8324000" />
       <workItem from="1752313828329" duration="22841000" />
-      <workItem from="1752403158153" duration="15851000" />
+      <workItem from="1752403158153" duration="20562000" />
+      <workItem from="1752430388389" duration="112000" />
+      <workItem from="1752479911895" duration="12019000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -525,7 +600,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752413892668</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="AuthService and UserService OK">
+      <option name="closed" value="true" />
+      <created>1752425975876</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1752425975876</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -557,7 +640,8 @@
     <MESSAGE value="add admin-frontend" />
     <MESSAGE value="create an admin account ok" />
     <MESSAGE value="addFriend v1" />
-    <option name="LAST_COMMIT_MESSAGE" value="addFriend v1" />
+    <MESSAGE value="AuthService and UserService OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="AuthService and UserService OK" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
