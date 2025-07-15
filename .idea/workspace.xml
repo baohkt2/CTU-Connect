@@ -4,18 +4,44 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Auth Client-Frontend v1">
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/RecaptchaWrapper.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Auth Client-Frontend fixing">
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/CorsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/ResendVerificationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/EmailAlreadyExistsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/UsernameAlreadyExistsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/public/contact.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/verify-email/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ClientOnly.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/ErrorAlert.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Loading.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/RecaptchaWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/RecaptchaWrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/ForgotPasswordForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ForgotPasswordForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/config/api-client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/config/api-client.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/constants/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/constants/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/services/analytics.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/services/analytics.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/types/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/types/common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/common.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/hooks/useRecaptcha.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useRecaptcha.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/lib/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/lib/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/authService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
     </list>
@@ -162,6 +188,9 @@
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
@@ -408,7 +437,10 @@
       <workItem from="1752403158153" duration="20562000" />
       <workItem from="1752430388389" duration="112000" />
       <workItem from="1752479911895" duration="13817000" />
-      <workItem from="1752495654602" duration="3665000" />
+      <workItem from="1752495654602" duration="7548000" />
+      <workItem from="1752577243931" duration="13560000" />
+      <workItem from="1752597854477" duration="1142000" />
+      <workItem from="1752599074480" duration="664000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -546,7 +578,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752494458106</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Auth Client-Frontend fixing">
+      <option name="closed" value="true" />
+      <created>1752500988551</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1752500988551</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -580,7 +620,8 @@
     <MESSAGE value="addFriend v1" />
     <MESSAGE value="AuthService and UserService OK" />
     <MESSAGE value="Auth Client-Frontend v1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Auth Client-Frontend v1" />
+    <MESSAGE value="Auth Client-Frontend fixing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Auth Client-Frontend fixing" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

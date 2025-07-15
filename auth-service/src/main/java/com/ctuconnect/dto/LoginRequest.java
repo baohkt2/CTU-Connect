@@ -9,15 +9,18 @@ import lombok.Data;
 @Data
 public class LoginRequest {
 
-    @Email(message = "Email phải có định dạng hợp lệ")
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@(student\\.)?ctu\\.edu\\.vn$",
-            message = "Email phải có đuôi @ctu.edu.vn hoặc @student.ctu.edu.vn")
-    private String email;
+//    @Email(message = "Email phải có định dạng hợp lệ")
+//    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@(student\\.)?ctu\\.edu\\.vn$",
+//            message = "Email phải có đuôi @ctu.edu.vn hoặc @student.ctu.edu.vn")
+//    private String email;
+//
+//    @Size(min = 3, max = 25, message = "Tên đăng nhập phải có từ 3-25 ký tự")
+//    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9._]{2,24}$",
+//            message = "Tên đăng nhập phải bắt đầu bằng chữ cái và chỉ chứa chữ cái, số, dấu chấm và gạch dưới")
+//    private String username;
 
-    @Size(min = 3, max = 25, message = "Tên đăng nhập phải có từ 3-25 ký tự")
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9._]{2,24}$",
-            message = "Tên đăng nhập phải bắt đầu bằng chữ cái và chỉ chứa chữ cái, số, dấu chấm và gạch dưới")
-    private String username;
+    @NotBlank
+    private String identifier; // Can be email or username
 
     @NotBlank(message = "Mật khẩu là bắt buộc")
     @Size(min = 8, max = 20, message = "Mật khẩu phải có từ 8-20 ký tự")

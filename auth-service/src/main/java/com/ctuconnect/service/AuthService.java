@@ -37,6 +37,11 @@ public interface AuthService {
     void verifyEmail(String token);
 
     /**
+     * Resend verification email
+     */
+    void resendVerificationEmail(String token);
+
+    /**
      * Logout a user by invalidating their refresh token
      */
     void logout(String refreshToken);

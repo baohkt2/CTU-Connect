@@ -19,7 +19,11 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+       uniqueConstraints = {
+           @UniqueConstraint(columnNames = {"email"}),
+           @UniqueConstraint(columnNames = {"username"})
+       })
 public class UserEntity {
 
     @Id
@@ -77,5 +81,15 @@ public class UserEntity {
     // Custom setter for isActive
     public void setActive(Boolean active) {
         this.isActive = active;
+    }
+
+    // Phương thức để đảm bảo email luôn được lưu dưới dạng lowercase
+    public void setEmail(String email) {
+        this.email = email != null ? email.toLowerCase().trim() : null;
+    }
+
+    // Phương thức để đảm bảo username luôn được lưu dưới dạng lowercase
+    public void setUsername(String username) {
+        this.username = username != null ? username.toLowerCase().trim() : null;
     }
 }

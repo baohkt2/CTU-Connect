@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChatHooks } from '@/hooks/useChatHooks';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import Avatar from '@/components/ui/Avatar';
 import {
@@ -65,12 +66,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     },
   ];
 
+  const pathname = usePathname();
+
   const isActive = (href: string) => {
     if (href === '/') {
-      return router.pathname === '/';
+      return pathname === '/';
     }
-    return router.pathname.startsWith(href);
+    return pathname.startsWith(href);
   };
+
 
   const handleLogout = async () => {
     await logout();

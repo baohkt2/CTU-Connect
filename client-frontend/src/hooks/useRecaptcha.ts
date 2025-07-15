@@ -1,8 +1,14 @@
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useRecaptcha = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    // Chỉ set isReady = true sau khi component đã mount trên client
+    setIsReady(!!executeRecaptcha);
+  }, [executeRecaptcha]);
 
   const executeRecaptchaAction = useCallback(
     async (action: string): Promise<string | null> => {
@@ -24,7 +30,7 @@ export const useRecaptcha = () => {
 
   return {
     executeRecaptcha: executeRecaptchaAction,
-    isReady: !!executeRecaptcha,
+    isReady,
   };
 };
 

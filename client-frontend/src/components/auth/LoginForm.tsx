@@ -85,10 +85,15 @@ const LoginForm: React.FC = () => {
         return;
       }
 
+      // Normalize identifier to lowercase before sending to backend
+      const normalizedIdentifier = data.emailOrUsername.toLowerCase().trim();
+
       // Chuyển đổi data để phù hợp với backend API
-      const loginData = data.emailOrUsername.includes('@')
-        ? { email: data.emailOrUsername, password: data.password, recaptchaToken }
-        : { username: data.emailOrUsername, password: data.password, recaptchaToken };
+      const loginData = {
+        identifier: normalizedIdentifier,
+        password: data.password,
+        recaptchaToken
+      };
 
       await login(loginData);
       router.push('/');
@@ -192,4 +197,3 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
-

@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import ErrorAlert from '@/components/ui/ErrorAlert';
 import Link from 'next/link';
 import Image from 'next/image';
 import { EyeIcon, EyeSlashIcon, CheckCircleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
@@ -17,24 +18,24 @@ const registerSchema = yup.object({
     .string()
     .required('Email CTU là bắt buộc')
     .email('Email không hợp lệ')
-    .test('ctu-email', 'Email phải có đuôi @ctu.edu.vn', function(value) {
+    .test('ctu-email', 'Email phải theo định dạng @ctu.edu.vn hoặc @student.ctu.edu.vn', function(value) {
       if (!value) return false;
-      return value.endsWith('@ctu.edu.vn') && value.length > '@ctu.edu.vn'.length;
+      const normalizedValue = value.toLowerCase().trim();
+      return normalizedValue.endsWith('@ctu.edu.vn') || normalizedValue.endsWith('@student.ctu.edu.vn');
     }),
   username: yup
     .string()
     .required('Tên đăng nhập là bắt buộc')
     .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự')
-    .max(30, 'Tên đăng nhập không được quá 30 ký tự')
-    .matches(/^[a-zA-Z0-9_]+$/, 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới')
-    .matches(/^[a-zA-Z]/, 'Tên đăng nhập phải bắt đầu bằng chữ cái'),
+    .max(25, 'Tên đăng nhập không được quá 25 ký tự')
+    .matches(/^[a-zA-Z][a-zA-Z0-9._]{2,24}$/, 'Tên đăng nhập phải bắt đầu bằng chữ cái và chỉ chứa chữ cái, số, dấu chấm và gạch dưới'),
   password: yup
     .string()
     .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
-    .max(50, 'Mật khẩu không được quá 50 ký tự')
+    .max(20, 'Mật khẩu không được quá 20 ký tự')
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
-      'Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số và 1 ký tự đặc biệt'
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?!.*\s).{8,20}$/,
+      'Mật khẩu phải chứa ít nhất: 1 chữ số, 1 chữ thường, 1 chữ hoa, 1 ký tự đặc biệt và không có khoảng trắng'
     )
     .required('Mật khẩu là bắt buộc'),
   confirmPassword: yup
@@ -49,6 +50,7 @@ const RegisterForm: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<'error' | 'warning' | 'info'>('error');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
@@ -69,28 +71,50 @@ const RegisterForm: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
+    // @ts-ignore
     try {
       // Execute reCAPTCHA
       const recaptchaToken = await executeRecaptcha(RECAPTCHA_ACTIONS.REGISTER);
 
       if (!recaptchaToken) {
         setError('Xác thực bảo mật thất bại. Vui lòng thử lại.');
+        setErrorType('warning');
         return;
       }
 
-      // Gửi dữ liệu cần thiết cho bước đăng ký đầu tiên
+      // Normalize email and username to lowercase before sending to backend
       const registerData = {
-        email: data.email,
-        username: data.username,
+        email: data.email.toLowerCase().trim(),
+        username: data.username.toLowerCase().trim(),
         password: data.password,
         recaptchaToken,
       };
 
-      await authService.register(registerData);
+      const respone = await authService.register(registerData);
+      console.log('Registration response:', respone);
       setRegistrationSuccess(true);
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+
+      // Xử lý các lỗi cụ thể
+      if (err.response?.data?.errorCode) {
+        switch (err.response.data.errorCode) {
+          case 'EMAIL_ALREADY_EXISTS':
+            setError('Email này đã được đăng ký. Vui lòng sử dụng email khác hoặc đăng nhập.');
+            setErrorType('warning');
+            break;
+          case 'USERNAME_ALREADY_EXISTS':
+            setError('Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên khác.');
+            setErrorType('warning');
+            break;
+          default:
+            setError(err.response.data.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setErrorType('error');
+        }
+      } else {
+        setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+        setErrorType('error');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -197,13 +221,11 @@ const RegisterForm: React.FC = () => {
           <div className="rounded-md shadow-sm">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-4">
-                  <div className="flex">
-                    <div className="ml-3">
-                      <p className="text-sm text-red-800">{error}</p>
-                    </div>
-                  </div>
-                </div>
+                <ErrorAlert
+                  message={error}
+                  type={errorType}
+                  onClose={() => setError(null)}
+                />
               )}
 
               <div>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import { ClientOnly } from './ClientOnly';
 
 interface RecaptchaWrapperProps {
   children: React.ReactNode;
@@ -16,16 +17,18 @@ export const RecaptchaWrapper: React.FC<RecaptchaWrapperProps> = ({ children }) 
   }
 
   return (
-    <GoogleReCaptchaProvider
-      reCaptchaKey={siteKey}
-      scriptProps={{
-        async: false,
-        defer: false,
-        appendTo: "head",
-        nonce: undefined,
-      }}
-    >
-      {children}
-    </GoogleReCaptchaProvider>
+    <ClientOnly fallback={<>{children}</>}>
+      <GoogleReCaptchaProvider
+        reCaptchaKey={siteKey}
+        scriptProps={{
+          async: false,
+          defer: false,
+          appendTo: "head",
+          nonce: undefined,
+        }}
+      >
+        {children}
+      </GoogleReCaptchaProvider>
+    </ClientOnly>
   );
 };

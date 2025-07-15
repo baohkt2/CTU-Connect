@@ -13,13 +13,14 @@ import { useRecaptcha, RECAPTCHA_ACTIONS } from '@/hooks/useRecaptcha';
 
 const forgotPasswordSchema = yup.object({
   email: yup
-    .string()
-    .required('Email CTU là bắt buộc')
-    .email('Email không hợp lệ')
-    .test('ctu-email', 'Email phải có đuôi @ctu.edu.vn', function(value) {
-      if (!value) return false;
-      return value.endsWith('@ctu.edu.vn') && value.length > '@ctu.edu.vn'.length;
-    }),
+      .string()
+      .required('Email CTU là bắt buộc')
+      .email('Email không hợp lệ')
+      .test('ctu-email', 'Email phải theo định dạng @ctu.edu.vn hoặc @student.ctu.edu.vn', function(value) {
+        if (!value) return false;
+        const normalizedValue = value.toLowerCase().trim();
+        return normalizedValue.endsWith('@ctu.edu.vn') || normalizedValue.endsWith('@student.ctu.edu.vn');
+      }),
 });
 
 type ForgotPasswordFormData = yup.InferType<typeof forgotPasswordSchema>;

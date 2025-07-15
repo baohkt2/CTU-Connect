@@ -85,6 +85,14 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   error?: string;
+  errorCode?: string;
+}
+
+export interface ApiError {
+  success: false;
+  message: string;
+  errorCode?: string;
+  errors?: { [key: string]: string };
 }
 
 export interface PaginatedResponse<T> {

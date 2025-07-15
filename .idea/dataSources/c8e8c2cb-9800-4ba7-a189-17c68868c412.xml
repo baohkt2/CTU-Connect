@@ -3,9 +3,17 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>887</IntrospectionStateNumber>
+      <Grants>1||-9223372036854775808|c|G
+1||10|c|G
+1||10|C|G
+1||10|T|G
+4||-9223372036854775808|c|G
+4||10|c|G
+4||10|C|G
+4||10|T|G</Grants>
+      <IntrospectionStateNumber>933</IntrospectionStateNumber>
       <ServerVersion>15.13</ServerVersion>
-      <StartupTime>1752407272</StartupTime>
+      <StartupTime>1752592757</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -802,7 +810,7 @@ true posixrules
 13270||10|C|G
 13270||-9223372036854775808|U|G
 13270||10|U|G</Grants>
-      <IntrospectionStateNumber>887</IntrospectionStateNumber>
+      <IntrospectionStateNumber>933</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4220,25 +4228,25 @@ true posixrules
     <schema id="262" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>887</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2025-07-13.12:26:10</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>933</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-07-15.15:42:27</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>518</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <sequence id="263" parent="262" name="email_verification_id_seq">
-      <ObjectId>24785</ObjectId>
+      <ObjectId>24820</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>872</StateNumber>
+      <StateNumber>895</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="264" parent="262" name="refresh_tokens_id_seq">
-      <ObjectId>24791</ObjectId>
+      <ObjectId>24826</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
-      <StateNumber>873</StateNumber>
+      <StateNumber>896</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
@@ -4250,5 +4258,282 @@ true posixrules
       <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
+    <table id="266" parent="262" name="email_verification">
+      <ObjectId>24821</ObjectId>
+      <StateNumber>906</StateNumber>
+      <AccessMethodId>2</AccessMethodId>
+      <OwnerName>postgres</OwnerName>
+    </table>
+    <table id="267" parent="262" name="refresh_tokens">
+      <ObjectId>24827</ObjectId>
+      <StateNumber>907</StateNumber>
+      <AccessMethodId>2</AccessMethodId>
+      <OwnerName>postgres</OwnerName>
+    </table>
+    <table id="268" parent="262" name="users">
+      <ObjectId>24832</ObjectId>
+      <StateNumber>906</StateNumber>
+      <AccessMethodId>2</AccessMethodId>
+      <OwnerName>postgres</OwnerName>
+    </table>
+    <column id="269" parent="266" name="id">
+      <IdentityKind>by-default</IdentityKind>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <SequenceId>24820</SequenceId>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="270" parent="266" name="created_at">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="271" parent="266" name="expiry_date">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="272" parent="266" name="is_verified">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>boolean|0s</StoredType>
+      <TypeId>16</TypeId>
+    </column>
+    <column id="273" parent="266" name="token">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="274" parent="266" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+      <StateNumber>895</StateNumber>
+      <StoredType>uuid|0s</StoredType>
+      <TypeId>2950</TypeId>
+    </column>
+    <foreign-key id="275" parent="266" name="fkbh3863tiicveqq2k27uooni0g">
+      <ColNames>user_id</ColNames>
+      <ObjectId>24845</ObjectId>
+      <StateNumber>906</StateNumber>
+      <RefKeyColPositions>1</RefKeyColPositions>
+      <RefTableId>24832</RefTableId>
+    </foreign-key>
+    <index id="276" parent="266" name="email_verification_pkey">
+      <ColNames>id</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24824</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>895</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <index id="277" parent="266" name="ukbo9diaxcddcqe31jh5xpk6rr4">
+      <ColNames>token</ColNames>
+      <ObjectId>24837</ObjectId>
+      <StateNumber>899</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <key id="278" parent="266" name="email_verification_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24825</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>895</StateNumber>
+      <UnderlyingIndexId>24824</UnderlyingIndexId>
+    </key>
+    <key id="279" parent="266" name="ukbo9diaxcddcqe31jh5xpk6rr4">
+      <ObjectId>24838</ObjectId>
+      <StateNumber>899</StateNumber>
+      <UnderlyingIndexId>24837</UnderlyingIndexId>
+    </key>
+    <column id="280" parent="267" name="id">
+      <IdentityKind>by-default</IdentityKind>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StateNumber>896</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <SequenceId>24826</SequenceId>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="281" parent="267" name="created_at">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StateNumber>896</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="282" parent="267" name="expiry_date">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StateNumber>896</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="283" parent="267" name="token">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StateNumber>896</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="284" parent="267" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StateNumber>896</StateNumber>
+      <StoredType>uuid|0s</StoredType>
+      <TypeId>2950</TypeId>
+    </column>
+    <foreign-key id="285" parent="267" name="fk1lih5y2npsf8u5o3vhdb9y0os">
+      <ColNames>user_id</ColNames>
+      <ObjectId>24850</ObjectId>
+      <StateNumber>907</StateNumber>
+      <RefKeyColPositions>1</RefKeyColPositions>
+      <RefTableId>24832</RefTableId>
+    </foreign-key>
+    <index id="286" parent="267" name="refresh_tokens_pkey">
+      <ColNames>id</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24830</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>896</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <index id="287" parent="267" name="ukghpmfn23vmxfu3spu3lfg4r2d">
+      <ColNames>token</ColNames>
+      <ObjectId>24839</ObjectId>
+      <StateNumber>901</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <key id="288" parent="267" name="refresh_tokens_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24831</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>896</StateNumber>
+      <UnderlyingIndexId>24830</UnderlyingIndexId>
+    </key>
+    <key id="289" parent="267" name="ukghpmfn23vmxfu3spu3lfg4r2d">
+      <ObjectId>24840</ObjectId>
+      <StateNumber>901</StateNumber>
+      <UnderlyingIndexId>24839</UnderlyingIndexId>
+    </key>
+    <column id="290" parent="268" name="id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>uuid|0s</StoredType>
+      <TypeId>2950</TypeId>
+    </column>
+    <column id="291" parent="268" name="created_at">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="292" parent="268" name="email">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>varchar(50)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="293" parent="268" name="is_active">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>boolean|0s</StoredType>
+      <TypeId>16</TypeId>
+    </column>
+    <column id="294" parent="268" name="password">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="295" parent="268" name="role">
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>varchar(20)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="296" parent="268" name="updated_at">
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="297" parent="268" name="username">
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StateNumber>897</StateNumber>
+      <StoredType>varchar(25)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <index id="298" parent="268" name="users_pkey">
+      <ColNames>id</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24835</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>897</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <index id="299" parent="268" name="uk6dotkott2kjsp8vw4d0m25fb7">
+      <ColNames>email</ColNames>
+      <ObjectId>24841</ObjectId>
+      <StateNumber>903</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <index id="300" parent="268" name="ukr43af9ap4edm43mmtq01oddj6">
+      <ColNames>username</ColNames>
+      <ObjectId>24843</ObjectId>
+      <StateNumber>905</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <key id="301" parent="268" name="users_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24836</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>897</StateNumber>
+      <UnderlyingIndexId>24835</UnderlyingIndexId>
+    </key>
+    <key id="302" parent="268" name="uk6dotkott2kjsp8vw4d0m25fb7">
+      <ObjectId>24842</ObjectId>
+      <StateNumber>903</StateNumber>
+      <UnderlyingIndexId>24841</UnderlyingIndexId>
+    </key>
+    <key id="303" parent="268" name="ukr43af9ap4edm43mmtq01oddj6">
+      <ObjectId>24844</ObjectId>
+      <StateNumber>905</StateNumber>
+      <UnderlyingIndexId>24843</UnderlyingIndexId>
+    </key>
   </database-model>
 </dataSource>

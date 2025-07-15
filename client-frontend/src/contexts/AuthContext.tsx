@@ -7,8 +7,8 @@ import { authService } from '@/services/authService';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: { email: string; password: string; recaptchaToken: string } | {
-    username: string;
+  login: (credentials: {
+    identifier: string;
     password: string;
     recaptchaToken: string
   }) => Promise<void>;
@@ -35,8 +35,15 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
     const checkAuth = async () => {
       // Kiểm tra xem có access token trong cookie không
       const hasToken = authService.getAccessTokenFromCookie();
@@ -67,12 +74,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [isHydrated]);
 
   const login = async (credentials: LoginRequest) => {
     try {
       const response = await authService.login(credentials);
       // Backend trả về user trong response, tokens được set trong cookies
+      console.log('Login response:', response);
       if (response.user) {
         setUser(response.user);
       }

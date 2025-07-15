@@ -2014,3 +2014,138 @@ Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAcc
 2025-07-14 12:26:42.448+0000 INFO  Neo4j Server shutdown initiated by request
 2025-07-14 12:26:42.449+0000 INFO  Stopping...
 2025-07-14 12:26:47.875+0000 INFO  Stopped.
+2025-07-14 13:23:46.026+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-14 13:23:46.041+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-14 13:23:46.043+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-14 13:23:46.046+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-14 13:23:46.049+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-14 13:23:46.050+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-14 13:23:46.051+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-14 13:23:46.052+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-14 13:23:46.053+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-14 13:23:46.058+0000 INFO  Starting...
+2025-07-14 13:23:47.425+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-14 13:23:48.093+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-14 13:23:55.941+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-14 13:23:56.001+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-14 13:23:56.547+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-14 13:23:56.549+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-14 13:23:56.552+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-14 13:23:56.553+0000 INFO  name: system
+2025-07-14 13:23:56.554+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-14 13:23:56.555+0000 INFO  Started.
+2025-07-15 11:11:32.056+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-15 11:11:32.073+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-15 11:11:32.075+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-15 11:11:32.076+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-15 11:11:32.077+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-15 11:11:32.080+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-15 11:11:32.081+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-15 11:11:32.082+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-15 11:11:32.083+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-15 11:11:32.090+0000 INFO  Starting...
+2025-07-15 11:11:33.432+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-15 11:11:34.165+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-15 11:11:42.536+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-15 11:11:42.596+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-15 11:11:43.240+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-15 11:11:43.241+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-15 11:11:43.245+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-15 11:11:43.246+0000 INFO  name: system
+2025-07-15 11:11:43.247+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-15 11:11:43.248+0000 INFO  Started.
+2025-07-15 13:15:41.664+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-15 13:15:41.672+0000 INFO  Stopping...
+2025-07-15 13:15:47.777+0000 INFO  Stopped.
+2025-07-15 14:13:02.406+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-15 14:13:02.417+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-15 14:13:02.419+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-15 14:13:02.419+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-15 14:13:02.421+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-15 14:13:02.422+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-15 14:13:02.423+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-15 14:13:02.423+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-15 14:13:02.425+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-15 14:13:02.430+0000 INFO  Starting...
+2025-07-15 14:13:03.932+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-15 14:13:04.692+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-15 14:13:12.872+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-15 14:13:12.921+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-15 14:13:13.484+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-15 14:13:13.485+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-15 14:13:13.488+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-15 14:13:13.489+0000 INFO  name: system
+2025-07-15 14:13:13.490+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-15 14:13:13.491+0000 INFO  Started.
+2025-07-15 15:02:03.657+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-15 15:02:03.685+0000 INFO  Stopping...
+2025-07-15 15:02:13.320+0000 INFO  Stopped.
+2025-07-15 15:03:42.238+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-15 15:03:42.249+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-15 15:03:42.251+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-15 15:03:42.252+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-15 15:03:42.253+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-15 15:03:42.254+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-15 15:03:42.254+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-15 15:03:42.255+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-15 15:03:42.256+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-15 15:03:42.260+0000 INFO  Starting...
+2025-07-15 15:03:43.429+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-15 15:03:44.059+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-15 15:03:51.488+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-15 15:03:51.545+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-15 15:03:52.143+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-15 15:03:52.144+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-15 15:03:52.147+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-15 15:03:52.148+0000 INFO  name: system
+2025-07-15 15:03:52.150+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-15 15:03:52.151+0000 INFO  Started.
+2025-07-15 15:14:22.216+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-15 15:14:22.218+0000 INFO  Stopping...
+2025-07-15 15:14:27.746+0000 INFO  Stopped.
+2025-07-15 15:19:37.077+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-15 15:19:37.082+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-15 15:19:37.083+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-15 15:19:37.084+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-15 15:19:37.084+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-15 15:19:37.085+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-15 15:19:37.085+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-15 15:19:37.086+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-15 15:19:37.086+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-15 15:19:37.088+0000 INFO  Starting...
+2025-07-15 15:19:37.913+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-15 15:19:38.465+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-15 15:19:46.069+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-15 15:19:46.111+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-15 15:19:46.727+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-15 15:19:46.729+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-15 15:19:46.732+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-15 15:19:46.733+0000 INFO  name: system
+2025-07-15 15:19:46.734+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-15 15:19:46.735+0000 INFO  Started.
+2025-07-15 16:46:20.267+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-15 16:46:20.363+0000 INFO  Stopping...
+2025-07-15 16:46:30.172+0000 INFO  Stopped.
+2025-07-15 17:07:22.192+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-15 17:07:22.203+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-15 17:07:22.204+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-15 17:07:22.205+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-15 17:07:22.206+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-15 17:07:22.207+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-15 17:07:22.208+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-15 17:07:22.208+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-15 17:07:22.209+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-15 17:07:22.214+0000 INFO  Starting...
+2025-07-15 17:07:24.467+0000 INFO  This instance is ServerId{313860e7} (313860e7-63c1-4ac8-8d09-3f96270c3c55)
+2025-07-15 17:07:25.598+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-15 17:07:40.004+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-15 17:07:40.074+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-15 17:07:40.793+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-15 17:07:40.795+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-15 17:07:40.799+0000 INFO  id: A7898152E1BD259933EF05D8F6AF66FB81638E1B4A509EF525A1733BA6103FEE
+2025-07-15 17:07:40.800+0000 INFO  name: system
+2025-07-15 17:07:40.801+0000 INFO  creationDate: 2025-07-10T11:58:49.966Z
+2025-07-15 17:07:40.801+0000 INFO  Started.
+2025-07-15 17:18:14.229+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-15 17:18:14.244+0000 INFO  Stopping...
+2025-07-15 17:18:20.045+0000 INFO  Stopped.
