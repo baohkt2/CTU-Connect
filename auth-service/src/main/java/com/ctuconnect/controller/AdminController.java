@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/auth/admin")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Admin Management", description = "Admin operations for user management")

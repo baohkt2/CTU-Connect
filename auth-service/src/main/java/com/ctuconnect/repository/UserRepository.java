@@ -15,13 +15,17 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-    Optional<UserEntity> findByEmail(String email);
+    @Query("SELECT u FROM UserEntity u WHERE LOWER(u.email) = LOWER(:email)")
+    Optional<UserEntity> findByEmail(@Param("email") String email);
 
-    Optional<UserEntity> findByUsername(String username);
+    @Query("SELECT u FROM UserEntity u WHERE LOWER(u.username) = LOWER(:username)")
+    Optional<UserEntity> findByUsername(@Param("username") String username);
 
-    boolean existsByEmail(String email);
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u WHERE LOWER(u.email) = LOWER(:email)")
+    boolean existsByEmail(@Param("email") String email);
 
-    boolean existsByUsername(String username);
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u WHERE LOWER(u.username) = LOWER(:username)")
+    boolean existsByUsername(@Param("username") String username);
 
     // Admin functionality methods
     long countByIsActive(boolean isActive);
@@ -37,8 +41,9 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     List<UserEntity> findTop10ByOrderByCreatedAtDesc();
 
+    @Query("SELECT u FROM UserEntity u WHERE LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
     Page<UserEntity> findByEmailContainingIgnoreCaseOrUsernameContainingIgnoreCase(
-            String email, String username, Pageable pageable);
+            @Param("email") String email, @Param("username") String username, Pageable pageable);
 
     Page<UserEntity> findByRole(String role, Pageable pageable);
 
@@ -47,6 +52,9 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     List<UserEntity> findByRole(String role);
 
     List<UserEntity> findByIsActive(boolean isActive);
+
+    @Query("SELECT u FROM UserEntity u WHERE LOWER(u.email) = LOWER(:identifier) OR LOWER(u.username) = LOWER(:identifier)")
+    Optional<UserEntity> findByEmailOrUsername(@Param("identifier") String identifier);
 
     @Query("SELECT u FROM UserEntity u WHERE u.id NOT IN " +
            "(SELECT ev.user.id FROM EmailVerificationEntity ev WHERE ev.isVerified = true)")

@@ -6,6 +6,9 @@ import com.ctuconnect.dto.RegisterRequest;
 import com.ctuconnect.entity.EmailVerificationEntity;
 import com.ctuconnect.entity.RefreshTokenEntity;
 import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.exception.EmailAlreadyExistsException;
+import com.ctuconnect.exception.UsernameAlreadyExistsException;
+import com.ctuconnect.mapper.UserMapper;
 import com.ctuconnect.repository.EmailVerificationRepository;
 import com.ctuconnect.repository.RefreshTokenRepository;
 import com.ctuconnect.repository.UserRepository;
@@ -17,9 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,15 +48,24 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        // Check if email already exists
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+        // Normalize email and username to lowercase
+        String normalizedEmail = request.getEmail().toLowerCase().trim();
+        String normalizedUsername = request.getUsername().toLowerCase().trim();
+
+        // Check if email already exists (case-insensitive)
+        if (userRepository.existsByEmail(normalizedEmail)) {
+            throw new EmailAlreadyExistsException("Email đã được đăng ký. Vui lòng sử dụng email khác.");
         }
 
-        // Create new user
+        // Check if username already exists (case-insensitive)
+        if (userRepository.existsByUsername(normalizedUsername)) {
+            throw new UsernameAlreadyExistsException("Tên đăng nhập đã được sử dụng. Vui lòng chọn tên khác.");
+        }
+
+        // Create new user with normalized email and username
         UserEntity user = UserEntity.builder()
-                .email(request.getEmail())
-                .username(request.getUsername())
+                .email(normalizedEmail)
+                .username(normalizedUsername)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole() != null ? request.getRole() : "USER")
                 .createdAt(LocalDateTime.now())
@@ -105,26 +114,29 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .role(user.getRole())
+                .tokenType("Bearer")
+                .user(UserMapper.toDto(user))
                 .build();
+
     }
 
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        // Authenticate user
+        // Normalize identifier to lowercase for search
+        String normalizedIdentifier = request.getIdentifier().toLowerCase().trim();
+
+        // Tìm user bằng email hoặc username (case-insensitive)
+        UserEntity user = userRepository.findByEmailOrUsername(normalizedIdentifier)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Authenticate user - sử dụng email làm username principal
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        user.getEmail(), // Luôn sử dụng email làm username principal
                         request.getPassword()
                 )
         );
-
-        // Get user
-        UserEntity user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if email is verified
         boolean isVerified = emailVerificationRepository.findByUser(user)
@@ -151,11 +163,11 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .role(user.getRole())
                 .tokenType("Bearer")
+                .user(UserMapper.toDto(user))
                 .build();
+
+
     }
 
     @Override
@@ -190,17 +202,20 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(newRefreshToken)
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .role(user.getRole())
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .user(UserMapper.toDto(user))
                 .build();
+
     }
 
     @Override
     @Transactional
     public void forgotPassword(String email) {
-        UserEntity user = userRepository.findByEmail(email)
+        // Normalize email to lowercase
+        String normalizedEmail = email.toLowerCase().trim();
+
+        UserEntity user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Generate password reset token
@@ -296,6 +311,43 @@ public class AuthServiceImpl implements AuthService {
         userVerificationEvent.put("verificationToken", token);
         userVerificationEvent.put("isVerified", true);
         kafkaTemplate.send("user-verification", user.getId().toString(), userVerificationEvent);
+    }
+
+    @Override
+    @Transactional
+    public void resendVerificationEmail(String oldToken) {
+        // Find the old verification token
+        EmailVerificationEntity oldVerification = emailVerificationRepository.findByToken(oldToken)
+                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
+
+        UserEntity user = oldVerification.getUser();
+
+        // Check if email is already verified
+        if (oldVerification.isVerified()) {
+            throw new RuntimeException("Email is already verified");
+        }
+
+        // Generate new verification token
+        String newVerificationToken = UUID.randomUUID().toString();
+
+        // Update the verification entity with new token and expiry
+        oldVerification.setToken(newVerificationToken);
+        oldVerification.setExpiryDate(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli());
+        oldVerification.setCreatedAt(LocalDateTime.now());
+
+        emailVerificationRepository.save(oldVerification);
+
+        // Send new verification email
+        emailService.sendVerificationEmail(user.getEmail(), newVerificationToken);
+
+        // Publish resend verification event
+        Map<String, Object> resendVerificationEvent = new HashMap<>();
+        resendVerificationEvent.put("userId", user.getId());
+        resendVerificationEvent.put("email", user.getEmail());
+        resendVerificationEvent.put("oldToken", oldToken);
+        resendVerificationEvent.put("newToken", newVerificationToken);
+        resendVerificationEvent.put("eventType", "RESENT");
+        kafkaTemplate.send("user-verification", user.getId().toString(), resendVerificationEvent);
     }
 
     @Override

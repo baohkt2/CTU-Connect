@@ -30,7 +30,6 @@ public class UserEntity {
     // Existing fields
     private String email;
     private String studentId;
-
     private String batch;
     private String fullName;
     private String role;

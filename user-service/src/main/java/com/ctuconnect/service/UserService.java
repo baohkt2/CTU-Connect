@@ -72,6 +72,7 @@ public class UserService {
         // Update only profile fields (not system fields like id, createdAt)
         if (userDTO.getFullName() != null) userEntity.setFullName(userDTO.getFullName());
         if (userDTO.getEmail() != null) userEntity.setEmail(userDTO.getEmail());
+        if (userDTO.getUsername() != null) userEntity.setUsername(userDTO.getUsername());
         if (userDTO.getStudentId() != null) userEntity.setStudentId(userDTO.getStudentId());
         if (userDTO.getBatch() != null) userEntity.setBatch(userDTO.getBatch());
         if (userDTO.getCollege() != null) userEntity.setCollege(userDTO.getCollege());
@@ -99,7 +100,7 @@ public class UserService {
     }
 
     /**
-     * Send a friend request (unidirectional relationship)
+     * Send a friend request - GỬI LỜI MỜI KẾT BẠN
      */
     @Transactional
     public void addFriend(String userId, String friendId) {
@@ -107,27 +108,77 @@ public class UserService {
             throw new IllegalArgumentException("Cannot add yourself as a friend");
         }
 
+        // Kiểm tra user tồn tại
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
         UserEntity friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
 
-        // Neo4j will automatically create the FRIEND relationship
-        user.getFriends().add(friend);
-        userRepository.save(user);
+        // Kiểm tra đã là bạn bè chưa
+        if (userRepository.areFriends(userId, friendId)) {
+            throw new IllegalStateException("Users are already friends");
+        }
 
-        // Publish friend request event
-        userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REQUEST",
-            "CREATED"
-        );
+        // Kiểm tra đã có friend request chưa
+        if (userRepository.hasPendingFriendRequest(userId, friendId)) {
+            throw new IllegalStateException("Friend request already sent");
+        }
+
+        // Kiểm tra xem có friend request ngược lại không (để auto-accept)
+        if (userRepository.hasPendingFriendRequest(friendId, userId)) {
+            // Tự động chấp nhận nếu đã có request ngược lại
+            userRepository.acceptFriendRequest(friendId, userId);
+
+            // Publish friend accepted event
+            userEventPublisher.publishUserRelationshipChangedEvent(
+                userId,
+                friendId,
+                "FRIEND_ACCEPTED",
+                "UPDATED"
+            );
+        } else {
+            // Gửi friend request mới
+            userRepository.sendFriendRequest(userId, friendId);
+
+            // Publish friend request event
+            userEventPublisher.publishUserRelationshipChangedEvent(
+                userId,
+                friendId,
+                "FRIEND_REQUEST",
+                "CREATED"
+            );
+        }
     }
 
     /**
-     * Accept a friend request (make relationship bidirectional)
+     * Get friend requests received by this user - LỜI MỜI KẾT BẠN NHẬN ĐƯỢC
+     */
+    public List<UserDTO> getFriendRequests(String userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        List<UserEntity> incomingRequests = userRepository.findIncomingFriendRequests(userId);
+        return incomingRequests.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get friend requests sent by this user - LỜI MỜI KẾT BẠN ĐÃ GỬI
+     */
+    public List<UserDTO> getFriendRequested(String userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        List<UserEntity> outgoingRequests = userRepository.findOutgoingFriendRequests(userId);
+        return outgoingRequests.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Accept a friend request - CHẤP NHẬN LỜI MỜI KẾT BẠN
      */
     @Transactional
     public void acceptFriendInvite(String userId, String friendId) {
@@ -137,17 +188,13 @@ public class UserService {
         UserEntity friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
 
-        // Check if friend request exists
-        boolean requestExists = friend.getFriends().stream()
-                .anyMatch(f -> f.getId().equals(userId));
-
-        if (!requestExists) {
-            throw new IllegalStateException("No friend request found from " + friendId);
+        // Kiểm tra có friend request từ friendId đến userId không
+        if (!userRepository.hasPendingFriendRequest(friendId, userId)) {
+            throw new IllegalStateException("No pending friend request from " + friendId);
         }
 
-        // Make relationship bidirectional
-        user.getFriends().add(friend);
-        userRepository.save(user);
+        // Chấp nhận friend request
+        userRepository.acceptFriendRequest(friendId, userId);
 
         // Publish friend accepted event
         userEventPublisher.publishUserRelationshipChangedEvent(
@@ -159,28 +206,35 @@ public class UserService {
     }
 
     /**
-     * Reject a friend request
+     * Reject a friend request - TỪ CHỐI LỜI MỜI KẾT BẠN
      */
     @Transactional
     public void rejectFriendInvite(String userId, String friendId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
         UserEntity friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
 
-        // Remove the friend request (unidirectional relationship)
-        friend.getFriends().removeIf(f -> f.getId().equals(userId));
-        userRepository.save(friend);
+        // Kiểm tra có friend request từ friendId đến userId không
+        if (!userRepository.hasPendingFriendRequest(friendId, userId)) {
+            throw new IllegalStateException("No pending friend request from " + friendId);
+        }
+
+        // Từ chối friend request
+        userRepository.rejectFriendRequest(friendId, userId);
 
         // Publish friend rejected event
         userEventPublisher.publishUserRelationshipChangedEvent(
             userId,
             friendId,
             "FRIEND_REQUEST",
-            "DELETED"
+            "REJECTED"
         );
     }
 
     /**
-     * Remove a friend (unfriend)
+     * Remove a friend (unfriend) - HỦY KẾT BẠN
      */
     @Transactional
     public void removeFriend(String userId, String friendId) {
@@ -190,12 +244,13 @@ public class UserService {
         UserEntity friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Friend not found with id: " + friendId));
 
-        // Remove bidirectional friendship
-        user.getFriends().removeIf(f -> f.getId().equals(friendId));
-        friend.getFriends().removeIf(f -> f.getId().equals(userId));
+        // Kiểm tra có phải bạn bè không
+        if (!userRepository.areFriends(userId, friendId)) {
+            throw new IllegalStateException("Users are not friends");
+        }
 
-        userRepository.save(user);
-        userRepository.save(friend);
+        // Xóa friendship
+        userRepository.deleteFriendship(userId, friendId);
 
         // Publish friend removed event
         userEventPublisher.publishUserRelationshipChangedEvent(
@@ -207,21 +262,22 @@ public class UserService {
     }
 
     /**
-     * Get all friends of a user
+     * Get all friends of a user - LẤY DANH SÁCH BẠN BÈ
      */
     public FriendsDTO getFriends(String userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        List<UserDTO> friends = user.getFriends().stream()
+        List<UserEntity> friends = userRepository.findFriends(userId);
+        List<UserDTO> friendDTOs = friends.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
 
-        return new FriendsDTO(friends);
+        return new FriendsDTO(friendDTOs);
     }
 
     /**
-     * Get mutual friends between two users
+     * Get mutual friends between two users - LẤY BẠN CHUNG
      */
     public FriendsDTO getMutualFriends(String userId, String otherUserId) {
         UserEntity user = userRepository.findById(userId)
@@ -230,60 +286,66 @@ public class UserService {
         UserEntity otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new RuntimeException("Other user not found with id: " + otherUserId));
 
-        Set<String> userFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-
-        List<UserDTO> mutualFriends = otherUser.getFriends().stream()
-                .filter(friend -> userFriendIds.contains(friend.getId()))
+        List<UserEntity> mutualFriends = userRepository.findMutualFriends(userId, otherUserId);
+        List<UserDTO> mutualFriendDTOs = mutualFriends.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
 
-        return FriendsDTO.ofMutualFriends(mutualFriends);
+        return FriendsDTO.ofMutualFriends(mutualFriendDTOs);
     }
 
     /**
-     * Get friend suggestions based on mutual connections and similar attributes
+     * Get friend suggestions - GỢI Ý KẾT BẠN
      */
     public FriendsDTO getFriendSuggestions(String userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Get existing friend IDs to exclude them from suggestions
-        Set<String> existingFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-        existingFriendIds.add(userId); // Exclude self
-
-        // Find users with similar attributes or mutual friends
-        List<UserEntity> allUsers = userRepository.findAll();
-
-        List<UserDTO> suggestions = allUsers.stream()
-                .filter(u -> !existingFriendIds.contains(u.getId()))
+        List<UserEntity> suggestions = userRepository.findFriendSuggestions(userId);
+        List<UserDTO> suggestionDTOs = suggestions.stream()
                 .map(u -> {
                     UserDTO dto = mapToDTO(u);
-                    // Calculate similarity score
+                    // Calculate mutual friends count
+                    List<UserEntity> mutualFriends = userRepository.findMutualFriends(userId, u.getId());
+                    dto.setMutualFriendsCount(mutualFriends.size());
+
+                    // Calculate similarity
                     calculateSimilarityScore(user, u, dto);
                     return dto;
                 })
-                .sorted((a, b) -> Integer.compare(b.getMutualFriendsCount(), a.getMutualFriendsCount()))
-                .limit(10)
                 .collect(Collectors.toList());
 
-        return FriendsDTO.ofSuggestions(suggestions);
+        return FriendsDTO.ofSuggestions(suggestionDTOs);
     }
 
     /**
-     * Filter users by relationship criteria
+     * Filter users by relationship criteria - LỌC NGƯỜI DÙNG THEO TIÊU CHÍ
      */
     public List<UserDTO> getUsersByRelationshipFilters(String userId, RelationshipFilterDTO filters) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        List<UserEntity> allUsers = userRepository.findAll();
+        List<UserEntity> filteredUsers;
 
-        return allUsers.stream()
-                .filter(u -> true) // Exclude self
+        // Sử dụng Neo4j query để filter hiệu quả
+        if (filters.getCollege() != null || filters.getFaculty() != null ||
+            filters.getMajor() != null || filters.getBatch() != null) {
+
+            // Convert filters to boolean flags for Neo4j query
+            boolean isSameCollege = filters.getCollege() != null;
+            boolean isSameFaculty = filters.getFaculty() != null;
+            boolean isSameMajor = filters.getMajor() != null;
+            boolean isSameBatch = filters.getBatch() != null;
+
+            filteredUsers = userRepository.findUsersWithFilters(userId, isSameCollege, isSameFaculty, isSameMajor, isSameBatch);
+        } else {
+            // If no specific filters, get all users except self
+            filteredUsers = userRepository.findAll().stream()
+                    .filter(u -> !u.getId().equals(userId))
+                    .collect(Collectors.toList());
+        }
+
+        return filteredUsers.stream()
                 .filter(u -> matchesFilters(user, u, filters))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -306,15 +368,21 @@ public class UserService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Remove all friend relationships
-        user.getFriends().clear();
-        userRepository.save(user);
+        // Xóa tất cả friend relationships và friend requests
+        List<UserEntity> friends = userRepository.findFriends(userId);
+        for (UserEntity friend : friends) {
+            userRepository.deleteFriendship(userId, friend.getId());
+        }
 
-        // Remove this user from other users' friend lists
-        List<UserEntity> allUsers = userRepository.findAll();
-        for (UserEntity otherUser : allUsers) {
-            otherUser.getFriends().removeIf(friend -> friend.getId().equals(userId));
-            userRepository.save(otherUser);
+        // Xóa tất cả friend requests (incoming và outgoing)
+        List<UserEntity> incomingRequests = userRepository.findIncomingFriendRequests(userId);
+        for (UserEntity requester : incomingRequests) {
+            userRepository.rejectFriendRequest(requester.getId(), userId);
+        }
+
+        List<UserEntity> outgoingRequests = userRepository.findOutgoingFriendRequests(userId);
+        for (UserEntity receiver : outgoingRequests) {
+            userRepository.rejectFriendRequest(userId, receiver.getId());
         }
 
         // Delete the user
@@ -325,21 +393,11 @@ public class UserService {
      * Calculate similarity score for friend suggestions
      */
     private void calculateSimilarityScore(UserEntity user, UserEntity candidate, UserDTO candidateDTO) {
-        // Count mutual friends - Updated to use String UUID
-        Set<String> userFriendIds = user.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-
-        int mutualFriendsCount = (int) candidate.getFriends().stream()
-                .mapToLong(friend -> userFriendIds.contains(friend.getId()) ? 1 : 0)
-                .sum();
-
-        candidateDTO.setMutualFriendsCount(mutualFriendsCount);
-
         // Check similarity attributes
         candidateDTO.setSameCollege(Objects.equals(user.getCollege(), candidate.getCollege()));
         candidateDTO.setSameFaculty(Objects.equals(user.getFaculty(), candidate.getFaculty()));
         candidateDTO.setSameMajor(Objects.equals(user.getMajor(), candidate.getMajor()));
+        candidateDTO.setSameBatch(Objects.equals(user.getBatch(), candidate.getBatch()));
     }
 
     /**
@@ -371,6 +429,7 @@ public class UserService {
         UserDTO dto = new UserDTO();
         dto.setId(entity.getId());
         dto.setEmail(entity.getEmail());
+        dto.setUsername(entity.getUsername());
         dto.setStudentId(entity.getStudentId());
         dto.setBatch(entity.getBatch());
         dto.setFullName(entity.getFullName());
@@ -382,12 +441,7 @@ public class UserService {
         dto.setBio(entity.getBio());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
-
-        // Set friend IDs - Updated to use String UUID
-        Set<String> friendIds = entity.getFriends().stream()
-                .map(UserEntity::getId)
-                .collect(Collectors.toSet());
-        dto.setFriendIds(friendIds);
+        dto.setIsActive(entity.getIsActive());
 
         return dto;
     }
@@ -399,6 +453,7 @@ public class UserService {
         UserEntity entity = new UserEntity();
         entity.setId(dto.getId());
         entity.setEmail(dto.getEmail());
+        entity.setUsername(dto.getUsername());
         entity.setStudentId(dto.getStudentId());
         entity.setBatch(dto.getBatch());
         entity.setFullName(dto.getFullName());
@@ -408,6 +463,7 @@ public class UserService {
         entity.setMajor(dto.getMajor());
         entity.setGender(dto.getGender());
         entity.setBio(dto.getBio());
+        entity.setIsActive(dto.getIsActive());
         return entity;
     }
 }

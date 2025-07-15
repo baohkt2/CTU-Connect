@@ -128,14 +128,15 @@ services:
     container_name: neo4j-graph-db
     hostname: neo4j
     ports:
-      - "7474:7474" # This maps host port 7474 to container's HTTP port 7474 (for the Browser)
-      - "7687:7687" # This maps host port 7687 to container's Bolt port 7687 (for drivers/applications)
+      - "7474:7474"
+      - "7687:7687"
     volumes:
       - neo4j-data:/data
       - ./database/neo4j/conf/neo4j.conf:/conf/neo4j.conf
       - ./database/neo4j/logs:/logs
       - ./database/neo4j/plugins:/plugins
       - ./database/neo4j/import:/import
+      - ./database/neo4j/init.sh:/docker-entrypoint-initdb.d/init.sh
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
@@ -145,15 +146,12 @@ services:
     networks:
       - ctuconnect-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474" ]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 40s
-    develop: # Phần mới
-      watch:
-        - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
-          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
 
   # Kafka for Event Streaming (No ZooKeeper needed)
   kafka:

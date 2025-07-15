@@ -76,6 +76,12 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully.");
     }
 
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerificationEmail(@RequestBody ResendVerificationRequest request) {
+        authService.resendVerificationEmail(request.getToken());
+        return ResponseEntity.ok("Verification email sent successfully.");
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequest request, HttpServletResponse response) {
         authService.logout(request.getRefreshToken());
