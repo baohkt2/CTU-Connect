@@ -4,44 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Auth Client-Frontend fixing">
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/CorsConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/ResendVerificationRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/EmailAlreadyExistsException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/exception/UsernameAlreadyExistsException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/mapper/UserMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/public/contact.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/verify-email/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ClientOnly.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/ErrorAlert.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Loading.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/c8e8c2cb-9800-4ba7-a189-17c68868c412/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/controller/GlobalExceptionHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/AuthResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/LoginRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/RegisterRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/dto/UserDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/impl/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/RecaptchaWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/RecaptchaWrapper.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/ForgotPasswordForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ForgotPasswordForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/hooks/useRecaptcha.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useRecaptcha.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/lib/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/lib/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/authService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/ResetPasswordForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ResetPasswordForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
     </list>
@@ -75,10 +44,11 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="e8a71b52e8023da453cf94c786f689ca146ba257" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -194,49 +164,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
-    <configuration name="JwtKeyGeneratorUtility" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ctuconnect.util.JwtKeyGeneratorUtility" />
-      <module name="auth-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ctuconnect.util.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AuthControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="auth-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ctuconnect.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.ctuconnect.controller" />
-      <option name="MAIN_CLASS_NAME" value="com.ctuconnect.controller.AuthControllerTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JwtTokenProviderTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="auth-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ctuconnect.security.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.ctuconnect.security" />
-      <option name="MAIN_CLASS_NAME" value="com.ctuconnect.security.JwtTokenProviderTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.ApiGatewayApplication" />
@@ -314,12 +241,51 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="api-gateway" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yml.auth-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
               <option value="auth-service" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.auth_db: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="auth_db" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.media_db: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="media_db" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -341,12 +307,12 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.JwtKeyGeneratorUtility" />
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.auth_db: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
-      <item itemvalue="JUnit.AuthControllerTest" />
-      <item itemvalue="JUnit.JwtTokenProviderTest" />
       <item itemvalue="Spring Boot.ChatServiceApplication" />
       <item itemvalue="Spring Boot.PostServiceApplication" />
       <item itemvalue="Spring Boot.ApiGatewayApplication" />
@@ -358,11 +324,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.JwtKeyGeneratorUtility" />
-        <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
-        <item itemvalue="JUnit.JwtTokenProviderTest" />
-        <item itemvalue="JUnit.AuthControllerTest" />
+        <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.auth_db: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -441,6 +407,7 @@
       <workItem from="1752577243931" duration="13560000" />
       <workItem from="1752597854477" duration="1142000" />
       <workItem from="1752599074480" duration="664000" />
+      <workItem from="1752805943127" duration="2842000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -597,7 +564,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="fix-database" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
