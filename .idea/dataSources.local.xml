@@ -16,5 +16,15 @@
         </introspection-scope>
       </schema-mapping>
     </data-source>
+    <data-source name="post_db@localhost" uuid="24e5b106-f344-46e5-96f1-d6fe92360e79">
+      <database-info product="Mongo DB" version="7.0.21" jdbc-version="4.2" driver-name="MongoDB JDBC Driver" driver-version="1.20" dbms="MONGO" exact-version="7.0.21" exact-driver-version="1.20" />
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="schema" negative="1" />
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
   </component>
 </project>

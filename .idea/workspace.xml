@@ -4,15 +4,64 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Pre-build Media-service">
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/media_db/01-init.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/config/CloudinaryConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/config/KafkaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/controller/MediaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/dto/MediaResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/dto/MediaUploadRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/entity/Media.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/exception/MediaNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/exception/MediaUploadException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/repository/MediaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/service/KafkaProducerService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/service/MediaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/src/main/resources/bootstrap.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media-service/test-media.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateCommentRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateInteractionRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreatePostRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/UpdatePostRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/test-post-service.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/RegisterForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/ResetPasswordForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/ResetPasswordForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/media-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/media-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/test/java/vn/ctu/edu/postservice/PostServiceApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/test/java/com/ctuconnect/postservice/PostServiceApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +122,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -86,75 +135,79 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.JwtKeyGeneratorUtility.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.adminer: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.auth-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.auth_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.user-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.eureka-server/Dockerfile build.executor&quot;: &quot;Run&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.EmailServiceTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.JwtTokenProviderTest.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
-    &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;Spring Boot.AuthServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;fix-database&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.28134558&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.JwtKeyGeneratorUtility.executor": "Run",
+    "Docker.docker-compose.yml.adminer: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.auth-service: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.auth_db: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.media-service: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.post-service: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml.user-service: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yml: Compose Deployment.executor": "Run",
+    "Docker.eureka-server/Dockerfile build.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.AuthControllerTest.executor": "Run",
+    "JUnit.AuthServiceTest.executor": "Run",
+    "JUnit.EmailServiceTest.executor": "Run",
+    "JUnit.JwtTokenProviderTest.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "Database connection parameters found",
+    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "Spring Boot.AuthServiceApplication.executor": "Run",
+    "Spring Boot.EurekaServerApplication.executor": "Run",
+    "com.intellij.ide.FileNotInSourceRootChecker.no.check": "true",
+    "git-widget-placeholder": "fix-database",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/LVTN/ctu-connect",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.splitter.proportion": "0.28134558",
+    "ts.external.directory.path": "D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mongo",
+      "postgresql"
     ],
-    &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;eaa90a37-8385-4cd3-af6e-aee505cea9ef&quot;
+    "RunConfigurationTargetLRU": [
+      "eaa90a37-8385-4cd3-af6e-aee505cea9ef"
     ]
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
       <recent name="D:\LVTN\ctu-connect\client-frontend\public" />
       <recent name="D:\LVTN\ctu-connect\client-frontend\src\assets" />
-      <recent name="D:\LVTN\ctu-connect" />
-      <recent name="D:\LVTN\ctu-connect\database\neo4j\import" />
-      <recent name="D:\LVTN\ctu-connect\database\neo4j\tasks" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -163,7 +216,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml.post-service: Compose Deployment">
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.ApiGatewayApplication" />
@@ -195,6 +248,13 @@
     <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="eureka-server" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PostServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="post-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.postservice.PostServiceApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -241,19 +301,6 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="api-gateway" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <configuration name="docker-compose.yml.auth-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -267,12 +314,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.auth_db: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.media-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="auth_db" />
+              <option value="media-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -286,6 +333,19 @@
           <option name="services">
             <list>
               <option value="media_db" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.post-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="post-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -308,11 +368,12 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.auth_db: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
+      <item itemvalue="Spring Boot.PostServiceApplication (1)" />
       <item itemvalue="Spring Boot.ChatServiceApplication" />
       <item itemvalue="Spring Boot.PostServiceApplication" />
       <item itemvalue="Spring Boot.ApiGatewayApplication" />
@@ -324,11 +385,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.auth_db: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -407,7 +468,7 @@
       <workItem from="1752577243931" duration="13560000" />
       <workItem from="1752597854477" duration="1142000" />
       <workItem from="1752599074480" duration="664000" />
-      <workItem from="1752805943127" duration="2842000" />
+      <workItem from="1752805943127" duration="15162000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -553,7 +614,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752500988551</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Pre-build Media-service">
+      <option name="closed" value="true" />
+      <created>1752809136342</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1752809136342</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -600,7 +669,8 @@
     <MESSAGE value="AuthService and UserService OK" />
     <MESSAGE value="Auth Client-Frontend v1" />
     <MESSAGE value="Auth Client-Frontend fixing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Auth Client-Frontend fixing" />
+    <MESSAGE value="Pre-build Media-service" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pre-build Media-service" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
