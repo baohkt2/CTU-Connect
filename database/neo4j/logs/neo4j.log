@@ -2218,23 +2218,3 @@ Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAcc
 2025-07-18 04:11:53.871+0000 INFO  Neo4j Server shutdown initiated by request
 2025-07-18 04:11:53.872+0000 INFO  Stopping...
 2025-07-18 04:11:59.113+0000 INFO  Stopped.
-2025-07-18 07:49:14.045+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
-2025-07-18 07:49:14.059+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
-2025-07-18 07:49:14.060+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
-2025-07-18 07:49:14.061+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
-2025-07-18 07:49:14.063+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
-2025-07-18 07:49:14.065+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
-2025-07-18 07:49:14.066+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
-2025-07-18 07:49:14.067+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
-2025-07-18 07:49:14.068+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
-2025-07-18 07:49:14.075+0000 INFO  Starting...
-2025-07-18 07:49:16.197+0000 INFO  This instance is ServerId{506ae2c2} (506ae2c2-1912-45ae-b50b-4f8592d30408)
-2025-07-18 07:49:17.634+0000 INFO  ======== Neo4j 5.13.0 ========
-2025-07-18 07:49:38.329+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
-2025-07-18 07:49:38.514+0000 INFO  Bolt enabled on 0.0.0.0:7687.
-2025-07-18 07:49:40.629+0000 INFO  HTTP enabled on 0.0.0.0:7474.
-2025-07-18 07:49:40.646+0000 INFO  Remote interface available at http://localhost:7474/
-2025-07-18 07:49:40.660+0000 INFO  id: F6E112903F0AB594211F1C34BC6D9AA143DA4F0AB213F41AC8C31A4BA71DD257
-2025-07-18 07:49:40.664+0000 INFO  name: system
-2025-07-18 07:49:40.667+0000 INFO  creationDate: 2025-07-18T02:39:12.989Z
-2025-07-18 07:49:40.672+0000 INFO  Started.
