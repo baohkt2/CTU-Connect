@@ -2,6 +2,7 @@ package com.ctuconnect.service;
 
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.enums.Role;
 import com.ctuconnect.repository.UserRepository;
 import com.ctuconnect.security.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 /**
  * Service để đồng bộ dữ liệu user giữa auth-db và user-db
@@ -35,7 +37,7 @@ public class UserSyncService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userId); // ID đồng bộ với auth-db
         userEntity.setEmail(email);
-        userEntity.setRole(role);
+        userEntity.setRole(Role.valueOf(role));
         userEntity.setCreatedAt(LocalDateTime.now());
         userEntity.setUpdatedAt(LocalDateTime.now());
 
@@ -53,7 +55,7 @@ public class UserSyncService {
 
         // Chỉ cập nhật những field được đồng bộ từ auth-db
         userEntity.setEmail(email);
-        userEntity.setRole(role);
+        userEntity.setRole(Role.valueOf(role));
         userEntity.setUpdatedAt(LocalDateTime.now());
 
         UserEntity updatedUser = userRepository.save(userEntity);
@@ -122,17 +124,64 @@ public class UserSyncService {
         dto.setEmail(entity.getEmail());
         dto.setUsername(entity.getUsername());
         dto.setFullName(entity.getFullName());
-        dto.setStudentId(entity.getStudentId());
-        dto.setBatch(entity.getBatch());
-        dto.setCollege(entity.getCollege());
-        dto.setFaculty(entity.getFaculty());
-        dto.setMajor(entity.getMajor());
-        dto.setGender(entity.getGender());
+        dto.setRole(entity.getRole() != null ? entity.getRole().toString() : null);
         dto.setBio(entity.getBio());
-        dto.setRole(entity.getRole());
+        dto.setIsActive(entity.getIsActive());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
-        dto.setIsActive(entity.getIsActive());
+
+        // Student fields
+        dto.setStudentId(entity.getStudentId());
+
+        // Faculty fields
+        dto.setStaffCode(entity.getStaffCode());
+        dto.setPosition(entity.getPosition());
+        dto.setAcademicTitle(entity.getAcademicTitle());
+        dto.setDegree(entity.getDegree());
+
+        // Academic information - codes
+        dto.setMajorCode(entity.getMajorCode());
+        dto.setFacultyCode(entity.getFacultyCode());
+        dto.setCollegeCode(entity.getCollegeCode());
+        dto.setGenderCode(entity.getGenderCode());
+
+        // Academic information - names
+        dto.setMajorName(entity.getMajorName());
+        dto.setFacultyName(entity.getFacultyName());
+        dto.setCollegeName(entity.getCollegeName());
+        dto.setGenderName(entity.getGenderName());
+
+        // Batch information
+        if (entity.getBatchYear() != null) {
+            try {
+                dto.setBatchYear(Integer.valueOf(entity.getBatchYear()));
+            } catch (NumberFormatException e) {
+                // Handle invalid batch year format
+                dto.setBatch(entity.getBatchYear());
+            }
+        }
+
+        // Legacy fields for backward compatibility
+        dto.setMajor(entity.getMajorName());
+        dto.setFaculty(entity.getFacultyName());
+        dto.setCollege(entity.getCollegeName());
+        dto.setGender(entity.getGenderName());
+        dto.setBatch(entity.getBatchYear());
+
+        // Media fields
+        dto.setAvatarUrl(entity.getAvatarUrl());
+        dto.setBackgroundUrl(entity.getBackgroundUrl());
+
+        // Friends mapping
+        if (entity.getFriends() != null) {
+            dto.setFriendIds(
+                    entity.getFriends().stream()
+                            .map(UserEntity::getId)
+                            .collect(Collectors.toSet())
+            );
+        }
+
         return dto;
     }
+
 }

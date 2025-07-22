@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +21,9 @@ public class FriendsDTO {
     // Constructor chỉ với danh sách friends
     public FriendsDTO(List<UserDTO> friends) {
         this.friends = friends;
+        this.friendIds = friends.stream()
+                .map(UserDTO::getId)
+                .collect(Collectors.toList());
     }
 
     // Constructor chỉ với danh sách mutual friends

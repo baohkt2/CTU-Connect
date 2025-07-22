@@ -4,6 +4,7 @@ import com.ctuconnect.dto.FriendsDTO;
 import com.ctuconnect.dto.RelationshipFilterDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.enums.Role;
 import com.ctuconnect.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,18 +70,37 @@ public class UserService {
 
         UserEntity userEntity = userEntityOpt.get();
 
-        // Update only profile fields (not system fields like id, createdAt)
+        // Update basic profile fields
         if (userDTO.getFullName() != null) userEntity.setFullName(userDTO.getFullName());
         if (userDTO.getEmail() != null) userEntity.setEmail(userDTO.getEmail());
         if (userDTO.getUsername() != null) userEntity.setUsername(userDTO.getUsername());
-        if (userDTO.getStudentId() != null) userEntity.setStudentId(userDTO.getStudentId());
-        if (userDTO.getBatch() != null) userEntity.setBatch(userDTO.getBatch());
-        if (userDTO.getCollege() != null) userEntity.setCollege(userDTO.getCollege());
-        if (userDTO.getFaculty() != null) userEntity.setFaculty(userDTO.getFaculty());
-        if (userDTO.getMajor() != null) userEntity.setMajor(userDTO.getMajor());
-        if (userDTO.getGender() != null) userEntity.setGender(userDTO.getGender());
         if (userDTO.getBio() != null) userEntity.setBio(userDTO.getBio());
-        if (userDTO.getRole() != null) userEntity.setRole(userDTO.getRole());
+
+        // Update role safely
+        if (userDTO.getRole() != null) {
+            try {
+                userEntity.setRole(Role.valueOf(userDTO.getRole()));
+            } catch (IllegalArgumentException e) {
+                // Keep existing role if invalid role provided
+            }
+        }
+
+        // Update student-specific fields
+        if (userDTO.getStudentId() != null) userEntity.setStudentId(userDTO.getStudentId());
+
+        // Update faculty-specific fields
+        if (userDTO.getStaffCode() != null) userEntity.setStaffCode(userDTO.getStaffCode());
+        if (userDTO.getPosition() != null) userEntity.setPosition(userDTO.getPosition());
+        if (userDTO.getAcademicTitle() != null) userEntity.setAcademicTitle(userDTO.getAcademicTitle());
+        if (userDTO.getDegree() != null) userEntity.setDegree(userDTO.getDegree());
+
+        // Update media fields
+        if (userDTO.getAvatarUrl() != null) userEntity.setAvatarUrl(userDTO.getAvatarUrl());
+        if (userDTO.getBackgroundUrl() != null) userEntity.setBackgroundUrl(userDTO.getBackgroundUrl());
+
+        // Note: Academic relationships (major, batch, gender, faculty, college)
+        // should be handled through separate service methods that properly
+        // manage Neo4j relationships rather than direct field updates
 
         userEntity.setUpdatedAt(LocalDateTime.now());
         UserEntity updatedUser = userRepository.save(userEntity);
@@ -93,7 +113,7 @@ public class UserService {
             updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
             "", // lastName - empty as we're using fullName
             updatedUser.getBio(),
-            "" // profilePicture - not implemented yet
+            updatedUser.getAvatarUrl() != null ? updatedUser.getAvatarUrl() : ""
         );
 
         return mapToDTO(updatedUser);
@@ -393,30 +413,30 @@ public class UserService {
      * Calculate similarity score for friend suggestions
      */
     private void calculateSimilarityScore(UserEntity user, UserEntity candidate, UserDTO candidateDTO) {
-        // Check similarity attributes
-        candidateDTO.setSameCollege(Objects.equals(user.getCollege(), candidate.getCollege()));
-        candidateDTO.setSameFaculty(Objects.equals(user.getFaculty(), candidate.getFaculty()));
-        candidateDTO.setSameMajor(Objects.equals(user.getMajor(), candidate.getMajor()));
-        candidateDTO.setSameBatch(Objects.equals(user.getBatch(), candidate.getBatch()));
+        // Check similarity attributes using proper getter methods
+        candidateDTO.setSameCollege(Objects.equals(user.getCollegeName(), candidate.getCollegeName()));
+        candidateDTO.setSameFaculty(Objects.equals(user.getFacultyName(), candidate.getFacultyName()));
+        candidateDTO.setSameMajor(Objects.equals(user.getMajorName(), candidate.getMajorName()));
+        candidateDTO.setSameBatch(Objects.equals(user.getBatchYear(), candidate.getBatchYear()));
     }
 
     /**
      * Check if user matches relationship filters
      */
     private boolean matchesFilters(UserEntity user, UserEntity candidate, RelationshipFilterDTO filters) {
-        if (filters.getCollege() != null && !filters.getCollege().equals(candidate.getCollege())) {
+        if (filters.getCollege() != null && !filters.getCollege().equals(candidate.getCollegeName())) {
             return false;
         }
-        if (filters.getFaculty() != null && !filters.getFaculty().equals(candidate.getFaculty())) {
+        if (filters.getFaculty() != null && !filters.getFaculty().equals(candidate.getFacultyName())) {
             return false;
         }
-        if (filters.getMajor() != null && !filters.getMajor().equals(candidate.getMajor())) {
+        if (filters.getMajor() != null && !filters.getMajor().equals(candidate.getMajorName())) {
             return false;
         }
-        if (filters.getBatch() != null && !filters.getBatch().equals(candidate.getBatch())) {
+        if (filters.getBatch() != null && !filters.getBatch().equals(candidate.getBatchYear())) {
             return false;
         }
-        if (filters.getGender() != null && !filters.getGender().equals(candidate.getGender())) {
+        if (filters.getGender() != null && !filters.getGender().equals(candidate.getGenderName())) {
             return false;
         }
         return true;
@@ -430,21 +450,67 @@ public class UserService {
         dto.setId(entity.getId());
         dto.setEmail(entity.getEmail());
         dto.setUsername(entity.getUsername());
-        dto.setStudentId(entity.getStudentId());
-        dto.setBatch(entity.getBatch());
         dto.setFullName(entity.getFullName());
-        dto.setRole(entity.getRole());
-        dto.setCollege(entity.getCollege());
-        dto.setFaculty(entity.getFaculty());
-        dto.setMajor(entity.getMajor());
-        dto.setGender(entity.getGender());
+        dto.setRole(entity.getRole() != null ? entity.getRole().toString() : null);
         dto.setBio(entity.getBio());
+        dto.setIsActive(entity.getIsActive());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
-        dto.setIsActive(entity.getIsActive());
+
+        // Student fields
+        dto.setStudentId(entity.getStudentId());
+
+        // Faculty fields
+        dto.setStaffCode(entity.getStaffCode());
+        dto.setPosition(entity.getPosition());
+        dto.setAcademicTitle(entity.getAcademicTitle());
+        dto.setDegree(entity.getDegree());
+
+        // Academic information - codes
+        dto.setMajorCode(entity.getMajorCode());
+        dto.setFacultyCode(entity.getFacultyCode());
+        dto.setCollegeCode(entity.getCollegeCode());
+        dto.setGenderCode(entity.getGenderCode());
+
+        // Academic information - names
+        dto.setMajorName(entity.getMajorName());
+        dto.setFacultyName(entity.getFacultyName());
+        dto.setCollegeName(entity.getCollegeName());
+        dto.setGenderName(entity.getGenderName());
+
+        // Batch information
+        if (entity.getBatchYear() != null) {
+            try {
+                dto.setBatchYear(Integer.valueOf(entity.getBatchYear()));
+            } catch (NumberFormatException e) {
+                // Handle invalid batch year format
+                dto.setBatch(entity.getBatchYear());
+            }
+        }
+
+        // Legacy fields for backward compatibility
+        dto.setMajor(entity.getMajorName());
+        dto.setFaculty(entity.getFacultyName());
+        dto.setCollege(entity.getCollegeName());
+        dto.setGender(entity.getGenderName());
+        dto.setBatch(entity.getBatchYear());
+
+        // Media fields
+        dto.setAvatarUrl(entity.getAvatarUrl());
+        dto.setBackgroundUrl(entity.getBackgroundUrl());
+
+        // Friends mapping
+        if (entity.getFriends() != null) {
+            dto.setFriendIds(
+                    entity.getFriends().stream()
+                            .map(UserEntity::getId)
+                            .collect(Collectors.toSet())
+            );
+        }
 
         return dto;
     }
+
 
     /**
      * Map UserDTO to UserEntity
@@ -454,16 +520,37 @@ public class UserService {
         entity.setId(dto.getId());
         entity.setEmail(dto.getEmail());
         entity.setUsername(dto.getUsername());
-        entity.setStudentId(dto.getStudentId());
-        entity.setBatch(dto.getBatch());
         entity.setFullName(dto.getFullName());
-        entity.setRole(dto.getRole());
-        entity.setCollege(dto.getCollege());
-        entity.setFaculty(dto.getFaculty());
-        entity.setMajor(dto.getMajor());
-        entity.setGender(dto.getGender());
+
+        // Handle role conversion safely
+        if (dto.getRole() != null) {
+            try {
+                entity.setRole(Role.valueOf(dto.getRole()));
+            } catch (IllegalArgumentException e) {
+                entity.setRole(Role.USER); // Default fallback
+            }
+        }
+
         entity.setBio(dto.getBio());
         entity.setIsActive(dto.getIsActive());
+
+        // Student fields
+        entity.setStudentId(dto.getStudentId());
+
+        // Faculty fields
+        entity.setStaffCode(dto.getStaffCode());
+        entity.setPosition(dto.getPosition());
+        entity.setAcademicTitle(dto.getAcademicTitle());
+        entity.setDegree(dto.getDegree());
+
+        // Media fields
+        entity.setAvatarUrl(dto.getAvatarUrl());
+        entity.setBackgroundUrl(dto.getBackgroundUrl());
+
+        // Note: Relationship mappings (major, batch, gender, etc.) should be handled
+        // separately as they require database lookups to establish Neo4j relationships
+        // This method only handles direct field mappings
+
         return entity;
     }
 }

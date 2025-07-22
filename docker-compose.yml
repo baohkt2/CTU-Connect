@@ -89,6 +89,44 @@ services:
           path: . # Giám sát toàn bộ thư mục context của Dockerfile
 
   # User Service
+
+  user-service:
+      build:
+        context: ./user-service
+      container_name: user-service
+      ports:
+        - "${USER_SERVICE_PORT}:8081"
+      depends_on:
+        neo4j:
+            condition: service_healthy
+        auth_db:
+            condition: service_healthy
+        eureka-server:
+            condition: service_healthy
+        kafka:
+            condition: service_healthy
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - SPRING_DATA_NEO4J_URI=bolt://neo4j:7687
+        - SPRING_DATA_NEO4J_USERNAME=neo4j
+        - SPRING_DATA_NEO4J_PASSWORD=password
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      networks:
+        - ctuconnect-network
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
+      develop: # Phần mới
+        watch:
+            - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
+              path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+
+  # Media Service
   media-service:
     build:
       context: ./media-service

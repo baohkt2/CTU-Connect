@@ -62,12 +62,15 @@ public class AuthServiceImpl implements AuthService {
             throw new UsernameAlreadyExistsException("Tên đăng nhập đã được sử dụng. Vui lòng chọn tên khác.");
         }
 
-        // Create new user with normalized email and username
+        // Determine role for user-service based on email domain
+        String userServiceRole = determineUserServiceRole(normalizedEmail);
+
+        // Create new user with normalized email and username - always save as "USER" in auth-db
         UserEntity user = UserEntity.builder()
                 .email(normalizedEmail)
                 .username(normalizedUsername)
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole() != null ? request.getRole() : "USER")
+                .role("USER") // Always save as "USER" in auth-db
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .isActive(true)
@@ -90,12 +93,12 @@ public class AuthServiceImpl implements AuthService {
         // Send verification email
         emailService.sendVerificationEmail(user.getEmail(), verificationToken);
 
-        // Publish user created event to Kafka
+        // Publish user created event to Kafka with role based on email domain
         Map<String, Object> userCreatedEvent = new HashMap<>();
         userCreatedEvent.put("userId", user.getId());
         userCreatedEvent.put("email", user.getEmail());
         userCreatedEvent.put("username", user.getUsername());
-        userCreatedEvent.put("role", user.getRole());
+        userCreatedEvent.put("role", userServiceRole); // Use determined role for user-service
         kafkaTemplate.send("user-registration", user.getId().toString(), userCreatedEvent);
 
         // Generate tokens
@@ -378,5 +381,17 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.save(refreshToken);
 
         return refreshToken.getToken();
+    }
+
+    /**
+     * Helper method to determine user-service role based on email domain
+     */
+    private String determineUserServiceRole(String email) {
+        if (email.endsWith("@student.ctu.edu.vn")) {
+            return "STUDENT";
+        } else if (email.endsWith("@ctu.edu.vn")) {
+            return "FACULTY";
+        }
+        return "USER";
     }
 }
