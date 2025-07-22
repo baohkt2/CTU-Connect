@@ -1,5 +1,6 @@
 package com.ctuconnect.dto;
 
+import com.ctuconnect.security.AuthenticatedUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,10 +17,15 @@ public class AuthContextDTO {
     private String role;
     private boolean authenticated;
 
-    public static AuthContextDTO fromAuthenticatedUser(com.ctuconnect.security.AuthenticatedUser user) {
-        if (user == null) {
+    public static AuthContextDTO fromAuthenticatedUser(AuthenticatedUser user) {
+        if (user == null || !user.isAuthenticated()) {
             return new AuthContextDTO(null, null, null, false);
         }
-        return new AuthContextDTO(user.getUserId(), user.getEmail(), user.getRole(), true);
+        return new AuthContextDTO(
+                user.getUserId(),
+                user.getEmail(),
+                user.getRole(),
+                true
+        );
     }
 }

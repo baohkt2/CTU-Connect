@@ -26,4 +26,10 @@ public class AuthenticatedUser {
     public boolean isUser() {
         return hasRole("USER");
     }
+
+    public boolean isAuthenticated() {
+        return userId != null && !userId.isEmpty() &&
+               email != null && !email.isEmpty() &&
+               role != null && !role.isEmpty();
+    }
 }

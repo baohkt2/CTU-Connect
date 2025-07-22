@@ -1,6 +1,7 @@
 package com.ctuconnect.service;
 
 import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.enums.Role;
 import com.ctuconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class UserEventListener {
                     .id(String.valueOf(event.get("userId"))) // Ensure String conversion
                     .email(String.valueOf(event.get("email")))
                     .username(String.valueOf(event.get("username")))
-                    .role(String.valueOf(event.get("role")))
+                    .role(Role.valueOf(String.valueOf(event.get("role"))))
                     .isActive(true)
                     .build();
 
@@ -65,7 +66,7 @@ public class UserEventListener {
 
             user.setEmail(String.valueOf(event.get("email")));
             user.setUsername(String.valueOf(event.get("username")));
-            user.setRole(String.valueOf(event.get("role")));
+            user.setRole(Role.valueOf(String.valueOf(event.get("role"))));
             user.setIsActive(Boolean.valueOf(String.valueOf(event.get("isActive"))));
 
             userRepository.save(user);

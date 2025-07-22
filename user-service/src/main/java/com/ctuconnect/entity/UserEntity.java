@@ -1,9 +1,7 @@
 package com.ctuconnect.entity;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import com.ctuconnect.enums.Role;
+import lombok.*;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -18,49 +16,139 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
+
     @Id
-    private String id; // UUID string từ auth-service
+    private String id; // UUID từ auth-service
 
-    // Username from auth service
-    private String username;
-
-    // Active status
-    private Boolean isActive;
-
-    // Existing fields
     private String email;
-    private String studentId;
-    private String batch;
+    private String username;
     private String fullName;
-    private String role;
-    private String college;
-    private String faculty;
-    private String major;
-    private String gender;
+    private Boolean isActive;
+    private Role role;
     private String bio;
 
+    // Ảnh đại diện (tùy chọn)
+    private String avatarUrl;
+    private String backgroundUrl;
+
+    // ==== Trường riêng của sinh viên ====
+    private String studentId;
+
+    // ==== Trường riêng của giảng viên/cán bộ ====
+    private String staffCode;
+    private String position;        // Giảng viên, Trợ lý, Cán bộ,...
+    private String academicTitle;   // Giáo sư, PGS,...
+    private String degree;          // Tiến sĩ, Thạc sĩ,...
+
+    // ==== Thời gian ====
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // ==== RELATIONSHIPS ====
+
+    @Relationship(type = "ENROLLED_IN", direction = Relationship.Direction.OUTGOING)
+    private MajorEntity major;
+
+    @Relationship(type = "IN_BATCH", direction = Relationship.Direction.OUTGOING)
+    private BatchEntity batch;
+
+    @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.OUTGOING)
+    private GenderEntity gender;
+
+    @Relationship(type = "WORKS_IN", direction = Relationship.Direction.OUTGOING)
+    private FacultyEntity workingFaculty; // dùng cho FACULTY
 
     @Relationship(type = "FRIEND", direction = Relationship.Direction.OUTGOING)
     private Set<UserEntity> friends = new HashSet<>();
 
-    // Utility method to ensure ID is set when creating from auth service
-    public static UserEntity fromAuthService(String authUserId, String email, String username, String role) {
+    // ==== Factory method ====
+
+    public static UserEntity fromAuthService(String authUserId, String email, String username, String roleString) {
+        Role resolvedRole;
+        try {
+            resolvedRole = Role.fromString(roleString);
+        } catch (IllegalArgumentException e) {
+            resolvedRole = Role.USER;
+        }
+
         return UserEntity.builder()
-                .id(authUserId) // Use UUID from auth service
+                .id(authUserId)
                 .email(email)
                 .username(username)
-                .role(role)
+                .role(resolvedRole)
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .friends(new HashSet<>())
                 .build();
     }
 
-    // Method to update timestamp
     public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // ==== Helper logic ====
+
+    public boolean isStudent() {
+        return Role.STUDENT.equals(this.role);
+    }
+
+    public boolean isFaculty() {
+        return Role.FACULTY.equals(this.role);
+    }
+
+    public boolean isAdmin() {
+        return Role.ADMIN.equals(this.role);
+    }
+
+    public String getMajorName() {
+        return major != null ? major.getName() : null;
+    }
+
+    public String getMajorCode() {
+        return major != null ? major.getCode() : null;
+    }
+
+    public String getBatchYear() {
+        return batch != null ? String.valueOf(batch.getYear()) : null;
+    }
+
+    public String getBatch() {
+        return getBatchYear();
+    }
+
+    public String getGenderCode() {
+        return gender != null ? gender.getCode() : null;
+    }
+
+    public String getGenderName() {
+        return gender != null ? gender.getName() : null;
+    }
+
+    public String getFacultyName() {
+        if (major != null && major.getFaculty() != null)
+            return major.getFaculty().getName();
+        return null;
+    }
+
+    public String getFacultyCode() {
+        if (major != null && major.getFaculty() != null)
+            return major.getFaculty().getCode();
+        return null;
+    }
+
+    public String getCollegeName() {
+        if (major != null && major.getFaculty() != null && major.getFaculty().getCollege() != null)
+            return major.getFaculty().getCollege().getName();
+        return null;
+    }
+
+    public String getCollegeCode() {
+        if (major != null && major.getFaculty() != null && major.getFaculty().getCollege() != null)
+            return major.getFaculty().getCollege().getCode();
+        return null;
+    }
+
+    public String getDepartment() {
+        return workingFaculty != null ? workingFaculty.getName() : getFacultyName();
     }
 }

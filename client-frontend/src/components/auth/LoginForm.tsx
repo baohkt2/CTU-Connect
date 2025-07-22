@@ -165,7 +165,6 @@ const LoginForm: React.FC = () => {
                     {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                   </button>
                 </div>
-                {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
               </div>
 
               <div className="flex justify-end">

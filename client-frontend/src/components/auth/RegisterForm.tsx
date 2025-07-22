@@ -151,7 +151,7 @@ const RegisterForm: React.FC = () => {
               Đăng ký thành công!
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Một email xác thực đã được gửi đến địa chỉ email c���a bạn.
+              Một email xác thực đã được gửi đến địa chỉ email của bạn.
             </p>
           </div>
 
@@ -163,10 +163,10 @@ const RegisterForm: React.FC = () => {
                 </p>
               </div>
 
-              <div className="text-sm text-gray-600">
-                <p>Không nhận được email?</p>
+              <div className="text-sm text-gray-600 text-left">
+              <p>Không nhận được email?</p>
                 <p>• Kiểm tra thư mục spam/junk</p>
-                <p>• Đảm bảo email đúng định dạng @ctu.edu.vn</p>
+                <p>• Đảm bảo email đúng định dạng @ctu.edu.vn hoặc @student.ctu.edu.vn</p>
               </div>
 
               <div className="pt-4">
@@ -286,7 +286,7 @@ const RegisterForm: React.FC = () => {
                     required
                     placeholder="Nhập mật khẩu mạnh"
                     {...register('password')}
-                    className={errors.password ? 'border-red-300' : ''}
+                    className={errors.password ? 'border-red-300 text-gray-500' : 'text-gray-500'}
                   />
                   <button
                     type="button"
@@ -294,9 +294,9 @@ const RegisterForm: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                      <EyeSlashIcon className="h-5 w-5 text-gray-700" />
                     ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                      <EyeIcon className="h-5 w-5 text-gray-700" />
                     )}
                   </button>
                 </div>
@@ -338,7 +338,7 @@ const RegisterForm: React.FC = () => {
                     required
                     placeholder="Nhập lại mật khẩu"
                     {...register('confirmPassword')}
-                    className={errors.confirmPassword ? 'border-red-300' : ''}
+                    className={errors.confirmPassword ? 'border-red-300 text-gray-500' : 'text-gray-500'}
                   />
                   <button
                     type="button"
@@ -346,9 +346,9 @@ const RegisterForm: React.FC = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                      <EyeSlashIcon className="h-5 w-5 text-gray-700" />
                     ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                      <EyeIcon className="h-5 w-5 text-gray-700" />
                     )}
                   </button>
                 </div>

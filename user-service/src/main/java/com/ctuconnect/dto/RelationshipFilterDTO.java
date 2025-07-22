@@ -1,15 +1,21 @@
 package com.ctuconnect.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RelationshipFilterDTO {
     // Boolean flags for relationship types
-    private boolean isFriend = false;
-    private boolean isSameCollege = false;
-    private boolean isSameFaculty = false;
-    private boolean isSameMajor = false;
-    private boolean isSameBatch = false;
+    private boolean isFriend;
+    private boolean isSameCollege;
+    private boolean isSameFaculty;
+    private boolean isSameMajor;
+    private boolean isSameBatch;
 
     // Specific filter values
     private String college;
@@ -20,6 +26,9 @@ public class RelationshipFilterDTO {
     private String role;
 
     // Additional options
+    @Builder.Default
     private Integer page = 0;
+
+    @Builder.Default
     private Integer size = 20;
 }

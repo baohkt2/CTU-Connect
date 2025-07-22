@@ -89,38 +89,116 @@ services:
           path: . # Giám sát toàn bộ thư mục context của Dockerfile
 
   # User Service
+
   user-service:
+      build:
+        context: ./user-service
+      container_name: user-service
+      ports:
+        - "${USER_SERVICE_PORT}:8081"
+      depends_on:
+        neo4j:
+            condition: service_healthy
+        auth_db:
+            condition: service_healthy
+        eureka-server:
+            condition: service_healthy
+        kafka:
+            condition: service_healthy
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - SPRING_DATA_NEO4J_URI=bolt://neo4j:7687
+        - SPRING_DATA_NEO4J_USERNAME=neo4j
+        - SPRING_DATA_NEO4J_PASSWORD=password
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      networks:
+        - ctuconnect-network
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
+      develop: # Phần mới
+        watch:
+            - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
+              path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+
+  # Media Service
+  media-service:
     build:
-      context: ./user-service
-    container_name: user-service
+      context: ./media-service
+    container_name: media-service
     ports:
-      - "8081:8081"
+      - "${MEDIA_SERVICE_PORT}:8084"
     depends_on:
-      neo4j:
+      media_db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
-      kafka:
-        condition: service_healthy # Changed from service_started to service_healthy for better reliability
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_NEO4J_URI=neo4j://neo4j:7687
-      - SPRING_NEO4J_AUTHENTICATION_USERNAME=neo4j
-      - SPRING_NEO4J_AUTHENTICATION_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://media_db:5432/media_db
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     networks:
       - ctuconnect-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-    develop: # Phần mới
+      start_period: 60s
+    develop:
       watch:
-        - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
-          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+        - action: rebuild
+          path: .
+
+  # Post Service
+  post-service:
+    build:
+      context: ./post-service
+    container_name: post-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      post_db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+#      media-service:
+#        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_HOST=post_db
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=post_db
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MEDIA_SERVICE_URL=http://media-service:8084
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    develop:
+      watch:
+        - action: rebuild
+          path: .
 
   # Neo4j Graph Database for User Service
   neo4j:
@@ -217,6 +295,29 @@ services:
         - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
           path: . # Giám sát toàn bộ thư mục context của Dockerfile
 
+  media_db:
+    image: postgres:15-alpine
+    container_name: media_db
+    environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=media_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - media_data:/var/lib/postgresql/data
+    networks:
+      - ctuconnect-network
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d media_db"]
+        interval: 10s
+        timeout: 5s
+        retries: 1
+    develop: # Phần mới
+      watch:
+        - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
   # Redis Cache
   redis:
     image: redis:7-alpine
@@ -238,6 +339,28 @@ services:
         - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
           path: . # Giám sát toàn bộ thư mục context của Dockerfile
 
+  # MongoDB for Post Service
+  post_db:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=post_db
+    volumes:
+      - post-data:/data/db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
 networks:
   ctuconnect-network:
     driver: bridge
@@ -246,4 +369,6 @@ volumes:
   auth_db_data:
   redis-data:
   neo4j-data:
-  kafka-data: # Removed zookeeper-data
+  kafka-data:
+  media_data:
+  post-data:
