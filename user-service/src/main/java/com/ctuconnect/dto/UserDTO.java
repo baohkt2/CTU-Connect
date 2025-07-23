@@ -17,6 +17,7 @@ public class UserDTO {
     private String fullName;
     private String role; // STUDENT / FACULTY / ADMIN
     private Boolean isActive;
+    private Boolean isProfileCompleted;
     private String bio;
 
     private LocalDateTime createdAt;

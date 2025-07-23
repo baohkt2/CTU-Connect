@@ -553,4 +553,14 @@ public class UserService {
 
         return entity;
     }
+
+    public Boolean checkProfile(String currentUserId) {
+        UserEntity userEntity = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + currentUserId));
+
+        // Map to DTO
+        UserDTO userDTO = mapToDTO(userEntity);
+
+       return userDTO.getIsProfileCompleted();
+    }
 }

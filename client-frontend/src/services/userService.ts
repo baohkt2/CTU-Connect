@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import { User, ApiResponse, PaginatedResponse } from '@/types';
+import { User, ApiResponse, PaginatedResponse, StudentProfileUpdateRequest, FacultyProfileUpdateRequest, MajorInfo, FacultyInfo, GenderInfo, BatchInfo } from '@/types';
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {
@@ -51,5 +51,46 @@ export const userService = {
   async getFriends(userId: string, page = 0, size = 10): Promise<PaginatedResponse<User>> {
     const response = await api.get(`/users/${userId}/friends?page=${page}&size=${size}`);
     return response.data;
-  }
+  },
+
+  async getMyProfile(): Promise<User> {
+    const response = await api.get('/users/me/profile');
+    return response.data;
+  },
+
+  async updateMyProfile(userData: StudentProfileUpdateRequest | FacultyProfileUpdateRequest): Promise<User> {
+    const response = await api.put('/users/me/profile', userData);
+    return response.data;
+  },
+
+  async checkProfileCompletion(): Promise<boolean> {
+    const response = await api.get('/users/checkMyInfo');
+    return response.data;
+  },
+
+  // Dropdown data APIs
+  async getMajors(): Promise<MajorInfo[]> {
+    const response = await api.get('/users/majors');
+    return response.data;
+  },
+
+  async getFaculties(): Promise<FacultyInfo[]> {
+    const response = await api.get('/users/faculties');
+    return response.data;
+  },
+
+  async getGenders(): Promise<GenderInfo[]> {
+    const response = await api.get('/users/genders');
+    return response.data;
+  },
+
+  async getBatches(): Promise<BatchInfo[]> {
+    const response = await api.get('/users/batches');
+    return response.data;
+  },
+
+  async getMajorsByFaculty(facultyCode: string): Promise<MajorInfo[]> {
+    const response = await api.get(`/users/faculties/${facultyCode}/majors`);
+    return response.data;
+  },
 };

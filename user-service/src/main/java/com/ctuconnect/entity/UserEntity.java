@@ -26,6 +26,7 @@ public class UserEntity {
     private Boolean isActive;
     private Role role;
     private String bio;
+    private Boolean isProfileCompleted = false; // Mặc định false
 
     // Ảnh đại diện (tùy chọn)
     private String avatarUrl;
@@ -77,6 +78,7 @@ public class UserEntity {
                 .username(username)
                 .role(resolvedRole)
                 .isActive(true)
+                .isProfileCompleted(false)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

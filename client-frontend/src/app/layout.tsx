@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import QueryProvider from "@/contexts/QueryProvider";
+import { ToastProvider } from "@/contexts/ToastContext";
 import { RecaptchaWrapper } from "@/components/RecaptchaWrapper";
+import ProfileGuard from "@/components/ProfileGuard";
 import React from "react";
 
 const geistSans = Geist({
@@ -35,7 +37,11 @@ export default function RootLayout({
         <RecaptchaWrapper>
           <QueryProvider>
             <AuthProvider>
-              {children}
+              <ToastProvider>
+                <ProfileGuard>
+                  {children}
+                </ProfileGuard>
+              </ToastProvider>
             </AuthProvider>
           </QueryProvider>
         </RecaptchaWrapper>

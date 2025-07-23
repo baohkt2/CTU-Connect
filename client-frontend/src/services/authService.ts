@@ -3,14 +3,14 @@ import { LoginRequest, RegisterRequest, AuthResponse, ApiResponse, User } from '
 
 export const authService = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await api.post('/api/auth/login', credentials, {
+    const response = await api.post('/auth/login', credentials, {
       withCredentials: true, // Để nhận cookies
     });
     return response.data;
   },
 
   async register(userData: RegisterRequest): Promise<{ message: string }> {
-    const response = await api.post('/api/auth/register', userData, {
+    const response = await api.post('/auth/register', userData, {
       withCredentials: true, // Để nhận cookies nếu cần
     });
     // Backend trả về message thông báo đã gửi email
@@ -20,41 +20,41 @@ export const authService = {
   async logout(): Promise<void> {
     // Backend expects refresh token in request body
     const refreshToken = this.getRefreshTokenFromCookie();
-    await api.post('/api/auth/logout', { refreshToken }, {
+    await api.post('/auth/logout', { refreshToken }, {
       withCredentials: true,
     });
   },
 
   async refreshToken(): Promise<AuthResponse> {
     const refreshToken = this.getRefreshTokenFromCookie();
-    const response = await api.post('/api/auth/refresh-token', { refreshToken }, {
+    const response = await api.post('/auth/refresh-token', { refreshToken }, {
       withCredentials: true,
     });
     return response.data;
   },
 
   async verifyEmail(token: string): Promise<{ message: string }> {
-    const response = await api.post(`/api/auth/verify-email?token=${token}`);
+    const response = await api.post(`/auth/verify-email?token=${token}`);
     return { message: response.data };
   },
 
   async resendVerificationEmail(token: string): Promise<{ message: string }> {
-    const response = await api.post('/api/auth/resend-verification', { token });
+    const response = await api.post('/auth/resend-verification', { token });
     return { message: response.data };
   },
 
   async forgotPassword(email: string): Promise<{ message: string }> {
-    const response = await api.post('/api/auth/forgot-password', { email });
+    const response = await api.post('/auth/forgot-password', { email });
     return { message: response.data };
   },
 
   async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
-    const response = await api.post('/api/auth/reset-password', { token, newPassword });
+    const response = await api.post('/auth/reset-password', { token, newPassword });
     return { message: response.data };
   },
 
   async getCurrentUser(): Promise<ApiResponse<User>> {
-    const response = await api.get('/api/auth/me', {
+    const response = await api.get('/auth/me', {
       withCredentials: true,
     });
     return response.data;

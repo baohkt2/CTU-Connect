@@ -14,6 +14,23 @@ export interface User {
   isOnline: boolean;
   createdAt: string;
   updatedAt: string;
+  // Enhanced profile fields
+  role: 'STUDENT' | 'FACULTY' | 'ADMIN' | 'USER';
+  isProfileCompleted: boolean;
+  avatarUrl?: string;
+  backgroundUrl?: string;
+
+  // Student specific fields
+  major?: MajorInfo;
+  batch?: BatchInfo;
+  gender?: GenderInfo;
+
+  // Faculty specific fields
+  staffCode?: string;
+  position?: string;
+  academicTitle?: string;
+  degree?: string;
+  workingFaculty?: FacultyInfo;
 }
 
 export interface Post {
@@ -103,4 +120,59 @@ export interface PaginatedResponse<T> {
   number: number;
   first: boolean;
   last: boolean;
+}
+
+export interface MajorInfo {
+  code: string;
+  name: string;
+  faculty?: FacultyInfo;
+}
+
+export interface FacultyInfo {
+  code: string;
+  name: string;
+  college?: CollegeInfo;
+}
+
+export interface CollegeInfo {
+  code: string;
+  name: string;
+}
+
+export interface BatchInfo {
+  year: number;
+}
+
+export interface GenderInfo {
+  code: string;
+  name: string;
+}
+
+export interface StudentProfileUpdateRequest {
+  fullName: string;
+  bio?: string;
+  studentId: string;
+  majorCode: string;
+  batchYear: number;
+  genderCode: string;
+  avatarUrl?: string;
+  backgroundUrl?: string;
+}
+
+export interface FacultyProfileUpdateRequest {
+  fullName: string;
+  bio?: string;
+  staffCode: string;
+  position: string;
+  academicTitle?: string;
+  degree?: string;
+  workingFacultyCode: string;
+  genderCode: string;
+  avatarUrl?: string;
+  backgroundUrl?: string;
+}
+
+export interface ProfileCompletionStatus {
+  isCompleted: boolean;
+  missingFields?: string[];
 }

@@ -28,6 +28,13 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
+    @GetMapping("/checkMyInfo")
+    @RequireAuth(selfOnly = true) // Kiểm tra đã nhập thông tin cá nhân hay chưa
+    public Boolean checkMyInfo() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return (userService.checkProfile(currentUserId));
+    }
+
     @GetMapping("/{userId}/profile")
     @RequireAuth // Có thể xem profile của người khác
     public ResponseEntity<UserDTO> getUserProfile(@PathVariable String userId) {
