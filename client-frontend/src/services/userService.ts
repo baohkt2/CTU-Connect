@@ -1,5 +1,6 @@
 import api from '@/lib/api';
-import { User, ApiResponse, PaginatedResponse, StudentProfileUpdateRequest, FacultyProfileUpdateRequest, MajorInfo, FacultyInfo, GenderInfo, BatchInfo } from '@/types';
+import { User, ApiResponse, PaginatedResponse, StudentProfileUpdateRequest, FacultyProfileUpdateRequest } from '@/types';
+import { categoryService } from './categoryService';
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {
@@ -68,29 +69,6 @@ export const userService = {
     return response.data;
   },
 
-  // Dropdown data APIs
-  async getMajors(): Promise<MajorInfo[]> {
-    const response = await api.get('/users/majors');
-    return response.data;
-  },
-
-  async getFaculties(): Promise<FacultyInfo[]> {
-    const response = await api.get('/users/faculties');
-    return response.data;
-  },
-
-  async getGenders(): Promise<GenderInfo[]> {
-    const response = await api.get('/users/genders');
-    return response.data;
-  },
-
-  async getBatches(): Promise<BatchInfo[]> {
-    const response = await api.get('/users/batches');
-    return response.data;
-  },
-
-  async getMajorsByFaculty(facultyCode: string): Promise<MajorInfo[]> {
-    const response = await api.get(`/users/faculties/${facultyCode}/majors`);
-    return response.data;
-  },
+  // Delegate category operations to categoryService
+  ...categoryService,
 };

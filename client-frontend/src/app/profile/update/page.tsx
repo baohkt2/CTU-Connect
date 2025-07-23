@@ -7,20 +7,22 @@ import { User } from '@/types';
 import StudentProfileForm from '@/components/profile/StudentProfileForm';
 import FacultyProfileForm from '@/components/profile/FacultyProfileForm';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 export default function UpdateProfilePage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      router.push('/login');
+    }
     const fetchUserProfile = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const profile = await userService.getMyProfile();
         setCurrentUser(profile);

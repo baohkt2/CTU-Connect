@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
-import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo } from '@/types';
+import { categoryService } from '@/services/categoryService';
+import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo, CollegeInfo } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 interface FacultyProfileFormProps {
@@ -29,9 +30,12 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
 
   const [dropdownData, setDropdownData] = useState({
     faculties: [] as FacultyInfo[],
+    colleges: [] as CollegeInfo[],
     genders: [] as GenderInfo[]
   });
 
+  const [filteredFaculties, setFilteredFaculties] = useState<FacultyInfo[]>([]);
+  const [selectedCollege, setSelectedCollege] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
 
@@ -66,12 +70,24 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   useEffect(() => {
     const loadDropdownData = async () => {
       try {
-        const [faculties, genders] = await Promise.all([
-          userService.getFaculties(),
-          userService.getGenders()
-        ]);
+        // Use the new getAllCategories API for better performance
+        const categories = await categoryService.getAllCategories();
 
-        setDropdownData({ faculties, genders });
+        setDropdownData({
+          faculties: categories.faculties,
+          colleges: categories.colleges,
+          genders: categories.genders
+        });
+
+        // Set initial filtered data
+        setFilteredFaculties(categories.faculties);
+
+        // If user has existing faculty data, set the selected college
+        if (user.workingFaculty?.college?.code) {
+          setSelectedCollege(user.workingFaculty.college.code);
+          const facultiesInCollege = categories.faculties.filter(f => f.college?.code === user.workingFaculty?.college?.code);
+          setFilteredFaculties(facultiesInCollege);
+        }
       } catch (error) {
         console.error('Error loading dropdown data:', error);
         showToast('Không thể tải dữ liệu danh mục', 'error');
@@ -81,7 +97,24 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     };
 
     loadDropdownData();
-  }, [showToast]);
+  }, [user.workingFaculty, showToast]);
+
+  const handleCollegeChange = async (collegeCode: string) => {
+    setSelectedCollege(collegeCode);
+    setFormData({ ...formData, workingFacultyCode: '' }); // Reset faculty when college changes
+
+    if (collegeCode) {
+      try {
+        const faculties = await categoryService.getFacultiesByCollege(collegeCode);
+        setFilteredFaculties(faculties);
+      } catch (error) {
+        console.error('Error loading faculties for college:', error);
+        showToast('Không thể tải danh sách khoa', 'error');
+      }
+    } else {
+      setFilteredFaculties(dropdownData.faculties);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,6 +196,26 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
           </select>
         </div>
 
+        {/* College */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Trường <span className="text-red-500">*</span>
+          </label>
+          <select
+            value={selectedCollege}
+            onChange={(e) => handleCollegeChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="">Chọn trường</option>
+            {dropdownData.colleges.map((college) => (
+              <option key={college.code} value={college.code}>
+                {college.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Working Faculty */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -175,7 +228,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             required
           >
             <option value="">Chọn khoa</option>
-            {dropdownData.faculties.map((faculty) => (
+            {filteredFaculties.map((faculty) => (
               <option key={faculty.code} value={faculty.code}>
                 {faculty.name}
               </option>
