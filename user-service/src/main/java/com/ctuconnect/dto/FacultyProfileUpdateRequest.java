@@ -1,0 +1,36 @@
+package com.ctuconnect.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class FacultyProfileUpdateRequest {
+    @NotBlank(message = "Full name is required")
+    private String fullName;
+
+    private String bio;
+
+    @NotBlank(message = "Staff code is required")
+    private String staffCode;
+
+    @NotBlank(message = "Position is required")
+    private String position;
+
+    private String academicTitle;
+    private String degree;
+
+    @NotBlank(message = "Working faculty name is required")
+    private String workingFacultyName; // Đổi từ workingFacultyCode sang workingFacultyName
+
+    @NotBlank(message = "Gender code is required")
+    private String genderCode;
+
+    private String avatarUrl;
+    private String backgroundUrl;
+}

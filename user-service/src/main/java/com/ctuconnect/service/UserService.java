@@ -1,11 +1,10 @@
 package com.ctuconnect.service;
 
-import com.ctuconnect.dto.FriendsDTO;
-import com.ctuconnect.dto.RelationshipFilterDTO;
-import com.ctuconnect.dto.UserDTO;
+import com.ctuconnect.dto.*;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.enums.Role;
-import com.ctuconnect.repository.UserRepository;
+import com.ctuconnect.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,18 @@ public class UserService {
 
     @Autowired
     private UserEventPublisher userEventPublisher;
+
+    @Autowired
+    private MajorRepository majorRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    @Autowired
+    private BatchRepository batchRepository;
+
+    @Autowired
+    private GenderRepository genderRepository;
 
     /**
      * Create a new user
@@ -562,5 +573,119 @@ public class UserService {
         UserDTO userDTO = mapToDTO(userEntity);
 
        return userDTO.getIsProfileCompleted();
+    }
+
+    /**
+     * Update student profile with proper relationship mapping
+     */
+    @Transactional
+    public UserDTO updateStudentProfile(String userId, Object profileRequestObj) {
+        try {
+            // Convert Object to StudentProfileUpdateRequest
+            ObjectMapper mapper = new ObjectMapper();
+            StudentProfileUpdateRequest request = mapper.convertValue(profileRequestObj, StudentProfileUpdateRequest.class);
+
+            UserEntity userEntity = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+            // Update basic fields
+            userEntity.setFullName(request.getFullName());
+            userEntity.setBio(request.getBio());
+            userEntity.setStudentId(request.getStudentId());
+            userEntity.setAvatarUrl(request.getAvatarUrl());
+            userEntity.setBackgroundUrl(request.getBackgroundUrl());
+
+            // Update relationships
+            updateUserRelationships(userEntity, request.getMajorName(), null, request.getBatchYear(), request.getGenderCode());
+
+            userEntity.setIsProfileCompleted(true);
+            userEntity.updateTimestamp();
+
+            UserEntity savedUser = userRepository.save(userEntity);
+
+            // Publish user updated event
+//            userEventPublisher.publishUserUpdatedEvent(savedUser);
+
+            return mapToDTO(savedUser);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating student profile: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Update faculty profile with proper relationship mapping
+     */
+    @Transactional
+    public UserDTO updateFacultyProfile(String userId, Object profileRequestObj) {
+        try {
+            // Convert Object to FacultyProfileUpdateRequest
+            ObjectMapper mapper = new ObjectMapper();
+            FacultyProfileUpdateRequest request = mapper.convertValue(profileRequestObj, FacultyProfileUpdateRequest.class);
+
+            UserEntity userEntity = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+            // Update basic fields
+            userEntity.setFullName(request.getFullName());
+            userEntity.setBio(request.getBio());
+            userEntity.setStaffCode(request.getStaffCode());
+            userEntity.setPosition(request.getPosition());
+            userEntity.setAcademicTitle(request.getAcademicTitle());
+            userEntity.setDegree(request.getDegree());
+            userEntity.setAvatarUrl(request.getAvatarUrl());
+            userEntity.setBackgroundUrl(request.getBackgroundUrl());
+
+            // Update relationships
+            updateUserRelationships(userEntity, null, request.getWorkingFacultyName(), null, request.getGenderCode());
+
+            userEntity.setIsProfileCompleted(true);
+            userEntity.updateTimestamp();
+
+            UserEntity savedUser = userRepository.save(userEntity);
+
+            // Publish user updated event
+//            userEventPublisher.publishUserUpdatedEvent(savedUser);
+
+            return mapToDTO(savedUser);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating faculty profile: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Helper method to update user relationships (major, faculty, batch, gender)
+     */
+    private void updateUserRelationships(UserEntity userEntity, String majorName, String facultyName, Integer batchYear, String genderCode) {
+        // Update major relationship for students
+        if (majorName != null && !majorName.isEmpty()) {
+            majorRepository.findById(majorName).ifPresentOrElse(
+                userEntity::setMajor,
+                () -> { throw new RuntimeException("Major not found: " + majorName); }
+            );
+        }
+
+        // Update working faculty relationship for faculty members
+        if (facultyName != null && !facultyName.isEmpty()) {
+            facultyRepository.findById(facultyName).ifPresentOrElse(
+                userEntity::setWorkingFaculty,
+                () -> { throw new RuntimeException("Faculty not found: " + facultyName); }
+            );
+        }
+
+        // Update batch relationship
+        if (batchYear != null) {
+            batchRepository.findById(batchYear).ifPresentOrElse(
+                userEntity::setBatch,
+                () -> { throw new RuntimeException("Batch not found: " + batchYear); }
+            );
+        }
+
+        // Update gender relationship
+        if (genderCode != null && !genderCode.isEmpty()) {
+            genderRepository.findById(genderCode).ifPresentOrElse(
+                userEntity::setGender,
+                () -> { throw new RuntimeException("Gender not found: " + genderCode); }
+            );
+        }
     }
 }

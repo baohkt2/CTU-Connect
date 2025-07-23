@@ -50,9 +50,22 @@ public class UserController {
 
     @PutMapping("/me/profile")
     @RequireAuth(selfOnly = true) // Cập nhật profile của chính mình
-    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody Object profileRequest) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.updateUserProfile(currentUserId, userDTO));
+
+        // Xác định loại request dựa trên user role và fields có trong request
+        UserDTO currentUser = userService.getUserProfile(currentUserId);
+
+        if (currentUser.getRole().equals("STUDENT")) {
+            // Convert to StudentProfileUpdateRequest và xử lý
+            return ResponseEntity.ok(userService.updateStudentProfile(currentUserId, profileRequest));
+        } else if (currentUser.getRole().equals("FACULTY")) {
+            // Convert to FacultyProfileUpdateRequest và xử lý
+            return ResponseEntity.ok(userService.updateFacultyProfile(currentUserId, profileRequest));
+        } else {
+            // Fallback to original UserDTO update
+            return ResponseEntity.ok(userService.updateUserProfile(currentUserId, (UserDTO) profileRequest));
+        }
     }
 
     // ===================== FRIEND REQUEST MANAGEMENT =====================
@@ -254,3 +267,4 @@ public class UserController {
         return ResponseEntity.ok("Friend request accepted successfully");
     }
 }
+

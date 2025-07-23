@@ -19,7 +19,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
     fullName: user.fullName || '',
     bio: user.bio || '',
     studentId: user.studentId || '',
-    majorCode: user.major?.code || '',
+    majorName: user.major?.name || '', // Đổi từ majorCode sang majorName
     batchYear: user.batch?.year || new Date().getFullYear(),
     genderCode: user.gender?.code || '',
     avatarUrl: user.avatarUrl || '',
@@ -111,7 +111,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   const handleCollegeChange = (collegeName: string) => {
     setSelectedCollege(collegeName);
     setSelectedFaculty('');
-    setFormData({ ...formData, majorCode: '' }); // Reset major and faculty when college changes
+    setFormData({ ...formData, majorName: '' }); // Reset major and faculty when college changes
 
     if (collegeName && dropdownData.hierarchicalData) {
       const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === collegeName);
@@ -132,7 +132,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
 
   const handleFacultyChange = (facultyName: string) => {
     setSelectedFaculty(facultyName);
-    setFormData({ ...formData, majorCode: '' }); // Reset major when faculty changes
+    setFormData({ ...formData, majorName: '' }); // Reset major when faculty changes
 
     if (facultyName && dropdownData.hierarchicalData && selectedCollege) {
       const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === selectedCollege);
@@ -159,7 +159,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.studentId || !formData.majorCode || !formData.genderCode) {
+    if (!formData.fullName || !formData.studentId || !formData.majorName || !formData.genderCode) {
       showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
       return;
     }
@@ -168,7 +168,12 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
     try {
       await userService.updateMyProfile(formData);
       showToast('Cập nhật thông tin thành công!', 'success');
-      router.push('/'); // Redirect to home page after successful update
+
+      // Force redirect to home page
+      setTimeout(() => {
+        router.push('/');
+        router.refresh(); // Force page refresh to update user data
+      }, 1000);
     } catch (error) {
       console.error('Error updating profile:', error);
       showToast('Có lỗi xảy ra khi cập nhật thông tin', 'error');
@@ -262,8 +267,8 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
             Ngành học <span className="text-red-500">*</span>
           </label>
           <select
-            value={formData.majorCode}
-            onChange={(e) => setFormData({ ...formData, majorCode: e.target.value })}
+            value={formData.majorName}
+            onChange={(e) => setFormData({ ...formData, majorName: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
             disabled={!selectedFaculty}

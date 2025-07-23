@@ -152,7 +152,7 @@ export interface StudentProfileUpdateRequest {
   fullName: string;
   bio?: string;
   studentId: string;
-  majorCode: string;
+  majorName: string; // Đổi từ majorCode sang majorName
   batchYear: number;
   genderCode: string;
   avatarUrl?: string;
@@ -166,7 +166,7 @@ export interface FacultyProfileUpdateRequest {
   position: string;
   academicTitle?: string;
   degree?: string;
-  workingFacultyCode: string;
+  workingFacultyName: string; // Đổi từ workingFacultyCode sang workingFacultyName
   genderCode: string;
   avatarUrl?: string;
   backgroundUrl?: string;

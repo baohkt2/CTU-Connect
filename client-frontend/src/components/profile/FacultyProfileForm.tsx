@@ -22,7 +22,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     position: user.position || '',
     academicTitle: user.academicTitle || '',
     degree: user.degree || '',
-    workingFacultyCode: user.workingFaculty?.code || '',
+    workingFacultyName: user.workingFaculty?.name || '', // Đổi từ workingFacultyCode sang workingFacultyName
     genderCode: user.gender?.code || '',
     avatarUrl: user.avatarUrl || '',
     backgroundUrl: user.backgroundUrl || ''
@@ -115,15 +115,15 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
 
   const handleCollegeChange = (collegeCode: string) => {
     setSelectedCollege(collegeCode);
-    setFormData({ ...formData, workingFacultyCode: '' }); // Reset faculty when college changes
+    setFormData({ ...formData, workingFacultyName: '' }); // Reset faculty when college changes
 
     if (collegeCode && dropdownData.hierarchicalData) {
-      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.code === collegeCode);
+      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === collegeCode);
       if (selectedCollegeData) {
         const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
-          code: faculty.code,
           name: faculty.name,
-          college: { code: collegeCode, name: selectedCollegeData.name }
+          code: faculty.code,
+          college: { name: collegeCode, code: selectedCollegeData.code }
         }));
         setFilteredFaculties(facultiesInCollege);
       }
@@ -135,7 +135,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.staffCode || !formData.position || !formData.workingFacultyCode || !formData.genderCode) {
+    if (!formData.fullName || !formData.staffCode || !formData.position || !formData.workingFacultyName || !formData.genderCode) {
       showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
       return;
     }
@@ -144,7 +144,12 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     try {
       await userService.updateMyProfile(formData);
       showToast('Cập nhật thông tin thành công!', 'success');
-      router.push('/'); // Redirect to home page after successful update
+
+      // Force redirect to home page
+      setTimeout(() => {
+        router.push('/');
+        router.refresh(); // Force page refresh to update user data
+      }, 1000);
     } catch (error) {
       console.error('Error updating profile:', error);
       showToast('Có lỗi xảy ra khi cập nhật thông tin', 'error');
@@ -238,14 +243,14 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             Khoa làm việc <span className="text-red-500">*</span>
           </label>
           <select
-            value={formData.workingFacultyCode}
-            onChange={(e) => setFormData({ ...formData, workingFacultyCode: e.target.value })}
+            value={formData.workingFacultyName}
+            onChange={(e) => setFormData({ ...formData, workingFacultyName: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
             <option value="">Chọn khoa</option>
             {filteredFaculties.map((faculty) => (
-              <option key={faculty.code} value={faculty.code}>
+              <option key={faculty.name} value={faculty.name}>
                 {faculty.name}
               </option>
             ))}
