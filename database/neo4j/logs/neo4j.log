@@ -2347,3 +2347,26 @@ Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAcc
 2025-07-23 18:01:15.112+0000 INFO  name: system
 2025-07-23 18:01:15.113+0000 INFO  creationDate: 2025-07-21T19:09:00.216Z
 2025-07-23 18:01:15.114+0000 INFO  Started.
+2025-07-23 18:37:01.076+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-23 18:37:01.095+0000 INFO  Stopping...
+2025-07-23 18:37:07.033+0000 INFO  Stopped.
+2025-07-23 18:40:28.250+0000 INFO  Logging config in use: Embedded default config 'default-user-logs.xml'
+2025-07-23 18:40:28.254+0000 WARN  Use of deprecated setting 'dbms.directories.import'. It is replaced by 'server.directories.import'.
+2025-07-23 18:40:28.255+0000 WARN  Use of deprecated setting 'dbms.directories.plugins'. It is replaced by 'server.directories.plugins'.
+2025-07-23 18:40:28.255+0000 WARN  Use of deprecated setting 'dbms.default_database'. It is replaced by 'initial.dbms.default_database'.
+2025-07-23 18:40:28.256+0000 WARN  Use of deprecated setting 'dbms.recovery.fail_on_missing_files'. It is replaced by 'db.recovery.fail_on_missing_files'.
+2025-07-23 18:40:28.256+0000 WARN  Use of deprecated setting 'dbms.memory.pagecache.size'. It is replaced by 'server.memory.pagecache.size'.
+2025-07-23 18:40:28.257+0000 WARN  Use of deprecated setting 'dbms.memory.heap.max_size'. It is replaced by 'server.memory.heap.max_size'.
+2025-07-23 18:40:28.257+0000 WARN  Use of deprecated setting 'dbms.memory.heap.initial_size'. It is replaced by 'server.memory.heap.initial_size'.
+2025-07-23 18:40:28.258+0000 WARN  Unrecognized setting. No declared setting with name: dbms.edition.
+2025-07-23 18:40:28.259+0000 INFO  Starting...
+2025-07-23 18:40:28.964+0000 INFO  This instance is ServerId{dd2be681} (dd2be681-ed03-487f-9eaf-27abb19418ef)
+2025-07-23 18:40:29.595+0000 INFO  ======== Neo4j 5.13.0 ========
+2025-07-23 18:40:52.579+0000 INFO  Called db.clearQueryCaches(): Query cache already empty.
+2025-07-23 18:40:52.767+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2025-07-23 18:40:55.686+0000 INFO  HTTP enabled on 0.0.0.0:7474.
+2025-07-23 18:40:55.707+0000 INFO  Remote interface available at http://localhost:7474/
+2025-07-23 18:40:55.764+0000 INFO  id: 5C15017B6EAB4BE825B4123C4EEB45289472B8F110F36626BBBF1CC49BBC0185
+2025-07-23 18:40:55.777+0000 INFO  name: system
+2025-07-23 18:40:55.792+0000 INFO  creationDate: 2025-07-21T19:09:00.216Z
+2025-07-23 18:40:55.793+0000 INFO  Started.

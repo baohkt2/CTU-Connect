@@ -8,6 +8,10 @@ import java.util.List;
 
 @Repository
 public interface MajorRepository extends Neo4jRepository<MajorEntity, String> {
-    @Query("MATCH (m:Major)-[:BELONGS_TO]->(f:Faculty {code: $facultyCode}) RETURN m")
-    List<MajorEntity> findByFacultyCode(String facultyCode);
+    // Tìm major theo faculty name
+    @Query("MATCH (f:Faculty {name: $facultyName})-[:HAS_MAJOR]->(m:Major) RETURN m")
+    List<MajorEntity> findByFacultyName(String facultyName);
+
+    // Tìm major theo faculty property trong major node
+    List<MajorEntity> findByFaculty(String faculty);
 }

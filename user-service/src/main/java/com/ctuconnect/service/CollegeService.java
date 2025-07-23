@@ -21,32 +21,33 @@ public class CollegeService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CollegeDTO> getCollegeByCode(String code) {
-        return collegeRepository.findById(code)
+    public Optional<CollegeDTO> getCollegeByName(String name) {
+        return collegeRepository.findById(name)
                 .map(this::convertToDTO);
     }
 
     public CollegeDTO createCollege(CollegeDTO collegeDTO) {
         CollegeEntity college = CollegeEntity.builder()
-                .code(collegeDTO.getCode())
                 .name(collegeDTO.getName())
+                .code(collegeDTO.getCode())
                 .build();
         CollegeEntity savedCollege = collegeRepository.save(college);
         return convertToDTO(savedCollege);
     }
 
-    public Optional<CollegeDTO> updateCollege(String code, CollegeDTO collegeDTO) {
-        return collegeRepository.findById(code)
+    public Optional<CollegeDTO> updateCollege(String name, CollegeDTO collegeDTO) {
+        return collegeRepository.findById(name)
                 .map(existingCollege -> {
-                    existingCollege.setName(collegeDTO.getName());
+                    existingCollege.setCode(collegeDTO.getCode());
+                    // name không được thay đổi vì là ID
                     CollegeEntity savedCollege = collegeRepository.save(existingCollege);
                     return convertToDTO(savedCollege);
                 });
     }
 
-    public boolean deleteCollege(String code) {
-        if (collegeRepository.existsById(code)) {
-            collegeRepository.deleteById(code);
+    public boolean deleteCollege(String name) {
+        if (collegeRepository.existsById(name)) {
+            collegeRepository.deleteById(name);
             return true;
         }
         return false;
@@ -54,8 +55,8 @@ public class CollegeService {
 
     private CollegeDTO convertToDTO(CollegeEntity college) {
         return CollegeDTO.builder()
-                .code(college.getCode())
                 .name(college.getName())
+                .code(college.getCode())
                 .build();
     }
 }

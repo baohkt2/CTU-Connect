@@ -22,16 +22,16 @@ public class FacultyController {
         return ResponseEntity.ok(faculties);
     }
 
-    @GetMapping("/college/{collegeCode}")
-    public ResponseEntity<List<FacultyDTO>> getFacultiesByCollege(@PathVariable String collegeCode) {
-        List<FacultyDTO> faculties = facultyService.getFacultiesByCollege(collegeCode);
+    @GetMapping("/college/{collegeName}")
+    public ResponseEntity<List<FacultyDTO>> getFacultiesByCollege(@PathVariable String collegeName) {
+        List<FacultyDTO> faculties = facultyService.getFacultiesByCollege(collegeName);
         return ResponseEntity.ok(faculties);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<FacultyDTO> getFacultyByCode(@PathVariable String code) {
-        return facultyService.getFacultyByCode(code)
-                .map(faculty -> ResponseEntity.ok(faculty))
+    @GetMapping("/{name}")
+    public ResponseEntity<FacultyDTO> getFacultyByName(@PathVariable String name) {
+        return facultyService.getFacultyByName(name)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -42,16 +42,16 @@ public class FacultyController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PutMapping("/{code}")
-    public ResponseEntity<FacultyDTO> updateFaculty(@PathVariable String code, @Valid @RequestBody FacultyDTO facultyDTO) {
-        return facultyService.updateFaculty(code, facultyDTO)
-                .map(faculty -> ResponseEntity.ok(faculty))
+    @PutMapping("/{name}")
+    public ResponseEntity<FacultyDTO> updateFaculty(@PathVariable String name, @Valid @RequestBody FacultyDTO facultyDTO) {
+        return facultyService.updateFaculty(name, facultyDTO)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{code}")
-    public ResponseEntity<Void> deleteFaculty(@PathVariable String code) {
-        if (facultyService.deleteFaculty(code)) {
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteFaculty(@PathVariable String name) {
+        if (facultyService.deleteFaculty(name)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

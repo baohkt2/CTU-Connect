@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import { BatchInfo, CollegeInfo, FacultyInfo, MajorInfo, GenderInfo } from '@/types';
+import { BatchInfo, CollegeInfo, FacultyInfo, MajorInfo, GenderInfo, HierarchicalCategories } from '@/types';
 
 export const categoryService = {
   // Batch APIs
@@ -19,8 +19,8 @@ export const categoryService = {
     return response.data;
   },
 
-  async getCollegeByCode(code: string): Promise<CollegeInfo> {
-    const response = await api.get(`/users/colleges/${code}`);
+  async getCollegeByName(name: string): Promise<CollegeInfo> {
+    const response = await api.get(`/users/colleges/${encodeURIComponent(name)}`);
     return response.data;
   },
 
@@ -30,13 +30,13 @@ export const categoryService = {
     return response.data;
   },
 
-  async getFacultiesByCollege(collegeCode: string): Promise<FacultyInfo[]> {
-    const response = await api.get(`/users/faculties/college/${collegeCode}`);
+  async getFacultiesByCollege(collegeName: string): Promise<FacultyInfo[]> {
+    const response = await api.get(`/users/faculties/college/${encodeURIComponent(collegeName)}`);
     return response.data;
   },
 
-  async getFacultyByCode(code: string): Promise<FacultyInfo> {
-    const response = await api.get(`/users/faculties/${code}`);
+  async getFacultyByName(name: string): Promise<FacultyInfo> {
+    const response = await api.get(`/users/faculties/${encodeURIComponent(name)}`);
     return response.data;
   },
 
@@ -46,13 +46,13 @@ export const categoryService = {
     return response.data;
   },
 
-  async getMajorsByFaculty(facultyCode: string): Promise<MajorInfo[]> {
-    const response = await api.get(`/users/majors/faculty/${facultyCode}`);
+  async getMajorsByFaculty(facultyName: string): Promise<MajorInfo[]> {
+    const response = await api.get(`/users/majors/faculty/${encodeURIComponent(facultyName)}`);
     return response.data;
   },
 
-  async getMajorByCode(code: string): Promise<MajorInfo> {
-    const response = await api.get(`/users/majors/${code}`);
+  async getMajorByName(name: string): Promise<MajorInfo> {
+    const response = await api.get(`/users/majors/${encodeURIComponent(name)}`);
     return response.data;
   },
 
@@ -68,18 +68,12 @@ export const categoryService = {
   },
 
   // Combined APIs for performance
-  async getAllCategories(): Promise<{
-    batches: BatchInfo[];
-    colleges: CollegeInfo[];
-    faculties: FacultyInfo[];
-    majors: MajorInfo[];
-    genders: GenderInfo[];
-  }> {
+  async getAllCategories(): Promise<HierarchicalCategories> {
     const response = await api.get('/users/categories/all');
     return response.data;
   },
 
-  // Get categories in hierarchy (college -> faculty -> major)
+  // Get categories in hierarchy
   async getCategoriesHierarchy(): Promise<{
     colleges: { [key: string]: { college: CollegeInfo; faculties: { [key: string]: { faculty: FacultyInfo; majors: MajorInfo[] } } } };
     batches: BatchInfo[];
@@ -87,5 +81,90 @@ export const categoryService = {
   }> {
     const response = await api.get('/users/categories/hierarchy');
     return response.data;
+  },
+
+  // Helper methods to extract flat lists from hierarchical data
+  async getFlatColleges(): Promise<CollegeInfo[]> {
+    const hierarchical = await this.getAllCategories();
+    return hierarchical.colleges.map(college => ({
+      name: college.name,
+      code: college.code
+    }));
+  },
+
+  async getFlatFaculties(): Promise<FacultyInfo[]> {
+    const hierarchical = await this.getAllCategories();
+    const faculties: FacultyInfo[] = [];
+
+    hierarchical.colleges.forEach(college => {
+      college.faculties.forEach(faculty => {
+        faculties.push({
+          name: faculty.name,
+          code: faculty.code,
+          college: { name: college.name, code: college.code }
+        });
+      });
+    });
+
+    return faculties;
+  },
+
+  async getFlatMajors(): Promise<MajorInfo[]> {
+    const hierarchical = await this.getAllCategories();
+    const majors: MajorInfo[] = [];
+
+    hierarchical.colleges.forEach(college => {
+      college.faculties.forEach(faculty => {
+        faculty.majors.forEach(major => {
+          majors.push({
+            name: major.name,
+            code: major.code,
+            faculty: {
+              name: faculty.name,
+              code: faculty.code,
+              college: { name: college.name, code: college.code }
+            }
+          });
+        });
+      });
+    });
+
+    return majors;
+  },
+
+  // Get faculties for a specific college from hierarchical data
+  async getFacultiesFromHierarchy(collegeName: string): Promise<FacultyInfo[]> {
+    const hierarchical = await this.getAllCategories();
+    const college = hierarchical.colleges.find(c => c.name === collegeName);
+
+    if (!college) return [];
+
+    return college.faculties.map(faculty => ({
+      name: faculty.name,
+      code: faculty.code,
+      college: { name: college.name, code: college.code }
+    }));
+  },
+
+  // Get majors for a specific faculty from hierarchical data
+  async getMajorsFromHierarchy(facultyName: string): Promise<MajorInfo[]> {
+    const hierarchical = await this.getAllCategories();
+
+    for (const college of hierarchical.colleges) {
+      const faculty = college.faculties.find(f => f.name === facultyName);
+      if (faculty) {
+        return faculty.majors.map(major => ({
+          name: major.name,
+          code: major.code,
+          faculty: {
+            name: faculty.name,
+            code: faculty.code,
+            college: { name: college.name, code: college.code }
+          }
+        }));
+      }
+    }
+
+    return [];
   },
 };

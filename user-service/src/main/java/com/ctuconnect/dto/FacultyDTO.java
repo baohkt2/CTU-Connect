@@ -11,14 +11,11 @@ import jakarta.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Builder
 public class FacultyDTO {
-    @NotBlank(message = "Faculty code is required")
-    private String code;
-
     @NotBlank(message = "Faculty name is required")
-    private String name;
+    private String name; // Sử dụng name làm identifier chính
 
-    @NotBlank(message = "College code is required")
-    private String collegeCode;
+    private String code; // Code tùy chọn cho frontend
 
-    private String collegeName;
+    @NotBlank(message = "College name is required")
+    private String collegeName; // Tên college mà faculty thuộc về
 }

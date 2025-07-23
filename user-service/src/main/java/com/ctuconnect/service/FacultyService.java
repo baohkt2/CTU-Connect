@@ -1,10 +1,9 @@
 package com.ctuconnect.service;
 
 import com.ctuconnect.dto.FacultyDTO;
-import com.ctuconnect.entity.CollegeEntity;
 import com.ctuconnect.entity.FacultyEntity;
-import com.ctuconnect.repository.CollegeRepository;
 import com.ctuconnect.repository.FacultyRepository;
+import com.ctuconnect.repository.CollegeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,46 +23,48 @@ public class FacultyService {
                 .collect(Collectors.toList());
     }
 
-    public List<FacultyDTO> getFacultiesByCollege(String collegeCode) {
-        return facultyRepository.findByCollegeCode(collegeCode).stream()
+    public List<FacultyDTO> getFacultiesByCollege(String collegeName) {
+        return facultyRepository.findByCollegeName(collegeName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Optional<FacultyDTO> getFacultyByCode(String code) {
-        return facultyRepository.findById(code)
+    public Optional<FacultyDTO> getFacultyByName(String name) {
+        return facultyRepository.findById(name)
                 .map(this::convertToDTO);
     }
 
     public Optional<FacultyDTO> createFaculty(FacultyDTO facultyDTO) {
-        return collegeRepository.findById(facultyDTO.getCollegeCode())
+        return collegeRepository.findById(facultyDTO.getCollegeName())
                 .map(college -> {
                     FacultyEntity faculty = FacultyEntity.builder()
-                            .code(facultyDTO.getCode())
                             .name(facultyDTO.getName())
-                            .college(college)
+                            .code(facultyDTO.getCode())
+                            .college(facultyDTO.getCollegeName())
+                            .collegeEntity(college)
                             .build();
                     FacultyEntity savedFaculty = facultyRepository.save(faculty);
                     return convertToDTO(savedFaculty);
                 });
     }
 
-    public Optional<FacultyDTO> updateFaculty(String code, FacultyDTO facultyDTO) {
-        return facultyRepository.findById(code)
+    public Optional<FacultyDTO> updateFaculty(String name, FacultyDTO facultyDTO) {
+        return facultyRepository.findById(name)
                 .flatMap(existingFaculty ->
-                    collegeRepository.findById(facultyDTO.getCollegeCode())
+                    collegeRepository.findById(facultyDTO.getCollegeName())
                             .map(college -> {
-                                existingFaculty.setName(facultyDTO.getName());
-                                existingFaculty.setCollege(college);
+                                existingFaculty.setCode(facultyDTO.getCode());
+                                existingFaculty.setCollege(facultyDTO.getCollegeName());
+                                existingFaculty.setCollegeEntity(college);
                                 FacultyEntity savedFaculty = facultyRepository.save(existingFaculty);
                                 return convertToDTO(savedFaculty);
                             })
                 );
     }
 
-    public boolean deleteFaculty(String code) {
-        if (facultyRepository.existsById(code)) {
-            facultyRepository.deleteById(code);
+    public boolean deleteFaculty(String name) {
+        if (facultyRepository.existsById(name)) {
+            facultyRepository.deleteById(name);
             return true;
         }
         return false;
@@ -71,10 +72,9 @@ public class FacultyService {
 
     private FacultyDTO convertToDTO(FacultyEntity faculty) {
         return FacultyDTO.builder()
-                .code(faculty.getCode())
                 .name(faculty.getName())
-                .collegeCode(faculty.getCollege() != null ? faculty.getCollege().getCode() : null)
-                .collegeName(faculty.getCollege() != null ? faculty.getCollege().getName() : null)
+                .code(faculty.getCode())
+                .collegeName(faculty.getCollege())
                 .build();
     }
 }

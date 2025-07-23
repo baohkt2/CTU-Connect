@@ -10,10 +10,12 @@ import org.springframework.data.neo4j.core.schema.*;
 @Builder
 public class MajorEntity {
     @Id
-    private String code; // e.g., CNPM01
+    private String name; // Sử dụng name làm ID như trong database
 
-    private String name;
+    private String code; // Có thể thêm code riêng nếu cần
 
-    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
-    private FacultyEntity faculty;
+    private String faculty; // Tên faculty mà major thuộc về (theo database structure)
+
+    @Relationship(type = "HAS_MAJOR", direction = Relationship.Direction.INCOMING)
+    private FacultyEntity facultyEntity;
 }

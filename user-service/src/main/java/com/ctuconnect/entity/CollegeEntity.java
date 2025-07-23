@@ -10,7 +10,8 @@ import org.springframework.data.neo4j.core.schema.*;
 @Builder
 public class CollegeEntity {
     @Id
-    private String code;
+    private String name; // Sử dụng name làm ID như trong database
 
-    private String name;
+    // Có thể thêm code riêng nếu cần
+    private String code;
 }

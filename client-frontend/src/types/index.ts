@@ -123,20 +123,20 @@ export interface PaginatedResponse<T> {
 }
 
 export interface MajorInfo {
-  code: string;
-  name: string;
+  name: string; // Sử dụng name làm identifier chính
+  code?: string; // Code tùy chọn
   faculty?: FacultyInfo;
 }
 
 export interface FacultyInfo {
-  code: string;
-  name: string;
+  name: string; // Sử dụng name làm identifier chính
+  code?: string; // Code tùy chọn
   college?: CollegeInfo;
 }
 
 export interface CollegeInfo {
-  code: string;
-  name: string;
+  name: string; // Sử dụng name làm identifier chính
+  code?: string; // Code tùy chọn
 }
 
 export interface BatchInfo {
@@ -175,4 +175,24 @@ export interface FacultyProfileUpdateRequest {
 export interface ProfileCompletionStatus {
   isCompleted: boolean;
   missingFields?: string[];
+}
+
+export interface CollegeWithHierarchyInfo {
+  name: string; // Sử dụng name làm identifier chính
+  code?: string; // Code tùy chọn
+  faculties: FacultyWithMajorsInfo[];
+}
+
+export interface FacultyWithMajorsInfo {
+  name: string; // Sử dụng name làm identifier chính
+  code?: string; // Code tùy chọn
+  collegeName: string; // Tên college
+  majors: MajorInfo[];
+}
+
+// Updated interface for hierarchical categories
+export interface HierarchicalCategories {
+  colleges: CollegeWithHierarchyInfo[];
+  batches: BatchInfo[];
+  genders: GenderInfo[];
 }

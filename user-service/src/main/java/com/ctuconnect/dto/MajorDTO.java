@@ -11,16 +11,13 @@ import jakarta.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Builder
 public class MajorDTO {
-    @NotBlank(message = "Major code is required")
-    private String code;
-
     @NotBlank(message = "Major name is required")
-    private String name;
+    private String name; // Sử dụng name làm identifier chính
 
-    @NotBlank(message = "Faculty code is required")
-    private String facultyCode;
+    private String code; // Code tùy chọn cho frontend
 
-    private String facultyName;
-    private String collegeCode;
-    private String collegeName;
+    @NotBlank(message = "Faculty name is required")
+    private String facultyName; // Tên faculty mà major thuộc về
+
+    private String collegeName; // Tên college (để hiển thị đầy đủ thông tin)
 }

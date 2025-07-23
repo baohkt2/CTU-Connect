@@ -1,7 +1,6 @@
 package com.ctuconnect.service;
 
 import com.ctuconnect.dto.MajorDTO;
-import com.ctuconnect.entity.FacultyEntity;
 import com.ctuconnect.entity.MajorEntity;
 import com.ctuconnect.repository.FacultyRepository;
 import com.ctuconnect.repository.MajorRepository;
@@ -24,61 +23,64 @@ public class MajorService {
                 .collect(Collectors.toList());
     }
 
-    public List<MajorDTO> getMajorsByFaculty(String facultyCode) {
-        return majorRepository.findByFacultyCode(facultyCode).stream()
+    public List<MajorDTO> getMajorsByFaculty(String facultyName) {
+        return majorRepository.findByFacultyName(facultyName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Optional<MajorDTO> getMajorByCode(String code) {
-        return majorRepository.findById(code)
+    public Optional<MajorDTO> getMajorByName(String name) {
+        return majorRepository.findById(name)
                 .map(this::convertToDTO);
     }
 
     public Optional<MajorDTO> createMajor(MajorDTO majorDTO) {
-        return facultyRepository.findById(majorDTO.getFacultyCode())
+        return facultyRepository.findById(majorDTO.getFacultyName())
                 .map(faculty -> {
                     MajorEntity major = MajorEntity.builder()
-                            .code(majorDTO.getCode())
                             .name(majorDTO.getName())
-                            .faculty(faculty)
+                            .code(majorDTO.getCode())
+                            .faculty(majorDTO.getFacultyName())
+                            .facultyEntity(faculty)
                             .build();
                     MajorEntity savedMajor = majorRepository.save(major);
                     return convertToDTO(savedMajor);
                 });
     }
 
-    public Optional<MajorDTO> updateMajor(String code, MajorDTO majorDTO) {
-        return majorRepository.findById(code)
+    public Optional<MajorDTO> updateMajor(String name, MajorDTO majorDTO) {
+        return majorRepository.findById(name)
                 .flatMap(existingMajor ->
-                    facultyRepository.findById(majorDTO.getFacultyCode())
+                    facultyRepository.findById(majorDTO.getFacultyName())
                             .map(faculty -> {
-                                existingMajor.setName(majorDTO.getName());
-                                existingMajor.setFaculty(faculty);
+                                existingMajor.setCode(majorDTO.getCode());
+                                existingMajor.setFaculty(majorDTO.getFacultyName());
+                                existingMajor.setFacultyEntity(faculty);
                                 MajorEntity savedMajor = majorRepository.save(existingMajor);
                                 return convertToDTO(savedMajor);
                             })
                 );
     }
 
-    public boolean deleteMajor(String code) {
-        if (majorRepository.existsById(code)) {
-            majorRepository.deleteById(code);
+    public boolean deleteMajor(String name) {
+        if (majorRepository.existsById(name)) {
+            majorRepository.deleteById(name);
             return true;
         }
         return false;
     }
 
     private MajorDTO convertToDTO(MajorEntity major) {
+        String collegeName = null;
+        if (major.getFacultyEntity() != null && major.getFacultyEntity().getCollege() != null) {
+            collegeName = major.getFacultyEntity().getCollege();
+        }
+
         return MajorDTO.builder()
-                .code(major.getCode())
                 .name(major.getName())
-                .facultyCode(major.getFaculty() != null ? major.getFaculty().getCode() : null)
-                .facultyName(major.getFaculty() != null ? major.getFaculty().getName() : null)
-                .collegeCode(major.getFaculty() != null && major.getFaculty().getCollege() != null ?
-                           major.getFaculty().getCollege().getCode() : null)
-                .collegeName(major.getFaculty() != null && major.getFaculty().getCollege() != null ?
-                           major.getFaculty().getCollege().getName() : null)
+                .code(major.getCode())
+                .facultyName(major.getFaculty())
+                .collegeName(collegeName)
                 .build();
     }
 }

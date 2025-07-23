@@ -22,10 +22,10 @@ public class CollegeController {
         return ResponseEntity.ok(colleges);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<CollegeDTO> getCollegeByCode(@PathVariable String code) {
-        return collegeService.getCollegeByCode(code)
-                .map(college -> ResponseEntity.ok(college))
+    @GetMapping("/{name}")
+    public ResponseEntity<CollegeDTO> getCollegeByName(@PathVariable String name) {
+        return collegeService.getCollegeByName(name)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -35,16 +35,16 @@ public class CollegeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCollege);
     }
 
-    @PutMapping("/{code}")
-    public ResponseEntity<CollegeDTO> updateCollege(@PathVariable String code, @Valid @RequestBody CollegeDTO collegeDTO) {
-        return collegeService.updateCollege(code, collegeDTO)
-                .map(college -> ResponseEntity.ok(college))
+    @PutMapping("/{name}")
+    public ResponseEntity<CollegeDTO> updateCollege(@PathVariable String name, @Valid @RequestBody CollegeDTO collegeDTO) {
+        return collegeService.updateCollege(name, collegeDTO)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{code}")
-    public ResponseEntity<Void> deleteCollege(@PathVariable String code) {
-        if (collegeService.deleteCollege(code)) {
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteCollege(@PathVariable String name) {
+        if (collegeService.deleteCollege(name)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

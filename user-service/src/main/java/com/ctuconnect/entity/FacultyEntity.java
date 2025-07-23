@@ -10,10 +10,12 @@ import org.springframework.data.neo4j.core.schema.*;
 @Builder
 public class FacultyEntity {
     @Id
-    private String code;
+    private String name; // Sử dụng name làm ID như trong database
 
-    private String name;
+    private String code; // Có thể thêm code riêng nếu cần
 
-    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
-    private CollegeEntity college;
+    private String college; // Tên college mà faculty thuộc về (theo database structure)
+
+    @Relationship(type = "HAS_FACULTY", direction = Relationship.Direction.INCOMING)
+    private CollegeEntity collegeEntity;
 }

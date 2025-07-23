@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users/categories")
@@ -23,11 +24,36 @@ public class CategoriesController {
     @GetMapping("/all")
     public ResponseEntity<Map<String, Object>> getAllCategories() {
         Map<String, Object> categories = new HashMap<>();
+
+        // Get all colleges with their faculties and majors nested
+        List<CollegeDTO> colleges = collegeService.getAllColleges();
+        List<CollegeWithHierarchyDTO> collegesWithHierarchy = colleges.stream()
+                .map(college -> {
+                    List<FacultyDTO> facultiesInCollege = facultyService.getFacultiesByCollege(college.getName());
+                    List<FacultyWithMajorsDTO> facultiesWithMajors = facultiesInCollege.stream()
+                            .map(faculty -> {
+                                List<MajorDTO> majorsInFaculty = majorService.getMajorsByFaculty(faculty.getName());
+                                return FacultyWithMajorsDTO.builder()
+                                        .name(faculty.getName())
+                                        .code(faculty.getCode())
+                                        .collegeName(faculty.getCollegeName())
+                                        .majors(majorsInFaculty)
+                                        .build();
+                            })
+                            .collect(Collectors.toList());
+
+                    return CollegeWithHierarchyDTO.builder()
+                            .name(college.getName())
+                            .code(college.getCode())
+                            .faculties(facultiesWithMajors)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        categories.put("colleges", collegesWithHierarchy);
         categories.put("batches", batchService.getAllBatches());
-        categories.put("colleges", collegeService.getAllColleges());
-        categories.put("faculties", facultyService.getAllFaculties());
-        categories.put("majors", majorService.getAllMajors());
         categories.put("genders", genderService.getAllGenders());
+
         return ResponseEntity.ok(categories);
     }
 
@@ -38,18 +64,18 @@ public class CategoriesController {
 
         Map<String, Object> collegeHierarchy = new HashMap<>();
         for (CollegeDTO college : colleges) {
-            List<FacultyDTO> faculties = facultyService.getFacultiesByCollege(college.getCode());
+            List<FacultyDTO> faculties = facultyService.getFacultiesByCollege(college.getName());
             Map<String, Object> facultyHierarchy = new HashMap<>();
 
             for (FacultyDTO faculty : faculties) {
-                List<MajorDTO> majors = majorService.getMajorsByFaculty(faculty.getCode());
-                facultyHierarchy.put(faculty.getCode(), Map.of(
+                List<MajorDTO> majors = majorService.getMajorsByFaculty(faculty.getName());
+                facultyHierarchy.put(faculty.getName(), Map.of(
                     "faculty", faculty,
                     "majors", majors
                 ));
             }
 
-            collegeHierarchy.put(college.getCode(), Map.of(
+            collegeHierarchy.put(college.getName(), Map.of(
                 "college", college,
                 "faculties", facultyHierarchy
             ));

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { categoryService } from '@/services/categoryService';
-import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo, CollegeInfo } from '@/types';
+import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo, CollegeInfo, HierarchicalCategories } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 interface FacultyProfileFormProps {
@@ -29,8 +29,9 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   });
 
   const [dropdownData, setDropdownData] = useState({
-    faculties: [] as FacultyInfo[],
+    hierarchicalData: null as HierarchicalCategories | null,
     colleges: [] as CollegeInfo[],
+    faculties: [] as FacultyInfo[],
     genders: [] as GenderInfo[]
   });
 
@@ -70,23 +71,36 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   useEffect(() => {
     const loadDropdownData = async () => {
       try {
-        // Use the new getAllCategories API for better performance
-        const categories = await categoryService.getAllCategories();
+        // Use the new hierarchical API for better performance
+        const hierarchicalData = await categoryService.getAllCategories();
+
+        // Extract flat lists for easier manipulation
+        const colleges = hierarchicalData.colleges.map(college => ({
+          code: college.code,
+          name: college.name
+        }));
 
         setDropdownData({
-          faculties: categories.faculties,
-          colleges: categories.colleges,
-          genders: categories.genders
+          hierarchicalData,
+          colleges,
+          faculties: [], // Will be populated when college is selected
+          genders: hierarchicalData.genders
         });
 
-        // Set initial filtered data
-        setFilteredFaculties(categories.faculties);
-
-        // If user has existing faculty data, set the selected college
+        // If user has existing faculty data, set the selected values and populate dependent dropdowns
         if (user.workingFaculty?.college?.code) {
-          setSelectedCollege(user.workingFaculty.college.code);
-          const facultiesInCollege = categories.faculties.filter(f => f.college?.code === user.workingFaculty?.college?.code);
-          setFilteredFaculties(facultiesInCollege);
+          const collegeCode = user.workingFaculty.college.code;
+          setSelectedCollege(collegeCode);
+
+          const selectedCollegeData = hierarchicalData.colleges.find(c => c.code === collegeCode);
+          if (selectedCollegeData) {
+            const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
+              code: faculty.code,
+              name: faculty.name,
+              college: { code: collegeCode, name: selectedCollegeData.name }
+            }));
+            setFilteredFaculties(facultiesInCollege);
+          }
         }
       } catch (error) {
         console.error('Error loading dropdown data:', error);
@@ -99,20 +113,22 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     loadDropdownData();
   }, [user.workingFaculty, showToast]);
 
-  const handleCollegeChange = async (collegeCode: string) => {
+  const handleCollegeChange = (collegeCode: string) => {
     setSelectedCollege(collegeCode);
     setFormData({ ...formData, workingFacultyCode: '' }); // Reset faculty when college changes
 
-    if (collegeCode) {
-      try {
-        const faculties = await categoryService.getFacultiesByCollege(collegeCode);
-        setFilteredFaculties(faculties);
-      } catch (error) {
-        console.error('Error loading faculties for college:', error);
-        showToast('Không thể tải danh sách khoa', 'error');
+    if (collegeCode && dropdownData.hierarchicalData) {
+      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.code === collegeCode);
+      if (selectedCollegeData) {
+        const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
+          code: faculty.code,
+          name: faculty.name,
+          college: { code: collegeCode, name: selectedCollegeData.name }
+        }));
+        setFilteredFaculties(facultiesInCollege);
       }
     } else {
-      setFilteredFaculties(dropdownData.faculties);
+      setFilteredFaculties([]);
     }
   };
 

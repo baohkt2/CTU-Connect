@@ -8,6 +8,10 @@ import java.util.List;
 
 @Repository
 public interface FacultyRepository extends Neo4jRepository<FacultyEntity, String> {
-    @Query("MATCH (f:Faculty)-[:BELONGS_TO]->(c:College {code: $collegeCode}) RETURN f")
-    List<FacultyEntity> findByCollegeCode(String collegeCode);
+    // Tìm faculty theo college name
+    @Query("MATCH (c:College {name: $collegeName})-[:HAS_FACULTY]->(f:Faculty) RETURN f")
+    List<FacultyEntity> findByCollegeName(String collegeName);
+
+    // Tìm faculty theo college property trong faculty node
+    List<FacultyEntity> findByCollege(String college);
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { categoryService } from '@/services/categoryService';
-import { User, StudentProfileUpdateRequest, MajorInfo, FacultyInfo, GenderInfo, BatchInfo, CollegeInfo } from '@/types';
+import { User, StudentProfileUpdateRequest, MajorInfo, FacultyInfo, GenderInfo, BatchInfo, CollegeInfo, HierarchicalCategories } from '@/types';
 import { useToast } from '@/hooks/useToast';
 
 interface StudentProfileFormProps {
@@ -27,9 +27,10 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   });
 
   const [dropdownData, setDropdownData] = useState({
-    majors: [] as MajorInfo[],
-    faculties: [] as FacultyInfo[],
+    hierarchicalData: null as HierarchicalCategories | null,
     colleges: [] as CollegeInfo[],
+    faculties: [] as FacultyInfo[],
+    majors: [] as MajorInfo[],
     genders: [] as GenderInfo[],
     batches: [] as BatchInfo[]
   });
@@ -44,34 +45,57 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   useEffect(() => {
     const loadDropdownData = async () => {
       try {
-        // Use the new getAllCategories API for better performance
-        const categories = await categoryService.getAllCategories();
+        // Use the new hierarchical API for better performance
+        const hierarchicalData = await categoryService.getAllCategories();
 
-        console.log(categories);
+        // Extract flat lists for easier manipulation
+        const colleges = hierarchicalData.colleges.map(college => ({
+          name: college.name,
+          code: college.code
+        }));
 
         setDropdownData({
-          majors: categories.majors,
-          faculties: categories.faculties,
-          colleges: categories.colleges,
-          genders: categories.genders,
-          batches: categories.batches
+          hierarchicalData,
+          colleges,
+          faculties: [], // Will be populated when college is selected
+          majors: [], // Will be populated when faculty is selected
+          genders: hierarchicalData.genders,
+          batches: hierarchicalData.batches
         });
 
-        // Set initial filtered data
-        setFilteredFaculties(categories.faculties);
-        setFilteredMajors(categories.majors);
+        // If user has existing data, set the selected values and populate dependent dropdowns
+        if (user.major?.faculty?.college?.name) {
+          const collegeName = user.major.faculty.college.name;
+          setSelectedCollege(collegeName);
 
-        // If user has existing data, set the selected values
-        if (user.major?.faculty?.college?.code) {
-          setSelectedCollege(user.major.faculty.college.code);
-          const facultiesInCollege = categories.faculties.filter(f => f.college?.code === user.major?.faculty?.college?.code);
-          setFilteredFaculties(facultiesInCollege);
-        }
+          const selectedCollegeData = hierarchicalData.colleges.find(c => c.name === collegeName);
+          if (selectedCollegeData) {
+            const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
+              name: faculty.name,
+              code: faculty.code,
+              college: { name: collegeName, code: selectedCollegeData.code }
+            }));
+            setFilteredFaculties(facultiesInCollege);
 
-        if (user.major?.faculty?.code) {
-          setSelectedFaculty(user.major.faculty.code);
-          const majorsInFaculty = categories.majors.filter(m => m.faculty?.code === user.major?.faculty?.code);
-          setFilteredMajors(majorsInFaculty);
+            if (user.major?.faculty?.name) {
+              const facultyName = user.major.faculty.name;
+              setSelectedFaculty(facultyName);
+
+              const selectedFacultyData = selectedCollegeData.faculties.find(f => f.name === facultyName);
+              if (selectedFacultyData) {
+                const majorsInFaculty = selectedFacultyData.majors.map(major => ({
+                  name: major.name,
+                  code: major.code,
+                  faculty: {
+                    name: facultyName,
+                    code: selectedFacultyData.code,
+                    college: { name: collegeName, code: selectedCollegeData.code }
+                  }
+                }));
+                setFilteredMajors(majorsInFaculty);
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Error loading dropdown data:', error);
@@ -84,40 +108,51 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
     loadDropdownData();
   }, [user.major, showToast]);
 
-  const handleCollegeChange = async (collegeCode: string) => {
-    setSelectedCollege(collegeCode);
+  const handleCollegeChange = (collegeName: string) => {
+    setSelectedCollege(collegeName);
     setSelectedFaculty('');
     setFormData({ ...formData, majorCode: '' }); // Reset major and faculty when college changes
 
-    if (collegeCode) {
-      try {
-        const faculties = await categoryService.getFacultiesByCollege(collegeCode);
-        setFilteredFaculties(faculties);
+    if (collegeName && dropdownData.hierarchicalData) {
+      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === collegeName);
+      if (selectedCollegeData) {
+        const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
+          name: faculty.name,
+          code: faculty.code,
+          college: { name: collegeName, code: selectedCollegeData.code }
+        }));
+        setFilteredFaculties(facultiesInCollege);
         setFilteredMajors([]); // Clear majors when college changes
-      } catch (error) {
-        console.error('Error loading faculties for college:', error);
-        showToast('Không thể tải danh sách khoa', 'error');
       }
     } else {
-      setFilteredFaculties(dropdownData.faculties);
-      setFilteredMajors(dropdownData.majors);
+      setFilteredFaculties([]);
+      setFilteredMajors([]);
     }
   };
 
-  const handleFacultyChange = async (facultyCode: string) => {
-    setSelectedFaculty(facultyCode);
+  const handleFacultyChange = (facultyName: string) => {
+    setSelectedFaculty(facultyName);
     setFormData({ ...formData, majorCode: '' }); // Reset major when faculty changes
 
-    if (facultyCode) {
-      try {
-        const majors = await categoryService.getMajorsByFaculty(facultyCode);
-        setFilteredMajors(majors);
-      } catch (error) {
-        console.error('Error loading majors for faculty:', error);
-        showToast('Không thể tải danh sách ngành', 'error');
+    if (facultyName && dropdownData.hierarchicalData && selectedCollege) {
+      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === selectedCollege);
+      if (selectedCollegeData) {
+        const selectedFacultyData = selectedCollegeData.faculties.find(f => f.name === facultyName);
+        if (selectedFacultyData) {
+          const majorsInFaculty = selectedFacultyData.majors.map(major => ({
+            name: major.name,
+            code: major.code,
+            faculty: {
+              name: facultyName,
+              code: selectedFacultyData.code,
+              college: { name: selectedCollege, code: selectedCollegeData.code }
+            }
+          }));
+          setFilteredMajors(majorsInFaculty);
+        }
       }
     } else {
-      setFilteredMajors(dropdownData.majors);
+      setFilteredMajors([]);
     }
   };
 
@@ -194,7 +229,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
           >
             <option value="">Chọn trường</option>
             {dropdownData.colleges.map((college) => (
-              <option key={college.code} value={college.code}>
+              <option key={college.name} value={college.name}>
                 {college.name}
               </option>
             ))}
@@ -214,7 +249,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
           >
             <option value="">Chọn khoa</option>
             {filteredFaculties.map((faculty) => (
-              <option key={faculty.code} value={faculty.code}>
+              <option key={faculty.name} value={faculty.name}>
                 {faculty.name}
               </option>
             ))}
@@ -235,7 +270,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
           >
             <option value="">Chọn ngành học</option>
             {filteredMajors.map((major) => (
-              <option key={major.code} value={major.code}>
+              <option key={major.name} value={major.name}>
                 {major.name}
               </option>
             ))}

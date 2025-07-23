@@ -4,38 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v1.1">
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/categoryService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/BatchController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CategoriesController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CollegeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/FacultyController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/GenderController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/MajorController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/BatchDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/CollegeDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FacultyDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/GenderDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/MajorDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/BatchRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/CollegeRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/FacultyRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/GenderRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/MajorRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/BatchService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/CollegeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/FacultyService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/GenderService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/MajorService.java" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v1.2">
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/CollegeWithHierarchyDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FacultyWithMajorsDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UniversityEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/profile/update/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/profile/update/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/auth/LoginForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/profile/FacultyProfileForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/FacultyProfileForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/profile/StudentProfileForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/StudentProfileForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/categoryService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/categoryService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CategoriesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CategoriesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CollegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/CollegeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/FacultyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/FacultyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/MajorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/MajorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/CollegeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/CollegeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FacultyDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FacultyDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/MajorDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/MajorDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/CollegeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/CollegeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/FacultyEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/FacultyEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/MajorEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/MajorEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/CollegeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/CollegeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/FacultyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/FacultyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/MajorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/MajorRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/CollegeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/FacultyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/FacultyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/MajorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/MajorService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -475,7 +471,7 @@
       <workItem from="1752822186543" duration="1572000" />
       <workItem from="1752824829177" duration="1051000" />
       <workItem from="1753086130099" duration="60000" />
-      <workItem from="1753292435331" duration="2775000" />
+      <workItem from="1753292435331" duration="5364000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -653,7 +649,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753292780754</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Update profile v1.2">
+      <option name="closed" value="true" />
+      <created>1753295533447</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1753295533447</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -704,7 +708,8 @@
     <MESSAGE value="Media service OK" />
     <MESSAGE value="Update profile v1.0" />
     <MESSAGE value="Update profile v1.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update profile v1.1" />
+    <MESSAGE value="Update profile v1.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update profile v1.2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

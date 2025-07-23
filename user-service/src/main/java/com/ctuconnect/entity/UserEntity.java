@@ -127,26 +127,26 @@ public class UserEntity {
     }
 
     public String getFacultyName() {
-        if (major != null && major.getFaculty() != null)
-            return major.getFaculty().getName();
+        if (major != null && major.getFacultyEntity() != null)
+            return major.getFacultyEntity().getName();
         return null;
     }
 
     public String getFacultyCode() {
-        if (major != null && major.getFaculty() != null)
-            return major.getFaculty().getCode();
+        if (major != null && major.getFacultyEntity() != null)
+            return major.getFacultyEntity().getCode();
         return null;
     }
 
     public String getCollegeName() {
-        if (major != null && major.getFaculty() != null && major.getFaculty().getCollege() != null)
-            return major.getFaculty().getCollege().getName();
+        if (major != null && major.getFacultyEntity() != null && major.getFacultyEntity().getCollegeEntity() != null)
+            return major.getFacultyEntity().getCollegeEntity().getName();
         return null;
     }
 
     public String getCollegeCode() {
-        if (major != null && major.getFaculty() != null && major.getFaculty().getCollege() != null)
-            return major.getFaculty().getCollege().getCode();
+        if (major != null && major.getFacultyEntity() != null && major.getFacultyEntity().getCollegeEntity() != null)
+            return major.getFacultyEntity().getCollegeEntity().getCode();
         return null;
     }
 

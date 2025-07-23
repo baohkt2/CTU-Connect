@@ -22,16 +22,16 @@ public class MajorController {
         return ResponseEntity.ok(majors);
     }
 
-    @GetMapping("/faculty/{facultyCode}")
-    public ResponseEntity<List<MajorDTO>> getMajorsByFaculty(@PathVariable String facultyCode) {
-        List<MajorDTO> majors = majorService.getMajorsByFaculty(facultyCode);
+    @GetMapping("/faculty/{facultyName}")
+    public ResponseEntity<List<MajorDTO>> getMajorsByFaculty(@PathVariable String facultyName) {
+        List<MajorDTO> majors = majorService.getMajorsByFaculty(facultyName);
         return ResponseEntity.ok(majors);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<MajorDTO> getMajorByCode(@PathVariable String code) {
-        return majorService.getMajorByCode(code)
-                .map(major -> ResponseEntity.ok(major))
+    @GetMapping("/{name}")
+    public ResponseEntity<MajorDTO> getMajorByName(@PathVariable String name) {
+        return majorService.getMajorByName(name)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -42,16 +42,16 @@ public class MajorController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PutMapping("/{code}")
-    public ResponseEntity<MajorDTO> updateMajor(@PathVariable String code, @Valid @RequestBody MajorDTO majorDTO) {
-        return majorService.updateMajor(code, majorDTO)
-                .map(major -> ResponseEntity.ok(major))
+    @PutMapping("/{name}")
+    public ResponseEntity<MajorDTO> updateMajor(@PathVariable String name, @Valid @RequestBody MajorDTO majorDTO) {
+        return majorService.updateMajor(name, majorDTO)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{code}")
-    public ResponseEntity<Void> deleteMajor(@PathVariable String code) {
-        if (majorService.deleteMajor(code)) {
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteMajor(@PathVariable String name) {
+        if (majorService.deleteMajor(name)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
