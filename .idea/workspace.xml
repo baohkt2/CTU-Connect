@@ -4,17 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v1.3">
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FacultyProfileUpdateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/StudentProfileUpdateRequest.java" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v1.4">
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/email.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/ctuconnect/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ProfileGuard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ProfileGuard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/profile/FacultyProfileForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/FacultyProfileForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/profile/StudentProfileForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/StudentProfileForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/import/init.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/import/init.cypher" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -454,7 +454,8 @@
       <workItem from="1752822186543" duration="1572000" />
       <workItem from="1752824829177" duration="1051000" />
       <workItem from="1753086130099" duration="60000" />
-      <workItem from="1753292435331" duration="7500000" />
+      <workItem from="1753292435331" duration="8400000" />
+      <workItem from="1753355763816" duration="2455000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -648,7 +649,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753298304003</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Update profile v1.4">
+      <option name="closed" value="true" />
+      <created>1753300180459</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1753300180459</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -701,7 +710,8 @@
     <MESSAGE value="Update profile v1.1" />
     <MESSAGE value="Update profile v1.2" />
     <MESSAGE value="Update profile v1.3" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update profile v1.3" />
+    <MESSAGE value="Update profile v1.4" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update profile v1.4" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

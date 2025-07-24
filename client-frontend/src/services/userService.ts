@@ -1,6 +1,6 @@
 import api from '@/lib/api';
-import { User, ApiResponse, PaginatedResponse, StudentProfileUpdateRequest, FacultyProfileUpdateRequest } from '@/types';
-import { categoryService } from './categoryService';
+import {ApiResponse, FacultyProfileUpdateRequest, PaginatedResponse, StudentProfileUpdateRequest, User} from '@/types';
+import {categoryService} from './categoryService';
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {
@@ -65,8 +65,7 @@ export const userService = {
   },
 
   async checkProfileCompletion(): Promise<boolean> {
-    const response = await api.get('/users/checkMyInfo');
-    return response.data;
+    return await api.get('/users/checkMyInfo');
   },
 
   // Delegate category operations to categoryService

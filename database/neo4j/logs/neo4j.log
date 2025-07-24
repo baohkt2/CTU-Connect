@@ -2370,3 +2370,6 @@ Caused by: java.lang.NoSuchMethodError: org.neo4j.kernel.impl.security.WebURLAcc
 2025-07-23 18:40:55.777+0000 INFO  name: system
 2025-07-23 18:40:55.792+0000 INFO  creationDate: 2025-07-21T19:09:00.216Z
 2025-07-23 18:40:55.793+0000 INFO  Started.
+2025-07-24 11:16:47.922+0000 INFO  Neo4j Server shutdown initiated by request
+2025-07-24 11:16:47.943+0000 INFO  Stopping...
+2025-07-24 11:16:53.537+0000 INFO  Stopped.

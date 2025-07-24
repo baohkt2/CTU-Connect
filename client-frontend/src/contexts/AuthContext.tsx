@@ -45,31 +45,62 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!isHydrated) return;
 
     const checkAuth = async () => {
-      // Kiểm tra xem có access token trong cookie không
-      const hasToken = authService.getAccessTokenFromCookie();
+      try {
+        // Check if we have tokens
+        const hasAccessToken = authService.getAccessTokenFromCookie();
+        const hasRefreshToken = authService.getRefreshTokenFromCookie();
 
-      if (hasToken && !authService.isTokenExpired()) {
-        try {
-          const response = await authService.getCurrentUser();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          console.error('Auth check error:', error);
-          // Token có thể đã expired, thử refresh
+        if (!hasAccessToken && !hasRefreshToken) {
+          // No tokens at all, user is not authenticated
+          setLoading(false);
+          return;
+        }
+
+        // Try to get current user
+        if (hasAccessToken && !authService.isTokenExpired()) {
+          // Access token is valid, try to get user
           try {
-            await authService.refreshToken();
             const response = await authService.getCurrentUser();
             if (response.success && response.data) {
               setUser(response.data);
+              setLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.log('Failed to get user with current access token, trying refresh...');
+          }
+        }
+
+        // Access token is expired or invalid, try refresh
+        if (hasRefreshToken) {
+          try {
+            const refreshResponse = await authService.refreshToken();
+            if (refreshResponse.user) {
+              setUser(refreshResponse.user);
+            } else {
+              // Try to get user after refresh
+              const userResponse = await authService.getCurrentUser();
+              if (userResponse.success && userResponse.data) {
+                setUser(userResponse.data);
+              }
             }
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
-            // Clear any stale cookies và redirect
+            // Clear any stale tokens and user state
             setUser(null);
+            // Clear cookies by calling logout (but don't redirect)
+            try {
+              await authService.logout();
+            } catch (logoutError) {
+              console.error('Logout error during refresh failure:', logoutError);
+            }
           }
         }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        setUser(null);
       }
+
       setLoading(false);
     };
 

@@ -6,6 +6,7 @@ import { userService } from '@/services/userService';
 import { categoryService } from '@/services/categoryService';
 import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo, CollegeInfo, HierarchicalCategories } from '@/types';
 import { useToast } from '@/hooks/useToast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FacultyProfileFormProps {
   user: User;
@@ -14,6 +15,7 @@ interface FacultyProfileFormProps {
 export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { updateUser } = useAuth();
 
   const [formData, setFormData] = useState<FacultyProfileUpdateRequest>({
     fullName: user.fullName || '',
@@ -142,14 +144,15 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
 
     setLoading(true);
     try {
-      await userService.updateMyProfile(formData);
+      const updatedUser = await userService.updateMyProfile(formData);
+
+      // Update user context with new data
+      updateUser(updatedUser);
+
       showToast('Cập nhật thông tin thành công!', 'success');
 
-      // Force redirect to home page
-      setTimeout(() => {
-        router.push('/');
-        router.refresh(); // Force page refresh to update user data
-      }, 1000);
+      // Redirect to home page immediately
+      router.push('/');
     } catch (error) {
       console.error('Error updating profile:', error);
       showToast('Có lỗi xảy ra khi cập nhật thông tin', 'error');

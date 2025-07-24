@@ -57,7 +57,7 @@ public class EmailService {
                             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                             .header { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
                             .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-                            .button { display: inline-block; background: #008000; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                            .button { display: inline-block; background: #4266f5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
                             .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
                             .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
                         </style>
@@ -143,7 +143,7 @@ public class EmailService {
                                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                                 .header { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
                                 .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-                                .button { display: inline-block; background: #008000; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                                .button { display: inline-block; background:#4266f5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
                                 .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
                                 .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
                             </style>

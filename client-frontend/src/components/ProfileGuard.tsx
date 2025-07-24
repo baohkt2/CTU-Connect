@@ -32,6 +32,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
   useEffect(() => {
     const checkProfileCompletion = async () => {
       // Skip check if user is not logged in, auth is loading, or on exempt pages
+
       if (!user || loading || isExemptPath) {
         setProfileCompleted(true);
         return;
@@ -47,7 +48,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
       try {
         const isCompleted = await userService.checkProfileCompletion();
         setProfileCompleted(isCompleted);
-
+        console.log('isCompleted', isCompleted);
         // If profile is not completed, redirect to update profile page
         if (!isCompleted) {
           router.push('/profile/update');
