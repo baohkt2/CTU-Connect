@@ -4,14 +4,27 @@ import com.ctuconnect.entity.FacultyEntity;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FacultyRepository extends Neo4jRepository<FacultyEntity, String> {
-    // Tìm faculty theo college name
-    @Query("MATCH (c:College {name: $collegeName})-[:HAS_FACULTY]->(f:Faculty) RETURN f")
-    List<FacultyEntity> findByCollegeName(String collegeName);
 
-    // Tìm faculty theo college property trong faculty node
+    @Query("MATCH (f:Faculty) RETURN f ORDER BY f.name")
+    List<FacultyEntity> findAllWithCollegeAndMajors();
+
+    @Query("MATCH (f:Faculty {college: $collegeName}) RETURN f ORDER BY f.name")
+    List<FacultyEntity> findByCollegeWithMajors(String collegeName);
+
+    @Query("MATCH (f:Faculty {name: $name}) RETURN f")
+    Optional<FacultyEntity> findByNameWithCollegeAndMajors(String name);
+
+    Optional<FacultyEntity> findByName(String name);
+
+    Optional<FacultyEntity> findByCode(String code);
+
     List<FacultyEntity> findByCollege(String college);
+
+
 }

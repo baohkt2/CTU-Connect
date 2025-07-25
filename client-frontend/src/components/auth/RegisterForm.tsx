@@ -217,7 +217,7 @@ const RegisterForm: React.FC = () => {
           </p>
         </div>
 
-        <Card className="mt-8 space-y-6">
+        <Card className="mt-8 space-y-6 text-gray-900">
           <div className="rounded-md shadow-sm">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {error && (

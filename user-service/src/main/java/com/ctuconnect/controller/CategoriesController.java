@@ -1,90 +1,52 @@
 package com.ctuconnect.controller;
 
-import com.ctuconnect.dto.*;
-import com.ctuconnect.service.*;
+import com.ctuconnect.dto.CategoryDTO;
+import com.ctuconnect.service.CategoryService;
+import com.ctuconnect.security.annotation.RequireAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users/categories")
 @RequiredArgsConstructor
 public class CategoriesController {
-    private final BatchService batchService;
-    private final CollegeService collegeService;
-    private final FacultyService facultyService;
-    private final MajorService majorService;
-    private final GenderService genderService;
+
+    private final CategoryService categoryService;
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String, Object>> getAllCategories() {
-        Map<String, Object> categories = new HashMap<>();
-
-        // Get all colleges with their faculties and majors nested
-        List<CollegeDTO> colleges = collegeService.getAllColleges();
-        List<CollegeWithHierarchyDTO> collegesWithHierarchy = colleges.stream()
-                .map(college -> {
-                    List<FacultyDTO> facultiesInCollege = facultyService.getFacultiesByCollege(college.getName());
-                    List<FacultyWithMajorsDTO> facultiesWithMajors = facultiesInCollege.stream()
-                            .map(faculty -> {
-                                List<MajorDTO> majorsInFaculty = majorService.getMajorsByFaculty(faculty.getName());
-                                return FacultyWithMajorsDTO.builder()
-                                        .name(faculty.getName())
-                                        .code(faculty.getCode())
-                                        .collegeName(faculty.getCollegeName())
-                                        .majors(majorsInFaculty)
-                                        .build();
-                            })
-                            .collect(Collectors.toList());
-
-                    return CollegeWithHierarchyDTO.builder()
-                            .name(college.getName())
-                            .code(college.getCode())
-                            .faculties(facultiesWithMajors)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        categories.put("colleges", collegesWithHierarchy);
-        categories.put("batches", batchService.getAllBatches());
-        categories.put("genders", genderService.getAllGenders());
-
-        return ResponseEntity.ok(categories);
+    @RequireAuth // Get all categories in hierarchical structure
+    public ResponseEntity<CategoryDTO.HierarchicalCategories> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategoriesHierarchical());
     }
 
-    @GetMapping("/hierarchy")
-    public ResponseEntity<Map<String, Object>> getCategoriesHierarchy() {
-        Map<String, Object> hierarchy = new HashMap<>();
-        List<CollegeDTO> colleges = collegeService.getAllColleges();
+    @GetMapping("/colleges")
+    @RequireAuth // Get all colleges with their faculties and majors
+    public ResponseEntity<java.util.List<CategoryDTO.CollegeInfo>> getColleges() {
+        return ResponseEntity.ok(categoryService.getAllColleges());
+    }
 
-        Map<String, Object> collegeHierarchy = new HashMap<>();
-        for (CollegeDTO college : colleges) {
-            List<FacultyDTO> faculties = facultyService.getFacultiesByCollege(college.getName());
-            Map<String, Object> facultyHierarchy = new HashMap<>();
+    @GetMapping("/faculties")
+    @RequireAuth // Get all faculties with their majors
+    public ResponseEntity<java.util.List<CategoryDTO.FacultyInfo>> getFaculties() {
+        return ResponseEntity.ok(categoryService.getAllFaculties());
+    }
 
-            for (FacultyDTO faculty : faculties) {
-                List<MajorDTO> majors = majorService.getMajorsByFaculty(faculty.getName());
-                facultyHierarchy.put(faculty.getName(), Map.of(
-                    "faculty", faculty,
-                    "majors", majors
-                ));
-            }
+    @GetMapping("/majors")
+    @RequireAuth // Get all majors
+    public ResponseEntity<java.util.List<CategoryDTO.MajorInfo>> getMajors() {
+        return ResponseEntity.ok(categoryService.getAllMajors());
+    }
 
-            collegeHierarchy.put(college.getName(), Map.of(
-                "college", college,
-                "faculties", facultyHierarchy
-            ));
-        }
+    @GetMapping("/batches")
+    @RequireAuth // Get all batches
+    public ResponseEntity<java.util.List<CategoryDTO.BatchInfo>> getBatches() {
+        return ResponseEntity.ok(categoryService.getAllBatches());
+    }
 
-        hierarchy.put("colleges", collegeHierarchy);
-        hierarchy.put("batches", batchService.getAllBatches());
-        hierarchy.put("genders", genderService.getAllGenders());
-
-        return ResponseEntity.ok(hierarchy);
+    @GetMapping("/genders")
+    @RequireAuth // Get all genders
+    public ResponseEntity<java.util.List<CategoryDTO.GenderInfo>> getGenders() {
+        return ResponseEntity.ok(categoryService.getAllGenders());
     }
 }

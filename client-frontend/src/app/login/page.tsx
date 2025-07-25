@@ -1,32 +1,32 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import LoginForm from '@/components/auth/LoginForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function LoginPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && user) {
-      router.push('/');
+    if (!loading && isAuthenticated) {
+      router.replace('/'); // ✅ Chuyển hướng nếu đã đăng nhập
     }
-  }, [user, loading, router]);
+    console.log('isAuthenticated:', isAuthenticated);
+  }, [isAuthenticated, loading, router]); // ✅ Sửa dependency từ `user` → `isAuthenticated`
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
     );
   }
 
-  if (user) {
-    return null;
+  if (isAuthenticated) {
+    return null; // ✅ Tránh render LoginForm nếu đã đăng nhập
   }
 
-  return <LoginForm/>
+  return <LoginForm />;
 }

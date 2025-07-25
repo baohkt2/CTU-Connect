@@ -267,4 +267,3 @@ public class UserController {
         return ResponseEntity.ok("Friend request accepted successfully");
     }
 }
-

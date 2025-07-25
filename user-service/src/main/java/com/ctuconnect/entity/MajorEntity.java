@@ -12,7 +12,7 @@ public class MajorEntity {
     @Id
     private String name; // Sử dụng name làm ID như trong database
 
-    private String code; // Có thể thêm code riêng nếu cần
+    private String code;
 
     private String faculty; // Tên faculty mà major thuộc về (theo database structure)
 

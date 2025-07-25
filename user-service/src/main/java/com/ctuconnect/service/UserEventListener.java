@@ -38,6 +38,7 @@ public class UserEventListener {
                     .email(String.valueOf(event.get("email")))
                     .username(String.valueOf(event.get("username")))
                     .role(Role.valueOf(String.valueOf(event.get("role"))))
+                    .isProfileCompleted(false) // Mặc định false
                     .isActive(true)
                     .build();
 

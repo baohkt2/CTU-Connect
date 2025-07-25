@@ -95,8 +95,8 @@ const LoginForm: React.FC = () => {
         recaptchaToken
       };
 
-      await login(loginData);
-      router.push('/');
+      await login(loginData).then(() => {router.replace('/')});
+
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const apiError = err as AxiosError<ApiErrorResponse>;

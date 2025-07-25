@@ -24,7 +24,7 @@ public class FacultyService {
     }
 
     public List<FacultyDTO> getFacultiesByCollege(String collegeName) {
-        return facultyRepository.findByCollegeName(collegeName).stream()
+        return facultyRepository.findByName(collegeName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

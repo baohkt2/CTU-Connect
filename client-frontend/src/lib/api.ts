@@ -14,7 +14,7 @@ const api = axios.create({
 // Request interceptor - không cần thêm Authorization header vì dùng cookies
 api.interceptors.request.use(
   (config) => {
-    // Có thể thêm CSRF token nếu cần
+    // API Gateway sẽ tự động đọc tokens từ HttpOnly cookies
     return config;
   },
   (error) => {
@@ -22,42 +22,72 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor để handle errors và auto-refresh token
+// Response interceptor để handle 401 errors từ API Gateway
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('DEBUG: API Response successful:', response.config.url, response.status);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+    console.log('DEBUG: API Error interceptor triggered:', originalRequest.url, error.response?.status);
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    // Nếu nhận 401 từ API Gateway
+    if (error.response?.status === 401) {
+      console.log('DEBUG: 401 Unauthorized received for:', originalRequest.url);
 
-      try {
-        // Thử refresh token
-        await api.post('/api/auth/refresh-token', {
-          refreshToken: getRefreshTokenFromCookie()
-        });
-
-        // Retry original request
-        return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh token failed, redirect to login
+      // Nếu đây là request refresh-token thất bại, logout user
+      if (originalRequest.url?.includes('/auth/refresh-token')) {
+        console.log('DEBUG: Refresh token failed, redirecting to login');
+        // Clear any auth state and redirect
         if (typeof window !== 'undefined') {
+          // Trigger logout through auth service to clear cookies
+          try {
+            await api.post('/auth/logout', {}, { withCredentials: true });
+          } catch (logoutError) {
+            console.error('DEBUG: Logout error:', logoutError);
+          }
+          // Redirect to login
           window.location.href = '/login';
         }
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
+      }
+
+      // Nếu chưa thử refresh token, thử refresh token
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        console.log('DEBUG: Attempting token refresh for failed request:', originalRequest.url);
+
+        try {
+          // Thử refresh token thông qua API Gateway
+          const refreshResponse = await api.post('/auth/refresh-token', {}, {
+            withCredentials: true
+          });
+          console.log('DEBUG: Token refresh successful, retrying original request');
+
+          // Retry original request sau khi refresh thành công
+          return api(originalRequest);
+        } catch (refreshError) {
+          console.log('DEBUG: Token refresh failed, redirecting to login');
+          // Refresh thất bại, logout và redirect
+          if (typeof window !== 'undefined') {
+            try {
+              await api.post('/auth/logout', {}, { withCredentials: true });
+            } catch (logoutError) {
+              console.error('DEBUG: Logout error:', logoutError);
+            }
+            window.location.href = '/login';
+          }
+          return Promise.reject(refreshError);
+        }
+      } else {
+        console.log('DEBUG: Already retried request, not attempting refresh again');
       }
     }
 
+    console.log('DEBUG: Non-401 error or already handled:', error.response?.status);
     return Promise.reject(error);
   }
 );
-
-// Helper function to get refresh token from cookie
-function getRefreshTokenFromCookie(): string | null {
-  if (typeof document === 'undefined') return null;
-  const cookies = document.cookie.split(';');
-  const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('refreshToken='));
-  return tokenCookie ? tokenCookie.split('=')[1] : null;
-}
 
 export default api;

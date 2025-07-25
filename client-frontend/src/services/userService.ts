@@ -65,7 +65,8 @@ export const userService = {
   },
 
   async checkProfileCompletion(): Promise<boolean> {
-    return await api.get('/users/checkMyInfo');
+    const response = await api.get('/users/checkMyInfo');
+    return response.data.isCompleted;
   },
 
   // Delegate category operations to categoryService

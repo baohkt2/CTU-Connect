@@ -1,8 +1,8 @@
 'use client';
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, LoginRequest, RegisterRequest } from '@/types';
 import { authService } from '@/services/authService';
+import { usePathname } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -32,10 +32,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Public routes that don't require authentication
+const PUBLIC_ROUTES = [
+    '/login',
+  '/register',
+  '/change-password',
+  '/verify-email',
+  '/resend-verification'
+];
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsHydrated(true);
@@ -44,73 +54,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     if (!isHydrated) return;
 
-    const checkAuth = async () => {
-      try {
-        // Check if we have tokens
-        const hasAccessToken = authService.getAccessTokenFromCookie();
-        const hasRefreshToken = authService.getRefreshTokenFromCookie();
+    // Check if current route is public
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
 
-        if (!hasAccessToken && !hasRefreshToken) {
-          // No tokens at all, user is not authenticated
+    const checkAuth = async () => {
+      console.log('DEBUG: ==> Starting checkAuth for route:', pathname);
+      console.log('DEBUG: ==> Is public route:', isPublicRoute);
+      console.log('DEBUG: ==> PUBLIC_ROUTES:', PUBLIC_ROUTES);
+
+      try {
+        // For public routes, skip auth check and set loading to false
+        if (isPublicRoute) {
+          console.log('DEBUG: Public route detected, skipping auth check:', pathname);
           setLoading(false);
           return;
         }
 
-        // Try to get current user
-        if (hasAccessToken && !authService.isTokenExpired()) {
-          // Access token is valid, try to get user
-          try {
-            const response = await authService.getCurrentUser();
-            if (response.success && response.data) {
-              setUser(response.data);
-              setLoading(false);
-              return;
-            }
-          } catch (error) {
-            console.log('Failed to get user with current access token, trying refresh...');
-          }
-        }
+        console.log('DEBUG: Checking authentication for protected route:', pathname);
 
-        // Access token is expired or invalid, try refresh
-        if (hasRefreshToken) {
-          try {
-            const refreshResponse = await authService.refreshToken();
-            if (refreshResponse.user) {
-              setUser(refreshResponse.user);
-            } else {
-              // Try to get user after refresh
-              const userResponse = await authService.getCurrentUser();
-              if (userResponse.success && userResponse.data) {
-                setUser(userResponse.data);
-              }
-            }
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-            // Clear any stale tokens and user state
-            setUser(null);
-            // Clear cookies by calling logout (but don't redirect)
-            try {
-              await authService.logout();
-            } catch (logoutError) {
-              console.error('Logout error during refresh failure:', logoutError);
-            }
+        // Use the enhanced authentication method that returns both auth status and user data
+        const authResult = await authService.checkAuthenticationWithUser();
+
+        console.log('DEBUG: Auth result:', authResult);
+
+        if (authResult.isAuthenticated && authResult.user) {
+          console.log('DEBUG: User authenticated, setting user data');
+          setUser(authResult.user);
+        } else {
+          console.log('DEBUG: User not authenticated, clearing user data');
+          setUser(null);
+
+          // If we have an error, log it
+          if (authResult.error) {
+            console.log('DEBUG: Authentication error:', authResult.error);
           }
         }
       } catch (error) {
-        console.error('Auth check error:', error);
+        console.log('DEBUG: Auth check failed with exception:', error);
         setUser(null);
+      } finally {
+        // Always set loading to false when auth check is complete
+        console.log('DEBUG: Setting loading to false');
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     checkAuth();
-  }, [isHydrated]);
+  }, [isHydrated, pathname]);
 
   const login = async (credentials: LoginRequest) => {
     try {
       const response = await authService.login(credentials);
-      // Backend trả về user trong response, tokens được set trong cookies
       console.log('Login response:', response);
       if (response.user) {
         setUser(response.user);
@@ -122,9 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (userData: RegisterRequest) => {
     try {
-      // Chỉ gọi API đăng ký, không auto-login
       await authService.register(userData);
-      // Không set user vì cần xác thực email trước
     } catch (error) {
       throw error;
     }
@@ -132,6 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
+      // authService.logout sẽ call API để clear HttpOnly cookies
       await authService.logout();
     } catch (error) {
       console.error('Logout error:', error);
@@ -140,7 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
       // Redirect to login page
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        window.location.replace('/');
       }
     }
   };

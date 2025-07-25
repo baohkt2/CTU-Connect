@@ -13,21 +13,19 @@ export const authService = {
     const response = await api.post('/auth/register', userData, {
       withCredentials: true, // Để nhận cookies nếu cần
     });
-    // Backend trả về message thông báo đã gửi email
     return { message: response.data };
   },
 
   async logout(): Promise<void> {
-    // Backend expects refresh token in request body
-    const refreshToken = this.getRefreshTokenFromCookie();
-    await api.post('/auth/logout', { refreshToken }, {
+    // Simply call logout endpoint - no need to manually handle tokens
+    await api.post('/auth/logout', {}, {
       withCredentials: true,
     });
   },
 
   async refreshToken(): Promise<AuthResponse> {
-    const refreshToken = this.getRefreshTokenFromCookie();
-    const response = await api.post('/auth/refresh-token', { refreshToken }, {
+    // API Gateway will automatically handle refresh token from HttpOnly cookies
+    const response = await api.post('/auth/refresh-token', {}, {
       withCredentials: true,
     });
     return response.data;
@@ -60,30 +58,59 @@ export const authService = {
     return response.data;
   },
 
-  // Helper methods for cookie management
-  getAccessTokenFromCookie(): string | null {
-    if (typeof document === 'undefined') return null;
-    const cookies = document.cookie.split(';');
-    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('accessToken='));
-    return tokenCookie ? tokenCookie.split('=')[1] : null;
-  },
-
-  getRefreshTokenFromCookie(): string | null {
-    if (typeof document === 'undefined') return null;
-    const cookies = document.cookie.split(';');
-    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('refreshToken='));
-    return tokenCookie ? tokenCookie.split('=')[1] : null;
-  },
-
-  isTokenExpired(): boolean {
-    const token = this.getAccessTokenFromCookie();
-    if (!token) return true;
+  /**
+   * Kiểm tra xác thực người dùng và trả về thông tin người dùng nếu đã xác thực
+   * @returns {Promise<{ isAuthenticated: boolean; user: User | null; error?: any }>}
+   */
+  checkAuthenticationWithUser: async (): Promise<{
+    isAuthenticated: boolean;
+    user: User | null;
+    error?: any;
+  }> => {
+    console.log('DEBUG: ========== Starting checkAuthenticationWithUser ==========');
+    console.log('DEBUG: Current URL:', typeof window !== 'undefined' ? window.location.href : 'server-side');
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 < Date.now();
-    } catch {
-      return true;
+      console.log('DEBUG: Making API call to /auth/me');
+      const response = await api.get('/auth/me', {
+        withCredentials: true,
+      });
+
+      console.log('DEBUG: API response status:', response.status);
+      console.log('DEBUG: API response data:', response.data.user);
+
+      // Check if the response indicates authentication success
+      if (response.data && response.status === 200) {
+        console.log('DEBUG: Authentication successful, user data found');
+        return {
+          isAuthenticated: true,
+          user: response.data.user,
+        };
+      } else if (response.data && !(response.status === 200)) {
+        console.log('DEBUG: Authentication failed - response indicates failure');
+        return {
+          isAuthenticated: false,
+          user: null,
+        };
+      } else {
+        console.log('DEBUG: Unexpected response format:', response.data);
+        return {
+          isAuthenticated: false,
+          user: null,
+        };
+      }
+    } catch (error: any) {
+      console.error('DEBUG: checkAuthenticationWithUser error:', error);
+      console.error('DEBUG: Error status:', error.response?.status);
+      console.error('DEBUG: Error data:', error.response?.data);
+
+      return {
+        isAuthenticated: false,
+        user: null,
+        error,
+      };
+    } finally {
+      console.log('DEBUG: ========== checkAuthenticationWithUser completed ==========');
     }
   }
 };

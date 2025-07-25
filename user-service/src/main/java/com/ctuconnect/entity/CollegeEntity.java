@@ -3,6 +3,8 @@ package com.ctuconnect.entity;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.*;
 
+import java.util.List;
+
 @Node("College")
 @Data
 @NoArgsConstructor
@@ -12,6 +14,8 @@ public class CollegeEntity {
     @Id
     private String name; // Sử dụng name làm ID như trong database
 
-    // Có thể thêm code riêng nếu cần
     private String code;
+
+    @Relationship(type = "HAS_FACULTY", direction = Relationship.Direction.OUTGOING)
+    private List<FacultyEntity> faculties;
 }

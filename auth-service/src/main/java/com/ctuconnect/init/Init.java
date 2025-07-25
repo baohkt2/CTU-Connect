@@ -68,7 +68,7 @@ public class Init implements CommandLineRunner {
         userCreatedEvent.put("userId", adminUser.getId());
         userCreatedEvent.put("email", adminUser.getEmail());
         userCreatedEvent.put("username", adminUser.getUsername());
-        userCreatedEvent.put("role", adminUser.getRole());
+        userCreatedEvent.put("role", "FACULTY"); // Giả sử role là FACULTY
         kafkaTemplate.send("user-registration", adminUser.getId().toString(), userCreatedEvent);
 
 

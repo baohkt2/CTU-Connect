@@ -37,6 +37,7 @@ public class UserSyncService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userId); // ID đồng bộ với auth-db
         userEntity.setEmail(email);
+        userEntity.setIsProfileCompleted(false);
         userEntity.setRole(Role.valueOf(role));
         userEntity.setCreatedAt(LocalDateTime.now());
         userEntity.setUpdatedAt(LocalDateTime.now());

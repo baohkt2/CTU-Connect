@@ -120,7 +120,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     setFormData({ ...formData, workingFacultyName: '' }); // Reset faculty when college changes
 
     if (collegeCode && dropdownData.hierarchicalData) {
-      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.name === collegeCode);
+      const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.code === collegeCode);
       if (selectedCollegeData) {
         const facultiesInCollege = selectedCollegeData.faculties.map(faculty => ({
           name: faculty.name,
@@ -133,6 +133,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
       setFilteredFaculties([]);
     }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,9 +149,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
 
       // Update user context with new data
       updateUser(updatedUser);
-
       showToast('Cập nhật thông tin thành công!', 'success');
-
       // Redirect to home page immediately
       router.push('/');
     } catch (error) {
@@ -170,7 +169,7 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 text-gray-900">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Full Name */}
         <div>

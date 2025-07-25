@@ -363,6 +363,35 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.delete(token);
     }
 
+    @Override
+    public AuthResponse getCurrentUser(String accessToken) {
+        try {
+            // Extract user information from access token
+            String userEmail = jwtService.extractUsername(accessToken);
+
+            // Validate token
+            if (jwtService.isTokenExpired(accessToken)) {
+                throw new RuntimeException("Access token has expired");
+            }
+
+            // Find user by email
+            UserEntity user = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Check if user is active
+            if (!user.isActive()) {
+                throw new RuntimeException("User account is inactive");
+            }
+
+            return AuthResponse.builder()
+                    .user(UserMapper.toDto(user))
+                    .tokenType("Bearer")
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid access token: " + e.getMessage());
+        }
+    }
+
     /**
      * Helper method to create a refresh token
      */

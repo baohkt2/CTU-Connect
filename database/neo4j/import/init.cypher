@@ -93,6 +93,45 @@ MERGE (m:Major {name: majorData.name, code: majorData.code, faculty: facultyData
 MERGE (f)-[:HAS_MAJOR]->(m);
 
 // =================================================================
+// 5. POSITION AND DEGREE NODES
+// =================================================================
+UNWIND [
+{code: 'GIANG_VIEN', name: 'Giảng viên'},
+{code: 'GIANG_VIEN_CHINH', name: 'Giảng viên chính'},
+{code: 'PHO_GIAO_SU', name: 'Phó Giáo sư'},
+{code: 'GIAO_SU', name: 'Giáo sư'},
+{code: 'CAN_BO', name: 'Cán bộ'},
+{code: 'TRO_LY', name: 'Trợ lý'},
+{code: 'NGHIEN_CUU_VIEN', name: 'Nghiên cứu viên'}
+] AS position
+MERGE (p:Position {code: position.code})
+SET p.name = position.name;
+
+
+UNWIND [
+{code: 'GIAO_SU', name: 'Giáo sư'},
+{code: 'PHO_GIAO_SU', name: 'Phó Giáo sư'},
+{code: 'TIEN_SI', name: 'Tiến sĩ'},
+{code: 'THAC_SI', name: 'Thạc sĩ'},
+{code: 'CU_NHAN', name: 'Cử nhân'}
+] AS title
+MERGE (a:AcademicTitle {code: title.code})
+SET a.name = title.name;
+
+UNWIND [
+{code: 'TIEN_SI', name: 'Tiến sĩ'},
+{code: 'THAC_SI', name: 'Thạc sĩ'},
+{code: 'CU_NHAN', name: 'Cử nhân'},
+{code: 'KHAC', name: 'Khác'}
+] AS degree
+MERGE (d:Degree {code: degree.code})
+SET d.name = degree.name;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (p:Position) REQUIRE p.code IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (a:AcademicTitle) REQUIRE a.code IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (d:Degree) REQUIRE d.code IS UNIQUE;
+
+// =================================================================
 // 5. CREATE SAMPLE USERS FOR TESTING
 // =================================================================
 // Create a sample student user

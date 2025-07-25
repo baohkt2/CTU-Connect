@@ -24,7 +24,7 @@ public class MajorService {
     }
 
     public List<MajorDTO> getMajorsByFaculty(String facultyName) {
-        return majorRepository.findByFacultyName(facultyName).stream()
+        return majorRepository.findByName(facultyName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
