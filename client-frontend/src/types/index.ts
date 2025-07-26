@@ -8,7 +8,6 @@ export interface User {
   avatar?: string;
   bio?: string;
   studentId?: string;
-  faculty?: string;
   yearOfStudy?: number;
   isVerified: boolean;
   isOnline: boolean;
@@ -27,10 +26,10 @@ export interface User {
 
   // Faculty specific fields
   staffCode?: string;
-  position?: string;
-  academicTitle?: string;
-  degree?: string;
-  workingFaculty?: FacultyInfo;
+  position?: PositionInfo;
+  academic?: AcademicInfo;
+  degree?: DegreeInfo;
+  faculty?: FacultyInfo;
 }
 
 export interface Post {
@@ -148,6 +147,21 @@ export interface GenderInfo {
   name: string;
 }
 
+export interface PositionInfo {
+    code: string;
+    name: string;
+}
+
+export interface AcademicInfo {
+  code: string;
+  name: string;
+}
+
+export interface DegreeInfo {
+  code: string;
+  name: string;
+}
+
 export interface StudentProfileUpdateRequest {
   fullName: string;
   bio?: string;
@@ -163,10 +177,10 @@ export interface FacultyProfileUpdateRequest {
   fullName: string;
   bio?: string;
   staffCode: string;
-  position: string;
-  academicTitle?: string;
-  degree?: string;
-  workingFacultyName: string; // Đổi từ workingFacultyCode sang workingFacultyName
+  positionCode: string;
+  academicCode?: string;
+  degreeCode?: string;
+  facultyCode: string; // Đổi từ workingFacultyCode sang workingFacultyName
   genderCode: string;
   avatarUrl?: string;
   backgroundUrl?: string;
@@ -192,7 +206,11 @@ export interface FacultyWithMajorsInfo {
 
 // Updated interface for hierarchical categories
 export interface HierarchicalCategories {
+  degrees: DegreeInfo[];
+  academics: AcademicInfo[];
+  positions: PositionInfo[];
   colleges: CollegeWithHierarchyInfo[];
   batches: BatchInfo[];
   genders: GenderInfo[];
+
 }

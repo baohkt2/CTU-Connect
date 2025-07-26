@@ -136,9 +136,9 @@ public class UserSyncService {
 
         // Faculty fields
         dto.setStaffCode(entity.getStaffCode());
-        dto.setPosition(entity.getPosition());
-        dto.setAcademicTitle(entity.getAcademicTitle());
-        dto.setDegree(entity.getDegree());
+        dto.setPositionCode(entity.getPositionCode());
+        dto.setAcademicCode(entity.getAcademicCode());
+        dto.setDegreeCode(entity.getDegreeCode());
 
         // Academic information - codes
         dto.setMajorCode(entity.getMajorCode());

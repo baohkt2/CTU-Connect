@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.schema.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BatchEntity {
+public class BatchEntity  {
     @Id
     private Integer year;
 }

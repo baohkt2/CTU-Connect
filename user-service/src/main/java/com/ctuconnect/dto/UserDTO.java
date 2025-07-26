@@ -29,9 +29,13 @@ public class UserDTO {
 
     // Giảng viên
     private String staffCode;
-    private String position;       // Giảng viên, Trợ lý, ...
-    private String academicTitle;  // Giáo sư, Phó GS, ...
-    private String degree;         // Tiến sĩ, Thạc sĩ,...
+    private String positionCode;       // Giảng viên, Trợ lý, ...
+    private String academicCode;  // Giáo sư, Phó GS, ...
+    private String degreeCode;         // Tiến sĩ, Thạc sĩ,...
+
+    private String positionName;       // Tên vị trí (dùng để hiển thị)
+    private String academicName;       // Tên học hàm (dùng để hiển thị)
+    private String degreeName;         // Tên học vị (dùng để hiển
 
     // Dành cho gửi dữ liệu (cập nhật thông tin người dùng) - sử dụng codes
     private String majorCode;
@@ -45,6 +49,7 @@ public class UserDTO {
     private String facultyName;
     private String collegeName;
     private String genderName;
+
 
     // Legacy fields cho backward compatibility
     private String major;

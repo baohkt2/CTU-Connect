@@ -5,6 +5,7 @@ import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.enums.Role;
 import com.ctuconnect.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -33,6 +35,15 @@ public class UserService {
 
     @Autowired
     private GenderRepository genderRepository;
+
+    @Autowired
+    private DegreeRepository degreeRepository;
+
+    @Autowired
+    private AcademicRepository academicRepository;
+
+    @Autowired
+    private PositionRepository positionRepository;
 
     /**
      * Create a new user
@@ -101,9 +112,7 @@ public class UserService {
 
         // Update faculty-specific fields
         if (userDTO.getStaffCode() != null) userEntity.setStaffCode(userDTO.getStaffCode());
-        if (userDTO.getPosition() != null) userEntity.setPosition(userDTO.getPosition());
-        if (userDTO.getAcademicTitle() != null) userEntity.setAcademicTitle(userDTO.getAcademicTitle());
-        if (userDTO.getDegree() != null) userEntity.setDegree(userDTO.getDegree());
+
 
         // Update media fields
         if (userDTO.getAvatarUrl() != null) userEntity.setAvatarUrl(userDTO.getAvatarUrl());
@@ -465,6 +474,7 @@ public class UserService {
         dto.setRole(entity.getRole() != null ? entity.getRole().toString() : null);
         dto.setBio(entity.getBio());
         dto.setIsActive(entity.getIsActive());
+        dto.setIsProfileCompleted(entity.getIsProfileCompleted());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
@@ -473,9 +483,9 @@ public class UserService {
 
         // Faculty fields
         dto.setStaffCode(entity.getStaffCode());
-        dto.setPosition(entity.getPosition());
-        dto.setAcademicTitle(entity.getAcademicTitle());
-        dto.setDegree(entity.getDegree());
+        dto.setPositionCode(entity.getPositionCode());
+        dto.setAcademicCode(entity.getAcademicCode());
+        dto.setDegreeCode(entity.getDegreeCode());
 
         // Academic information - codes
         dto.setMajorCode(entity.getMajorCode());
@@ -550,9 +560,6 @@ public class UserService {
 
         // Faculty fields
         entity.setStaffCode(dto.getStaffCode());
-        entity.setPosition(dto.getPosition());
-        entity.setAcademicTitle(dto.getAcademicTitle());
-        entity.setDegree(dto.getDegree());
 
         // Media fields
         entity.setAvatarUrl(dto.getAvatarUrl());
@@ -596,7 +603,7 @@ public class UserService {
             userEntity.setBackgroundUrl(request.getBackgroundUrl());
 
             // Update relationships
-            updateUserRelationships(userEntity, request.getMajorName(), null, request.getBatchYear(), request.getGenderCode());
+            updateUserRelationshipsCollege(userEntity, request.getMajorName(), null, request.getBatchYear(), request.getGenderCode());
 
             userEntity.setIsProfileCompleted(true);
             userEntity.updateTimestamp();
@@ -629,15 +636,14 @@ public class UserService {
             userEntity.setFullName(request.getFullName());
             userEntity.setBio(request.getBio());
             userEntity.setStaffCode(request.getStaffCode());
-            userEntity.setPosition(request.getPosition());
-            userEntity.setAcademicTitle(request.getAcademicTitle());
-            userEntity.setDegree(request.getDegree());
             userEntity.setAvatarUrl(request.getAvatarUrl());
             userEntity.setBackgroundUrl(request.getBackgroundUrl());
 
             // Update relationships
-            updateUserRelationships(userEntity, null, request.getWorkingFacultyName(), null, request.getGenderCode());
+            updateUserRelationshipsCollege(userEntity, null, request.getFacultyCode(), null, request.getGenderCode());
 
+            updateUserRelationshipsFaculty(userEntity, request.getDegreeCode(), request.getAcademicCode(), request.getPositionCode());
+            
             userEntity.setIsProfileCompleted(true);
             userEntity.updateTimestamp();
 
@@ -655,7 +661,7 @@ public class UserService {
     /**
      * Helper method to update user relationships (major, faculty, batch, gender)
      */
-    private void updateUserRelationships(UserEntity userEntity, String majorName, String facultyName, Integer batchYear, String genderCode) {
+    private void updateUserRelationshipsCollege(UserEntity userEntity, String majorName, String facultyName, Integer batchYear, String genderCode) {
         // Update major relationship for students
         if (majorName != null && !majorName.isEmpty()) {
             majorRepository.findById(majorName).ifPresentOrElse(
@@ -688,4 +694,35 @@ public class UserService {
             );
         }
     }
+    /**
+     * Helper method to update user relationships (degree, academic, faculty)
+     */
+    private void updateUserRelationshipsFaculty(UserEntity userEntity, String degreeCode, String academicCode, String positionCode) {
+        // Update degree relationship
+        if (degreeCode != null && !degreeCode.isEmpty()) {
+            degreeRepository.findById(degreeCode).ifPresentOrElse(
+                    userEntity::setDegree,
+                    () -> { throw new RuntimeException("Degree not found: " + degreeCode); }
+            );
+        }
+
+        // Update academic relationship
+        if (academicCode != null && !academicCode.isEmpty()) {
+            academicRepository.findById(academicCode).ifPresentOrElse(
+                    userEntity::setAcademic,
+                    () -> { throw new RuntimeException("Academic title not found: " + academicCode); }
+            );
+        }
+
+        // Update working faculty relationship (nếu chưa cập nhật)
+        if (positionCode != null && !positionCode.isEmpty()) {
+            positionRepository.findById(positionCode).ifPresentOrElse(
+                    userEntity::setPosition,
+                    () -> { throw new RuntimeException("Position not found: " + positionCode); }
+            );
+        }
+
+    }
+
+
 }

@@ -6,12 +6,14 @@ import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.security.SecurityContextHolder;
 import com.ctuconnect.security.annotation.RequireAuth;
 import com.ctuconnect.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequireAuth // Yêu cầu xác thực cho tất cả endpoints

@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CollegeEntity {
-    @Id
-    private String name; // Sử dụng name làm ID như trong database
 
+    private String name; // Sử dụng name làm ID như trong database
+    @Id
     private String code;
 
     @Relationship(type = "HAS_FACULTY", direction = Relationship.Direction.OUTGOING)

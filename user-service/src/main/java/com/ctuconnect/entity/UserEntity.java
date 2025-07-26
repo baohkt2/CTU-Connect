@@ -37,9 +37,7 @@ public class UserEntity {
 
     // ==== Trường riêng của giảng viên/cán bộ ====
     private String staffCode;
-    private String position;        // Giảng viên, Trợ lý, Cán bộ,...
-    private String academicTitle;   // Giáo sư, PGS,...
-    private String degree;          // Tiến sĩ, Thạc sĩ,...
+
 
     // ==== Thời gian ====
     private LocalDateTime createdAt;
@@ -61,6 +59,21 @@ public class UserEntity {
 
     @Relationship(type = "FRIEND", direction = Relationship.Direction.OUTGOING)
     private Set<UserEntity> friends = new HashSet<>();
+
+//    @Relationship(type = "FOLLOWING", direction = Relationship.Direction.OUTGOING)
+//    private Set<UserEntity> following = new HashSet<>();
+//
+//    @Relationship(type = "FOLLOWER", direction = Relationship.Direction.INCOMING)
+//    private Set<UserEntity> followers = new HashSet<>();
+
+    @Relationship(type = "HAS_DEGREE", direction = Relationship.Direction.OUTGOING)
+    private DegreeEntity degree;
+
+    @Relationship(type = "HAS_POSITION", direction = Relationship.Direction.OUTGOING)
+    private PositionEntity position;
+
+    @Relationship(type = "HAS_ACEADEMIC", direction = Relationship.Direction.OUTGOING)
+    private AcademicEntity academic;
 
     // ==== Factory method ====
 
@@ -153,4 +166,30 @@ public class UserEntity {
     public String getDepartment() {
         return workingFaculty != null ? workingFaculty.getName() : getFacultyName();
     }
+
+    public String getDegreeName() {
+        return degree != null ? degree.getName() : null;
+    }
+
+    public String getDegreeCode() {
+        return degree != null ? degree.getCode() : null;
+    }
+
+    public String getPositionName() {
+        return position != null ? position.getName() : null;
+    }
+
+    public String getPositionCode() {
+        return position != null ? position.getCode() : null;
+    }
+
+    public String getAcademicName() {
+        return academic != null ? academic.getName() : null;
+    }
+
+    public String getAcademicCode() {
+        return academic != null ? academic.getCode() : null;
+    }
+
+
 }

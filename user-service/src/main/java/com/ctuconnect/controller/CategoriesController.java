@@ -20,6 +20,21 @@ public class CategoriesController {
         return ResponseEntity.ok(categoryService.getAllCategoriesHierarchical());
     }
 
+   /* @GetMapping("/positions")
+    public ResponseEntity<List<CategoryDTO.PositionInfo>> getAllPositions() {
+        return ResponseEntity.ok(categoryService.getAllPositions());
+    }
+
+    @GetMapping("/academic-titles")
+    public ResponseEntity<List<CategoryDTO.AcademicTitleInfo>> getAllAcademicTitles() {
+        return ResponseEntity.ok(categoryService.getAllAcademicTitles());
+    }
+
+    @GetMapping("/degrees")
+    public ResponseEntity<List<CategoryDTO.DegreeInfo>> getAllDegrees() {
+        return ResponseEntity.ok(categoryService.getAllDegrees());
+    }*/
+
     @GetMapping("/colleges")
     @RequireAuth // Get all colleges with their faculties and majors
     public ResponseEntity<java.util.List<CategoryDTO.CollegeInfo>> getColleges() {

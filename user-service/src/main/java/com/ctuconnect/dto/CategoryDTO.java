@@ -86,5 +86,29 @@ public class CategoryDTO {
         private List<CollegeInfo> colleges;
         private List<BatchInfo> batches;
         private List<GenderInfo> genders;
+        private List<PositionInfo> positions;
+        private List<AcademicInfo> academics;
+        private List<DegreeInfo> degrees;
+    }
+
+    @Builder
+    @Data
+    public static class PositionInfo {
+        private String name;
+        private String code;
+    }
+
+    @Builder
+    @Data
+    public static class AcademicInfo {
+        private String name;
+        private String code;
+    }
+
+    @Builder
+    @Data
+    public static class DegreeInfo {
+        private String name;
+        private String code;
     }
 }

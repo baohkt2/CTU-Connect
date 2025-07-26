@@ -14,7 +14,9 @@ CREATE CONSTRAINT IF NOT EXISTS FOR (f:Faculty) REQUIRE f.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (m:Major) REQUIRE m.name IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (b:Batch) REQUIRE b.year IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (g:Gender) REQUIRE g.code IS UNIQUE;
-
+CREATE CONSTRAINT IF NOT EXISTS FOR (p:Position) REQUIRE p.code IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (a:Academic) REQUIRE a.code IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (d:Degree) REQUIRE d.code IS UNIQUE;
 // =================================================================
 // 2. CREATE GENDER NODES FIRST
 // =================================================================
@@ -115,7 +117,7 @@ UNWIND [
 {code: 'THAC_SI', name: 'Thạc sĩ'},
 {code: 'CU_NHAN', name: 'Cử nhân'}
 ] AS title
-MERGE (a:AcademicTitle {code: title.code})
+MERGE (a:Academic {code: title.code})
 SET a.name = title.name;
 
 UNWIND [
@@ -128,7 +130,7 @@ MERGE (d:Degree {code: degree.code})
 SET d.name = degree.name;
 
 CREATE CONSTRAINT IF NOT EXISTS FOR (p:Position) REQUIRE p.code IS UNIQUE;
-CREATE CONSTRAINT IF NOT EXISTS FOR (a:AcademicTitle) REQUIRE a.code IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (a:Academic) REQUIRE a.code IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (d:Degree) REQUIRE d.code IS UNIQUE;
 
 // =================================================================
@@ -159,7 +161,7 @@ MERGE (faculty:User {
   isProfileCompleted: true,
   staffCode: 'GV001',
   position: 'GIANG_VIEN',
-  academicTitle: 'TIEN_SI',
+  Academic: 'TIEN_SI',
   degree: 'TIEN_SI',
   createdAt: datetime(),
   updatedAt: datetime()

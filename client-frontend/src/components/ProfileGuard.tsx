@@ -1,3 +1,4 @@
+/*
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -144,3 +145,4 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
   console.log('DEBUG: ProfileGuard - rendering children');
   return <>{children}</>;
 }
+*/

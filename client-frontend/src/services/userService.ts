@@ -66,7 +66,7 @@ export const userService = {
 
   async checkProfileCompletion(): Promise<boolean> {
     const response = await api.get('/users/checkMyInfo');
-    return response.data.isCompleted;
+    return response.data;
   },
 
   // Delegate category operations to categoryService

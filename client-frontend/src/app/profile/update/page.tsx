@@ -7,7 +7,6 @@ import { User } from '@/types';
 import StudentProfileForm from '@/components/profile/StudentProfileForm';
 import FacultyProfileForm from '@/components/profile/FacultyProfileForm';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
 
 export default function UpdateProfilePage() {

@@ -20,13 +20,13 @@ public class FacultyProfileUpdateRequest {
     private String staffCode;
 
     @NotBlank(message = "Position is required")
-    private String position;
+    private String positionCode;
 
-    private String academicTitle;
-    private String degree;
+    private String academicCode;
+    private String degreeCode;
 
     @NotBlank(message = "Working faculty name is required")
-    private String workingFacultyName; // Đổi từ workingFacultyCode sang workingFacultyName
+    private String facultyCode; // Đổi từ workingFacultyCode sang workingFacultyName
 
     @NotBlank(message = "Gender code is required")
     private String genderCode;

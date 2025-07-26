@@ -4,7 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { categoryService } from '@/services/categoryService';
-import { User, FacultyProfileUpdateRequest, FacultyInfo, GenderInfo, CollegeInfo, HierarchicalCategories } from '@/types';
+import {
+  User,
+  FacultyProfileUpdateRequest,
+  FacultyInfo,
+  GenderInfo,
+  CollegeInfo,
+  HierarchicalCategories,
+  PositionInfo, AcademicInfo, DegreeInfo
+} from '@/types';
 import { useToast } from '@/hooks/useToast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -21,10 +29,10 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     fullName: user.fullName || '',
     bio: user.bio || '',
     staffCode: user.staffCode || '',
-    position: user.position || '',
-    academicTitle: user.academicTitle || '',
-    degree: user.degree || '',
-    workingFacultyName: user.workingFaculty?.name || '', // Đổi từ workingFacultyCode sang workingFacultyName
+    positionCode: user.position?.code || '',
+    academicCode: user.academic?.code || '',
+    degreeCode: user.degree?.code || '',
+    facultyCode: user.faculty?.code || '', // Đổi từ facultyCode sang facultyName
     genderCode: user.gender?.code || '',
     avatarUrl: user.avatarUrl || '',
     backgroundUrl: user.backgroundUrl || ''
@@ -42,33 +50,10 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
 
-  // Position options for faculty
-  const positionOptions = [
-    { value: 'GIANG_VIEN', label: 'Giảng viên' },
-    { value: 'GIANG_VIEN_CHINH', label: 'Giảng viên chính' },
-    { value: 'PHO_GIAO_SU', label: 'Phó Giáo sư' },
-    { value: 'GIAO_SU', label: 'Giáo sư' },
-    { value: 'CAN_BO', label: 'Cán bộ' },
-    { value: 'TRO_LY', label: 'Trợ lý' },
-    { value: 'NGHIEN_CUU_VIEN', label: 'Nghiên cứu viên' }
-  ];
-
-  // Academic title options
-  const academicTitleOptions = [
-    { value: 'GIAO_SU', label: 'Giáo sư' },
-    { value: 'PHO_GIAO_SU', label: 'Phó Giáo sư' },
-    { value: 'TIEN_SI', label: 'Tiến sĩ' },
-    { value: 'THAC_SI', label: 'Thạc sĩ' },
-    { value: 'CU_NHAN', label: 'Cử nhân' }
-  ];
-
-  // Degree options
-  const degreeOptions = [
-    { value: 'TIEN_SI', label: 'Tiến sĩ' },
-    { value: 'THAC_SI', label: 'Thạc sĩ' },
-    { value: 'CU_NHAN', label: 'Cử nhân' },
-    { value: 'KHAC', label: 'Khác' }
-  ];
+  // Dynamic options from backend
+  const [positionOptions, setPositionOptions] = useState<PositionInfo[]>([]);
+  const [academicOptions, setAcademicOptions] = useState<AcademicInfo[]>([]);
+  const [degreeOptions, setDegreeOptions] = useState<DegreeInfo[]>([]);
 
   useEffect(() => {
     const loadDropdownData = async () => {
@@ -89,9 +74,22 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
           genders: hierarchicalData.genders
         });
 
+        // Set position, academic title, and degree options
+        if (hierarchicalData.positions) {
+          setPositionOptions(hierarchicalData.positions);
+        }
+
+        if (hierarchicalData.academics) {
+          setAcademicOptions(hierarchicalData.academics);
+        }
+
+        if (hierarchicalData.degrees) {
+          setDegreeOptions(hierarchicalData.degrees);
+        }
+
         // If user has existing faculty data, set the selected values and populate dependent dropdowns
-        if (user.workingFaculty?.college?.code) {
-          const collegeCode = user.workingFaculty.college.code;
+        if (user.faculty?.college?.code) {
+          const collegeCode = user.faculty.college.code;
           setSelectedCollege(collegeCode);
 
           const selectedCollegeData = hierarchicalData.colleges.find(c => c.code === collegeCode);
@@ -113,11 +111,11 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
     };
 
     loadDropdownData();
-  }, [user.workingFaculty, showToast]);
+  }, [user.faculty, showToast]);
 
   const handleCollegeChange = (collegeCode: string) => {
     setSelectedCollege(collegeCode);
-    setFormData({ ...formData, workingFacultyName: '' }); // Reset faculty when college changes
+    setFormData({ ...formData, facultyCode: '' }); // Reset faculty when college changes
 
     if (collegeCode && dropdownData.hierarchicalData) {
       const selectedCollegeData = dropdownData.hierarchicalData.colleges.find(c => c.code === collegeCode);
@@ -138,20 +136,21 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.staffCode || !formData.position || !formData.workingFacultyName || !formData.genderCode) {
+    if (!formData.fullName || !formData.staffCode || !formData.positionCode || !formData.facultyCode || !formData.genderCode) {
       showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
       return;
     }
 
     setLoading(true);
     try {
+      console.log('formData', formData);
       const updatedUser = await userService.updateMyProfile(formData);
 
       // Update user context with new data
       updateUser(updatedUser);
       showToast('Cập nhật thông tin thành công!', 'success');
       // Redirect to home page immediately
-      router.push('/');
+      router.replace('/');
     } catch (error) {
       console.error('Error updating profile:', error);
       showToast('Có lỗi xảy ra khi cập nhật thông tin', 'error');
@@ -205,15 +204,15 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             Chức vụ <span className="text-red-500">*</span>
           </label>
           <select
-            value={formData.position}
-            onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+            value={formData.positionCode}
+            onChange={(e) => setFormData({ ...formData, positionCode: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
             <option value="">Chọn chức vụ</option>
             {positionOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+              <option key={option.code} value={option.code}>
+                {option.name}
               </option>
             ))}
           </select>
@@ -245,14 +244,14 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             Khoa làm việc <span className="text-red-500">*</span>
           </label>
           <select
-            value={formData.workingFacultyName}
-            onChange={(e) => setFormData({ ...formData, workingFacultyName: e.target.value })}
+            value={formData.facultyCode}
+            onChange={(e) => setFormData({ ...formData, facultyCode: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
             <option value="">Chọn khoa</option>
             {filteredFaculties.map((faculty) => (
-              <option key={faculty.name} value={faculty.name}>
+              <option key={faculty.code} value={faculty.code}>
                 {faculty.name}
               </option>
             ))}
@@ -265,14 +264,14 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             Học hàm
           </label>
           <select
-            value={formData.academicTitle}
-            onChange={(e) => setFormData({ ...formData, academicTitle: e.target.value })}
+            value={formData.academicCode}
+            onChange={(e) => setFormData({ ...formData, academicCode: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Chọn học hàm</option>
-            {academicTitleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {academicOptions.map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.name}
               </option>
             ))}
           </select>
@@ -284,14 +283,14 @@ export default function FacultyProfileForm({ user }: FacultyProfileFormProps) {
             Học vị
           </label>
           <select
-            value={formData.degree}
-            onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
+            value={formData.degreeCode}
+            onChange={(e) => setFormData({ ...formData, degreeCode: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Chọn học vị</option>
             {degreeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+              <option key={option.code} value={option.code}>
+                {option.name}
               </option>
             ))}
           </select>

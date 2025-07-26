@@ -9,9 +9,9 @@ import org.springframework.data.neo4j.core.schema.*;
 @AllArgsConstructor
 @Builder
 public class MajorEntity {
-    @Id
-    private String name; // Sử dụng name làm ID như trong database
 
+    private String name; // Sử dụng name làm ID như trong database
+    @Id
     private String code;
 
     private String faculty; // Tên faculty mà major thuộc về (theo database structure)

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User, LoginRequest, RegisterRequest } from '@/types';
 import { authService } from '@/services/authService';
 import { usePathname } from 'next/navigation';
+import {userService} from "@/services/userService";
 
 interface AuthContextType {
   user: User | null;
@@ -80,6 +81,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (authResult.isAuthenticated && authResult.user) {
           console.log('DEBUG: User authenticated, setting user data');
           setUser(authResult.user);
+          const myProfile = await userService.getMyProfile();
+          console.log('DEBUG: myProfile :', myProfile.isProfileCompleted);
+          if (!myProfile.isProfileCompleted) {
+            console.log('DEBUG: User profile not completed, redirecting to profile update');
+            // Redirect to profile update page if profile is not completed
+            if (typeof window !== 'undefined') {
+              window.location.replace('/profile/update');
+            }
+          }
         } else {
           console.log('DEBUG: User not authenticated, clearing user data');
           setUser(null);

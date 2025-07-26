@@ -73,6 +73,24 @@ export const categoryService = {
     return response.data;
   },
 
+  // // Position APIs
+  // async getPositions(): Promise<PositionInfo[]> {
+  //   const hierarchical = await this.getAllCategories();
+  //   return hierarchical.positions || [];
+  // },
+  //
+  // // Academic Title APIs
+  // async getAcademicTitles(): Promise<AcademicTitleInfo[]> {
+  //   const hierarchical = await this.getAllCategories();
+  //   return hierarchical.academicTitles || [];
+  // },
+  //
+  // // Degree APIs
+  // async getDegrees(): Promise<DegreeInfo[]> {
+  //   const hierarchical = await this.getAllCategories();
+  //   return hierarchical.degrees || [];
+  // },
+
   // Get categories in hierarchy
   async getCategoriesHierarchy(): Promise<{
     colleges: { [key: string]: { college: CollegeInfo; faculties: { [key: string]: { faculty: FacultyInfo; majors: MajorInfo[] } } } };

@@ -6,7 +6,9 @@ import com.ctuconnect.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,15 @@ public class CategoryService {
 
     @Autowired
     private GenderRepository genderRepository;
+
+    @Autowired
+    private PositionRepository positionRepository;
+
+    @Autowired
+    private AcademicRepository academicRepository;
+
+    @Autowired
+    private DegreeRepository degreeRepository;
 
     // ===================== HIERARCHICAL DATA RETRIEVAL =====================
 
@@ -77,12 +88,52 @@ public class CategoryService {
                 .map(this::convertToGenderInfo)
                 .collect(Collectors.toList());
 
+        // Get positions, academic titles, and degrees
+        List<CategoryDTO.PositionInfo> positionInfos = getAllPositions();
+        List<CategoryDTO.AcademicInfo> academicInfos = getAllAcademic();
+        List<CategoryDTO.DegreeInfo> degreeInfos = getAllDegrees();
+
         return CategoryDTO.HierarchicalCategories.builder()
                 .colleges(collegeInfos)
                 .batches(batchInfos)
                 .genders(genderInfos)
+                .positions(positionInfos)
+                .academics(academicInfos)
+                .degrees(degreeInfos)
                 .build();
     }
+
+    private List<CategoryDTO.AcademicInfo> getAllAcademic() {
+        List<AcademicEntity> academics = academicRepository.findAll();
+        return academics.stream()
+                .map(academic -> CategoryDTO.AcademicInfo.builder()
+                        .name(academic.getName())
+                        .code(academic.getCode())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<CategoryDTO.DegreeInfo> getAllDegrees() {
+        List<DegreeEntity> degrees = degreeRepository.findAll();
+        return degrees.stream()
+                .map(degree -> CategoryDTO.DegreeInfo.builder()
+                        .name(degree.getName())
+                        .code(degree.getCode())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<CategoryDTO.PositionInfo> getAllPositions() {
+
+        List<PositionEntity> positions = positionRepository.findAll();
+        return positions.stream()
+                .map(position -> CategoryDTO.PositionInfo.builder()
+                        .name(position.getName())
+                        .code(position.getCode())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
     // ===================== COLLEGE OPERATIONS =====================
 

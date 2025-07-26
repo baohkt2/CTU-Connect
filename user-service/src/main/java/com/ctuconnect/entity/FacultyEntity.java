@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FacultyEntity {
-    @Id
-    private String name; // Sử dụng name làm ID như trong database
 
+    private String name; // Sử dụng name làm ID như trong database
+    @Id
     private String code;
 
     private String college; // Tên college mà faculty thuộc về (theo database structure)
