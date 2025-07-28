@@ -61,9 +61,9 @@ public class UserController {
         if (currentUser.getRole().equals("STUDENT")) {
             // Convert to StudentProfileUpdateRequest và xử lý
             return ResponseEntity.ok(userService.updateStudentProfile(currentUserId, profileRequest));
-        } else if (currentUser.getRole().equals("FACULTY")) {
+        } else if (currentUser.getRole().equals("LECTURER")) {
             // Convert to FacultyProfileUpdateRequest và xử lý
-            return ResponseEntity.ok(userService.updateFacultyProfile(currentUserId, profileRequest));
+            return ResponseEntity.ok(userService.updateLecturerProfile(currentUserId, profileRequest));
         } else {
             // Fallback to original UserDTO update
             return ResponseEntity.ok(userService.updateUserProfile(currentUserId, (UserDTO) profileRequest));

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BatchDTO {
-    private Integer year;
+    private String year;
 }

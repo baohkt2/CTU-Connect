@@ -128,46 +128,24 @@ public class UserSyncService {
         dto.setRole(entity.getRole() != null ? entity.getRole().toString() : null);
         dto.setBio(entity.getBio());
         dto.setIsActive(entity.getIsActive());
+        dto.setIsProfileCompleted(entity.getIsProfileCompleted());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
         // Student fields
         dto.setStudentId(entity.getStudentId());
-
-        // Faculty fields
+        dto.setMajor(entity.getMajor());
+        dto.setBatch(entity.getBatch());
+        // Lecturer fields
         dto.setStaffCode(entity.getStaffCode());
-        dto.setPositionCode(entity.getPositionCode());
-        dto.setAcademicCode(entity.getAcademicCode());
-        dto.setDegreeCode(entity.getDegreeCode());
+        dto.setAcademic(entity.getAcademic());
+        dto.setDegree(entity.getDegree());
+        dto.setPosition(entity.getPosition());
 
-        // Academic information - codes
-        dto.setMajorCode(entity.getMajorCode());
-        dto.setFacultyCode(entity.getFacultyCode());
-        dto.setCollegeCode(entity.getCollegeCode());
-        dto.setGenderCode(entity.getGenderCode());
-
-        // Academic information - names
-        dto.setMajorName(entity.getMajorName());
-        dto.setFacultyName(entity.getFacultyName());
-        dto.setCollegeName(entity.getCollegeName());
-        dto.setGenderName(entity.getGenderName());
-
-        // Batch information
-        if (entity.getBatchYear() != null) {
-            try {
-                dto.setBatchYear(Integer.valueOf(entity.getBatchYear()));
-            } catch (NumberFormatException e) {
-                // Handle invalid batch year format
-                dto.setBatch(entity.getBatchYear());
-            }
-        }
-
-        // Legacy fields for backward compatibility
-        dto.setMajor(entity.getMajorName());
-        dto.setFaculty(entity.getFacultyName());
-        dto.setCollege(entity.getCollegeName());
-        dto.setGender(entity.getGenderName());
-        dto.setBatch(entity.getBatchYear());
+        // Common fields
+        dto.setFaculty(entity.getFaculty());
+        dto.setCollege(entity.getCollege());
+        dto.setGender(entity.getGender());
 
         // Media fields
         dto.setAvatarUrl(entity.getAvatarUrl());

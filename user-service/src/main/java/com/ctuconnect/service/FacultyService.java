@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.ctuconnect.entity.MajorEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -18,19 +19,19 @@ public class FacultyService {
     private final CollegeRepository collegeRepository;
 
     public List<FacultyDTO> getAllFaculties() {
-        return facultyRepository.findAll().stream()
+        return facultyRepository.findAllWithCollegeAndMajors().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FacultyDTO> getFacultiesByCollege(String collegeName) {
-        return facultyRepository.findByName(collegeName).stream()
+        return facultyRepository.findByCollege(collegeName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     public Optional<FacultyDTO> getFacultyByName(String name) {
-        return facultyRepository.findById(name)
+        return facultyRepository.findByNameWithCollegeAndMajors(name)
                 .map(this::convertToDTO);
     }
 
@@ -71,10 +72,20 @@ public class FacultyService {
     }
 
     private FacultyDTO convertToDTO(FacultyEntity faculty) {
-        return FacultyDTO.builder()
+        FacultyDTO dto = FacultyDTO.builder()
                 .name(faculty.getName())
                 .code(faculty.getCode())
                 .collegeName(faculty.getCollege())
                 .build();
+
+        // Add majors if available
+        if (faculty.getMajors() != null && !faculty.getMajors().isEmpty()) {
+            List<String> majorNames = faculty.getMajors().stream()
+                .map(MajorEntity::getName)
+                .collect(Collectors.toList());
+            dto.setMajors(majorNames);
+        }
+
+        return dto;
     }
 }

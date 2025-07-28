@@ -1,17 +1,20 @@
 package com.ctuconnect.service;
 
 import com.ctuconnect.dto.*;
-import com.ctuconnect.entity.UserEntity;
+import com.ctuconnect.entity.*;
 import com.ctuconnect.enums.Role;
 import com.ctuconnect.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +48,8 @@ public class UserService {
     @Autowired
     private PositionRepository positionRepository;
 
+    @Autowired
+    private CollegeRepository collegeRepository;
     /**
      * Create a new user
      */
@@ -61,12 +66,9 @@ public class UserService {
      * Get user profile by ID or email (fallback for compatibility)
      */
     public UserDTO getUserProfile(String userIdOrEmail) {
-        Optional<UserEntity> userEntity = userRepository.findById(userIdOrEmail);
+        Optional<UserEntity> userEntity;
 
-        // If not found by ID, try to find by email (fallback for compatibility)
-        if (userEntity.isEmpty()) {
-            userEntity = userRepository.findByEmail(userIdOrEmail);
-        }
+        userEntity = userRepository.findById(userIdOrEmail);
 
         if (userEntity.isEmpty()) {
             throw new RuntimeException("User not found with id or email: " + userIdOrEmail);
@@ -75,9 +77,11 @@ public class UserService {
         return mapToDTO(userEntity.get());
     }
 
+
     /**
      * Update user profile by ID or email (fallback for compatibility)
      */
+    @Transactional
     public UserDTO updateUserProfile(String userIdOrEmail, UserDTO userDTO) {
         Optional<UserEntity> userEntityOpt = userRepository.findById(userIdOrEmail);
 
@@ -91,6 +95,7 @@ public class UserService {
         }
 
         UserEntity userEntity = userEntityOpt.get();
+        String userId = userEntity.getId();
 
         // Update basic profile fields
         if (userDTO.getFullName() != null) userEntity.setFullName(userDTO.getFullName());
@@ -113,30 +118,211 @@ public class UserService {
         // Update faculty-specific fields
         if (userDTO.getStaffCode() != null) userEntity.setStaffCode(userDTO.getStaffCode());
 
-
         // Update media fields
         if (userDTO.getAvatarUrl() != null) userEntity.setAvatarUrl(userDTO.getAvatarUrl());
         if (userDTO.getBackgroundUrl() != null) userEntity.setBackgroundUrl(userDTO.getBackgroundUrl());
 
-        // Note: Academic relationships (major, batch, gender, faculty, college)
-        // should be handled through separate service methods that properly
-        // manage Neo4j relationships rather than direct field updates
+        // Update relationships - this fixes the duplicate relationship issue
+        if (userDTO.getMajorId() != null) {
+            updateUserMajor(userId, userDTO.getMajorId());
+        }
+
+        if (userDTO.getBatchId() != null) {
+            updateUserBatch(userId, userDTO.getBatchId());
+        }
+
+        if (userDTO.getGenderId() != null) {
+            updateUserGender(userId, userDTO.getGenderId());
+        }
+
+        if (userDTO.getFacultyId() != null) {
+            if (userEntity.isStudent()) {
+                updateUserFaculty(userId, userDTO.getFacultyId());
+            } else {
+                updateUserWorkingFaculty(userId, userDTO.getFacultyId());
+            }
+        }
+
+        if (userDTO.getCollegeId() != null) {
+            if (userEntity.isStudent()) {
+                updateUserCollege(userId, userDTO.getCollegeId());
+            } else {
+                updateUserWorkingCollege(userId, userDTO.getCollegeId());
+            }
+        }
+
+        if (userDTO.getDegreeId() != null) {
+            updateUserDegree(userId, userDTO.getDegreeId());
+        }
+
+        if (userDTO.getPositionId() != null) {
+            updateUserPosition(userId, userDTO.getPositionId());
+        }
+
+        if (userDTO.getAcademicId() != null) {
+            updateUserAcademic(userId, userDTO.getAcademicId());
+        }
 
         userEntity.setUpdatedAt(LocalDateTime.now());
         UserEntity updatedUser = userRepository.save(userEntity);
 
         // Publish user profile updated event
         userEventPublisher.publishUserProfileUpdatedEvent(
-            userIdOrEmail,
-            updatedUser.getEmail(),
-            updatedUser.getFullName(),
-            updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
-            "", // lastName - empty as we're using fullName
-            updatedUser.getBio(),
-            updatedUser.getAvatarUrl() != null ? updatedUser.getAvatarUrl() : ""
+                userIdOrEmail,
+                updatedUser.getEmail(),
+                updatedUser.getFullName(),
+                updatedUser.getFullName(), // firstName - using fullName as we don't have separate first/last names
+                "", // lastName - empty as we're using fullName
+                updatedUser.getBio(),
+                updatedUser.getAvatarUrl() != null ? updatedUser.getAvatarUrl() : ""
         );
 
         return mapToDTO(updatedUser);
+    }
+
+    // ========================= RELATIONSHIP UPDATE METHODS =========================
+
+    /**
+     * Update user's major relationship (for students)
+     */
+    @Transactional
+    public void updateUserMajor(String userId, String majorId) {
+        // Verify user exists
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Verify major exists
+        majorRepository.findById(majorId)
+                .orElseThrow(() -> new RuntimeException("Major not found with id: " + majorId));
+
+        // Update relationship - this will delete old relationship and create new one
+        userRepository.updateUserMajor(userId, majorId);
+    }
+
+    /**
+     * Update user's batch relationship
+     */
+    @Transactional
+    public void updateUserBatch(String userId, String batchId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        batchRepository.findById(batchId)
+                .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
+
+        userRepository.updateUserBatch(userId, batchId);
+    }
+
+    /**
+     * Update user's gender relationship
+     */
+    @Transactional
+    public void updateUserGender(String userId, String genderId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        genderRepository.findById(genderId)
+                .orElseThrow(() -> new RuntimeException("Gender not found with id: " + genderId));
+
+        userRepository.updateUserGender(userId, genderId);
+    }
+
+    /**
+     * Update user's faculty relationship (for students)
+     */
+    @Transactional
+    public void updateUserFaculty(String userId, String facultyId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        facultyRepository.findById(facultyId)
+                .orElseThrow(() -> new RuntimeException("Faculty not found with id: " + facultyId));
+
+        userRepository.updateUserFaculty(userId, facultyId);
+    }
+
+    /**
+     * Update user's college relationship (for students)
+     */
+    @Transactional
+    public void updateUserCollege(String userId, String collegeId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        collegeRepository.findById(collegeId)
+                .orElseThrow(() -> new RuntimeException("College not found with id: " + collegeId));
+
+        userRepository.updateUserCollege(userId, collegeId);
+    }
+
+    /**
+     * Update user's working faculty relationship (for staff)
+     */
+    @Transactional
+    public void updateUserWorkingFaculty(String userId, String facultyId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        facultyRepository.findById(facultyId)
+                .orElseThrow(() -> new RuntimeException("Faculty not found with id: " + facultyId));
+
+        userRepository.updateUserWorkingFaculty(userId, facultyId);
+    }
+
+    /**
+     * Update user's working college relationship (for staff)
+     */
+    @Transactional
+    public void updateUserWorkingCollege(String userId, String collegeId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        collegeRepository.findById(collegeId)
+                .orElseThrow(() -> new RuntimeException("College not found with id: " + collegeId));
+
+        userRepository.updateUserWorkingCollege(userId, collegeId);
+    }
+
+    /**
+     * Update user's degree relationship
+     */
+    @Transactional
+    public void updateUserDegree(String userId, String degreeId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        degreeRepository.findById(degreeId)
+                .orElseThrow(() -> new RuntimeException("Degree not found with id: " + degreeId));
+
+        userRepository.updateUserDegree(userId, degreeId);
+    }
+
+    /**
+     * Update user's position relationship
+     */
+    @Transactional
+    public void updateUserPosition(String userId, String positionId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        positionRepository.findById(positionId)
+                .orElseThrow(() -> new RuntimeException("Position not found with id: " + positionId));
+
+        userRepository.updateUserPosition(userId, positionId);
+    }
+
+    /**
+     * Update user's academic relationship
+     */
+    @Transactional
+    public void updateUserAcademic(String userId, String academicId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        academicRepository.findById(academicId)
+                .orElseThrow(() -> new RuntimeException("Academic not found with id: " + academicId));
+
+        userRepository.updateUserAcademic(userId, academicId);
     }
 
     /**
@@ -172,10 +358,10 @@ public class UserService {
 
             // Publish friend accepted event
             userEventPublisher.publishUserRelationshipChangedEvent(
-                userId,
-                friendId,
-                "FRIEND_ACCEPTED",
-                "UPDATED"
+                    userId,
+                    friendId,
+                    "FRIEND_ACCEPTED",
+                    "UPDATED"
             );
         } else {
             // Gửi friend request mới
@@ -183,10 +369,10 @@ public class UserService {
 
             // Publish friend request event
             userEventPublisher.publishUserRelationshipChangedEvent(
-                userId,
-                friendId,
-                "FRIEND_REQUEST",
-                "CREATED"
+                    userId,
+                    friendId,
+                    "FRIEND_REQUEST",
+                    "CREATED"
             );
         }
     }
@@ -238,10 +424,10 @@ public class UserService {
 
         // Publish friend accepted event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_ACCEPTED",
-            "UPDATED"
+                userId,
+                friendId,
+                "FRIEND_ACCEPTED",
+                "UPDATED"
         );
     }
 
@@ -266,10 +452,10 @@ public class UserService {
 
         // Publish friend rejected event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REQUEST",
-            "REJECTED"
+                userId,
+                friendId,
+                "FRIEND_REQUEST",
+                "REJECTED"
         );
     }
 
@@ -294,10 +480,10 @@ public class UserService {
 
         // Publish friend removed event
         userEventPublisher.publishUserRelationshipChangedEvent(
-            userId,
-            friendId,
-            "FRIEND_REMOVED",
-            "DELETED"
+                userId,
+                friendId,
+                "FRIEND_REMOVED",
+                "DELETED"
         );
     }
 
@@ -369,7 +555,7 @@ public class UserService {
 
         // Sử dụng Neo4j query để filter hiệu quả
         if (filters.getCollege() != null || filters.getFaculty() != null ||
-            filters.getMajor() != null || filters.getBatch() != null) {
+                filters.getMajor() != null || filters.getBatch() != null) {
 
             // Convert filters to boolean flags for Neo4j query
             boolean isSameCollege = filters.getCollege() != null;
@@ -456,10 +642,7 @@ public class UserService {
         if (filters.getBatch() != null && !filters.getBatch().equals(candidate.getBatchYear())) {
             return false;
         }
-        if (filters.getGender() != null && !filters.getGender().equals(candidate.getGenderName())) {
-            return false;
-        }
-        return true;
+        return filters.getGender() == null || filters.getGender().equals(candidate.getGenderName());
     }
 
     /**
@@ -480,41 +663,18 @@ public class UserService {
 
         // Student fields
         dto.setStudentId(entity.getStudentId());
-
-        // Faculty fields
+        dto.setMajor(entity.getMajor());
+        dto.setBatch(entity.getBatch());
+        // Lecturer fields
         dto.setStaffCode(entity.getStaffCode());
-        dto.setPositionCode(entity.getPositionCode());
-        dto.setAcademicCode(entity.getAcademicCode());
-        dto.setDegreeCode(entity.getDegreeCode());
+        dto.setAcademic(entity.getAcademic());
+        dto.setDegree(entity.getDegree());
+        dto.setPosition(entity.getPosition());
 
-        // Academic information - codes
-        dto.setMajorCode(entity.getMajorCode());
-        dto.setFacultyCode(entity.getFacultyCode());
-        dto.setCollegeCode(entity.getCollegeCode());
-        dto.setGenderCode(entity.getGenderCode());
-
-        // Academic information - names
-        dto.setMajorName(entity.getMajorName());
-        dto.setFacultyName(entity.getFacultyName());
-        dto.setCollegeName(entity.getCollegeName());
-        dto.setGenderName(entity.getGenderName());
-
-        // Batch information
-        if (entity.getBatchYear() != null) {
-            try {
-                dto.setBatchYear(Integer.valueOf(entity.getBatchYear()));
-            } catch (NumberFormatException e) {
-                // Handle invalid batch year format
-                dto.setBatch(entity.getBatchYear());
-            }
-        }
-
-        // Legacy fields for backward compatibility
-        dto.setMajor(entity.getMajorName());
-        dto.setFaculty(entity.getFacultyName());
-        dto.setCollege(entity.getCollegeName());
-        dto.setGender(entity.getGenderName());
-        dto.setBatch(entity.getBatchYear());
+        // Common fields
+        dto.setFaculty(entity.getFaculty());
+        dto.setCollege(entity.getCollege());
+        dto.setGender(entity.getGender());
 
         // Media fields
         dto.setAvatarUrl(entity.getAvatarUrl());
@@ -579,7 +739,7 @@ public class UserService {
         // Map to DTO
         UserDTO userDTO = mapToDTO(userEntity);
 
-       return userDTO.getIsProfileCompleted();
+        return userDTO.getIsProfileCompleted();
     }
 
     /**
@@ -602,16 +762,14 @@ public class UserService {
             userEntity.setAvatarUrl(request.getAvatarUrl());
             userEntity.setBackgroundUrl(request.getBackgroundUrl());
 
-            // Update relationships
-            updateUserRelationshipsCollege(userEntity, request.getMajorName(), null, request.getBatchYear(), request.getGenderCode());
+            // Update relationships with proper one-to-one handling
+            updateStudentRelationships(userEntity, request.getMajorCode(), request.getFacultyCode(),
+                    request.getCollegeCode(), request.getBatchYear(), request.getGenderCode());
 
             userEntity.setIsProfileCompleted(true);
             userEntity.updateTimestamp();
 
             UserEntity savedUser = userRepository.save(userEntity);
-
-            // Publish user updated event
-//            userEventPublisher.publishUserUpdatedEvent(savedUser);
 
             return mapToDTO(savedUser);
         } catch (Exception e) {
@@ -619,15 +777,124 @@ public class UserService {
         }
     }
 
+    private void updateStudentRelationships(UserEntity userEntity, String majorCode, String facultyCode,
+                                            String collegeCode, String batchYear, String genderCode) {
+        String userId = userEntity.getId();
+
+        // Method 1: Clear all student relationships in one query (Most Efficient)
+        userRepository.clearStudentProfileRelationships(userId);
+
+        // Set new relationships (one-to-one)
+        if (majorCode != null && !majorCode.isEmpty()) {
+            MajorEntity major = majorRepository.findById(majorCode)
+                    .orElseThrow(() -> new RuntimeException("Major not found: " + majorCode));
+            userEntity.setMajor(major);
+        }
+
+        if (facultyCode != null && !facultyCode.isEmpty()) {
+            FacultyEntity faculty = facultyRepository.findById(facultyCode)
+                    .orElseThrow(() -> new RuntimeException("Faculty not found: " + facultyCode));
+            userEntity.setFaculty(faculty);
+        }
+
+        if (collegeCode != null && !collegeCode.isEmpty()) {
+            CollegeEntity college = collegeRepository.findById(collegeCode)
+                    .orElseThrow(() -> new RuntimeException("College not found: " + collegeCode));
+            userEntity.setCollege(college);
+        }
+
+        if (batchYear != null && !batchYear.isEmpty()) {
+            BatchEntity batch = batchRepository.findByYear(batchYear)
+                    .orElseThrow(() -> new RuntimeException("Batch not found: " + batchYear));
+            userEntity.setBatch(batch);
+        }
+
+        if (genderCode != null && !genderCode.isEmpty()) {
+            GenderEntity gender = genderRepository.findById(genderCode)
+                    .orElseThrow(() -> new RuntimeException("Gender not found: " + genderCode));
+            userEntity.setGender(gender);
+        }
+    }
+    /*private void updateStudentRelationships(UserEntity userEntity, @NotBlank(message = "Major is required") String majorCode, @NotBlank(message = "Faculty is required") String facultyCode, @NotBlank(message = "College is required") String collegeCode, @NotNull(message = "Batch year is required") String batchYear, @NotBlank(message = "Gender code is required") String genderCode) {
+        String userId = userEntity.getId(); // Get the user ID
+
+        // Explicitly delete old relationships before setting new ones
+        userRepository.deleteRelationship(userId, "ENROLLED_IN"); // Assuming ENROLLED_IN is for Major
+        userRepository.deleteRelationship(userId, "WORKS_IN");    // Assuming WORKS_IN is for Faculty
+        userRepository.deleteRelationship(userId, "BELONGS_TO");  // Example for College
+        userRepository.deleteRelationship(userId, "IN_BATCH");    // For Batch
+        userRepository.deleteRelationship(userId, "HAS_GENDER");  // For Gender
+
+        // Alternatively, use the single method for all:
+        // String[] relationshipsToDelete = {"ENROLLED_IN", "WORKS_IN", "BELONGS_TO", "IN_BATCH", "HAS_GENDER"};
+        // userRepository.deleteRelationshipsByType(userId, relationshipsToDelete);
+
+        // Save entity to delete existing relationships before creating new ones
+        userRepository.save(userEntity);
+
+        // Update major relationship
+        if (majorCode != null && !majorCode.isEmpty()) {
+            majorRepository.findById(majorCode).ifPresentOrElse(
+                    userEntity::setMajor,
+                    () -> {
+                        throw new RuntimeException("Major not found: " + majorCode);
+                    }
+            );
+        }
+
+        // Update faculty relationship
+        if (facultyCode != null && !facultyCode.isEmpty()) {
+            facultyRepository.findById(facultyCode).ifPresentOrElse(
+                    userEntity::setFaculty,
+                    () -> {
+                        throw new RuntimeException("Faculty not found: " + facultyCode);
+                    }
+            );
+        }
+
+        // Update college relationship
+        if (collegeCode != null && !collegeCode.isEmpty()) {
+            collegeRepository.findById(collegeCode).ifPresentOrElse(
+                    userEntity::setCollege,
+                    () -> {
+                        throw new RuntimeException("College not found: " + collegeCode);
+                    }
+            );
+        }
+
+        // Update batch relationship
+        if (batchYear != null) {
+            batchRepository.findByYear(batchYear).ifPresentOrElse(
+                    userEntity::setBatch,
+                    () -> {
+                        throw new RuntimeException("Batch not found: " + batchYear);
+                    }
+            );
+        }
+
+        // Update gender relationship
+        if (genderCode != null && !genderCode.isEmpty()) {
+            genderRepository.findById(genderCode).ifPresentOrElse(
+                    userEntity::setGender,
+                    () -> {
+                        throw new RuntimeException("Gender not found: " + genderCode);
+                    }
+            );
+        }
+
+        // Update
+    }
+*/
+
     /**
      * Update faculty profile with proper relationship mapping
      */
     @Transactional
-    public UserDTO updateFacultyProfile(String userId, Object profileRequestObj) {
+    public UserDTO updateLecturerProfile(String userId, Object profileRequestObj) {
         try {
             // Convert Object to FacultyProfileUpdateRequest
             ObjectMapper mapper = new ObjectMapper();
-            FacultyProfileUpdateRequest request = mapper.convertValue(profileRequestObj, FacultyProfileUpdateRequest.class);
+            LecturerProfileUpdateRequest request = mapper.convertValue(profileRequestObj, LecturerProfileUpdateRequest.class);
 
             UserEntity userEntity = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
@@ -640,10 +907,9 @@ public class UserService {
             userEntity.setBackgroundUrl(request.getBackgroundUrl());
 
             // Update relationships
-            updateUserRelationshipsCollege(userEntity, null, request.getFacultyCode(), null, request.getGenderCode());
 
-            updateUserRelationshipsFaculty(userEntity, request.getDegreeCode(), request.getAcademicCode(), request.getPositionCode());
-            
+            updateLecturerRelationships(userEntity, request.getDegreeCode(), request.getAcademicCode(), request.getPositionCode(), request.getFacultyCode(), request.getCollegeCode(), request.getGenderCode());
+
             userEntity.setIsProfileCompleted(true);
             userEntity.updateTimestamp();
 
@@ -658,70 +924,55 @@ public class UserService {
         }
     }
 
-    /**
-     * Helper method to update user relationships (major, faculty, batch, gender)
-     */
-    private void updateUserRelationshipsCollege(UserEntity userEntity, String majorName, String facultyName, Integer batchYear, String genderCode) {
-        // Update major relationship for students
-        if (majorName != null && !majorName.isEmpty()) {
-            majorRepository.findById(majorName).ifPresentOrElse(
-                userEntity::setMajor,
-                () -> { throw new RuntimeException("Major not found: " + majorName); }
-            );
-        }
+    private void updateLecturerRelationships(UserEntity userEntity, String degreeCode, String academicCode,
+                                             String positionCode, String facultyCode, String collegeCode, String genderCode) {
+        String userId = userEntity.getId();
 
-        // Update working faculty relationship for faculty members
-        if (facultyName != null && !facultyName.isEmpty()) {
-            facultyRepository.findById(facultyName).ifPresentOrElse(
-                userEntity::setWorkingFaculty,
-                () -> { throw new RuntimeException("Faculty not found: " + facultyName); }
-            );
-        }
+        // Method 1: Clear all lecturer relationships in one query (Most Efficient)
+        userRepository.clearLecturerProfileRelationships(userId);
 
-        // Update batch relationship
-        if (batchYear != null) {
-            batchRepository.findById(batchYear).ifPresentOrElse(
-                userEntity::setBatch,
-                () -> { throw new RuntimeException("Batch not found: " + batchYear); }
-            );
-        }
+        // OR Method 2: Use generic method with specific relationship types
+        // List<String> lecturerRelationships = Arrays.asList(
+        //     "HAS_DEGREE", "HAS_ACADEMIC", "HAS_POSITION", "WORKS_IN", "BELONGS_TO", "HAS_GENDER"
+        // );
+        // userRepository.clearSpecificRelationships(userId, lecturerRelationships);
 
-        // Update gender relationship
-        if (genderCode != null && !genderCode.isEmpty()) {
-            genderRepository.findById(genderCode).ifPresentOrElse(
-                userEntity::setGender,
-                () -> { throw new RuntimeException("Gender not found: " + genderCode); }
-            );
-        }
-    }
-    /**
-     * Helper method to update user relationships (degree, academic, faculty)
-     */
-    private void updateUserRelationshipsFaculty(UserEntity userEntity, String degreeCode, String academicCode, String positionCode) {
-        // Update degree relationship
+        // Set new relationships
         if (degreeCode != null && !degreeCode.isEmpty()) {
-            degreeRepository.findById(degreeCode).ifPresentOrElse(
-                    userEntity::setDegree,
-                    () -> { throw new RuntimeException("Degree not found: " + degreeCode); }
-            );
+            DegreeEntity degree = degreeRepository.findById(degreeCode)
+                    .orElseThrow(() -> new RuntimeException("Degree not found: " + degreeCode));
+            userEntity.setDegree(degree);
         }
 
-        // Update academic relationship
         if (academicCode != null && !academicCode.isEmpty()) {
-            academicRepository.findById(academicCode).ifPresentOrElse(
-                    userEntity::setAcademic,
-                    () -> { throw new RuntimeException("Academic title not found: " + academicCode); }
-            );
+            AcademicEntity academic = academicRepository.findById(academicCode)
+                    .orElseThrow(() -> new RuntimeException("Academic not found: " + academicCode));
+            userEntity.setAcademic(academic);
         }
 
-        // Update working faculty relationship (nếu chưa cập nhật)
         if (positionCode != null && !positionCode.isEmpty()) {
-            positionRepository.findById(positionCode).ifPresentOrElse(
-                    userEntity::setPosition,
-                    () -> { throw new RuntimeException("Position not found: " + positionCode); }
-            );
+            PositionEntity position = positionRepository.findById(positionCode)
+                    .orElseThrow(() -> new RuntimeException("Position not found: " + positionCode));
+            userEntity.setPosition(position);
         }
 
+        if (facultyCode != null && !facultyCode.isEmpty()) {
+            FacultyEntity faculty = facultyRepository.findById(facultyCode)
+                    .orElseThrow(() -> new RuntimeException("Faculty not found: " + facultyCode));
+            userEntity.setFaculty(faculty);
+        }
+
+        if (collegeCode != null && !collegeCode.isEmpty()) {
+            CollegeEntity college = collegeRepository.findById(collegeCode)
+                    .orElseThrow(() -> new RuntimeException("College not found: " + collegeCode));
+            userEntity.setCollege(college);
+        }
+
+        if (genderCode != null && !genderCode.isEmpty()) {
+            GenderEntity gender = genderRepository.findById(genderCode)
+                    .orElseThrow(() -> new RuntimeException("Gender not found: " + genderCode));
+            userEntity.setGender(gender);
+        }
     }
 
 

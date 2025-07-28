@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node("Academic")
 @Data
@@ -20,4 +21,6 @@ public class AcademicEntity {
 
     private String description; // Mô tả chi tiết về học vị
 
+    @Relationship(type = "HAS_DEGREE", direction = Relationship.Direction.INCOMING)
+    private DegreeEntity degree;
 }

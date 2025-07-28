@@ -4,20 +4,24 @@ export interface User {
   id: string;
   email: string;
   username: string;
-  fullName: string;
+  fullName?: string;
   avatar?: string;
   bio?: string;
   studentId?: string;
   yearOfStudy?: number;
   isVerified: boolean;
-  isOnline: boolean;
-  createdAt: string;
-  updatedAt: string;
+  isOnline?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
   // Enhanced profile fields
-  role: 'STUDENT' | 'FACULTY' | 'ADMIN' | 'USER';
-  isProfileCompleted: boolean;
-  avatarUrl?: string;
-  backgroundUrl?: string;
+  role: 'STUDENT' | 'LECTURER' | 'ADMIN' | 'USER';
+  isProfileCompleted?: boolean;
+  avatarUrl?: string | null; // Changed from avatar to avatarUrl
+  backgroundUrl?: string | null; // Added backgroundUrl
+
+  // Working fields
+  college?: CollegeInfo; // Changed from collegeCode to college
+  faculty?: FacultyInfo; // Changed from workingFacultyCode to faculty
 
   // Student specific fields
   major?: MajorInfo;
@@ -29,7 +33,7 @@ export interface User {
   position?: PositionInfo;
   academic?: AcademicInfo;
   degree?: DegreeInfo;
-  faculty?: FacultyInfo;
+
 }
 
 export interface Post {
@@ -139,7 +143,7 @@ export interface CollegeInfo {
 }
 
 export interface BatchInfo {
-  year: number;
+  year: string;
 }
 
 export interface GenderInfo {
@@ -166,14 +170,16 @@ export interface StudentProfileUpdateRequest {
   fullName: string;
   bio?: string;
   studentId: string;
-  majorName: string; // Đổi từ majorCode sang majorName
-  batchYear: number;
+  collegeCode: string; // Đổi từ collegeCode sang collegeName
+  facultyCode: string; // Đổi từ workingFacultyCode sang facultyName
+  majorCode: string; // Đổi từ majorCode sang majorName
+  batchYear: string;
   genderCode: string;
   avatarUrl?: string;
   backgroundUrl?: string;
 }
 
-export interface FacultyProfileUpdateRequest {
+export interface LecturerProfileUpdateRequest {
   fullName: string;
   bio?: string;
   staffCode: string;
@@ -206,11 +212,10 @@ export interface FacultyWithMajorsInfo {
 
 // Updated interface for hierarchical categories
 export interface HierarchicalCategories {
-  degrees: DegreeInfo[];
-  academics: AcademicInfo[];
-  positions: PositionInfo[];
+  degrees?: DegreeInfo[];
+  academics?: AcademicInfo[];
+  positions?: PositionInfo[];
   colleges: CollegeWithHierarchyInfo[];
-  batches: BatchInfo[];
+  batches?: BatchInfo[];
   genders: GenderInfo[];
-
 }

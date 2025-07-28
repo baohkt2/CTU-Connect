@@ -23,4 +23,7 @@ public class FacultyEntity {
 
     @Relationship(type = "HAS_MAJOR", direction = Relationship.Direction.OUTGOING)
     private List<MajorEntity> majors;
+
+    @Relationship(type = "WORKS_IN", direction = Relationship.Direction.INCOMING)
+    private List<UserEntity> users; // Danh sách nhân viên làm việc tại faculty
 }

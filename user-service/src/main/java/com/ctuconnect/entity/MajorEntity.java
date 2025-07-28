@@ -18,4 +18,7 @@ public class MajorEntity {
 
     @Relationship(type = "HAS_MAJOR", direction = Relationship.Direction.INCOMING)
     private FacultyEntity facultyEntity;
+
+    @Relationship(type = "ENROLLED_IN", direction = Relationship.Direction.INCOMING)
+    private UserEntity users; // Sinh viên thuộc major này
 }

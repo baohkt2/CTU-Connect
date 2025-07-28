@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MediaResponse {
-    private Long id;
+    private String id;
     private String fileName;
     private String originalFileName;
     private String cloudinaryUrl;

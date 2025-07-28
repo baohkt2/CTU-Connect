@@ -20,11 +20,17 @@ public class StudentProfileUpdateRequest {
     @NotBlank(message = "Student ID is required")
     private String studentId;
 
-    @NotBlank(message = "Major name is required")
-    private String majorName; // Đổi từ majorCode sang majorName
+    @NotBlank(message = "Major is required")
+    private String majorCode;
+
+    @NotBlank(message = "College is required")
+    private String collegeCode;
+
+    @NotBlank(message = "Faculty is required")
+    private String facultyCode;
 
     @NotNull(message = "Batch year is required")
-    private Integer batchYear;
+    private String batchYear;
 
     @NotBlank(message = "Gender code is required")
     private String genderCode;

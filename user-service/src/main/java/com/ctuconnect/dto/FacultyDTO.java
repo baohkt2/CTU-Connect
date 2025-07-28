@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +20,6 @@ public class FacultyDTO {
 
     @NotBlank(message = "College name is required")
     private String collegeName; // Tên college mà faculty thuộc về
+
+    private List<String> majors; // Danh sách các ngành trong khoa
 }

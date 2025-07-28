@@ -1,8 +1,11 @@
 package com.ctuconnect.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Role {
     STUDENT("STUDENT"),
-    FACULTY("FACULTY"),
+    LECTURER("LECTURER"),
     ADMIN("ADMIN"),
     USER("USER");
 
@@ -10,10 +13,6 @@ public enum Role {
 
     Role(String code) {
         this.code = code;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     public static Role fromString(String value) {
@@ -35,7 +34,7 @@ public enum Role {
         if (lowerEmail.contains("@ctu.edu.vn")) {
             // Có thể refine sâu hơn nếu có phân biệt giữa faculty & student qua prefix email
             if (lowerEmail.startsWith("gv.") || lowerEmail.contains(".gv@")) {
-                return FACULTY;
+                return LECTURER;
             }
             if (lowerEmail.contains("admin") || lowerEmail.startsWith("admin.")) {
                 return ADMIN;

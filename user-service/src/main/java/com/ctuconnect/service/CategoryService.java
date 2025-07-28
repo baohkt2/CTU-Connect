@@ -351,7 +351,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public CategoryDTO.BatchInfo getBatchByYear(Integer year) {
+    public CategoryDTO.BatchInfo getBatchByYear(String year) {
         BatchEntity batch = batchRepository.findByYear(year)
                 .orElseThrow(() -> new RuntimeException("Batch not found: " + year));
         return convertToBatchInfo(batch);

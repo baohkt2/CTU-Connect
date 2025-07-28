@@ -19,7 +19,7 @@ public class KafkaProducerService {
     public void sendMediaUploadEvent(Media media) {
         try {
             MediaEvent event = new MediaEvent(
-                media.getId(),
+                media.getIdAsString(),
                 media.getCloudinaryUrl(),
                 media.getMediaType().toString(),
                 media.getUploadedBy(),
@@ -36,7 +36,7 @@ public class KafkaProducerService {
     public void sendMediaDeleteEvent(Media media) {
         try {
             MediaEvent event = new MediaEvent(
-                media.getId(),
+                media.getIdAsString(),
                 media.getCloudinaryUrl(),
                 media.getMediaType().toString(),
                 media.getUploadedBy(),
@@ -51,13 +51,13 @@ public class KafkaProducerService {
     }
 
     public static class MediaEvent {
-        public Long mediaId;
+        public String mediaId;
         public String url;
         public String mediaType;
         public String uploadedBy;
         public String action;
 
-        public MediaEvent(Long mediaId, String url, String mediaType, String uploadedBy, String action) {
+        public MediaEvent(String mediaId, String url, String mediaType, String uploadedBy, String action) {
             this.mediaId = mediaId;
             this.url = url;
             this.mediaType = mediaType;

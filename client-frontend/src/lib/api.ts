@@ -25,9 +25,14 @@ api.interceptors.request.use(
 // Response interceptor để handle 401 errors từ API Gateway
 api.interceptors.response.use(
   (response) => {
-    console.log('DEBUG: API Response successful:', response.config.url, response.status);
+    if (response.status === 201) {
+      console.log('DEBUG: Created resource:', response.config.url);
+    } else {
+      console.log('DEBUG: API Response successful:', response.config.url, response.data);
+    }
     return response;
   },
+
   async (error) => {
     const originalRequest = error.config;
     console.log('DEBUG: API Error interceptor triggered:', originalRequest.url, error.response?.status);

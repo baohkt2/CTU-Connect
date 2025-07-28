@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node("Position")
 @Data
@@ -18,4 +19,7 @@ public class PositionEntity {
     private String code; // Mã định danh cho vị trí, ví dụ: "LECTURER", "TEACHING_ASSISTANT", "ADMIN_STAFF"
 
     private String description; // Mô tả chi tiết về vị trí
+
+    @Relationship(type = "HAS_POSITION", direction = Relationship.Direction.INCOMING)
+    private UserEntity users; // Người dùng có vị trí này, có thể là giảng
 }

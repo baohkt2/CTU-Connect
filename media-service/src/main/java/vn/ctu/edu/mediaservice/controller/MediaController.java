@@ -21,7 +21,6 @@ import java.util.Map;
 @RequestMapping("/api/media")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class MediaController {
 
     private final MediaService mediaService;
@@ -34,7 +33,7 @@ public class MediaController {
 
         log.info("Received upload request for file: {} by user: {}", file.getOriginalFilename(), uploadedBy);
         MediaResponse response = mediaService.uploadFile(file, uploadedBy, description);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

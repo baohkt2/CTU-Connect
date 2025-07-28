@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import {ApiResponse, FacultyProfileUpdateRequest, PaginatedResponse, StudentProfileUpdateRequest, User} from '@/types';
+import {ApiResponse, LecturerProfileUpdateRequest, PaginatedResponse, StudentProfileUpdateRequest, User} from '@/types';
 import {categoryService} from './categoryService';
 
 export const userService = {
@@ -59,7 +59,7 @@ export const userService = {
     return response.data;
   },
 
-  async updateMyProfile(userData: StudentProfileUpdateRequest | FacultyProfileUpdateRequest): Promise<User> {
+  async updateMyProfile(userData: StudentProfileUpdateRequest | LecturerProfileUpdateRequest): Promise<User> {
     const response = await api.put('/users/me/profile', userData);
     return response.data;
   },

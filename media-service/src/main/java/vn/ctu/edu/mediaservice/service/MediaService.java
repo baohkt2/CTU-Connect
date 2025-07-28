@@ -165,7 +165,7 @@ public class MediaService {
 
     private MediaResponse convertToResponse(Media media) {
         return new MediaResponse(
-            media.getId(),
+            media.getIdAsString(),
             media.getFileName(),
             media.getOriginalFileName(),
             media.getCloudinaryUrl(),

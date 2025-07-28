@@ -54,11 +54,14 @@ public class UserEntity {
     @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.OUTGOING)
     private GenderEntity gender;
 
-    @Relationship(type = "WORKS_IN", direction = Relationship.Direction.OUTGOING)
-    private FacultyEntity workingFaculty; // dùng cho FACULTY
-
     @Relationship(type = "FRIEND", direction = Relationship.Direction.OUTGOING)
     private Set<UserEntity> friends = new HashSet<>();
+
+    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
+    private CollegeEntity college;
+
+    @Relationship(type = "WORKS_IN", direction = Relationship.Direction.OUTGOING)
+    private FacultyEntity faculty;
 
 //    @Relationship(type = "FOLLOWING", direction = Relationship.Direction.OUTGOING)
 //    private Set<UserEntity> following = new HashSet<>();
@@ -72,8 +75,9 @@ public class UserEntity {
     @Relationship(type = "HAS_POSITION", direction = Relationship.Direction.OUTGOING)
     private PositionEntity position;
 
-    @Relationship(type = "HAS_ACEADEMIC", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "HAS_ACADEMIC", direction = Relationship.Direction.OUTGOING)
     private AcademicEntity academic;
+
 
     // ==== Factory method ====
 
@@ -108,7 +112,7 @@ public class UserEntity {
     }
 
     public boolean isFaculty() {
-        return Role.FACULTY.equals(this.role);
+        return Role.LECTURER.equals(this.role);
     }
 
     public boolean isAdmin() {
@@ -127,10 +131,6 @@ public class UserEntity {
         return batch != null ? String.valueOf(batch.getYear()) : null;
     }
 
-    public String getBatch() {
-        return getBatchYear();
-    }
-
     public String getGenderCode() {
         return gender != null ? gender.getCode() : null;
     }
@@ -140,31 +140,35 @@ public class UserEntity {
     }
 
     public String getFacultyName() {
-        if (major != null && major.getFacultyEntity() != null)
-            return major.getFacultyEntity().getName();
+       if (faculty != null) {
+            return faculty.getName();
+        }
         return null;
     }
 
     public String getFacultyCode() {
-        if (major != null && major.getFacultyEntity() != null)
-            return major.getFacultyEntity().getCode();
+       if (faculty != null) {
+            return faculty.getCode();
+        }
         return null;
     }
 
     public String getCollegeName() {
-        if (major != null && major.getFacultyEntity() != null && major.getFacultyEntity().getCollegeEntity() != null)
-            return major.getFacultyEntity().getCollegeEntity().getName();
+       if (college != null) {
+            return college.getName();
+        }
         return null;
     }
 
     public String getCollegeCode() {
-        if (major != null && major.getFacultyEntity() != null && major.getFacultyEntity().getCollegeEntity() != null)
-            return major.getFacultyEntity().getCollegeEntity().getCode();
+       if (college != null) {
+            return college.getCode();
+        }
         return null;
     }
 
     public String getDepartment() {
-        return workingFaculty != null ? workingFaculty.getName() : getFacultyName();
+        return faculty != null ? faculty.getName() : getFacultyName();
     }
 
     public String getDegreeName() {

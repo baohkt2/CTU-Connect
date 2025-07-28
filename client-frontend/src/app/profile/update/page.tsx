@@ -5,22 +5,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { userService } from '@/services/userService';
 import { User } from '@/types';
 import StudentProfileForm from '@/components/profile/StudentProfileForm';
-import FacultyProfileForm from '@/components/profile/FacultyProfileForm';
+import LecturerProfileForm from '@/components/profile/LecturerProfileForm';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import {useRouter} from "next/navigation";
 
 export default function UpdateProfilePage() {
   const { user } = useAuth();
-  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      router.push('/login');
-    }
     const fetchUserProfile = async () => {
       try {
         const profile = await userService.getMyProfile();
@@ -83,11 +78,11 @@ export default function UpdateProfilePage() {
             <StudentProfileForm user={currentUser} />
           )}
 
-          {currentUser.role === 'FACULTY' && (
-            <FacultyProfileForm user={currentUser} />
+          {currentUser.role === 'LECTURER' && (
+            <LecturerProfileForm user={currentUser} />
           )}
 
-          {!['STUDENT', 'FACULTY'].includes(currentUser.role) && (
+          {!['STUDENT', 'LECTURER'].includes(currentUser.role) && (
             <div className="text-center py-8">
               <p className="text-gray-600">
                 Vai trò người dùng không hợp lệ để cập nhật thông tin cá nhân.

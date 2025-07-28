@@ -22,7 +22,7 @@ public class BatchController {
     }
 
     @GetMapping("/{year}")
-    public ResponseEntity<BatchDTO> getBatchByYear(@PathVariable Integer year) {
+    public ResponseEntity<BatchDTO> getBatchByYear(@PathVariable String year) {
         return batchService.getBatchByYear(year)
                 .map(batch -> ResponseEntity.ok(batch))
                 .orElse(ResponseEntity.notFound().build());
@@ -35,14 +35,14 @@ public class BatchController {
     }
 
     @PutMapping("/{year}")
-    public ResponseEntity<BatchDTO> updateBatch(@PathVariable Integer year, @RequestBody BatchDTO batchDTO) {
+    public ResponseEntity<BatchDTO> updateBatch(@PathVariable String year, @RequestBody BatchDTO batchDTO) {
         return batchService.updateBatch(year, batchDTO)
                 .map(batch -> ResponseEntity.ok(batch))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{year}")
-    public ResponseEntity<Void> deleteBatch(@PathVariable Integer year) {
+    public ResponseEntity<Void> deleteBatch(@PathVariable String year) {
         if (batchService.deleteBatch(year)) {
             return ResponseEntity.noContent().build();
         }

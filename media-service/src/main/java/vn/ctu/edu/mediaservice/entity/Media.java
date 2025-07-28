@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "media")
@@ -17,8 +18,9 @@ import java.time.LocalDateTime;
 public class Media {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(nullable = false)
     private String fileName;
@@ -57,5 +59,9 @@ public class Media {
 
     public enum MediaType {
         IMAGE, VIDEO, AUDIO, DOCUMENT
+    }
+
+    public String getIdAsString() {
+        return id != null ? id.toString() : null;
     }
 }

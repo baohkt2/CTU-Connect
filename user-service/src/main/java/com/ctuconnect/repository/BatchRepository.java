@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BatchRepository extends Neo4jRepository<BatchEntity, Integer> {
+public interface BatchRepository extends Neo4jRepository<BatchEntity, String> {
 
     List<BatchEntity> findAllByOrderByYearDesc();
 
-    Optional<BatchEntity> findByYear(Integer year);
+    Optional<BatchEntity> findByYear(String year);
 }

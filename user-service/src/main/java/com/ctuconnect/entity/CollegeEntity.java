@@ -18,4 +18,8 @@ public class CollegeEntity {
 
     @Relationship(type = "HAS_FACULTY", direction = Relationship.Direction.OUTGOING)
     private List<FacultyEntity> faculties;
+
+    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.INCOMING)
+    private List<UserEntity> students; // Danh sách sinh viên thuộc college
+
 }

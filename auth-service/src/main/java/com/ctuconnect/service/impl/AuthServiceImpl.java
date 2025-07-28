@@ -419,7 +419,7 @@ public class AuthServiceImpl implements AuthService {
         if (email.endsWith("@student.ctu.edu.vn")) {
             return "STUDENT";
         } else if (email.endsWith("@ctu.edu.vn")) {
-            return "FACULTY";
+            return "LECTURER";
         }
         return "USER";
     }

@@ -11,13 +11,13 @@ import java.util.Optional;
 @Repository
 public interface FacultyRepository extends Neo4jRepository<FacultyEntity, String> {
 
-    @Query("MATCH (f:Faculty) RETURN f ORDER BY f.name")
+    @Query("MATCH (f:Faculty) OPTIONAL MATCH (f)<-[:HAS_FACULTY]-(c:College) OPTIONAL MATCH (f)-[:HAS_MAJOR]->(m:Major) RETURN f, c, m ORDER BY f.name")
     List<FacultyEntity> findAllWithCollegeAndMajors();
 
-    @Query("MATCH (f:Faculty {college: $collegeName}) RETURN f ORDER BY f.name")
+    @Query("MATCH (f:Faculty {college: $collegeName}) OPTIONAL MATCH (f)<-[:HAS_FACULTY]-(c:College) OPTIONAL MATCH (f)-[:HAS_MAJOR]->(m:Major) RETURN f, c, m ORDER BY f.name")
     List<FacultyEntity> findByCollegeWithMajors(String collegeName);
 
-    @Query("MATCH (f:Faculty {name: $name}) RETURN f")
+    @Query("MATCH (f:Faculty {name: $name}) OPTIONAL MATCH (f)<-[:HAS_FACULTY]-(c:College) OPTIONAL MATCH (f)-[:HAS_MAJOR]->(m:Major) RETURN f, c, m")
     Optional<FacultyEntity> findByNameWithCollegeAndMajors(String name);
 
     Optional<FacultyEntity> findByName(String name);

@@ -45,7 +45,7 @@ public class CategoryDTO {
     @AllArgsConstructor
     @Builder
     public static class BatchInfo {
-        private Integer year;
+        private String year;
     }
 
     @Data

@@ -28,7 +28,7 @@ MERGE (g2:Gender {code: 'F', name: 'Nữ'});
 // =================================================================
 WITH [2021, 2022, 2023, 2024, 2025] AS batches
 UNWIND batches AS batchYear
-MERGE (b:Batch {year: toInteger(batchYear)});
+MERGE (b:Batch {year: toString(batchYear)});
 
 // =================================================================
 // 4. CREATE HIERARCHICAL UNIVERSITY STRUCTURE
@@ -100,8 +100,6 @@ MERGE (f)-[:HAS_MAJOR]->(m);
 UNWIND [
 {code: 'GIANG_VIEN', name: 'Giảng viên'},
 {code: 'GIANG_VIEN_CHINH', name: 'Giảng viên chính'},
-{code: 'PHO_GIAO_SU', name: 'Phó Giáo sư'},
-{code: 'GIAO_SU', name: 'Giáo sư'},
 {code: 'CAN_BO', name: 'Cán bộ'},
 {code: 'TRO_LY', name: 'Trợ lý'},
 {code: 'NGHIEN_CUU_VIEN', name: 'Nghiên cứu viên'}
@@ -137,57 +135,8 @@ CREATE CONSTRAINT IF NOT EXISTS FOR (d:Degree) REQUIRE d.code IS UNIQUE;
 // 5. CREATE SAMPLE USERS FOR TESTING
 // =================================================================
 // Create a sample student user
-MERGE (student:User {
-  id: 'user-123-student',
-  email: 'student@ctu.edu.vn',
-  username: 'student123',
-  fullName: 'Nguyễn Văn A',
-  role: 'STUDENT',
-  isActive: true,
-  isProfileCompleted: true,
-  studentId: 'B2021001',
-  createdAt: datetime(),
-  updatedAt: datetime()
-})
-
-// Create a sample faculty user
-MERGE (faculty:User {
-  id: 'user-456-faculty',
-  email: 'faculty@ctu.edu.vn',
-  username: 'faculty456',
-  fullName: 'TS. Trần Thị B',
-  role: 'FACULTY',
-  isActive: true,
-  isProfileCompleted: true,
-  staffCode: 'GV001',
-  position: 'GIANG_VIEN',
-  Academic: 'TIEN_SI',
-  degree: 'TIEN_SI',
-  createdAt: datetime(),
-  updatedAt: datetime()
-});
 
 // =================================================================
 // 6. CREATE RELATIONSHIPS FOR SAMPLE USERS
 // =================================================================
 // Student relationships
-MATCH (student:User {id: 'user-123-student'})
-MATCH (major:Major {name: 'Công nghệ Phần mềm'})
-MATCH (batch:Batch {year: 2023})
-MATCH (gender:Gender {code: 'M'})
-MERGE (student)-[:ENROLLED_IN]->(major)
-MERGE (student)-[:IN_BATCH]->(batch)
-MERGE (student)-[:HAS_GENDER]->(gender);
-
-// Faculty relationships
-MATCH (faculty:User {id: 'user-456-faculty'})
-MATCH (workingFaculty:Faculty {name: 'Bộ môn Công nghệ Phần mềm'})
-MATCH (gender:Gender {code: 'F'})
-MERGE (faculty)-[:WORKS_IN]->(workingFaculty)
-MERGE (faculty)-[:HAS_GENDER]->(gender);
-
-// Create friendship relationship
-MATCH (student:User {id: 'user-123-student'})
-MATCH (faculty:User {id: 'user-456-faculty'})
-MERGE (student)-[:FRIEND]->(faculty)
-MERGE (faculty)-[:FRIEND]->(student);

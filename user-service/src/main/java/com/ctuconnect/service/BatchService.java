@@ -21,7 +21,7 @@ public class BatchService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<BatchDTO> getBatchByYear(Integer year) {
+    public Optional<BatchDTO> getBatchByYear(String year) {
         return batchRepository.findById(year)
                 .map(this::convertToDTO);
     }
@@ -34,7 +34,7 @@ public class BatchService {
         return convertToDTO(savedBatch);
     }
 
-    public Optional<BatchDTO> updateBatch(Integer year, BatchDTO batchDTO) {
+    public Optional<BatchDTO> updateBatch(String year, BatchDTO batchDTO) {
         return batchRepository.findById(year)
                 .map(existingBatch -> {
                     existingBatch.setYear(batchDTO.getYear());
@@ -43,7 +43,7 @@ public class BatchService {
                 });
     }
 
-    public boolean deleteBatch(Integer year) {
+    public boolean deleteBatch(String year) {
         if (batchRepository.existsById(year)) {
             batchRepository.deleteById(year);
             return true;

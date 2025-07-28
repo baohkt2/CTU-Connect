@@ -10,5 +10,8 @@ import org.springframework.data.neo4j.core.schema.*;
 @Builder
 public class BatchEntity  {
     @Id
-    private Integer year;
+    private String year;
+
+    @Relationship(type = "IN_BATCH", direction = Relationship.Direction.INCOMING)
+    private UserEntity students;
 }

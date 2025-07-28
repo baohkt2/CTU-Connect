@@ -78,15 +78,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         console.log('DEBUG: Auth result:', authResult);
 
-        if (authResult.isAuthenticated && authResult.user) {
+        if (authResult.isAuthenticated) {
           console.log('DEBUG: User authenticated, setting user data');
-          setUser(authResult.user);
-          const myProfile = await userService.getMyProfile();
-          console.log('DEBUG: myProfile :', myProfile.isProfileCompleted);
+          const myProfile = await userService.getMyProfile()
+          setUser(myProfile);
+
+          console.log('DEBUG: myProfile :', myProfile);
           if (!myProfile.isProfileCompleted) {
             console.log('DEBUG: User profile not completed, redirecting to profile update');
             // Redirect to profile update page if profile is not completed
-            if (typeof window !== 'undefined') {
+            if (typeof window !== 'undefined' && window.location.pathname !== '/profile/update') {
               window.location.replace('/profile/update');
             }
           }

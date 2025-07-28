@@ -1,11 +1,14 @@
 package com.ctuconnect.dto;
 
+import com.ctuconnect.entity.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
 
 @Data
 @AllArgsConstructor
@@ -19,48 +22,24 @@ public class UserDTO {
     private Boolean isActive;
     private Boolean isProfileCompleted;
     private String bio;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<String> friendIds;
-
     // Sinh viên
     private String studentId;
-
+    private Info major;
+    private BatchInfo batch;
     // Giảng viên
     private String staffCode;
-    private String positionCode;       // Giảng viên, Trợ lý, ...
-    private String academicCode;  // Giáo sư, Phó GS, ...
-    private String degreeCode;         // Tiến sĩ, Thạc sĩ,...
-
-    private String positionName;       // Tên vị trí (dùng để hiển thị)
-    private String academicName;       // Tên học hàm (dùng để hiển thị)
-    private String degreeName;         // Tên học vị (dùng để hiển
-
-    // Dành cho gửi dữ liệu (cập nhật thông tin người dùng) - sử dụng codes
-    private String majorCode;
-    private String facultyCode;
-    private String collegeCode;
-    private Integer batchYear;
-    private String genderCode;
-
-    // Dành cho hiển thị (khi truy vấn) - sử dụng names
-    private String majorName;
-    private String facultyName;
-    private String collegeName;
-    private String genderName;
-
-
-    // Legacy fields cho backward compatibility
-    private String major;
-    private String faculty;
-    private String college;
-    private String gender;
-    private String batch;
-
+    private Info position;
+    private Info academic;
+    private Info degree;
+    // Thông tin chung
+    private Info faculty;
+    private Info college;
+    private Info gender;
     private String avatarUrl;
     private String backgroundUrl;
-
     // Gợi ý bạn bè / so sánh
     private Integer mutualFriendsCount;
     private Boolean sameCollege;
@@ -68,64 +47,137 @@ public class UserDTO {
     private Boolean sameMajor;
     private Boolean sameBatch;
 
-    // Helper methods cho backward compatibility
-    public String getMajor() {
-        return majorName != null ? majorName : major;
+    public String getMajorId() {
+        return major != null ? major.getCode() : null;
     }
 
-    public String getFaculty() {
-        return facultyName != null ? facultyName : faculty;
+    public String getBatchId() {
+        return batch != null ? batch.getYear() : null;
     }
 
-    public String getCollege() {
-        return collegeName != null ? collegeName : college;
+    public String getCollegeId() {
+        return college != null ? college.getCode() : null;
     }
 
-    public String getGender() {
-        return genderName != null ? genderName : gender;
+    public String getFacultyId() {
+        return faculty != null ? faculty.getCode() : null;
     }
 
-    public String getBatch() {
-        return batchYear != null ? String.valueOf(batchYear) : batch;
+    public String getGenderId() {
+        return gender != null ? gender.getCode() : null;
     }
 
-    // Setter methods cho backward compatibility
-    public void setMajor(String major) {
-        this.major = major;
-        if (this.majorName == null) {
-            this.majorName = major;
+    public String getPositionId() {
+        return position != null ? position.getCode() : null;
+    }
+
+    public String getAcademicId() {
+        return academic != null ? academic.getCode() : null;
+    }
+
+    public String getDegreeId() {
+        return degree != null ? degree.getCode() : null;
+    }
+
+    public void setMajor(MajorEntity major) {
+        if (major != null) {
+            this.major = Info.builder()
+                    .name(major.getName())
+                    .code(major.getCode())
+                    .build();
+        } else {
+            this.major = null;
         }
     }
 
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-        if (this.facultyName == null) {
-            this.facultyName = faculty;
+    public void setBatch(BatchEntity batch) {
+        if (batch != null) {
+            this.batch = BatchInfo.builder()
+                    .year(batch.getYear())
+                    .build();
+        } else {
+            this.batch = null;
         }
     }
 
-    public void setCollege(String college) {
-        this.college = college;
-        if (this.collegeName == null) {
-            this.collegeName = college;
+    public void setCollege(CollegeEntity college) {
+        if (college != null) {
+            this.college = Info.builder()
+                    .name(college.getName())
+                    .code(college.getCode())
+                    .build();
+        } else {
+            this.college = null;
         }
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-        if (this.genderName == null) {
-            this.genderName = gender;
+    public void setFaculty(FacultyEntity faculty) {
+        if (faculty != null) {
+            this.faculty = Info.builder()
+                    .name(faculty.getName())
+                    .code(faculty.getCode())
+                    .build();
+        } else {
+            this.faculty = null;
         }
     }
 
-    public void setBatch(String batch) {
-        this.batch = batch;
-        if (this.batchYear == null && batch != null) {
-            try {
-                this.batchYear = Integer.valueOf(batch);
-            } catch (NumberFormatException e) {
-                // Ignore if batch is not a number
-            }
+    public void setGender(GenderEntity gender) {
+        if (gender != null) {
+            this.gender = Info.builder()
+                    .name(gender.getName())
+                    .code(gender.getCode())
+                    .build();
+        } else {
+            this.gender = null;
         }
     }
+
+    public void setPosition(PositionEntity position) {
+        if (position != null) {
+            this.position = Info.builder()
+                    .name(position.getName())
+                    .code(position.getCode())
+                    .build();
+        } else {
+            this.position = null;
+        }
+    }
+
+    public void setAcademic(AcademicEntity academic) {
+        if (academic != null) {
+            this.academic = Info.builder()
+                    .name(academic.getName())
+                    .code(academic.getCode())
+                    .build();
+        } else {
+            this.academic = null;
+        }
+    }
+
+    public void setDegree(DegreeEntity degree) {
+        if (degree != null) {
+            this.degree = Info.builder()
+                    .name(degree.getName())
+                    .code(degree.getCode())
+                    .build();
+        } else {
+            this.degree = null;
+        }
+    }
+
+    @Builder
+    @Data
+    public static class Info {
+        private String name;
+        private String code;
+    }
+
+    @Data
+    @Builder
+    public static class BatchInfo {
+        private String year;
+    }
+
+
 }
