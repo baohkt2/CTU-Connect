@@ -28,10 +28,10 @@ public class Media {
     @Column(nullable = false)
     private String originalFileName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String cloudinaryUrl;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String cloudinaryPublicId;
 
     @Column(nullable = false)
@@ -44,6 +44,7 @@ public class Media {
     @Column(nullable = false)
     private Long fileSize;
 
+    @Column(length = 1024)
     private String description;
 
     @Column(nullable = false)
