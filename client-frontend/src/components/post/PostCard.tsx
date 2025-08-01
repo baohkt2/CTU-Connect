@@ -1,282 +1,416 @@
+'use client';
+
 import React, { useState } from 'react';
-import { usePostHooks, useCommentHooks } from '@/hooks/usePostHooks';
-import { useAuth } from '@/contexts/AuthContext';
-import { Post } from '@/types';
-import { formatDate } from '@/utils/helpers';
-import Avatar from '@/components/ui/Avatar';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import Modal from '@/components/ui/Modal';
-import Textarea from '@/components/ui/Textarea';
-import Link from 'next/link';
+import { Post, CreateCommentRequest } from '@/types';
+import { postService } from '@/services/postService';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Textarea } from '@/components/ui/Textarea';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import {
-  HeartIcon,
-  ChatBubbleOvalLeftIcon,
-  ShareIcon,
-  EllipsisHorizontalIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+  Heart,
+  MessageCircle,
+  Share,
+  Bookmark,
+  MoreHorizontal,
+  Send,
+  Eye
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 
 interface PostCardProps {
   post: Post;
+  onPostUpdate?: (updatedPost: Post) => void;
+  onPostDelete?: (postId: string) => void;
+  className?: string;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { user } = useAuth();
-  const { useLikePost, useUnlikePost, useDeletePost } = usePostHooks();
-  const { useComments, useCreateComment } = useCommentHooks();
-
+export const PostCard: React.FC<PostCardProps> = ({
+  post,
+  onPostUpdate,
+  onPostDelete,
+  className = ''
+}) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState<any[]>([]);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isLoadingInteraction, setIsLoadingInteraction] = useState(false);
 
-  const likePostMutation = useLikePost();
-  const unlikePostMutation = useUnlikePost();
-  const deletePostMutation = useDeletePost();
-  const createCommentMutation = useCreateComment();
+  // Load comments when showing comments section
+  const handleShowComments = async () => {
+    if (!showComments && comments.length === 0) {
+      setIsLoadingComments(true);
+      try {
+        const response = await postService.getComments(post.id);
+        setComments(response.content);
+      } catch (error) {
+        console.error('Failed to load comments:', error);
+      } finally {
+        setIsLoadingComments(false);
+      }
+    }
+    setShowComments(!showComments);
+  };
 
-  const { data: commentsData } = useComments(post.id, 0, 10);
-
+  // Handle like/unlike
   const handleLike = async () => {
-    if (post.isLiked) {
-      await unlikePostMutation.mutateAsync(post.id);
-    } else {
-      await likePostMutation.mutateAsync(post.id);
-    }
-  };
+    if (isLoadingInteraction) return;
 
-  const handleDeletePost = async () => {
+    setIsLoadingInteraction(true);
     try {
-      await deletePostMutation.mutateAsync(post.id);
-      setShowDeleteModal(false);
+      await postService.toggleLike(post.id);
+      setIsLiked(!isLiked);
+
+      // Update post stats optimistically
+      const updatedPost = {
+        ...post,
+        stats: {
+          ...post.stats,
+          likes: isLiked ? post.stats.likes - 1 : post.stats.likes + 1
+        }
+      };
+      onPostUpdate?.(updatedPost);
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setIsLoadingInteraction(false);
     }
   };
 
-  const handleAddComment = async (e: React.FormEvent) => {
+  // Handle bookmark
+  const handleBookmark = async () => {
+    if (isLoadingInteraction) return;
+
+    setIsLoadingInteraction(true);
+    try {
+      await postService.toggleBookmark(post.id);
+      setIsBookmarked(!isBookmarked);
+
+      // Update post stats optimistically
+      const updatedPost = {
+        ...post,
+        stats: {
+          ...post.stats,
+          bookmarks: isBookmarked ? post.stats.bookmarks - 1 : post.stats.bookmarks + 1
+        }
+      };
+      onPostUpdate?.(updatedPost);
+    } catch (error) {
+      console.error('Failed to toggle bookmark:', error);
+    } finally {
+      setIsLoadingInteraction(false);
+    }
+  };
+
+  // Handle share
+  const handleShare = async () => {
+    if (isLoadingInteraction) return;
+
+    setIsLoadingInteraction(true);
+    try {
+      await postService.sharePost(post.id);
+
+      // Update post stats optimistically
+      const updatedPost = {
+        ...post,
+        stats: {
+          ...post.stats,
+          shares: post.stats.shares + 1
+        }
+      };
+      onPostUpdate?.(updatedPost);
+
+      // Copy link to clipboard
+      await navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
+      alert('Post link copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to share post:', error);
+    } finally {
+      setIsLoadingInteraction(false);
+    }
+  };
+
+  // Handle comment submission
+  const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commentText.trim()) return;
+    if (!commentText.trim() || isSubmittingComment) return;
 
+    setIsSubmittingComment(true);
     try {
-      await createCommentMutation.mutateAsync({
-        postId: post.id,
+      const commentData: CreateCommentRequest = {
         content: commentText.trim()
-      });
+      };
+
+      const newComment = await postService.createComment(post.id, commentData);
+      setComments(prev => [...prev, newComment]);
       setCommentText('');
+
+      // Update post stats
+      const updatedPost = {
+        ...post,
+        stats: {
+          ...post.stats,
+          comments: post.stats.comments + 1
+        }
+      };
+      onPostUpdate?.(updatedPost);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error('Failed to create comment:', error);
+    } finally {
+      setIsSubmittingComment(false);
     }
   };
 
-  const isOwner = user?.id === post.authorId;
+  const formatStats = (count: number): string => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count.toString();
+  };
 
   return (
-    <>
-      <Card className="mb-4" hover>
-        {/* Post Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <Avatar
-              src={post.author.avatarUrl || '/default-avatar.png'}
-              alt={post.author.fullName}
-              size="md"
-              online={post.author.isOnline}
-            />
-            <div>
-              <Link
-                href={`/profile/${post.author.id}`}
-                className="font-semibold text-gray-900 hover:text-blue-600"
-              >
-                {post.author.fullName}
-              </Link>
-              <p className="text-sm text-gray-500">
-                @{post.author.username} · {formatDate(post.createdAt)}
-              </p>
-            </div>
-          </div>
-
-          {isOwner && (
-            <div className="relative group">
-              <button className="p-2 rounded-full hover:bg-gray-100">
-                <EllipsisHorizontalIcon className="w-5 h-5 text-gray-500" />
-              </button>
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                >
-                  <TrashIcon className="w-4 h-4 mr-2" />
-                  Xóa bài đăng
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Post Content */}
-        <div className="mb-4">
-          <p className="text-gray-900 whitespace-pre-wrap">{post.content}</p>
-        </div>
-
-        {/* Post Images */}
-        {post.images && post.images.length > 0 && (
-          <div className={`mb-4 grid gap-2 ${
-            post.images.length === 1 ? 'grid-cols-1' : 
-            post.images.length === 2 ? 'grid-cols-2' : 
-            'grid-cols-2'
-          }`}>
-            {post.images.map((image, index) => (
+    <Card className={`post-card ${className}`}>
+      {/* Post Header */}
+      <div className="flex items-start justify-between p-4">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+            {post.authorAvatar ? (
               <img
-                key={index}
-                src={image}
-                alt={`Post image ${index + 1}`}
-                className="w-full h-64 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => {
-                  // TODO: Implement image modal/gallery
-                }}
+                src={post.authorAvatar}
+                alt={post.authorName || 'Author'}
+                className="w-full h-full rounded-full object-cover"
               />
+            ) : (
+              <span className="text-sm font-medium text-gray-600">
+                {(post.authorName || 'Anonymous').charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">
+              {post.authorName || 'Anonymous'}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+              {post.visibility && post.visibility !== 'PUBLIC' && (
+                <span className="ml-2 px-2 py-0.5 bg-gray-100 rounded text-xs">
+                  {post.visibility.toLowerCase()}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+        <Button variant="ghost" size="sm">
+          <MoreHorizontal className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Post Content */}
+      <div className="px-4 pb-3">
+        {post.title && (
+          <h2 className="text-lg font-semibold mb-2">{post.title}</h2>
+        )}
+        <p className="text-gray-900 whitespace-pre-wrap">{post.content}</p>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {post.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+              >
+                #{tag}
+              </span>
             ))}
           </div>
         )}
 
-        {/* Post Actions */}
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={handleLike}
-              className={`flex items-center space-x-2 px-3 py-1 rounded-full transition-colors ${
-                post.isLiked 
-                  ? 'text-red-600 hover:bg-red-50' 
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {post.isLiked ? (
-                <HeartIconSolid className="w-5 h-5" />
-              ) : (
-                <HeartIcon className="w-5 h-5" />
-              )}
-              <span className="text-sm">{post.likes}</span>
-            </button>
+        {/* Category */}
+        {post.category && (
+          <div className="mt-2">
+            <span className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
+              {post.category}
+            </span>
+          </div>
+        )}
+      </div>
 
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="flex items-center space-x-2 px-3 py-1 rounded-full text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              <ChatBubbleOvalLeftIcon className="w-5 h-5" />
-              <span className="text-sm">{post.comments}</span>
-            </button>
-
-            <button className="flex items-center space-x-2 px-3 py-1 rounded-full text-gray-600 hover:bg-gray-100 transition-colors">
-              <ShareIcon className="w-5 h-5" />
-              <span className="text-sm">Chia sẻ</span>
-            </button>
+      {/* Post Images */}
+      {post.images && post.images.length > 0 && (
+        <div className="px-4 pb-3">
+          <div className={`grid gap-2 ${
+            post.images.length === 1 ? 'grid-cols-1' : 
+            post.images.length === 2 ? 'grid-cols-2' : 
+            'grid-cols-2'
+          }`}>
+            {post.images.slice(0, 4).map((image, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={image}
+                  alt={`Post image ${index + 1}`}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                {index === 3 && post.images.length > 4 && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-lg font-semibold">
+                      +{post.images.length - 4} more
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Comments Section */}
-        {showComments && (
-          <div className="mt-4 pt-4 border-t">
-            {/* Add Comment Form */}
-            <form onSubmit={handleAddComment} className="mb-4">
-              <div className="flex space-x-3">
-                <Avatar
-                  src={user?.avatarUrl || '/default-avatar.png'}
-                  alt={user?.fullName || 'User'}
-                  size="sm"
+      {/* Post Stats */}
+      <div className="px-4 py-2 border-t border-gray-100">
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <div className="flex items-center space-x-4">
+            <span className="flex items-center space-x-1">
+              <Eye className="w-4 h-4" />
+              <span>{formatStats(post.stats.views)}</span>
+            </span>
+            <span className="flex items-center space-x-1">
+              <Heart className="w-4 h-4" />
+              <span>{formatStats(post.stats.likes)}</span>
+            </span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <span>{formatStats(post.stats.comments)} comments</span>
+            <span>{formatStats(post.stats.shares)} shares</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Post Actions */}
+      <div className="px-4 py-2 border-t border-gray-100">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLike}
+            disabled={isLoadingInteraction}
+            className={`flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-gray-500'}`}
+          >
+            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+            <span>Like</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShowComments}
+            className="flex items-center space-x-2 text-gray-500"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span>Comment</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            disabled={isLoadingInteraction}
+            className="flex items-center space-x-2 text-gray-500"
+          >
+            <Share className="w-5 h-5" />
+            <span>Share</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBookmark}
+            disabled={isLoadingInteraction}
+            className={`flex items-center space-x-2 ${isBookmarked ? 'text-blue-500' : 'text-gray-500'}`}
+          >
+            <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+            <span>Save</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div className="border-t border-gray-100">
+          {/* Comment Form */}
+          <form onSubmit={handleSubmitComment} className="p-4 border-b border-gray-100">
+            <div className="flex space-x-3">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
+              <div className="flex-1">
+                <Textarea
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  minRows={1}
+                  maxRows={4}
+                  className="w-full resize-none"
                 />
-                <div className="flex-1">
-                  <Textarea
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Viết bình luận..."
-                    rows={2}
-                    className="resize-none"
-                  />
-                  <div className="flex justify-end mt-2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={!commentText.trim() || createCommentMutation.isPending}
-                      loading={createCommentMutation.isPending}
-                    >
-                      Bình luận
-                    </Button>
-                  </div>
+                <div className="flex justify-end mt-2">
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={!commentText.trim() || isSubmittingComment}
+                    className="flex items-center space-x-2"
+                  >
+                    {isSubmittingComment ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                    <span>Post</span>
+                  </Button>
                 </div>
               </div>
-            </form>
+            </div>
+          </form>
 
-            {/* Comments List */}
-            {commentsData?.content && commentsData.content.length > 0 && (
-              <div className="space-y-3">
-                {commentsData.content.map((comment) => (
+          {/* Comments List */}
+          <div className="p-4">
+            {isLoadingComments ? (
+              <div className="flex justify-center py-4">
+                <LoadingSpinner />
+              </div>
+            ) : comments.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No comments yet</p>
+            ) : (
+              <div className="space-y-4">
+                {comments.map((comment) => (
                   <div key={comment.id} className="flex space-x-3">
-                    <Avatar
-                      src={comment.author.avatarUrl || '/default-avatar.png'}
-                      alt={comment.author.fullName}
-                      size="sm"
-                    />
-                    <div className="flex-1">
-                      <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <Link
-                          href={`/profile/${comment.author.id}`}
-                          className="font-semibold text-sm text-gray-900 hover:text-blue-600"
-                        >
-                          {comment.author.fullName}
-                        </Link>
-                        <p className="text-gray-700 text-sm mt-1">{comment.content}</p>
-                      </div>
-                      <div className="flex items-center space-x-4 mt-1">
-                        <span className="text-xs text-gray-500">
-                          {formatDate(comment.createdAt)}
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0">
+                      {comment.authorAvatar ? (
+                        <img
+                          src={comment.authorAvatar}
+                          alt={comment.authorName}
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs font-medium text-gray-600 flex items-center justify-center w-full h-full">
+                          {(comment.authorName || 'A').charAt(0).toUpperCase()}
                         </span>
-                        <button className="text-xs text-gray-500 hover:text-blue-600">
-                          Thích
-                        </button>
-                        <button className="text-xs text-gray-500 hover:text-blue-600">
-                          Trả lời
-                        </button>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="bg-gray-100 rounded-lg px-3 py-2">
+                        <p className="font-semibold text-sm">{comment.authorName || 'Anonymous'}</p>
+                        <p className="text-gray-900">{comment.content}</p>
                       </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-        )}
-      </Card>
-
-      {/* Delete Post Modal */}
-      <Modal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="Xóa bài đăng"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-700">
-            Bạn có chắc chắn muốn xóa bài đăng này không? Hành động này không thể hoàn tác.
-          </p>
-          <div className="flex justify-end space-x-3">
-            <Button
-              variant="secondary"
-              onClick={() => setShowDeleteModal(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleDeletePost}
-              loading={deletePostMutation.isPending}
-            >
-              Xóa
-            </Button>
-          </div>
         </div>
-      </Modal>
-    </>
+      )}
+    </Card>
   );
 };
-
-export default PostCard;

@@ -27,17 +27,25 @@ public class PostEntity {
     @Id
     private String id;
 
+    private String title;
+
     private String content;
 
     @Field("author")
     private AuthorInfo author;
 
+    @Builder.Default
     private List<String> images = new ArrayList<>();
 
+    @Builder.Default
     private List<String> tags = new ArrayList<>();
 
     private String category;
 
+    @Builder.Default
+    private String visibility = "PUBLIC"; // PUBLIC, FRIENDS, PRIVATE
+
+    @Builder.Default
     private PostStats stats = new PostStats();
 
     @Field("created_at")
@@ -48,15 +56,24 @@ public class PostEntity {
     @Field("updated_at")
     private LocalDateTime updatedAt;
 
+    // Convenience method to get authorId
+    public String getAuthorId() {
+        return author != null ? author.getId() : null;
+    }
+
     // Nested class for statistics
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class PostStats {
+        @Builder.Default
         private long views = 0;
+        @Builder.Default
         private long shares = 0;
+        @Builder.Default
         private long comments = 0;
+        @Builder.Default
         private Map<InteractionEntity.InteractionType.ReactionType, Integer> reactions = new HashMap<>();
 
         public void incrementReaction(InteractionEntity.InteractionType.ReactionType reaction) {
@@ -66,10 +83,10 @@ public class PostEntity {
         public void decrementReaction(InteractionEntity.InteractionType.ReactionType reaction) {
             reactions.computeIfPresent(reaction, (k, v) -> Math.max(0, v - 1));
         }
+
         public void incrementViews() {
             this.views++;
         }
-
 
         public void incrementShares() {
             this.shares++;
@@ -87,5 +104,9 @@ public class PostEntity {
             this.shares = Math.max(0, this.shares - 1);
         }
 
+        // Get total likes from all reaction types
+        public long getLikes() {
+            return reactions.values().stream().mapToInt(Integer::intValue).sum();
+        }
     }
 }

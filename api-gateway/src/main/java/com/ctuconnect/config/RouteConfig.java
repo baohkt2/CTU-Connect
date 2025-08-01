@@ -34,6 +34,10 @@ public class RouteConfig {
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://media-service"))
 
+                .route("post-service-route", r -> r
+                        .path("/api/posts/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://post-service"))
                 .build();
     }
 }

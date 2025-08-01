@@ -12,7 +12,9 @@ import java.util.List;
 @Repository
 public interface PostRepository extends MongoRepository<PostEntity, String> {
 
-    Page<PostEntity> findByAuthorId(String authorId, Pageable pageable);
+    // Find by author ID (using nested author object)
+    @Query("{ 'author.id': ?0 }")
+    Page<PostEntity> findByAuthor_Id(String authorId, Pageable pageable);
 
     Page<PostEntity> findByCategory(String category, Pageable pageable);
 
@@ -21,12 +23,20 @@ public interface PostRepository extends MongoRepository<PostEntity, String> {
     @Query("{ 'title': { $regex: ?0, $options: 'i' } }")
     Page<PostEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
-    @Query("{ '$or': [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?0, $options: 'i' } } ] }")
-    Page<PostEntity> findByTitleOrContentContaining(String searchTerm, Pageable pageable);
+    @Query("{ '$or': [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?1, $options: 'i' } } ] }")
+    Page<PostEntity> findByTitleContainingOrContentContaining(String titleTerm, String contentTerm, Pageable pageable);
+
+    // Find by visibility
+    Page<PostEntity> findByVisibility(String visibility, Pageable pageable);
+
+    // Find by author and visibility
+    @Query("{ 'author.id': ?0, 'visibility': ?1 }")
+    Page<PostEntity> findByAuthor_IdAndVisibility(String authorId, String visibility, Pageable pageable);
 
     List<PostEntity> findTop10ByOrderByStatsViewsDesc();
 
     List<PostEntity> findTop10ByOrderByStatsLikesDesc();
 
-    long countByAuthorId(String authorId);
+    @Query("{ 'author.id': ?0 }")
+    long countByAuthor_Id(String authorId);
 }

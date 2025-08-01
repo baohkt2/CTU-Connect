@@ -15,14 +15,17 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PostRequest {
+    @Size(max = 200, message = "Title cannot exceed 200 characters")
+    private String title;
+
     @NotBlank(message = "Content is required")
     @Size(max = 5000, message = "Content cannot exceed 5000 characters")
     private String content;
 
-
+    @Builder.Default
     private List<String> tags = new ArrayList<>();
 
     private String category;
 
-
+    private String visibility = "PUBLIC"; // PUBLIC, FRIENDS, PRIVATE
 }

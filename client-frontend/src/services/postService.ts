@@ -1,77 +1,177 @@
 import api from '@/lib/api';
-import { Post, Comment, ApiResponse, PaginatedResponse } from '@/types';
+import {
+  Post,
+  Comment,
+  CreatePostRequest,
+  UpdatePostRequest,
+  CreateCommentRequest,
+  CreateInteractionRequest,
+  Interaction,
+  PaginatedResponse,
+  InteractionType,
+  ReactionType
+} from '@/types';
 
 export const postService = {
-  async createPost(content: string, images?: File[]): Promise<Post> {
-    const formData = new FormData();
-    formData.append('content', content);
+  // Create post with proper structure matching backend
+  async createPost(postData: CreatePostRequest, files?: File[]): Promise<Post> {
+    if (files && files.length > 0) {
+      // Use multipart form data for posts with files
+      const formData = new FormData();
 
-    if (images) {
-      images.forEach((image) => {
-        formData.append('images', image);
+      // Create post JSON and append as part
+      const postBlob = new Blob([JSON.stringify(postData)], {
+        type: 'application/json'
       });
+      formData.append('post', postBlob);
+
+      // Append files
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const response = await api.post('/posts', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // Use simple JSON endpoint for text-only posts
+      const response = await api.post('/posts/simple', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
     }
+  },
 
-    const response = await api.post('/posts', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  // Get paginated posts
+  async getPosts(
+    page = 0,
+    size = 10,
+    sortBy = 'createdAt',
+    sortDir = 'desc',
+    authorId?: string,
+    category?: string,
+    search?: string
+  ): Promise<PaginatedResponse<Post>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+      sortBy,
+      sortDir,
     });
+
+    if (authorId) params.append('authorId', authorId);
+    if (category) params.append('category', category);
+    if (search) params.append('search', search);
+
+    const response = await api.get(`/posts?${params.toString()}`);
     return response.data;
   },
 
-  async getPosts(page = 0, size = 10): Promise<PaginatedResponse<Post>> {
-    const response = await api.get(`/posts?page=${page}&size=${size}`);
-    return response.data;
-  },
-
+  // Get single post by ID
   async getPost(postId: string): Promise<Post> {
     const response = await api.get(`/posts/${postId}`);
     return response.data;
   },
 
-  async getUserPosts(userId: string, page = 0, size = 10): Promise<PaginatedResponse<Post>> {
-    const response = await api.get(`/posts/user/${userId}?page=${page}&size=${size}`);
+  // Get posts by author
+  async getUserPosts(authorId: string, page = 0, size = 10): Promise<PaginatedResponse<Post>> {
+    return this.getPosts(page, size, 'createdAt', 'desc', authorId);
+  },
+
+  // Update post
+  async updatePost(postId: string, updateData: UpdatePostRequest): Promise<Post> {
+    const response = await api.put(`/posts/${postId}`, updateData);
     return response.data;
   },
 
-  async likePost(postId: string): Promise<ApiResponse<null>> {
-    const response = await api.post(`/posts/${postId}/like`);
+  // Delete post
+  async deletePost(postId: string): Promise<void> {
+    await api.delete(`/posts/${postId}`);
+  },
+
+  // Search posts
+  async searchPosts(query: string, page = 0, size = 10): Promise<PaginatedResponse<Post>> {
+    return this.getPosts(page, size, 'createdAt', 'desc', undefined, undefined, query);
+  },
+
+  // Get posts by category
+  async getPostsByCategory(category: string, page = 0, size = 10): Promise<PaginatedResponse<Post>> {
+    return this.getPosts(page, size, 'createdAt', 'desc', undefined, category);
+  },
+
+  // INTERACTION METHODS
+
+  // Create interaction (like, share, bookmark)
+  async createInteraction(postId: string, interactionData: CreateInteractionRequest): Promise<Interaction | null> {
+    const response = await api.post(`/posts/${postId}/interactions`, interactionData);
     return response.data;
   },
 
-  async unlikePost(postId: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/posts/${postId}/like`);
+  // Like/Unlike post
+  async toggleLike(postId: string): Promise<Interaction | null> {
+    return this.createInteraction(postId, {
+      type: InteractionType.LIKE,
+      reactionType: ReactionType.LIKE
+    });
+  },
+
+  // Share post
+  async sharePost(postId: string): Promise<Interaction | null> {
+    return this.createInteraction(postId, {
+      type: InteractionType.SHARE
+    });
+  },
+
+  // Bookmark post
+  async toggleBookmark(postId: string): Promise<Interaction | null> {
+    return this.createInteraction(postId, {
+      type: InteractionType.BOOKMARK,
+      reactionType: ReactionType.BOOKMARK
+    });
+  },
+
+  // Check if user has liked post
+  async hasUserLikedPost(postId: string): Promise<boolean> {
+    const response = await api.get(`/posts/${postId}/likes/check`);
     return response.data;
   },
 
-  async deletePost(postId: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/posts/${postId}`);
-    return response.data;
-  },
+  // COMMENT METHODS
 
-  async createComment(postId: string, content: string): Promise<Comment> {
-    const response = await api.post(`/posts/${postId}/comments`, { content });
-    return response.data;
-  },
-
+  // Get comments for post
   async getComments(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
     const response = await api.get(`/posts/${postId}/comments?page=${page}&size=${size}`);
     return response.data;
   },
 
-  async likeComment(commentId: string): Promise<ApiResponse<null>> {
-    const response = await api.post(`/comments/${commentId}/like`);
+  // Create comment
+  async createComment(postId: string, commentData: CreateCommentRequest): Promise<Comment> {
+    const response = await api.post(`/posts/${postId}/comments`, commentData);
     return response.data;
   },
 
-  async unlikeComment(commentId: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/comments/${commentId}/like`);
+  // UTILITY METHODS
+
+  // Get trending posts
+  async getTrendingPosts(): Promise<Post[]> {
+    const response = await api.get('/posts/trending');
     return response.data;
   },
 
-  async deleteComment(commentId: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/comments/${commentId}`);
+  // Get top viewed posts
+  async getTopViewedPosts(): Promise<Post[]> {
+    const response = await api.get('/posts/top-viewed');
+    return response.data;
+  },
+
+  // Get top liked posts
+  async getTopLikedPosts(): Promise<Post[]> {
+    const response = await api.get('/posts/top-liked');
     return response.data;
   }
 };

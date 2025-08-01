@@ -15,12 +15,12 @@ export interface User {
   // Enhanced profile fields
   role: 'STUDENT' | 'LECTURER' | 'ADMIN' | 'USER';
   isProfileCompleted?: boolean;
-  avatarUrl?: string | null; // Changed from avatar to avatarUrl
-  backgroundUrl?: string | null; // Added backgroundUrl
+  avatarUrl?: string | null;
+  backgroundUrl?: string | null;
 
   // Working fields
-  college?: CollegeInfo; // Changed from collegeCode to college
-  faculty?: FacultyInfo; // Changed from workingFacultyCode to faculty
+  college?: CollegeInfo;
+  faculty?: FacultyInfo;
 
   // Student specific fields
   major?: MajorInfo;
@@ -32,20 +32,50 @@ export interface User {
   position?: PositionInfo;
   academic?: AcademicInfo;
   degree?: DegreeInfo;
-
 }
 
+// Updated Post interface to match backend PostResponse
 export interface Post {
   id: string;
+  title?: string;
   content: string;
-  images?: string[];
   authorId: string;
-  author: User;
-  likes: number;
-  comments: number;
-  isLiked: boolean;
+  authorName?: string;
+  authorAvatar?: string;
+  images?: string[];
+  tags?: string[];
+  category?: string;
+  visibility?: string;
+  stats: PostStats;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PostStats {
+  views: number;
+  likes: number;
+  shares: number;
+  comments: number;
+  bookmarks: number;
+  reactions?: { [key: string]: number };
+}
+
+// Post creation request to match backend PostRequest
+export interface CreatePostRequest {
+  title?: string;
+  content: string;
+  tags?: string[];
+  category?: string;
+  visibility?: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
+}
+
+// Post update request
+export interface UpdatePostRequest {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  category?: string;
+  visibility?: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
 }
 
 export interface Comment {
@@ -53,31 +83,52 @@ export interface Comment {
   content: string;
   postId: string;
   authorId: string;
-  author: User;
+  authorName?: string;
+  authorAvatar?: string;
+  stats?: CommentStats;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CommentStats {
   likes: number;
-  isLiked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  replies: number;
 }
 
-export interface ChatMessage {
-  id: string;
+export interface CreateCommentRequest {
   content: string;
-  senderId: string;
-  receiverId: string;
-  sender: User;
-  receiver: User;
-  isRead: boolean;
+  parentId?: string; // For reply comments
+}
+
+export interface Interaction {
+  id: string;
+  postId: string;
+  authorId: string;
+  type: InteractionType;
+  reactionType?: ReactionType;
   createdAt: string;
 }
 
-export interface ChatRoom {
-  id: string;
-  participants: User[];
-  lastMessage?: ChatMessage;
-  unreadCount: number;
-  createdAt: string;
-  updatedAt: string;
+export enum InteractionType {
+  LIKE = 'LIKE',
+  SHARE = 'SHARE',
+  BOOKMARK = 'BOOKMARK',
+  VIEW = 'VIEW'
+}
+
+export enum ReactionType {
+  LIKE = 'LIKE',
+  LOVE = 'LOVE',
+  HAHA = 'HAHA',
+  WOW = 'WOW',
+  SAD = 'SAD',
+  ANGRY = 'ANGRY',
+  BOOKMARK = 'BOOKMARK'
+}
+
+export interface CreateInteractionRequest {
+  type: InteractionType;
+  reactionType?: ReactionType;
 }
 
 export interface LoginRequest {
