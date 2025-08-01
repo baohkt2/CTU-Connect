@@ -32,4 +32,8 @@ public class AuthenticatedUser {
                email != null && !email.isEmpty() &&
                role != null && !role.isEmpty();
     }
+
+    public String getId() {
+        return userId;
+    }
 }

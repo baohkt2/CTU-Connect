@@ -4,36 +4,92 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v2">
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v0.1.1">
+      <change afterPath="$PROJECT_DIR$/ARCHITECTURE_OPTIMIZATION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/POST_SERVICE_FIXES_SUMMARY.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/posts/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/config/CacheConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/config/WebSocketConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/EnhancedPostController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/NotificationDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/ScheduledPostRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/PostAnalyticsResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/NotificationEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/NotificationRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/DataConsistencyService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NewsFeedService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NotificationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/config/RedisConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/controller/EnhancedUserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/ActivityDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/FriendSuggestionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/SocialGraphService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostFeed.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostFeed.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/Card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/ErrorAlert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/ErrorAlert.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/Input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/LoadingSpinner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/LoadingSpinner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/Textarea.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/Textarea.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateCommentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateInteractionRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreatePostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/UpdatePostRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/PostServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/client/MediaServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/client/UserServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/config/KafkaConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/AuthorInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/CommentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/PostEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/InteractionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/security/AuthenticationInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/security/SecurityContextHolder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/security/annotation/RequireAuth.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/EventService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/AcademicEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/AcademicEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/BatchEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/BatchEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/CollegeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/CollegeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/DegreeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/DegreeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/FacultyEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/FacultyEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/GenderEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/GenderEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/MajorEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/MajorEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/PositionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/PositionEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application-docker.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application-docker.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,8 +103,8 @@
         <option value="FastAPI main" />
         <option value="FastAPI test_main" />
         <option value="TypeScript File" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -68,7 +124,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="fix-database" />
+        <entry key="$PROJECT_DIR$" value="build-Post" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -142,29 +198,32 @@
     "RequestMappingsPanelWidth0": "75",
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "SHELLCHECK.PATH": "C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
     "Spring Boot.AuthServiceApplication.executor": "Run",
     "Spring Boot.EurekaServerApplication.executor": "Run",
     "com.intellij.ide.FileNotInSourceRootChecker.no.check": "true",
-    "git-widget-placeholder": "build-Post",
+    "git-widget-placeholder": "f08f1d49",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/LVTN/ctu-connect/post-service/src/main/java/vn/ctu/edu/postservice",
+    "last_opened_file_path": "D:/LVTN/ctu-connect",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
+    "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.standard": "",
+    "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
+    "settings.editor.selected.configurable": "preferences.general",
     "settings.editor.splitter.proportion": "0.28134558",
     "ts.external.directory.path": "D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
@@ -265,6 +324,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="PostServiceApplication (2)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="post-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.PostServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="PostServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="post-service" />
@@ -302,19 +368,6 @@
     <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="api-gateway" />
-            </list>
-          </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
         </settings>
       </deployment>
@@ -359,6 +412,19 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yml.post-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="post-service" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yml.user-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -374,12 +440,12 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.neo4j: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
-      <item itemvalue="FastAPI.Recommender-service" />
+      <item itemvalue="Spring Boot.PostServiceApplication (2)" />
       <item itemvalue="Spring Boot.MediaServiceApplication" />
       <item itemvalue="Spring Boot.PostServiceApplication (1)" />
       <item itemvalue="Spring Boot.ChatServiceApplication" />
@@ -393,11 +459,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.neo4j: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media_db: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -490,6 +556,10 @@
       <workItem from="1753580043883" duration="13711000" />
       <workItem from="1753625709674" duration="16295000" />
       <workItem from="1753703567557" duration="21143000" />
+      <workItem from="1754057799643" duration="12190000" />
+      <workItem from="1754070276763" duration="291000" />
+      <workItem from="1754070592565" duration="1928000" />
+      <workItem from="1754075149380" duration="604000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -723,7 +793,23 @@
       <option name="project" value="LOCAL" />
       <updated>1753728843314</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="PostService v0.1">
+      <option name="closed" value="true" />
+      <created>1754052118881</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1754052118881</updated>
+    </task>
+    <task id="LOCAL-00031" summary="PostService v0.1.1">
+      <option name="closed" value="true" />
+      <created>1754053375980</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1754053375980</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -753,8 +839,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Complete Token ok" />
-    <MESSAGE value="Test user-service" />
     <MESSAGE value="Dang fix profile" />
     <MESSAGE value="Dang fix profile v2" />
     <MESSAGE value="Dang fix profile v3" />
@@ -778,7 +862,9 @@
     <MESSAGE value="Update profile v1.4.2" />
     <MESSAGE value="Update profile v1.5" />
     <MESSAGE value="Update profile v2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update profile v2" />
+    <MESSAGE value="PostService v0.1" />
+    <MESSAGE value="PostService v0.1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="PostService v0.1.1" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

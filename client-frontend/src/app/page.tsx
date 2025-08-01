@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
 import CreatePostForm from '@/components/post/CreatePostForm';
-import PostCard from '@/components/post/PostCard';
+import {PostCard }from '@/components/post/PostCard';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';

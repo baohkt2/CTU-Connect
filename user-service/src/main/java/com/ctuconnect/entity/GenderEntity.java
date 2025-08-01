@@ -16,4 +16,8 @@ public class GenderEntity {
 
     @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.INCOMING)
     private UserEntity user; // Người dùng có giới tính này
+
+    public String getId() {
+        return code;
+    }
 }

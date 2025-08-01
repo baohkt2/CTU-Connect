@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class CollegeEntity {
 
-    private String name; // Sử dụng name làm ID như trong database
+    private String name;
     @Id
     private String code;
 
@@ -22,4 +22,7 @@ public class CollegeEntity {
     @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.INCOMING)
     private List<UserEntity> students; // Danh sách sinh viên thuộc college
 
+    public String getId() {
+        return code; // Trả về name làm ID
+    }
 }

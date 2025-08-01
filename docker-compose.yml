@@ -101,6 +101,8 @@ services:
             condition: service_healthy
         auth_db:
             condition: service_healthy
+        redis:
+            condition: service_healthy
         eureka-server:
             condition: service_healthy
         kafka:
@@ -110,6 +112,8 @@ services:
         - SPRING_DATA_NEO4J_URI=bolt://neo4j:7687
         - SPRING_DATA_NEO4J_USERNAME=neo4j
         - SPRING_DATA_NEO4J_PASSWORD=password
+        - SPRING_DATA_REDIS_HOST=redis
+        - SPRING_DATA_REDIS_PORT=6379
         - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
         - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       networks:
@@ -173,6 +177,8 @@ services:
     depends_on:
       post_db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       kafka:
         condition: service_healthy
       eureka-server:
@@ -184,6 +190,8 @@ services:
       - SPRING_DATA_MONGODB_HOST=post_db
       - SPRING_DATA_MONGODB_PORT=27017
       - SPRING_DATA_MONGODB_DATABASE=post_db
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - MEDIA_SERVICE_URL=http://media-service:8084

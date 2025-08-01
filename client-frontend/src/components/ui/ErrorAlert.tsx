@@ -70,4 +70,5 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({
   );
 };
 
+export { ErrorAlert };
 export default ErrorAlert;

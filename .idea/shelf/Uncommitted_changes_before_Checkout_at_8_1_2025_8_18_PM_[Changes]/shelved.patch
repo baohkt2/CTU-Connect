@@ -1,0 +1,1166 @@
+Index: api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.ctuconnect.config;\r\n\r\nimport com.ctuconnect.filter.JwtAuthenticationFilter;\r\nimport org.springframework.cloud.gateway.route.RouteLocator;\r\nimport org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;\r\nimport org.springframework.context.annotation.Bean;\r\nimport org.springframework.context.annotation.Configuration;\r\n\r\n@Configuration\r\npublic class RouteConfig {\r\n\r\n    private final JwtAuthenticationFilter jwtAuthenticationFilter;\r\n\r\n    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {\r\n        this.jwtAuthenticationFilter = jwtAuthenticationFilter;\r\n    }\r\n\r\n    @Bean\r\n    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {\r\n        return builder.routes()\r\n                // Auth Service Routes - Public endpoints that don't require JWT validation\r\n                .route(\"auth-service-route\", r -> r\r\n                        .path(\"/api/auth/**\")\r\n                        .uri(\"lb://auth-service\"))\r\n\r\n                // User Service Routes - Protected endpoints that require JWT validation\r\n                .route(\"user-service-route\", r -> r\r\n                        .path(\"/api/users/**\")\r\n                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))\r\n                        .uri(\"lb://user-service\"))\r\n\r\n                .route(\"media-service-route\", r -> r\r\n                        .path(\"/api/media/**\")\r\n                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))\r\n                        .uri(\"lb://media-service\"))\r\n\r\n                .build();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java b/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java
+--- a/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java	(date 1754054294340)
+@@ -33,7 +33,10 @@
+                         .path("/api/media/**")
+                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                         .uri("lb://media-service"))
+-
++                .route("post-service-route", r -> r
++                        .path("/api/posts/**")
++                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
++                        .uri("lb://post-service"))
+                 .build();
+     }
+ }
+Index: post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java b/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java
+rename to post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java	(date 1754054294302)
+@@ -1,8 +1,7 @@
+-package vn.ctu.edu.postservice.entity;
++package com.ctuconnect.entity;
+ 
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+-import lombok.NoArgsConstructor;
+ import org.springframework.data.annotation.CreatedDate;
+ import org.springframework.data.annotation.Id;
+ import org.springframework.data.annotation.LastModifiedDate;
+@@ -10,7 +9,7 @@
+ 
+ import org.springframework.data.mongodb.core.mapping.Field;
+ import lombok.Data;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
++import com.ctuconnect.dto.AuthorInfo;
+ 
+ import java.time.LocalDateTime;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java b/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java
+rename to post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/CommentResponse.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java	(date 1754054294292)
+@@ -1,6 +1,6 @@
+-package vn.ctu.edu.postservice.dto.response;
++package com.ctuconnect.dto.response;
+ 
+-import vn.ctu.edu.postservice.entity.CommentEntity;
++import com.ctuconnect.entity.CommentEntity;
+ 
+ import java.time.LocalDateTime;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java b/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java
+rename to post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/InteractionResponse.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java	(date 1754054294307)
+@@ -1,6 +1,6 @@
+-package vn.ctu.edu.postservice.dto.response;
++package com.ctuconnect.dto.response;
+ 
+-import vn.ctu.edu.postservice.entity.InteractionEntity;
++import com.ctuconnect.entity.InteractionEntity;
+ 
+ import java.time.LocalDateTime;
+ import java.util.Map;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java b/post-service/src/main/java/com/ctuconnect/service/PostService.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java
+rename to post-service/src/main/java/com/ctuconnect/service/PostService.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/service/PostService.java	(date 1754054294287)
+@@ -1,20 +1,20 @@
+-package vn.ctu.edu.postservice.service;
++package com.ctuconnect.service;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.stereotype.Service;
+ import org.springframework.web.multipart.MultipartFile;
+-import vn.ctu.edu.postservice.client.MediaServiceClient;
+-import vn.ctu.edu.postservice.client.UserServiceClient;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
+-import vn.ctu.edu.postservice.dto.request.PostRequest;
+-import vn.ctu.edu.postservice.dto.response.PostResponse;
+-import vn.ctu.edu.postservice.entity.InteractionEntity;
+-import vn.ctu.edu.postservice.entity.PostEntity;
+-import vn.ctu.edu.postservice.repository.CommentRepository;
+-import vn.ctu.edu.postservice.repository.InteractionRepository;
+-import vn.ctu.edu.postservice.repository.PostRepository;
++import com.ctuconnect.client.MediaServiceClient;
++import com.ctuconnect.client.UserServiceClient;
++import com.ctuconnect.dto.AuthorInfo;
++import com.ctuconnect.dto.request.PostRequest;
++import com.ctuconnect.dto.response.PostResponse;
++import com.ctuconnect.entity.InteractionEntity;
++import com.ctuconnect.entity.PostEntity;
++import com.ctuconnect.repository.CommentRepository;
++import com.ctuconnect.repository.InteractionRepository;
++import com.ctuconnect.repository.PostRepository;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java b/post-service/src/main/java/com/ctuconnect/service/InteractionService.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java
+rename to post-service/src/main/java/com/ctuconnect/service/InteractionService.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/service/InteractionService.java	(date 1754054294355)
+@@ -1,15 +1,15 @@
+-package vn.ctu.edu.postservice.service;
++package com.ctuconnect.service;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+-import vn.ctu.edu.postservice.client.UserServiceClient;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
+-import vn.ctu.edu.postservice.dto.request.InteractionRequest;
+-import vn.ctu.edu.postservice.dto.response.InteractionResponse;
+-import vn.ctu.edu.postservice.entity.InteractionEntity;
+-import vn.ctu.edu.postservice.entity.PostEntity;
+-import vn.ctu.edu.postservice.repository.InteractionRepository;
+-import vn.ctu.edu.postservice.repository.PostRepository;
++import com.ctuconnect.client.UserServiceClient;
++import com.ctuconnect.dto.AuthorInfo;
++import com.ctuconnect.dto.request.InteractionRequest;
++import com.ctuconnect.dto.response.InteractionResponse;
++import com.ctuconnect.entity.InteractionEntity;
++import com.ctuconnect.entity.PostEntity;
++import com.ctuconnect.repository.InteractionRepository;
++import com.ctuconnect.repository.PostRepository;
+ 
+ import java.util.Optional;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java b/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java
+deleted file mode 100644
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ /dev/null	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
+@@ -1,165 +0,0 @@
+-package vn.ctu.edu.postservice.dto.response;
+-
+-import vn.ctu.edu.postservice.entity.PostEntity;
+-
+-import java.time.LocalDateTime;
+-import java.util.List;
+-
+-public class PostResponse {
+-
+-    private String id;
+-    private String title;
+-    private String content;
+-    private String authorId;
+-    private List<String> images;
+-    private List<String> tags;
+-    private String category;
+-    private PostStatsResponse stats;
+-    private LocalDateTime createdAt;
+-    private LocalDateTime updatedAt;
+-
+-    // Constructors
+-    public PostResponse() {}
+-
+-    public PostResponse(PostEntity post) {
+-        this.id = post.getId();
+-        this.title = post.getTitle();
+-        this.content = post.getContent();
+-        this.authorId = post.getAuthorId();
+-        this.images = post.getImages();
+-        this.tags = post.getTags();
+-        this.category = post.getCategory();
+-        this.stats = new PostStatsResponse(post.getStats());
+-        this.createdAt = post.getCreatedAt();
+-        this.updatedAt = post.getUpdatedAt();
+-    }
+-
+-    // Getters and Setters
+-    public String getId() {
+-        return id;
+-    }
+-
+-    public void setId(String id) {
+-        this.id = id;
+-    }
+-
+-    public String getTitle() {
+-        return title;
+-    }
+-
+-    public void setTitle(String title) {
+-        this.title = title;
+-    }
+-
+-    public String getContent() {
+-        return content;
+-    }
+-
+-    public void setContent(String content) {
+-        this.content = content;
+-    }
+-
+-    public String getAuthorId() {
+-        return authorId;
+-    }
+-
+-    public void setAuthorId(String authorId) {
+-        this.authorId = authorId;
+-    }
+-
+-    public List<String> getImages() {
+-        return images;
+-    }
+-
+-    public void setImages(List<String> images) {
+-        this.images = images;
+-    }
+-
+-    public List<String> getTags() {
+-        return tags;
+-    }
+-
+-    public void setTags(List<String> tags) {
+-        this.tags = tags;
+-    }
+-
+-    public String getCategory() {
+-        return category;
+-    }
+-
+-    public void setCategory(String category) {
+-        this.category = category;
+-    }
+-
+-    public PostStatsResponse getStats() {
+-        return stats;
+-    }
+-
+-    public void setStats(PostStatsResponse stats) {
+-        this.stats = stats;
+-    }
+-
+-    public LocalDateTime getCreatedAt() {
+-        return createdAt;
+-    }
+-
+-    public void setCreatedAt(LocalDateTime createdAt) {
+-        this.createdAt = createdAt;
+-    }
+-
+-    public LocalDateTime getUpdatedAt() {
+-        return updatedAt;
+-    }
+-
+-    public void setUpdatedAt(LocalDateTime updatedAt) {
+-        this.updatedAt = updatedAt;
+-    }
+-
+-    public static class PostStatsResponse {
+-        private long views;
+-        private long likes;
+-        private long shares;
+-        private long comments;
+-
+-        public PostStatsResponse() {}
+-
+-        public PostStatsResponse(PostEntity.PostStats stats) {
+-            this.views = stats.getViews();
+-            this.likes = stats.getLikes();
+-            this.shares = stats.getShares();
+-            this.comments = stats.getComments();
+-        }
+-
+-        public long getViews() {
+-            return views;
+-        }
+-
+-        public void setViews(long views) {
+-            this.views = views;
+-        }
+-
+-        public long getLikes() {
+-            return likes;
+-        }
+-
+-        public void setLikes(long likes) {
+-            this.likes = likes;
+-        }
+-
+-        public long getShares() {
+-            return shares;
+-        }
+-
+-        public void setShares(long shares) {
+-            this.shares = shares;
+-        }
+-
+-        public long getComments() {
+-            return comments;
+-        }
+-
+-        public void setComments(long comments) {
+-            this.comments = comments;
+-        }
+-    }
+-}
+Index: post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java b/post-service/src/main/java/com/ctuconnect/client/MediaServiceClient.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java
+rename to post-service/src/main/java/com/ctuconnect/client/MediaServiceClient.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/client/MediaServiceClient.java	(date 1754054294393)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.client;
++package com.ctuconnect.client;
+ 
+ import lombok.Data;
+ import org.springframework.cloud.openfeign.FeignClient;
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"45c2871e-0a67-4aea-8968-e03f2e8fc23f\" name=\"Changes\" comment=\"Update profile v2\">\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/client-frontend/src/types/index.ts\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/client-frontend/src/types/index.ts\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/database/neo4j/logs/debug.log\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/database/neo4j/logs/debug.log\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/database/neo4j/logs/neo4j.log\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/database/neo4j/logs/neo4j.log\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/pom.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/pom.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateCommentRequest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateInteractionRequest.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreatePostRequest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/UpdatePostRequest.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Dockerfile\" />\r\n        <option value=\"FastAPI main\" />\r\n        <option value=\"FastAPI test_main\" />\r\n        <option value=\"TypeScript File\" />\r\n        <option value=\"Class\" />\r\n        <option value=\"Interface\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <favorite-branches>\r\n      <branch-storage>\r\n        <map>\r\n          <entry type=\"LOCAL\">\r\n            <value>\r\n              <list>\r\n                <branch-info repo=\"$PROJECT_DIR$\" source=\"fix-database\" />\r\n              </list>\r\n            </value>\r\n          </entry>\r\n        </map>\r\n      </branch-storage>\r\n    </favorite-branches>\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"fix-database\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n    <option name=\"RESET_MODE\" value=\"HARD\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;baohkt2&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">{\r\n  &quot;selectedUrlAndAccountId&quot;: {\r\n    &quot;url&quot;: &quot;https://github.com/baohkt2/CTU-Connect-Backend.git&quot;,\r\n    &quot;accountId&quot;: &quot;29367579-14a9-4fa5-b6e3-d9686d39984a&quot;\r\n  }\r\n}</component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"mock:///JetClient Request Console\" root0=\"SKIP_INSPECTION\" />\r\n    <setting file=\"file://$USER_HOME$/AppData/Local/JetBrains/IntelliJIdea2025.1/tmp/jetclient/scripts/d71a7eaf/Drafts_folder-post-response_drafts.js\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"file://$USER_HOME$/AppData/Local/JetBrains/IntelliJIdea2025.1/tmp/jetclient/scripts/d71a7eaf/Drafts_folder-pre-request_drafts.js\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"file://$PROJECT_DIR$/database/neo4j/tasks/init.cypher\" root0=\"FORCE_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"KubernetesApiPersistence\">{}</component>\r\n  <component name=\"KubernetesApiProvider\">{\r\n  &quot;isMigrated&quot;: true\r\n}</component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 1\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2yiufTl5YpkGJt6HiYzfaueoifp\" />\r\n  <component name=\"ProjectLevelVcsManager\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Application.JwtKeyGeneratorUtility.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.adminer: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.api-gateway: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.auth-service: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.auth_db: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.media-service: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.media_db: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.neo4j: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.post-service: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml.user-service: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.docker-compose.yml: Compose Deployment.executor\": \"Run\",\r\n    \"Docker.eureka-server/Dockerfile build.executor\": \"Run\",\r\n    \"Downloaded.Files.Path.Enabled\": \"false\",\r\n    \"JUnit.AuthControllerTest.executor\": \"Run\",\r\n    \"JUnit.AuthServiceTest.executor\": \"Run\",\r\n    \"JUnit.EmailServiceTest.executor\": \"Run\",\r\n    \"JUnit.JwtTokenProviderTest.executor\": \"Run\",\r\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\r\n    \"Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found\": \"Database connection parameters found\",\r\n    \"Notification.DoNotAsk-DatabaseConfigFileWatcher.found\": \"true\",\r\n    \"Python.main.executor\": \"Run\",\r\n    \"Repository.Attach.Annotations\": \"false\",\r\n    \"Repository.Attach.JavaDocs\": \"false\",\r\n    \"Repository.Attach.Sources\": \"false\",\r\n    \"RequestMappingsPanelOrder0\": \"0\",\r\n    \"RequestMappingsPanelOrder1\": \"1\",\r\n    \"RequestMappingsPanelWidth0\": \"75\",\r\n    \"RequestMappingsPanelWidth1\": \"75\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"SHELLCHECK.PATH\": \"C:\\\\Users\\\\ASUS\\\\AppData\\\\Roaming\\\\JetBrains\\\\IntelliJIdea2025.1\\\\plugins\\\\Shell Script\\\\shellcheck.exe\",\r\n    \"Spring Boot.AuthServiceApplication.executor\": \"Run\",\r\n    \"Spring Boot.EurekaServerApplication.executor\": \"Run\",\r\n    \"com.intellij.ide.FileNotInSourceRootChecker.no.check\": \"true\",\r\n    \"git-widget-placeholder\": \"build-Post\",\r\n    \"ignore.virus.scanning.warn.message\": \"true\",\r\n    \"junie.onboarding.icon.badge.shown\": \"true\",\r\n    \"last_opened_file_path\": \"D:/LVTN/ctu-connect/post-service/src/main/java/vn/ctu/edu/postservice\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.standard\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.standard\": \"\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_interpreter_path\": \"node\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"project.structure.last.edited\": \"Modules\",\r\n    \"project.structure.proportion\": \"0.15\",\r\n    \"project.structure.side.proportion\": \"0.2\",\r\n    \"run.configurations.included.in.services\": \"true\",\r\n    \"settings.editor.selected.configurable\": \"settings.javascript.linters.eslint\",\r\n    \"settings.editor.splitter.proportion\": \"0.28134558\",\r\n    \"ts.external.directory.path\": \"D:\\\\LVTN\\\\ctu-connect\\\\client-frontend\\\\node_modules\\\\typescript\\\\lib\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  },\r\n  \"keyToStringList\": {\r\n    \"DatabaseDriversLRU\": [\r\n      \"postgresql\",\r\n      \"mongo\"\r\n    ],\r\n    \"RunConfigurationTargetLRU\": [\r\n      \"eaa90a37-8385-4cd3-af6e-aee505cea9ef\"\r\n    ]\r\n  }\r\n}]]></component>\r\n  <component name=\"ReactorSettings\">\r\n    <option name=\"notificationShown\" value=\"true\" />\r\n  </component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\post-service\\src\\main\\java\\vn\\ctu\\edu\\postservice\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\post-service\\src\\main\\java\\com\\ctuconnect\\postservice\" />\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\post-service\\src\\main\\java\\com\\ctuconnect\\postservice\\entity\" />\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\post-service\\src\\main\\java\\com\\ctuconnect\" />\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\client-frontend\\public\" />\r\n      <recent name=\"D:\\LVTN\\ctu-connect\\client-frontend\\src\\assets\" />\r\n    </key>\r\n    <key name=\"ExtractSuperBase.RECENT_KEYS\">\r\n      <recent name=\"com.ctuconnect.config\" />\r\n    </key>\r\n    <key name=\"MoveClassesOrPackagesDialog.RECENTS_KEY\">\r\n      <recent name=\"com.ctuconnect.UserMapper\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Docker.docker-compose.yml: Compose Deployment\">\r\n    <configuration name=\"Recommender-service\" type=\"Python.FastAPI\">\r\n      <option name=\"file\" value=\"$PROJECT_DIR$/Recommender-service/main.py\" />\r\n      <module name=\"Recommender-service\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\r\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"ApiGatewayApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"api-gateway\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.ctuconnect.ApiGatewayApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"AuthServiceApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"auth-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.ctuconnect.AuthServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"ChatServiceApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"chat-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"vn.ctu.edu.chatservice.ChatServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"DemoApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"demo\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.example.demo.DemoApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"EurekaServerApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"eureka-server\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.ctuconnect.EurekaServerApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"MediaServiceApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"media-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"vn.ctu.edu.mediaservice.MediaServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"PostServiceApplication (1)\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"post-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.ctuconnect.postservice.PostServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"PostServiceApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <option name=\"FRAME_DEACTIVATION_UPDATE_POLICY\" value=\"UpdateClassesAndResources\" />\r\n      <module name=\"post-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"vn.ctu.edu.postservice.PostServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserServiceApplication (1)\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"user-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.ctuconnect.UserServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserServiceApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"user-service\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"vn.ctu.edu.userservice.UserServiceApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings />\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"docker-deploy\" factoryName=\"dockerfile\" temporary=\"true\">\r\n      <deployment type=\"dockerfile\">\r\n        <settings />\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.api-gateway: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"api-gateway\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.media-service: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"media-service\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.media_db: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"media_db\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.neo4j: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"neo4j\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"docker-compose.yml.user-service: Compose Deployment\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\" server-name=\"Docker\">\r\n      <deployment type=\"docker-compose.yml\">\r\n        <settings>\r\n          <option name=\"services\">\r\n            <list>\r\n              <option value=\"user-service\" />\r\n            </list>\r\n          </option>\r\n          <option name=\"sourceFilePath\" value=\"docker-compose.yml\" />\r\n        </settings>\r\n      </deployment>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <list>\r\n      <item itemvalue=\"Docker.docker-compose.yml: Compose Deployment\" />\r\n      <item itemvalue=\"Docker.docker-compose.yml.neo4j: Compose Deployment\" />\r\n      <item itemvalue=\"Docker.docker-compose.yml.media_db: Compose Deployment\" />\r\n      <item itemvalue=\"Docker.docker-compose.yml.api-gateway: Compose Deployment\" />\r\n      <item itemvalue=\"Docker.docker-compose.yml.media-service: Compose Deployment\" />\r\n      <item itemvalue=\"Docker.docker-compose.yml.user-service: Compose Deployment\" />\r\n      <item itemvalue=\"FastAPI.Recommender-service\" />\r\n      <item itemvalue=\"Spring Boot.MediaServiceApplication\" />\r\n      <item itemvalue=\"Spring Boot.PostServiceApplication (1)\" />\r\n      <item itemvalue=\"Spring Boot.ChatServiceApplication\" />\r\n      <item itemvalue=\"Spring Boot.PostServiceApplication\" />\r\n      <item itemvalue=\"Spring Boot.ApiGatewayApplication\" />\r\n      <item itemvalue=\"Spring Boot.UserServiceApplication (1)\" />\r\n      <item itemvalue=\"Spring Boot.DemoApplication\" />\r\n      <item itemvalue=\"Spring Boot.AuthServiceApplication\" />\r\n      <item itemvalue=\"Spring Boot.EurekaServerApplication\" />\r\n      <item itemvalue=\"Spring Boot.UserServiceApplication\" />\r\n    </list>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Docker.docker-compose.yml.media-service: Compose Deployment\" />\r\n        <item itemvalue=\"Docker.docker-compose.yml.user-service: Compose Deployment\" />\r\n        <item itemvalue=\"Docker.docker-compose.yml.neo4j: Compose Deployment\" />\r\n        <item itemvalue=\"Docker.docker-compose.yml.media_db: Compose Deployment\" />\r\n        <item itemvalue=\"Docker.docker-compose.yml.api-gateway: Compose Deployment\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53\" />\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"StructureViewState\">\r\n    <option name=\"selectedTab\" value=\"Logical\" />\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"45c2871e-0a67-4aea-8968-e03f2e8fc23f\" name=\"Changes\" comment=\"\" />\r\n      <created>1750329817498</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1750329817498</updated>\r\n      <workItem from=\"1750329818743\" duration=\"4140000\" />\r\n      <workItem from=\"1750427639581\" duration=\"590000\" />\r\n      <workItem from=\"1750428424523\" duration=\"12808000\" />\r\n      <workItem from=\"1750488220007\" duration=\"8771000\" />\r\n      <workItem from=\"1750497599217\" duration=\"139000\" />\r\n      <workItem from=\"1750497774042\" duration=\"126000\" />\r\n      <workItem from=\"1750497913706\" duration=\"70000\" />\r\n      <workItem from=\"1750498003738\" duration=\"64000\" />\r\n      <workItem from=\"1750498119293\" duration=\"16000\" />\r\n      <workItem from=\"1750498136937\" duration=\"253000\" />\r\n      <workItem from=\"1750498429958\" duration=\"2420000\" />\r\n      <workItem from=\"1750501002559\" duration=\"81000\" />\r\n      <workItem from=\"1750501084400\" duration=\"25000\" />\r\n      <workItem from=\"1750501119681\" duration=\"240000\" />\r\n      <workItem from=\"1750501417128\" duration=\"605000\" />\r\n      <workItem from=\"1750502144099\" duration=\"20000\" />\r\n      <workItem from=\"1750502215356\" duration=\"1639000\" />\r\n      <workItem from=\"1750524256618\" duration=\"6099000\" />\r\n      <workItem from=\"1750568576749\" duration=\"21792000\" />\r\n      <workItem from=\"1750595584643\" duration=\"6000000\" />\r\n      <workItem from=\"1750609057329\" duration=\"4286000\" />\r\n      <workItem from=\"1750649229405\" duration=\"7677000\" />\r\n      <workItem from=\"1750661542276\" duration=\"1812000\" />\r\n      <workItem from=\"1750771605937\" duration=\"85000\" />\r\n      <workItem from=\"1750829997308\" duration=\"181000\" />\r\n      <workItem from=\"1751029792052\" duration=\"1488000\" />\r\n      <workItem from=\"1751286679272\" duration=\"1754000\" />\r\n      <workItem from=\"1751442308625\" duration=\"2943000\" />\r\n      <workItem from=\"1751447261118\" duration=\"2232000\" />\r\n      <workItem from=\"1751464475982\" duration=\"440000\" />\r\n      <workItem from=\"1751540946509\" duration=\"13651000\" />\r\n      <workItem from=\"1751558237127\" duration=\"48000\" />\r\n      <workItem from=\"1751558297304\" duration=\"6904000\" />\r\n      <workItem from=\"1751630898439\" duration=\"207000\" />\r\n      <workItem from=\"1751631436196\" duration=\"5949000\" />\r\n      <workItem from=\"1751637907386\" duration=\"2297000\" />\r\n      <workItem from=\"1751718587975\" duration=\"8216000\" />\r\n      <workItem from=\"1751805145202\" duration=\"9478000\" />\r\n      <workItem from=\"1751870563948\" duration=\"16480000\" />\r\n      <workItem from=\"1751965662450\" duration=\"17979000\" />\r\n      <workItem from=\"1752057197606\" duration=\"19761000\" />\r\n      <workItem from=\"1752136180049\" duration=\"955000\" />\r\n      <workItem from=\"1752137183760\" duration=\"168000\" />\r\n      <workItem from=\"1752138048482\" duration=\"13528000\" />\r\n      <workItem from=\"1752156054956\" duration=\"4705000\" />\r\n      <workItem from=\"1752221972038\" duration=\"3744000\" />\r\n      <workItem from=\"1752225820873\" duration=\"176000\" />\r\n      <workItem from=\"1752226008708\" duration=\"4905000\" />\r\n      <workItem from=\"1752237308014\" duration=\"8324000\" />\r\n      <workItem from=\"1752313828329\" duration=\"22841000\" />\r\n      <workItem from=\"1752403158153\" duration=\"20562000\" />\r\n      <workItem from=\"1752430388389\" duration=\"112000\" />\r\n      <workItem from=\"1752479911895\" duration=\"13817000\" />\r\n      <workItem from=\"1752495654602\" duration=\"7548000\" />\r\n      <workItem from=\"1752577243931\" duration=\"13560000\" />\r\n      <workItem from=\"1752597854477\" duration=\"1142000\" />\r\n      <workItem from=\"1752599074480\" duration=\"664000\" />\r\n      <workItem from=\"1752805943127\" duration=\"15912000\" />\r\n      <workItem from=\"1752822186543\" duration=\"1572000\" />\r\n      <workItem from=\"1752824829177\" duration=\"1051000\" />\r\n      <workItem from=\"1753086130099\" duration=\"60000\" />\r\n      <workItem from=\"1753292435331\" duration=\"8400000\" />\r\n      <workItem from=\"1753355763816\" duration=\"13205000\" />\r\n      <workItem from=\"1753369120081\" duration=\"3985000\" />\r\n      <workItem from=\"1753435608366\" duration=\"58000\" />\r\n      <workItem from=\"1753435686659\" duration=\"9993000\" />\r\n      <workItem from=\"1753451167568\" duration=\"3032000\" />\r\n      <workItem from=\"1753526056279\" duration=\"11331000\" />\r\n      <workItem from=\"1753580043883\" duration=\"13711000\" />\r\n      <workItem from=\"1753625709674\" duration=\"16295000\" />\r\n      <workItem from=\"1753703567557\" duration=\"21143000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"init\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751809284361</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751809284361</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Complete Login/ Sign up\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751884648943</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751884648944</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Complete Token v1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751969492736</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751969492736</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Complete Token ok\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751973179469</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751973179469</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Test user-service\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751982231413</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751982231413</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Test user-service\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1751982249022</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1751982249022</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"Dang fix profile\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752076029428</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752076029428</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"Dang fix profile v2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752151900166</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752151900166</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"Dang fix profile v3\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752160112022</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752160112022</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"init client-frontend and admin-frontend\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752238605526</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752238605526</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"config friends v0\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752242107224</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752242107224</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00012\" summary=\"user-service fix v2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752409182622</created>\r\n      <option name=\"number\" value=\"00012\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752409182622</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00013\" summary=\"add admin-frontend\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752409210449</created>\r\n      <option name=\"number\" value=\"00013\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752409210449</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00014\" summary=\"create an admin account ok\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752409794488</created>\r\n      <option name=\"number\" value=\"00014\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752409794488</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00015\" summary=\"addFriend v1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752413892668</created>\r\n      <option name=\"number\" value=\"00015\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00015\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752413892668</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00016\" summary=\"AuthService and UserService OK\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752425975876</created>\r\n      <option name=\"number\" value=\"00016\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00016\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752425975876</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00017\" summary=\"Auth Client-Frontend v1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752494458106</created>\r\n      <option name=\"number\" value=\"00017\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00017\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752494458106</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00018\" summary=\"Auth Client-Frontend fixing\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752500988551</created>\r\n      <option name=\"number\" value=\"00018\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00018\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752500988551</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00019\" summary=\"Pre-build Media-service\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752809136342</created>\r\n      <option name=\"number\" value=\"00019\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00019\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752809136342</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00020\" summary=\"Media service OK\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1752821787619</created>\r\n      <option name=\"number\" value=\"00020\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00020\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1752821787619</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00021\" summary=\"Update profile v1.0\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753212209387</created>\r\n      <option name=\"number\" value=\"00021\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00021\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753212209387</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00022\" summary=\"Update profile v1.1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753292780754</created>\r\n      <option name=\"number\" value=\"00022\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00022\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753292780754</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00023\" summary=\"Update profile v1.2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753295533447</created>\r\n      <option name=\"number\" value=\"00023\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00023\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753295533447</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00024\" summary=\"Update profile v1.3\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753298304003</created>\r\n      <option name=\"number\" value=\"00024\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00024\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753298304003</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00025\" summary=\"Update profile v1.4\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753300180459</created>\r\n      <option name=\"number\" value=\"00025\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00025\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753300180459</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00026\" summary=\"Update profile v1.4.1 fix loading\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753358279348</created>\r\n      <option name=\"number\" value=\"00026\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00026\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753358279348</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00027\" summary=\"Update profile v1.4.2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753444283612</created>\r\n      <option name=\"number\" value=\"00027\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00027\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753444283612</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00028\" summary=\"Update profile v1.5\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753533490392</created>\r\n      <option name=\"number\" value=\"00028\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00028\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753533490392</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00029\" summary=\"Update profile v2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1753728843314</created>\r\n      <option name=\"number\" value=\"00029\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00029\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1753728843314</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"30\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"build-Post\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Complete Token ok\" />\r\n    <MESSAGE value=\"Test user-service\" />\r\n    <MESSAGE value=\"Dang fix profile\" />\r\n    <MESSAGE value=\"Dang fix profile v2\" />\r\n    <MESSAGE value=\"Dang fix profile v3\" />\r\n    <MESSAGE value=\"init client-frontend and admin-frontend\" />\r\n    <MESSAGE value=\"config friends v0\" />\r\n    <MESSAGE value=\"user-service fix v2\" />\r\n    <MESSAGE value=\"add admin-frontend\" />\r\n    <MESSAGE value=\"create an admin account ok\" />\r\n    <MESSAGE value=\"addFriend v1\" />\r\n    <MESSAGE value=\"AuthService and UserService OK\" />\r\n    <MESSAGE value=\"Auth Client-Frontend v1\" />\r\n    <MESSAGE value=\"Auth Client-Frontend fixing\" />\r\n    <MESSAGE value=\"Pre-build Media-service\" />\r\n    <MESSAGE value=\"Media service OK\" />\r\n    <MESSAGE value=\"Update profile v1.0\" />\r\n    <MESSAGE value=\"Update profile v1.1\" />\r\n    <MESSAGE value=\"Update profile v1.2\" />\r\n    <MESSAGE value=\"Update profile v1.3\" />\r\n    <MESSAGE value=\"Update profile v1.4\" />\r\n    <MESSAGE value=\"Update profile v1.4.1 fix loading\" />\r\n    <MESSAGE value=\"Update profile v1.4.2\" />\r\n    <MESSAGE value=\"Update profile v1.5\" />\r\n    <MESSAGE value=\"Update profile v2\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Update profile v2\" />\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/ctu_connect$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1752823450070\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$/Recommender-service\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/.idea/workspace.xml	(date 1754053758240)
+@@ -4,35 +4,20 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v2">
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" afterDir="false" />
++    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v0.1">
++      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostFeed.tsx" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/post/index.ts" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/pom.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateCommentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateInteractionRequest.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreatePostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/UpdatePostRequest.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/response/PostResponse.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -164,7 +149,7 @@
+     "project.structure.proportion": "0.15",
+     "project.structure.side.proportion": "0.2",
+     "run.configurations.included.in.services": "true",
+-    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
++    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
+     "settings.editor.splitter.proportion": "0.28134558",
+     "ts.external.directory.path": "D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib",
+     "vue.rearranger.settings.migration": "true"
+@@ -723,7 +708,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1753728843314</updated>
+     </task>
+-    <option name="localTasksCounter" value="30" />
++    <task id="LOCAL-00030" summary="PostService v0.1">
++      <option name="closed" value="true" />
++      <created>1754052118881</created>
++      <option name="number" value="00030" />
++      <option name="presentableId" value="LOCAL-00030" />
++      <option name="project" value="LOCAL" />
++      <updated>1754052118881</updated>
++    </task>
++    <option name="localTasksCounter" value="31" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -753,7 +746,6 @@
+     </option>
+   </component>
+   <component name="VcsManagerConfiguration">
+-    <MESSAGE value="Complete Token ok" />
+     <MESSAGE value="Test user-service" />
+     <MESSAGE value="Dang fix profile" />
+     <MESSAGE value="Dang fix profile v2" />
+@@ -778,7 +770,8 @@
+     <MESSAGE value="Update profile v1.4.2" />
+     <MESSAGE value="Update profile v1.5" />
+     <MESSAGE value="Update profile v2" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Update profile v2" />
++    <MESSAGE value="PostService v0.1" />
++    <option name="LAST_COMMIT_MESSAGE" value="PostService v0.1" />
+   </component>
+   <component name="XSLT-Support.FileAssociations.UIState">
+     <expand />
+Index: post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java b/post-service/src/main/java/com/ctuconnect/config/KafkaConfig.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java
+rename to post-service/src/main/java/com/ctuconnect/config/KafkaConfig.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/config/KafkaConfig.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/config/KafkaConfig.java	(date 1754054294336)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.config;
++package com.ctuconnect.config;
+ 
+ import org.apache.kafka.clients.producer.ProducerConfig;
+ import org.apache.kafka.common.serialization.StringSerializer;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java b/post-service/src/main/java/com/ctuconnect/entity/PostEntity.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java
+rename to post-service/src/main/java/com/ctuconnect/entity/PostEntity.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/entity/PostEntity.java	(date 1754054294351)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.entity;
++package com.ctuconnect.entity;
+ 
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+@@ -9,7 +9,7 @@
+ import org.springframework.data.annotation.LastModifiedDate;
+ import org.springframework.data.mongodb.core.mapping.Document;
+ import org.springframework.data.mongodb.core.mapping.Field;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
++import com.ctuconnect.dto.AuthorInfo;
+ 
+ import java.time.LocalDateTime;
+ import java.util.ArrayList;
+@@ -27,17 +27,25 @@
+     @Id
+     private String id;
+ 
++    private String title;
++
+     private String content;
+ 
+     @Field("author")
+     private AuthorInfo author;
+ 
++    @Builder.Default
+     private List<String> images = new ArrayList<>();
+ 
++    @Builder.Default
+     private List<String> tags = new ArrayList<>();
+ 
+     private String category;
+ 
++    @Builder.Default
++    private String visibility = "PUBLIC"; // PUBLIC, FRIENDS, PRIVATE
++
++    @Builder.Default
+     private PostStats stats = new PostStats();
+ 
+     @Field("created_at")
+@@ -48,15 +56,24 @@
+     @Field("updated_at")
+     private LocalDateTime updatedAt;
+ 
++    // Convenience method to get authorId
++    public String getAuthorId() {
++        return author != null ? author.getId() : null;
++    }
++
+     // Nested class for statistics
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     @Builder
+     public static class PostStats {
++        @Builder.Default
+         private long views = 0;
++        @Builder.Default
+         private long shares = 0;
++        @Builder.Default
+         private long comments = 0;
++        @Builder.Default
+         private Map<InteractionEntity.InteractionType.ReactionType, Integer> reactions = new HashMap<>();
+ 
+         public void incrementReaction(InteractionEntity.InteractionType.ReactionType reaction) {
+@@ -66,11 +83,11 @@
+         public void decrementReaction(InteractionEntity.InteractionType.ReactionType reaction) {
+             reactions.computeIfPresent(reaction, (k, v) -> Math.max(0, v - 1));
+         }
++
+         public void incrementViews() {
+             this.views++;
+         }
+ 
+-
+         public void incrementShares() {
+             this.shares++;
+         }
+@@ -87,5 +104,9 @@
+             this.shares = Math.max(0, this.shares - 1);
+         }
+ 
++        // Get total likes from all reaction types
++        public long getLikes() {
++            return reactions.values().stream().mapToInt(Integer::intValue).sum();
++        }
+     }
+ }
+Index: post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java b/post-service/src/main/java/com/ctuconnect/security/annotation/RequireAuth.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java
+rename to post-service/src/main/java/com/ctuconnect/security/annotation/RequireAuth.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/security/annotation/RequireAuth.java	(date 1754054294389)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.security.annotation;
++package com.ctuconnect.security.annotation;
+ 
+ import java.lang.annotation.ElementType;
+ import java.lang.annotation.Retention;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java b/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java
+rename to post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java	(date 1754054294364)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.entity;
++package com.ctuconnect.entity;
+ 
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+@@ -7,7 +7,7 @@
+ import org.springframework.data.annotation.Id;
+ import org.springframework.data.mongodb.core.mapping.Document;
+ import org.springframework.data.mongodb.core.mapping.Field;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
++import com.ctuconnect.dto.AuthorInfo;
+ 
+ import java.time.LocalDateTime;
+ import java.util.HashMap;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java b/post-service/src/main/java/com/ctuconnect/PostServiceApplication.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java
+rename to post-service/src/main/java/com/ctuconnect/PostServiceApplication.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/PostServiceApplication.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/PostServiceApplication.java	(date 1754054294326)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice;
++package com.ctuconnect;
+ 
+ import org.springframework.boot.SpringApplication;
+ import org.springframework.boot.autoconfigure.SpringBootApplication;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java b/post-service/src/main/java/com/ctuconnect/dto/request/CommentRequest.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java
+rename to post-service/src/main/java/com/ctuconnect/dto/request/CommentRequest.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/request/CommentRequest.java	(date 1754054294398)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.dto.request;
++package com.ctuconnect.dto.request;
+ 
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.Size;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java b/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java
+rename to post-service/src/main/java/com/ctuconnect/repository/PostRepository.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/repository/PostRepository.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java	(date 1754054294359)
+@@ -1,11 +1,11 @@
+-package vn.ctu.edu.postservice.repository;
++package com.ctuconnect.repository;
+ 
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.data.mongodb.repository.MongoRepository;
+ import org.springframework.data.mongodb.repository.Query;
+ import org.springframework.stereotype.Repository;
+-import vn.ctu.edu.postservice.entity.PostEntity;
++import com.ctuconnect.entity.PostEntity;
+ 
+ import java.util.List;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java b/post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java
+rename to post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java	(date 1754054294331)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.dto.request;
++package com.ctuconnect.dto.request;
+ 
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.Size;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java b/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java
+rename to post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java	(date 1754054294373)
+@@ -1,12 +1,11 @@
+-package vn.ctu.edu.postservice.dto.request;
++package com.ctuconnect.dto.request;
+ 
+ import jakarta.validation.constraints.NotNull;
+ import lombok.AllArgsConstructor;
+ import lombok.Builder;
+ import lombok.Data;
+ import lombok.NoArgsConstructor;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
+-import vn.ctu.edu.postservice.entity.InteractionEntity;
++import com.ctuconnect.entity.InteractionEntity;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+Index: post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java b/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java
+new file mode 100644
+--- /dev/null	(date 1754054294346)
++++ b/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java	(date 1754054294346)
+@@ -0,0 +1,139 @@
++package com.ctuconnect.dto.response;
++
++import lombok.Data;
++import com.ctuconnect.entity.PostEntity;
++import com.ctuconnect.entity.InteractionEntity;
++
++import java.time.LocalDateTime;
++import java.util.List;
++import java.util.Map;
++
++@Data
++public class PostResponse {
++    private String id;
++    private String title;
++    private String content;
++    private String authorId;
++    private String authorName;
++    private String authorAvatar;
++    private List<String> images;
++    private List<String> tags;
++    private String category;
++    private String visibility;
++    private PostStatsResponse stats;
++    private LocalDateTime createdAt;
++    private LocalDateTime updatedAt;
++
++    // Constructors
++    public PostResponse() {}
++
++    public PostResponse(PostEntity post) {
++        this.id = post.getId();
++        this.title = post.getTitle();
++        this.content = post.getContent();
++
++        // Handle AuthorInfo properly
++        if (post.getAuthor() != null) {
++            this.authorId = post.getAuthor().getId();
++            this.authorName = post.getAuthor().getName();
++            this.authorAvatar = post.getAuthor().getAvatar();
++        }
++
++        this.images = post.getImages();
++        this.tags = post.getTags();
++        this.category = post.getCategory();
++        this.visibility = post.getVisibility();
++        this.stats = new PostStatsResponse(post.getStats());
++        this.createdAt = post.getCreatedAt();
++        this.updatedAt = post.getUpdatedAt();
++    }
++
++    // Getters and Setters
++    public String getId() { return id; }
++    public void setId(String id) { this.id = id; }
++
++    public String getTitle() { return title; }
++    public void setTitle(String title) { this.title = title; }
++
++    public String getContent() { return content; }
++    public void setContent(String content) { this.content = content; }
++
++    public String getAuthorId() { return authorId; }
++    public void setAuthorId(String authorId) { this.authorId = authorId; }
++
++    public String getAuthorName() { return authorName; }
++    public void setAuthorName(String authorName) { this.authorName = authorName; }
++
++    public String getAuthorAvatar() { return authorAvatar; }
++    public void setAuthorAvatar(String authorAvatar) { this.authorAvatar = authorAvatar; }
++
++    public List<String> getImages() { return images; }
++    public void setImages(List<String> images) { this.images = images; }
++
++    public List<String> getTags() { return tags; }
++    public void setTags(List<String> tags) { this.tags = tags; }
++
++    public String getCategory() { return category; }
++    public void setCategory(String category) { this.category = category; }
++
++    public String getVisibility() { return visibility; }
++    public void setVisibility(String visibility) { this.visibility = visibility; }
++
++    public PostStatsResponse getStats() { return stats; }
++    public void setStats(PostStatsResponse stats) { this.stats = stats; }
++
++    public LocalDateTime getCreatedAt() { return createdAt; }
++    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
++
++    public LocalDateTime getUpdatedAt() { return updatedAt; }
++    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
++
++    public static class PostStatsResponse {
++        private long views;
++        private long likes;
++        private long shares;
++        private long comments;
++        private long bookmarks;
++        private Map<InteractionEntity.InteractionType.ReactionType, Integer> reactions;
++
++        public PostStatsResponse() {}
++
++        public PostStatsResponse(PostEntity.PostStats stats) {
++            this.views = stats.getViews();
++            this.shares = stats.getShares();
++            this.comments = stats.getComments();
++            this.reactions = stats.getReactions();
++
++            // Calculate total likes from reactions
++            this.likes = reactions.values().stream().mapToInt(Integer::intValue).sum();
++
++            // Set bookmarks if available
++            this.bookmarks = reactions.getOrDefault(
++                InteractionEntity.InteractionType.ReactionType.BOOKMARK, 0
++            );
++        }
++
++        // Getters and Setters
++        public long getViews() { return views; }
++        public void setViews(long views) { this.views = views; }
++
++        public long getLikes() { return likes; }
++        public void setLikes(long likes) { this.likes = likes; }
++
++        public long getShares() { return shares; }
++        public void setShares(long shares) { this.shares = shares; }
++
++        public long getComments() { return comments; }
++        public void setComments(long comments) { this.comments = comments; }
++
++        public long getBookmarks() { return bookmarks; }
++        public void setBookmarks(long bookmarks) { this.bookmarks = bookmarks; }
++
++        public Map<InteractionEntity.InteractionType.ReactionType, Integer> getReactions() {
++            return reactions;
++        }
++        public void setReactions(Map<InteractionEntity.InteractionType.ReactionType, Integer> reactions) {
++            this.reactions = reactions;
++        }
++    }
++}
+Index: post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java b/post-service/src/main/java/com/ctuconnect/security/SecurityContextHolder.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java
+rename to post-service/src/main/java/com/ctuconnect/security/SecurityContextHolder.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/security/SecurityContextHolder.java	(date 1754054294317)
+@@ -1,6 +1,5 @@
+-package vn.ctu.edu.postservice.security;
++package com.ctuconnect.security;
+ 
+-import com.ctuconnect.security.AuthenticatedUser;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java b/post-service/src/main/java/com/ctuconnect/service/EventService.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java
+rename to post-service/src/main/java/com/ctuconnect/service/EventService.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/service/EventService.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/service/EventService.java	(date 1754054294384)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.service;
++package com.ctuconnect.service;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.kafka.core.KafkaTemplate;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java b/post-service/src/main/java/com/ctuconnect/service/CommentService.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java
+rename to post-service/src/main/java/com/ctuconnect/service/CommentService.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/service/CommentService.java	(date 1754054294321)
+@@ -1,17 +1,17 @@
+-package vn.ctu.edu.postservice.service;
++package com.ctuconnect.service;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.stereotype.Service;
+-import vn.ctu.edu.postservice.client.UserServiceClient;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
+-import vn.ctu.edu.postservice.dto.request.CommentRequest;
+-import vn.ctu.edu.postservice.dto.response.CommentResponse;
+-import vn.ctu.edu.postservice.entity.CommentEntity;
+-import vn.ctu.edu.postservice.entity.PostEntity;
+-import vn.ctu.edu.postservice.repository.CommentRepository;
+-import vn.ctu.edu.postservice.repository.PostRepository;
++import com.ctuconnect.client.UserServiceClient;
++import com.ctuconnect.dto.AuthorInfo;
++import com.ctuconnect.dto.request.CommentRequest;
++import com.ctuconnect.dto.response.CommentResponse;
++import com.ctuconnect.entity.CommentEntity;
++import com.ctuconnect.entity.PostEntity;
++import com.ctuconnect.repository.CommentRepository;
++import com.ctuconnect.repository.PostRepository;
+ 
+ import java.util.Optional;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java b/post-service/src/main/java/com/ctuconnect/security/AuthenticationInterceptor.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java
+rename to post-service/src/main/java/com/ctuconnect/security/AuthenticationInterceptor.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/security/AuthenticationInterceptor.java	(date 1754054294378)
+@@ -1,7 +1,5 @@
+-package vn.ctu.edu.postservice.security;
++package com.ctuconnect.security;
+ 
+-import com.ctuconnect.security.AuthenticatedUser;
+-import com.ctuconnect.security.SecurityContextHolder;
+ import jakarta.servlet.http.HttpServletRequest;
+ import jakarta.servlet.http.HttpServletResponse;
+ import org.slf4j.Logger;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java b/post-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java
+rename to post-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/security/AuthenticatedUser.java	(date 1754054294368)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.security;
++package com.ctuconnect.security;
+ 
+ import lombok.AllArgsConstructor;
+ import lombok.Data;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java b/post-service/src/main/java/com/ctuconnect/controller/PostController.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java
+rename to post-service/src/main/java/com/ctuconnect/controller/PostController.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/controller/PostController.java	(date 1754054294402)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.controller;
++package com.ctuconnect.controller;
+ 
+ import jakarta.validation.Valid;
+ import org.springframework.beans.factory.annotation.Autowired;
+@@ -10,17 +10,17 @@
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.*;
+ import org.springframework.web.multipart.MultipartFile;
+-import vn.ctu.edu.postservice.dto.request.CommentRequest;
+-import vn.ctu.edu.postservice.dto.request.InteractionRequest;
+-import vn.ctu.edu.postservice.dto.request.PostRequest;
+-import vn.ctu.edu.postservice.dto.response.CommentResponse;
+-import vn.ctu.edu.postservice.dto.response.InteractionResponse;
+-import vn.ctu.edu.postservice.dto.response.PostResponse;
+-import vn.ctu.edu.postservice.security.SecurityContextHolder;
+-import vn.ctu.edu.postservice.security.annotation.RequireAuth;
+-import vn.ctu.edu.postservice.service.CommentService;
+-import vn.ctu.edu.postservice.service.InteractionService;
+-import vn.ctu.edu.postservice.service.PostService;
++import com.ctuconnect.dto.request.CommentRequest;
++import com.ctuconnect.dto.request.InteractionRequest;
++import com.ctuconnect.dto.request.PostRequest;
++import com.ctuconnect.dto.response.CommentResponse;
++import com.ctuconnect.dto.response.InteractionResponse;
++import com.ctuconnect.dto.response.PostResponse;
++import com.ctuconnect.security.SecurityContextHolder;
++import com.ctuconnect.security.annotation.RequireAuth;
++import com.ctuconnect.service.CommentService;
++import com.ctuconnect.service.InteractionService;
++import com.ctuconnect.service.PostService;
+ 
+ import java.util.List;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java b/post-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java
+rename to post-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/security/aspect/AuthorizationAspect.java	(date 1754054294276)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.security.aspect;
++package com.ctuconnect.security.aspect;
+ 
+ import com.ctuconnect.security.AuthenticatedUser;
+ import com.ctuconnect.security.SecurityContextHolder;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java b/post-service/src/main/java/com/ctuconnect/controller/AdminController.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java
+rename to post-service/src/main/java/com/ctuconnect/controller/AdminController.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/controller/AdminController.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/controller/AdminController.java	(date 1754054294413)
+@@ -1,5 +1,6 @@
+-package vn.ctu.edu.postservice.controller;
++package com.ctuconnect.controller;
+ 
++import com.ctuconnect.entity.InteractionEntity;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.PageRequest;
+@@ -7,13 +8,13 @@
+ import org.springframework.data.domain.Sort;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.*;
+-import vn.ctu.edu.postservice.dto.response.CommentResponse;
+-import vn.ctu.edu.postservice.dto.response.PostResponse;
+-import vn.ctu.edu.postservice.repository.CommentRepository;
+-import vn.ctu.edu.postservice.repository.InteractionRepository;
+-import vn.ctu.edu.postservice.repository.PostRepository;
+-import vn.ctu.edu.postservice.service.CommentService;
+-import vn.ctu.edu.postservice.service.PostService;
++import com.ctuconnect.dto.response.CommentResponse;
++import com.ctuconnect.dto.response.PostResponse;
++import com.ctuconnect.repository.CommentRepository;
++import com.ctuconnect.repository.InteractionRepository;
++import com.ctuconnect.repository.PostRepository;
++import com.ctuconnect.service.CommentService;
++import com.ctuconnect.service.PostService;
+ 
+ import java.util.HashMap;
+ import java.util.List;
+@@ -113,9 +114,9 @@
+         stats.put("totalPosts", postRepository.countByAuthorId(userId));
+         stats.put("totalComments", commentRepository.countByAuthorId(userId));
+         stats.put("totalLikes", interactionRepository.countByUserIdAndType(userId,
+-                vn.ctu.edu.postservice.entity.InteractionEntity.InteractionType.LIKE));
++                InteractionEntity.InteractionType.LIKE));
+         stats.put("totalBookmarks", interactionRepository.countByUserIdAndType(userId,
+-                vn.ctu.edu.postservice.entity.InteractionEntity.InteractionType.BOOKMARK));
++                InteractionEntity.InteractionType.BOOKMARK));
+ 
+         return ResponseEntity.ok(stats);
+     }
+Index: post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java b/post-service/src/main/java/com/ctuconnect/repository/InteractionRepository.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java
+rename to post-service/src/main/java/com/ctuconnect/repository/InteractionRepository.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/repository/InteractionRepository.java	(date 1754054294312)
+@@ -1,11 +1,11 @@
+-package vn.ctu.edu.postservice.repository;
++package com.ctuconnect.repository;
+ 
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.data.mongodb.repository.MongoRepository;
+ import org.springframework.stereotype.Repository;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
+-import vn.ctu.edu.postservice.entity.InteractionEntity;
++import com.ctuconnect.dto.AuthorInfo;
++import com.ctuconnect.entity.InteractionEntity;
+ 
+ import java.util.List;
+ import java.util.Optional;
+Index: post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java b/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java
+rename to post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/repository/CommentRepository.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java	(date 1754054294282)
+@@ -1,10 +1,10 @@
+-package vn.ctu.edu.postservice.repository;
++package com.ctuconnect.repository;
+ 
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.data.mongodb.repository.MongoRepository;
+ import org.springframework.stereotype.Repository;
+-import vn.ctu.edu.postservice.entity.CommentEntity;
++import com.ctuconnect.entity.CommentEntity;
+ 
+ import java.util.List;
+ 
+Index: post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java b/post-service/src/main/java/com/ctuconnect/dto/AuthorInfo.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java
+rename to post-service/src/main/java/com/ctuconnect/dto/AuthorInfo.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/dto/AuthorInfo.java	(date 1754054294297)
+@@ -1,4 +1,4 @@
+-package vn.ctu.edu.postservice.dto;
++package com.ctuconnect.dto;
+ 
+ 
+ import lombok.AllArgsConstructor;
+@@ -13,5 +13,5 @@
+ public class AuthorInfo {
+     private String id;
+     private String name;
+-    private String avatarUrl;
++    private String avatar;
+ }
+Index: post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java b/post-service/src/main/java/com/ctuconnect/client/UserServiceClient.java
+rename from post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java
+rename to post-service/src/main/java/com/ctuconnect/client/UserServiceClient.java
+--- a/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java	(revision b3228fc33caf19b6d18f2cc87ed79890c82f6039)
++++ b/post-service/src/main/java/com/ctuconnect/client/UserServiceClient.java	(date 1754054294407)
+@@ -1,9 +1,9 @@
+-package vn.ctu.edu.postservice.client;
++package com.ctuconnect.client;
+ 
+ import org.springframework.cloud.openfeign.FeignClient;
+ import org.springframework.web.bind.annotation.GetMapping;
+ import org.springframework.web.bind.annotation.PathVariable;
+-import vn.ctu.edu.postservice.dto.AuthorInfo;
++import com.ctuconnect.dto.AuthorInfo;
+ 
+ @FeignClient(name = "user-service", url = "${user-service.url:http://localhost:8080}")
+ public interface UserServiceClient {

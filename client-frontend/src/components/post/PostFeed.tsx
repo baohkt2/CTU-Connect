@@ -66,15 +66,14 @@ export const PostFeed: React.FC<PostFeedProps> = ({
           last: true
         };
       } else {
-        response = await postService.getPosts(
+        // Latest posts
+        response = await postService.getPosts({
           page,
-          10,
-          'createdAt',
-          'desc',
+          size: 10,
           authorId,
           category,
           search
-        );
+        });
       }
 
       if (append) {
@@ -84,19 +83,16 @@ export const PostFeed: React.FC<PostFeedProps> = ({
       }
 
       setHasMore(!response.last && response.content.length > 0);
-      setCurrentPage(page);
+      setCurrentPage(response.number);
     } catch (err: any) {
-      console.error('Failed to load posts:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to load posts');
+      setError(err.response?.data?.message || 'Failed to load posts');
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
   }, [authorId, category, search, activeTab]);
 
-  // Initial load and reload when filters change
   useEffect(() => {
-    setCurrentPage(0);
     loadPosts(0, false);
   }, [loadPosts]);
 
@@ -111,13 +107,18 @@ export const PostFeed: React.FC<PostFeedProps> = ({
     loadPosts(0, false);
   };
 
+  const handleTabChange = (tab: 'latest' | 'trending' | 'top-liked') => {
+    setActiveTab(tab);
+    setCurrentPage(0);
+  };
+
   const handlePostCreated = (newPost: Post) => {
     setPosts(prev => [newPost, ...prev]);
     setShowCreatePost(false);
   };
 
   const handlePostUpdate = (updatedPost: Post) => {
-    setPosts(prev => prev.map(post =>
+    setPosts(prev => prev.map(post => 
       post.id === updatedPost.id ? updatedPost : post
     ));
   };
@@ -126,166 +127,141 @@ export const PostFeed: React.FC<PostFeedProps> = ({
     setPosts(prev => prev.filter(post => post.id !== postId));
   };
 
-  const handleTabChange = (tab: 'latest' | 'trending' | 'top-liked') => {
-    setActiveTab(tab);
-    setCurrentPage(0);
-  };
+  const tabs = [
+    { key: 'latest', label: 'Latest', icon: RefreshCw },
+    { key: 'trending', label: 'Trending', icon: TrendingUp },
+    { key: 'top-liked', label: 'Most Liked', icon: Heart }
+  ];
 
-  if (isLoading) {
+  if (isLoading && posts.length === 0) {
     return (
-      <div className="flex justify-center py-8">
+      <div className="flex justify-center items-center min-h-64">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className={`post-feed ${className}`}>
-      {/* Feed Header */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+    <div className={`space-y-6 ${className}`}>
+      {/* Header with tabs and create button */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">
-            {search ? `Search results for "${search}"` :
-             category ? `Posts in ${category}` :
-             authorId ? 'User Posts' : 'Latest Posts'}
-          </h2>
+          <div className="flex space-x-1">
+            {tabs.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => handleTabChange(key as any)}
+                className={`flex items-center px-4 py-2 rounded-md transition-colors ${
+                  activeTab === key
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Icon className="h-4 w-4 mr-2" />
+                {label}
+              </button>
+            ))}
+          </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2">
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={handleRefresh}
               disabled={isLoading}
-              className="flex items-center gap-2"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-
-            {!authorId && (
-              <Button
-                size="sm"
-                onClick={() => setShowCreatePost(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Create Post
-              </Button>
-            )}
+            
+            <Button
+              size="sm"
+              onClick={() => setShowCreatePost(!showCreatePost)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Post
+            </Button>
           </div>
         </div>
 
-        {/* Feed Tabs */}
-        {!search && !category && !authorId && (
-          <div className="flex gap-2">
-            <Button
-              variant={activeTab === 'latest' ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => handleTabChange('latest')}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Latest
-            </Button>
-            <Button
-              variant={activeTab === 'trending' ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => handleTabChange('trending')}
-              className="flex items-center gap-2"
-            >
-              <Eye className="w-4 h-4" />
-              Trending
-            </Button>
-            <Button
-              variant={activeTab === 'top-liked' ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => handleTabChange('top-liked')}
-              className="flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4" />
-              Most Liked
-            </Button>
+        {/* Search/Filter Info */}
+        {(search || category || authorId) && (
+          <div className="text-sm text-gray-600 mb-2">
+            Showing posts
+            {search && ` matching "${search}"`}
+            {category && ` in category "${category}"`}
+            {authorId && ` by author`}
           </div>
         )}
       </div>
 
-      {/* Create Post Modal/Inline */}
+      {/* Create Post Form */}
       {showCreatePost && (
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Create New Post</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowCreatePost(false)}
-            >
-              Cancel
-            </Button>
-          </div>
-          <CreatePost
-            onPostCreated={handlePostCreated}
-            onCancel={() => setShowCreatePost(false)}
-          />
-        </div>
+        <CreatePost
+          onPostCreated={handlePostCreated}
+          onCancel={() => setShowCreatePost(false)}
+        />
       )}
 
-      {/* Error Display */}
+      {/* Error Alert */}
       {error && (
-        <div className="mb-6">
-          <ErrorAlert message={error} />
-        </div>
+        <ErrorAlert 
+          message={error} 
+          onClose={() => setError(null)} 
+        />
       )}
 
       {/* Posts List */}
-      {posts.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <TrendingUp className="w-16 h-16 mx-auto" />
+      <div className="space-y-4">
+        {posts.length === 0 && !isLoading ? (
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <div className="text-gray-500 mb-4">
+              <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p className="text-lg font-medium">No posts found</p>
+              <p className="text-sm">
+                {search || category 
+                  ? 'Try adjusting your search criteria' 
+                  : 'Be the first to share something!'
+                }
+              </p>
+            </div>
+            {!search && !category && !authorId && (
+              <Button onClick={() => setShowCreatePost(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Post
+              </Button>
+            )}
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No posts found</h3>
-          <p className="text-gray-500 mb-4">
-            {search ? 'Try adjusting your search terms' :
-             category ? 'No posts in this category yet' :
-             'Be the first to create a post!'}
-          </p>
-          {!authorId && !search && !category && (
-            <Button onClick={() => setShowCreatePost(true)}>
-              Create First Post
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {posts.map((post) => (
+        ) : (
+          posts.map((post) => (
             <PostCard
               key={post.id}
               post={post}
               onPostUpdate={handlePostUpdate}
               onPostDelete={handlePostDelete}
             />
-          ))}
+          ))
+        )}
+      </div>
 
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="text-center py-6">
-              <Button
-                variant="secondary"
-                onClick={handleLoadMore}
-                disabled={isLoadingMore}
-                className="flex items-center gap-2"
-              >
-                {isLoadingMore && <LoadingSpinner size="sm" />}
-                {isLoadingMore ? 'Loading...' : 'Load More Posts'}
-              </Button>
-            </div>
-          )}
+      {/* Load More Button */}
+      {hasMore && posts.length > 0 && (
+        <div className="flex justify-center pt-4">
+          <Button
+            variant="outline"
+            onClick={handleLoadMore}
+            disabled={isLoadingMore}
+            loading={isLoadingMore}
+          >
+            {isLoadingMore ? 'Loading...' : 'Load More Posts'}
+          </Button>
+        </div>
+      )}
 
-          {/* End of Feed Message */}
-          {!hasMore && posts.length > 0 && (
-            <div className="text-center py-6 text-gray-500">
-              <p>You've reached the end of the feed</p>
-            </div>
-          )}
+      {/* Loading indicator for infinite scroll */}
+      {isLoadingMore && (
+        <div className="flex justify-center py-4">
+          <LoadingSpinner />
         </div>
       )}
     </div>

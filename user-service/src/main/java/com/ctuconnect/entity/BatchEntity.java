@@ -14,4 +14,8 @@ public class BatchEntity  {
 
     @Relationship(type = "IN_BATCH", direction = Relationship.Direction.INCOMING)
     private UserEntity students;
+
+    public String getId() {
+        return year;
+    }
 }

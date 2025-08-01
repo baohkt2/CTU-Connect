@@ -23,4 +23,8 @@ public class AcademicEntity {
 
     @Relationship(type = "HAS_DEGREE", direction = Relationship.Direction.INCOMING)
     private DegreeEntity degree;
+
+    public String getId() {
+        return code;
+    }
 }

@@ -42,7 +42,7 @@ export interface Post {
   authorId: string;
   authorName?: string;
   authorAvatar?: string;
-  images?: string[];
+  images?: string[]; // Array of image URLs or null if no images
   tags?: string[];
   category?: string;
   visibility?: string;

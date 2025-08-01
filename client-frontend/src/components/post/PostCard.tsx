@@ -40,7 +40,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingInteraction, setIsLoadingInteraction] = useState(false);
 
-  // Load comments when showing comments section
   const handleShowComments = async () => {
     if (!showComments && comments.length === 0) {
       setIsLoadingComments(true);
@@ -56,7 +55,6 @@ export const PostCard: React.FC<PostCardProps> = ({
     setShowComments(!showComments);
   };
 
-  // Handle like/unlike
   const handleLike = async () => {
     if (isLoadingInteraction) return;
 
@@ -65,7 +63,6 @@ export const PostCard: React.FC<PostCardProps> = ({
       await postService.toggleLike(post.id);
       setIsLiked(!isLiked);
 
-      // Update post stats optimistically
       const updatedPost = {
         ...post,
         stats: {
@@ -81,7 +78,6 @@ export const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
-  // Handle bookmark
   const handleBookmark = async () => {
     if (isLoadingInteraction) return;
 
@@ -90,7 +86,6 @@ export const PostCard: React.FC<PostCardProps> = ({
       await postService.toggleBookmark(post.id);
       setIsBookmarked(!isBookmarked);
 
-      // Update post stats optimistically
       const updatedPost = {
         ...post,
         stats: {
@@ -106,7 +101,6 @@ export const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
-  // Handle share
   const handleShare = async () => {
     if (isLoadingInteraction) return;
 
@@ -114,7 +108,6 @@ export const PostCard: React.FC<PostCardProps> = ({
     try {
       await postService.sharePost(post.id);
 
-      // Update post stats optimistically
       const updatedPost = {
         ...post,
         stats: {
@@ -134,7 +127,6 @@ export const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
-  // Handle comment submission
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim() || isSubmittingComment) return;
@@ -149,7 +141,6 @@ export const PostCard: React.FC<PostCardProps> = ({
       setComments(prev => [...prev, newComment]);
       setCommentText('');
 
-      // Update post stats
       const updatedPost = {
         ...post,
         stats: {
@@ -171,8 +162,9 @@ export const PostCard: React.FC<PostCardProps> = ({
     return count.toString();
   };
 
+  // @ts-ignore
   return (
-    <Card className={`post-card ${className}`}>
+    <Card className={`post-card bg-white rounded-lg shadow ${className}`}>
       {/* Post Header */}
       <div className="flex items-start justify-between p-4">
         <div className="flex items-center space-x-3">
@@ -347,9 +339,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                   placeholder="Write a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  minRows={1}
-                  maxRows={4}
-                  className="w-full resize-none"
+                  className="w-full resize-none min-h-[60px]"
                 />
                 <div className="flex justify-end mt-2">
                   <Button
@@ -359,7 +349,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                     className="flex items-center space-x-2"
                   >
                     {isSubmittingComment ? (
-                      <LoadingSpinner size="sm" />
+                      <LoadingSpinner />
                     ) : (
                       <Send className="w-4 h-4" />
                     )}

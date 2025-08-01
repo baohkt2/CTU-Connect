@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -782,7 +785,7 @@ public class UserService {
         String userId = userEntity.getId();
 
         // Method 1: Clear all student relationships in one query (Most Efficient)
-        userRepository.clearStudentProfileRelationships(userId);
+        userRepository.clearStudentRelationships(userId);
 
         // Set new relationships (one-to-one)
         if (majorCode != null && !majorCode.isEmpty()) {
@@ -929,7 +932,7 @@ public class UserService {
         String userId = userEntity.getId();
 
         // Method 1: Clear all lecturer relationships in one query (Most Efficient)
-        userRepository.clearLecturerProfileRelationships(userId);
+        userRepository.clearLecturerRelationships(userId);
 
         // OR Method 2: Use generic method with specific relationship types
         // List<String> lecturerRelationships = Arrays.asList(
@@ -975,5 +978,198 @@ public class UserService {
         }
     }
 
+    /**
+     * Get friend IDs for a user (for internal service communication)
+     */
+    public Set<String> getFriendIds(String userId) {
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            return userOpt.get().getFriendIds();
+        }
+        return new HashSet<>();
+    }
+
+    /**
+     * Get users with close interactions (for feed ranking)
+     */
+    public Set<String> getCloseInteractionIds(String userId) {
+        // This would typically analyze interaction patterns
+        // For now, returning a subset of friends with high interaction
+        Set<String> friendIds = getFriendIds(userId);
+        return friendIds.stream()
+                .limit(10) // Top 10 close interactions
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get users from same faculty
+     */
+    public Set<String> getSameFacultyUserIds(String userId) {
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent() && userOpt.get().getFacultyId() != null) {
+            String facultyId = userOpt.get().getFacultyId();
+            return userRepository.findByFacultyId(facultyId)
+                    .stream()
+                    .map(UserEntity::getId)
+                    .filter(id -> !id.equals(userId))
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
+    }
+
+    /**
+     * Get users from same major
+     */
+    public Set<String> getSameMajorUserIds(String userId) {
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent() && userOpt.get().getMajorId() != null) {
+            String majorId = userOpt.get().getMajorId();
+            return userRepository.findByMajorId(majorId)
+                    .stream()
+                    .map(UserEntity::getId)
+                    .filter(id -> !id.equals(userId))
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
+    }
+
+    /**
+     * Get user's interest tags (derived from posts, interactions, etc.)
+     */
+    public Set<String> getUserInterestTags(String userId) {
+        // This would typically analyze user's post tags, liked posts, etc.
+        // For now, returning mock data
+        return Set.of("technology", "education", "research", "academic");
+    }
+
+    /**
+     * Get user's preferred categories
+     */
+    public Set<String> getUserPreferredCategories(String userId) {
+        // This would typically analyze user's post categories, interactions
+        // For now, returning mock data based on user role
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            UserEntity user = userOpt.get();
+            if (user.getRole() == Role.STUDENT) {
+                return Set.of("Student Life", "Academic", "Events");
+            } else if (user.getRole() == Role.LECTURER) { // Fixed: Changed from Role.FACULTY to Role.LECTURER
+                return Set.of("Research", "Academic", "Publications");
+            }
+        }
+        return Set.of("General", "News");
+    }
+
+    /**
+     * Get user's faculty ID
+     */
+    public String getUserFacultyId(String userId) {
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        return userOpt.map(UserEntity::getFacultyId).orElse(null);
+    }
+
+    /**
+     * Get user's major ID
+     */
+    public String getUserMajorId(String userId) {
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        return userOpt.map(UserEntity::getMajorId).orElse(null);
+    }
+
+    /**
+     * Enhanced user search with academic context
+     */
+    public List<UserDTO> searchUsersWithContext(String query, String faculty, String major,
+                                               String batch, String currentUserId, int page, int size) {
+        // This would implement complex search with Neo4j queries
+        // For now, implementing basic search
+        List<UserEntity> users = userRepository.findByFullNameContainingIgnoreCase(query);
+
+        // Apply filters
+        if (faculty != null && !faculty.isEmpty()) {
+            users = users.stream()
+                    .filter(user -> faculty.equals(user.getFacultyId()))
+                    .collect(Collectors.toList());
+        }
+
+        if (major != null && !major.isEmpty()) {
+            users = users.stream()
+                    .filter(user -> major.equals(user.getMajorId()))
+                    .collect(Collectors.toList());
+        }
+
+        if (batch != null && !batch.isEmpty()) {
+            users = users.stream()
+                    .filter(user -> batch.equals(user.getBatchId()))
+                    .collect(Collectors.toList());
+        }
+
+        // Apply pagination and convert to DTOs
+        return users.stream()
+                .skip(page * size)
+                .limit(size)
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Send friend request
+     */
+    /*@Transactional
+    public void sendFriendRequest(String fromUserId, String toUserId) {
+        // This would typically create a friend request relationship in Neo4j
+        // For now, just publishing an event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+                fromUserId, toUserId, "FRIEND_REQUEST_SENT");
+
+        log.info("Friend request sent from {} to {}", fromUserId, toUserId);
+    }
+*/
+    /**
+     * Accept friend request
+     */
+    /*@Transactional
+    public void acceptFriendRequest(String fromUserId, String toUserId) {
+        // This would typically update the relationship in Neo4j
+        // For now, just publishing an event
+        userEventPublisher.publishUserRelationshipChangedEvent(
+                toUserId, fromUserId, "FRIEND_REQUEST_ACCEPTED");
+
+        log.info("Friend request accepted: {} and {} are now friends", fromUserId, toUserId);
+    }
+*/
+    /**
+     * Get user activity feed (for profile timeline)
+     */
+    public List<ActivityDTO> getUserActivity(String userId, String viewerId, int page, int size) {
+        // This would typically query activity logs or events
+        // For now, returning mock activity data
+        List<ActivityDTO> activities = new ArrayList<>();
+
+        activities.add(ActivityDTO.builder()
+                .id("activity_1")
+                .userId(userId)
+                .activityType("POST_CREATED")
+                .entityType("POST")
+                .entityId("post_123")
+                .description("Created a new post")
+                .timestamp(LocalDateTime.now().minusDays(1))
+                .build());
+
+        activities.add(ActivityDTO.builder()
+                .id("activity_2")
+                .userId(userId)
+                .activityType("FRIEND_ADDED")
+                .entityType("USER")
+                .entityId("user_456")
+                .description("Added a new friend")
+                .timestamp(LocalDateTime.now().minusDays(2))
+                .build());
+
+        return activities.stream()
+                .skip(page * size)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
 
 }

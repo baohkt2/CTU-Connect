@@ -24,4 +24,8 @@ public class DegreeEntity {
 
     @Relationship(type = "HAS_ACADEMIC", direction = Relationship.Direction.INCOMING)
     private List<UserEntity> users;
+
+    public String getId() {
+        return code; // Sử dụng mã làm ID
+    }
 }

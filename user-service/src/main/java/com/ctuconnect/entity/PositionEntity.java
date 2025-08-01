@@ -22,4 +22,8 @@ public class PositionEntity {
 
     @Relationship(type = "HAS_POSITION", direction = Relationship.Direction.INCOMING)
     private UserEntity users; // Người dùng có vị trí này, có thể là giảng
+
+    public String getId() {
+        return code;
+    }
 }
