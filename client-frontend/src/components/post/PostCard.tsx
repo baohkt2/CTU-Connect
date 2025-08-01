@@ -79,7 +79,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <Avatar
-              src={post.author.avatar}
+              src={post.author.avatarUrl || '/default-avatar.png'}
               alt={post.author.fullName}
               size="md"
               online={post.author.isOnline}
@@ -182,7 +182,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             <form onSubmit={handleAddComment} className="mb-4">
               <div className="flex space-x-3">
                 <Avatar
-                  src={user?.avatar}
+                  src={user?.avatarUrl || '/default-avatar.png'}
                   alt={user?.fullName || 'User'}
                   size="sm"
                 />
@@ -214,7 +214,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 {commentsData.content.map((comment) => (
                   <div key={comment.id} className="flex space-x-3">
                     <Avatar
-                      src={comment.author.avatar}
+                      src={comment.author.avatarUrl || '/default-avatar.png'}
                       alt={comment.author.fullName}
                       size="sm"
                     />

@@ -1,11 +1,22 @@
 package vn.ctu.edu.postservice.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import org.springframework.data.mongodb.core.mapping.Field;
+import lombok.Data;
+import vn.ctu.edu.postservice.dto.AuthorInfo;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@Builder
 @Document(collection = "comments")
 public class CommentEntity {
 
@@ -17,15 +28,17 @@ public class CommentEntity {
 
     private String content;
 
-    @Field("author_id")
-    private String authorId;
+    @Field("author")
+    private AuthorInfo author;
 
     @Field("parent_comment_id")
     private String parentCommentId; // For nested comments/replies
 
     @Field("created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Field("updated_at")
     private LocalDateTime updatedAt;
 
@@ -35,76 +48,15 @@ public class CommentEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public CommentEntity(String postId, String content, String authorId) {
+    public CommentEntity(String postId, String content, AuthorInfo author) {
         this();
         this.postId = postId;
         this.content = content;
-        this.authorId = authorId;
+        this.author = author;
     }
 
-    public CommentEntity(String postId, String content, String authorId, String parentCommentId) {
-        this(postId, content, authorId);
+    public CommentEntity(String postId, String content, AuthorInfo author, String parentCommentId) {
+        this(postId, content, author);
         this.parentCommentId = parentCommentId;
-    }
-
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public void setParentCommentId(String parentCommentId) {
-        this.parentCommentId = parentCommentId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void updateTimestamp() {
-        this.updatedAt = LocalDateTime.now();
     }
 }

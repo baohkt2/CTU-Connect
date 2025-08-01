@@ -5,10 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Update profile v2">
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/UserServiceClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/AuthorInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/InteractionRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticatedUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/AuthenticationInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/SecurityContextHolder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/annotation/RequireAuth.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/security/aspect/AuthorizationAspect.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePostForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/entity/Media.java" beforeDir="false" afterPath="$PROJECT_DIR$/media-service/src/main/java/vn/ctu/edu/mediaservice/entity/Media.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/client/MediaServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateCommentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CommentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreateInteractionRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/CreatePostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/PostRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/dto/request/UpdatePostRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/CommentEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/InteractionEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/entity/PostEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/repository/InteractionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/CommentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/InteractionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/vn/ctu/edu/postservice/service/PostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,9 +46,9 @@
         <option value="Dockerfile" />
         <option value="FastAPI main" />
         <option value="FastAPI test_main" />
-        <option value="Interface" />
         <option value="TypeScript File" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -43,7 +68,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="e8a71b52e8023da453cf94c786f689ca146ba257" />
+        <entry key="$PROJECT_DIR$" value="fix-database" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -123,10 +148,10 @@
     "Spring Boot.AuthServiceApplication.executor": "Run",
     "Spring Boot.EurekaServerApplication.executor": "Run",
     "com.intellij.ide.FileNotInSourceRootChecker.no.check": "true",
-    "git-widget-placeholder": "fix-database",
+    "git-widget-placeholder": "build-Post",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/LVTN/ctu-connect",
+    "last_opened_file_path": "D:/LVTN/ctu-connect/post-service/src/main/java/vn/ctu/edu/postservice",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
@@ -158,6 +183,9 @@
     <option name="notificationShown" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\vn\ctu\edu\postservice" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
@@ -172,7 +200,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.media-service: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
     <configuration name="Recommender-service" type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/Recommender-service/main.py" />
       <module name="Recommender-service" />
@@ -712,7 +740,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="fix-database" />
+                        <option value="build-Post" />
                       </list>
                     </value>
                   </entry>

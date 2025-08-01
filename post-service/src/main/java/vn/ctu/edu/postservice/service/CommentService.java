@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.ctu.edu.postservice.dto.request.CreateCommentRequest;
+import vn.ctu.edu.postservice.client.UserServiceClient;
+import vn.ctu.edu.postservice.dto.AuthorInfo;
+import vn.ctu.edu.postservice.dto.request.CommentRequest;
 import vn.ctu.edu.postservice.dto.response.CommentResponse;
 import vn.ctu.edu.postservice.entity.CommentEntity;
 import vn.ctu.edu.postservice.entity.PostEntity;
@@ -25,14 +27,18 @@ public class CommentService {
     @Autowired
     private EventService eventService;
 
-    public CommentResponse createComment(String postId, CreateCommentRequest request) {
+    @Autowired
+    private UserServiceClient userServiceClient;
+
+    public CommentResponse createComment(String postId, CommentRequest request, String authorId) {
         // Verify post exists
+        AuthorInfo author = userServiceClient.getAuthorInfo(authorId);
         Optional<PostEntity> postOpt = postRepository.findById(postId);
         if (postOpt.isEmpty()) {
             throw new RuntimeException("Post not found with id: " + postId);
         }
 
-        CommentEntity comment = new CommentEntity(postId, request.getContent(), request.getAuthorId(), request.getParentCommentId());
+        CommentEntity comment = new CommentEntity(postId, request.getContent(), author, request.getParentCommentId());
         CommentEntity savedComment = commentRepository.save(comment);
 
         // Update post comment count
@@ -41,7 +47,7 @@ public class CommentService {
         postRepository.save(post);
 
         // Publish event
-        eventService.publishCommentEvent("COMMENT_CREATED", postId, savedComment.getId(), savedComment.getAuthorId());
+        eventService.publishCommentEvent("COMMENT_CREATED", postId, savedComment.getId(), savedComment.getAuthor().getId());
 
         return new CommentResponse(savedComment);
     }
@@ -65,7 +71,7 @@ public class CommentService {
             CommentEntity comment = commentOpt.get();
 
             // Check if user is the author
-            if (!comment.getAuthorId().equals(authorId)) {
+            if (!comment.getAuthor().getId().equals(authorId)) {
                 throw new RuntimeException("Only the author can delete this comment");
             }
 

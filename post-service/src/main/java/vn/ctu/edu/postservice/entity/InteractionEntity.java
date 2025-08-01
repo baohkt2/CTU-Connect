@@ -1,13 +1,21 @@
 package vn.ctu.edu.postservice.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import vn.ctu.edu.postservice.dto.AuthorInfo;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
+@AllArgsConstructor
+@Builder
 @Document(collection = "interactions")
 public class InteractionEntity {
 
@@ -17,8 +25,8 @@ public class InteractionEntity {
     @Field("post_id")
     private String postId;
 
-    @Field("user_id")
-    private String userId;
+    @Field("author")
+    private AuthorInfo author;
 
     private InteractionType type;
 
@@ -32,63 +40,45 @@ public class InteractionEntity {
         this.createdAt = LocalDateTime.now();
     }
 
-    public InteractionEntity(String postId, String userId, InteractionType type) {
+    public InteractionEntity(String postId, AuthorInfo author, InteractionType type) {
         this();
         this.postId = postId;
-        this.userId = userId;
+        this.author = author;
         this.type = type;
     }
 
-    // Getters and Setters
-    public String getId() {
-        return id;
+    public InteractionType.ReactionType getReaction() {
+        if (type.getReactionType() != null) {
+            return type.getReactionType();
+        }
+        return InteractionType.ReactionType.NONE;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public InteractionType getType() {
-        return type;
-    }
-
-    public void setType(InteractionType type) {
-        this.type = type;
-    }
-
-    public Map<String, Object> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
+    @Getter
     public enum InteractionType {
-        VIEW, LIKE, SHARE, BOOKMARK
+        VIEW,
+        LIKE(ReactionType.NONE), // default type
+        SHARE,
+        BOOKMARK,
+        COMMENT,
+        REPLY,
+        MENTION,
+        REPORT;
+
+        private final ReactionType reactionType;
+
+        InteractionType() {
+            this.reactionType = null;
+        }
+
+        InteractionType(ReactionType reactionType) {
+            this.reactionType = reactionType;
+        }
+
+        public enum ReactionType {
+            LIKE, LOVE, HAPPY, SAD, ANGRY, NONE
+        }
     }
+
 }

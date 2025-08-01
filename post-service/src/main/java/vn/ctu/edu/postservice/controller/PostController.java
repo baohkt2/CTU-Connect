@@ -10,13 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.ctu.edu.postservice.dto.request.CreateCommentRequest;
-import vn.ctu.edu.postservice.dto.request.CreateInteractionRequest;
-import vn.ctu.edu.postservice.dto.request.CreatePostRequest;
-import vn.ctu.edu.postservice.dto.request.UpdatePostRequest;
+import vn.ctu.edu.postservice.dto.request.CommentRequest;
+import vn.ctu.edu.postservice.dto.request.InteractionRequest;
+import vn.ctu.edu.postservice.dto.request.PostRequest;
 import vn.ctu.edu.postservice.dto.response.CommentResponse;
 import vn.ctu.edu.postservice.dto.response.InteractionResponse;
 import vn.ctu.edu.postservice.dto.response.PostResponse;
+import vn.ctu.edu.postservice.security.SecurityContextHolder;
+import vn.ctu.edu.postservice.security.annotation.RequireAuth;
 import vn.ctu.edu.postservice.service.CommentService;
 import vn.ctu.edu.postservice.service.InteractionService;
 import vn.ctu.edu.postservice.service.PostService;
@@ -39,11 +40,13 @@ public class PostController {
 
     // Create post
     @PostMapping
+    @RequireAuth(selfOnly = true)
     public ResponseEntity<PostResponse> createPost(
-            @Valid @RequestPart("post") CreatePostRequest request,
+            @Valid @RequestPart("post") PostRequest request,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
-            PostResponse response = postService.createPost(request, files);
+            PostResponse response = postService.createPost(request, files, currentUserId);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -83,10 +86,10 @@ public class PostController {
     // Get post by ID (auto-record VIEW interaction)
     @GetMapping("/{id}")
     public ResponseEntity<PostResponse> getPostById(
-            @PathVariable String id,
-            @RequestParam(required = false) String userId) {
+            @PathVariable String id) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
-            PostResponse post = postService.getPostById(id, userId);
+            PostResponse post = postService.getPostById(id, currentUserId);
             return ResponseEntity.ok(post);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -95,10 +98,11 @@ public class PostController {
 
     // Update post (author only)
     @PutMapping("/{id}")
+    @RequireAuth(selfOnly = true)
     public ResponseEntity<PostResponse> updatePost(
             @PathVariable String id,
-            @Valid @RequestBody UpdatePostRequest request,
-            @RequestParam String authorId) {
+            @Valid @RequestBody PostRequest request) {
+        String authorId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
             PostResponse updatedPost = postService.updatePost(id, request, authorId);
             return ResponseEntity.ok(updatedPost);
@@ -109,9 +113,10 @@ public class PostController {
 
     // Delete post (author only)
     @DeleteMapping("/{id}")
+    @RequireAuth(selfOnly = true)
     public ResponseEntity<Void> deletePost(
-            @PathVariable String id,
-            @RequestParam String authorId) {
+            @PathVariable String id) {
+        String authorId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
             postService.deletePost(id, authorId);
             return ResponseEntity.noContent().build();
@@ -124,9 +129,10 @@ public class PostController {
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentResponse> addComment(
             @PathVariable String id,
-            @Valid @RequestBody CreateCommentRequest request) {
+            @Valid @RequestBody CommentRequest request) {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
-            CommentResponse comment = commentService.createComment(id, request);
+            CommentResponse comment = commentService.createComment(id, request, currentUserId);
             return ResponseEntity.status(HttpStatus.CREATED).body(comment);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -149,9 +155,10 @@ public class PostController {
     @PostMapping("/{id}/interactions")
     public ResponseEntity<InteractionResponse> recordInteraction(
             @PathVariable String id,
-            @Valid @RequestBody CreateInteractionRequest request) {
+            @Valid @RequestBody InteractionRequest request) {
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
-            InteractionResponse interaction = interactionService.createInteraction(id, request);
+            InteractionResponse interaction = interactionService.createInteraction(id, request, userId);
             if (interaction == null) {
                 // Interaction was removed (e.g., unlike)
                 return ResponseEntity.noContent().build();
@@ -165,18 +172,10 @@ public class PostController {
     // Check if user has liked post
     @GetMapping("/{id}/likes/check")
     public ResponseEntity<Boolean> hasUserLikedPost(
-            @PathVariable String id,
-            @RequestParam String userId) {
-        boolean hasLiked = interactionService.hasUserLikedPost(id, userId);
+            @PathVariable String id) {
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        boolean hasLiked = interactionService.hasUserReacted(id, userId);
         return ResponseEntity.ok(hasLiked);
     }
 
-    // Check if user has bookmarked post
-    @GetMapping("/{id}/bookmarks/check")
-    public ResponseEntity<Boolean> hasUserBookmarkedPost(
-            @PathVariable String id,
-            @RequestParam String userId) {
-        boolean hasBookmarked = interactionService.hasUserBookmarkedPost(id, userId);
-        return ResponseEntity.ok(hasBookmarked);
-    }
 }

@@ -60,7 +60,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     },
     {
       name: 'Hồ sơ',
-      href: `/profile/${user?.id}`,
+      href: `/profile/me`,
       icon: UserIcon,
       iconSolid: UserIconSolid
     },
@@ -126,7 +126,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="relative group">
                 <button className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100">
                   <Avatar
-                    src={user?.avatar}
+                    src={user?.avatarUrl || '/default-avatar.png'}
                     alt={user?.fullName || 'User'}
                     size="sm"
                     online={user?.isOnline}

@@ -6,8 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.ctu.edu.postservice.client.MediaServiceClient;
-import vn.ctu.edu.postservice.dto.request.CreatePostRequest;
-import vn.ctu.edu.postservice.dto.request.UpdatePostRequest;
+import vn.ctu.edu.postservice.client.UserServiceClient;
+import vn.ctu.edu.postservice.dto.AuthorInfo;
+import vn.ctu.edu.postservice.dto.request.PostRequest;
 import vn.ctu.edu.postservice.dto.response.PostResponse;
 import vn.ctu.edu.postservice.entity.InteractionEntity;
 import vn.ctu.edu.postservice.entity.PostEntity;
@@ -35,10 +36,17 @@ public class PostService {
     private MediaServiceClient mediaServiceClient;
 
     @Autowired
+    private UserServiceClient userServiceClient;
+
+    @Autowired
     private EventService eventService;
 
-    public PostResponse createPost(CreatePostRequest request, List<MultipartFile> files) {
-        PostEntity post = new PostEntity(request.getTitle(), request.getContent(), request.getAuthorId());
+    public PostResponse createPost(PostRequest request, List<MultipartFile> files, String authorId) {
+        AuthorInfo author = userServiceClient.getAuthorInfo(authorId);
+        PostEntity post = new PostEntity();
+        post.setContent(request.getContent());
+        post.setAuthor(author);
+        post.setImages(new ArrayList<>());
         post.setTags(request.getTags());
         post.setCategory(request.getCategory());
 
@@ -63,7 +71,7 @@ public class PostService {
         PostEntity savedPost = postRepository.save(post);
 
         // Publish event
-        eventService.publishPostEvent("POST_CREATED", savedPost.getId(), savedPost.getAuthorId(), savedPost);
+        eventService.publishPostEvent("POST_CREATED", savedPost.getId(), savedPost.getAuthor().getId(), savedPost);
 
         return new PostResponse(savedPost);
     }
@@ -88,14 +96,15 @@ public class PostService {
                 .map(PostResponse::new);
     }
 
-    public PostResponse getPostById(String id, String userId) {
+    public PostResponse getPostById(String id, String authorId) {
+        AuthorInfo author = userServiceClient.getAuthorInfo(authorId);
         Optional<PostEntity> postOpt = postRepository.findById(id);
         if (postOpt.isPresent()) {
             PostEntity post = postOpt.get();
-
+            String userId = author != null ? author.getId() : null;
             // Record view interaction if userId is provided
-            if (userId != null && !userId.equals(post.getAuthorId())) {
-                recordViewInteraction(post.getId(), userId);
+            if (userId != null && !userId.equals(post.getAuthor().getId())) {
+                recordViewInteraction(post.getId(), author);
             }
 
             return new PostResponse(post);
@@ -103,20 +112,17 @@ public class PostService {
         throw new RuntimeException("Post not found with id: " + id);
     }
 
-    public PostResponse updatePost(String id, UpdatePostRequest request, String authorId) {
+    public PostResponse updatePost(String id, PostRequest request, String authorId) {
+
         Optional<PostEntity> postOpt = postRepository.findById(id);
         if (postOpt.isPresent()) {
             PostEntity post = postOpt.get();
 
             // Check if user is the author
-            if (!post.getAuthorId().equals(authorId)) {
+            if (!post.getAuthor().getId().equals(authorId)) {
                 throw new RuntimeException("Only the author can update this post");
             }
 
-            // Update fields
-            if (request.getTitle() != null) {
-                post.setTitle(request.getTitle());
-            }
             if (request.getContent() != null) {
                 post.setContent(request.getContent());
             }
@@ -127,11 +133,10 @@ public class PostService {
                 post.setCategory(request.getCategory());
             }
 
-            post.updateTimestamp();
             PostEntity savedPost = postRepository.save(post);
 
             // Publish event
-            eventService.publishPostEvent("POST_UPDATED", savedPost.getId(), savedPost.getAuthorId(), savedPost);
+            eventService.publishPostEvent("POST_UPDATED", savedPost.getId(), savedPost.getAuthor().getId(), savedPost);
 
             return new PostResponse(savedPost);
         }
@@ -144,7 +149,7 @@ public class PostService {
             PostEntity post = postOpt.get();
 
             // Check if user is the author
-            if (!post.getAuthorId().equals(authorId)) {
+            if (!post.getAuthor().getId().equals(authorId)) {
                 throw new RuntimeException("Only the author can delete this post");
             }
 
@@ -162,14 +167,14 @@ public class PostService {
         }
     }
 
-    private void recordViewInteraction(String postId, String userId) {
+    private void recordViewInteraction(String postId, AuthorInfo author) {
         // Check if user already viewed this post recently
         Optional<InteractionEntity> existingView = interactionRepository
-                .findByPostIdAndUserIdAndType(postId, userId, InteractionEntity.InteractionType.VIEW);
+                .findByPostIdAndAuthorAndType(postId, author, InteractionEntity.InteractionType.VIEW);
 
         if (existingView.isEmpty()) {
             // Create view interaction
-            InteractionEntity viewInteraction = new InteractionEntity(postId, userId, InteractionEntity.InteractionType.VIEW);
+            InteractionEntity viewInteraction = new InteractionEntity(postId, author, InteractionEntity.InteractionType.VIEW);
             interactionRepository.save(viewInteraction);
 
             // Update post stats
@@ -181,7 +186,7 @@ public class PostService {
             }
 
             // Publish interaction event
-            eventService.publishInteractionEvent(postId, userId, "VIEW");
+            eventService.publishInteractionEvent(postId, author.getId(), "VIEW");
         }
     }
 

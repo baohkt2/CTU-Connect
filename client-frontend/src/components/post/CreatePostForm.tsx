@@ -69,7 +69,7 @@ const CreatePostForm: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex space-x-3">
           <Avatar
-            src={user?.avatar}
+            src={user?.avatarUrl || '/default-avatar.png'}
             alt={user?.fullName || 'User'}
             size="md"
           />
