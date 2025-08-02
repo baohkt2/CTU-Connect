@@ -148,29 +148,6 @@ export const postService = {
     return response.data;
   },
 
-  // COMMENT METHODS
-
-  // Get comments for post
-  async getComments(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
-    const response = await api.get(`/posts/${postId}/comments?page=${page}&size=${size}`);
-    console.log("Getting comments:", response.data);
-    return response.data;
-  },
-
-  // Create comment
-  async createComment(postId: string, commentData: CreateCommentRequest): Promise<Comment> {
-    const response = await api.post(`/posts/${postId}/comments`, commentData);
-    return response.data;
-  },
-
-  // UTILITY METHODS
-
-  // Get trending posts
-  async getTrendingPosts(): Promise<Post[]> {
-    const response = await api.get('/posts/trending');
-    return response.data;
-  },
-
   // Get top viewed posts
   async getTopViewedPosts(): Promise<Post[]> {
     const response = await api.get('/posts/top-viewed');
@@ -180,6 +157,59 @@ export const postService = {
   // Get top liked posts
   async getTopLikedPosts(): Promise<Post[]> {
     const response = await api.get('/posts/top-liked');
+    return response.data;
+  },
+
+  // INTERACTION STATUS METHODS (New - for persistent state)
+
+  // Check interaction status for a post
+  async getInteractionStatus(postId: string): Promise<{
+    postId: string;
+    userId: string;
+    hasLiked: boolean;
+    hasBookmarked: boolean;
+    interactions: { LIKE: boolean; BOOKMARK: boolean };
+  }> {
+    const response = await api.get(`/posts/${postId}/interactions/status`);
+    return response.data;
+  },
+
+  // Check like status specifically
+  async checkLikeStatus(postId: string): Promise<{
+    postId: string;
+    hasLiked: boolean;
+    userId: string;
+  }> {
+    const response = await api.get(`/posts/${postId}/interactions/like/status`);
+    return response.data;
+  },
+
+  // Check bookmark status specifically
+  async checkBookmarkStatus(postId: string): Promise<{
+    postId: string;
+    hasBookmarked: boolean;
+    userId: string;
+  }> {
+    const response = await api.get(`/posts/${postId}/interactions/bookmark/status`);
+    return response.data;
+  },
+
+  // COMMENT METHODS (Missing)
+
+  // Get comments for a post
+  async getComments(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+    });
+
+    const response = await api.get(`/posts/${postId}/comments?${params.toString()}`);
+    return response.data;
+  },
+
+  // Create a comment
+  async createComment(postId: string, commentData: CreateCommentRequest): Promise<Comment> {
+    const response = await api.post(`/posts/${postId}/comments`, commentData);
     return response.data;
   }
 };

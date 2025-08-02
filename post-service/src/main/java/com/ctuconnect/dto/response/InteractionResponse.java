@@ -1,14 +1,14 @@
 package com.ctuconnect.dto.response;
 
 import com.ctuconnect.entity.InteractionEntity;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class InteractionResponse {
 
     // Getters and Setters
@@ -18,6 +18,10 @@ public class InteractionResponse {
     private InteractionEntity.InteractionType type;
     private Map<String, Object> metadata;
     private LocalDateTime createdAt;
+
+    // New fields for status responses
+    private boolean hasInteraction;
+    private String message;
 
     // Constructors
     public InteractionResponse() {}
@@ -29,6 +33,13 @@ public class InteractionResponse {
         this.type = interaction.getType();
         this.metadata = interaction.getMetadata();
         this.createdAt = interaction.getCreatedAt();
+        this.hasInteraction = true;
+    }
+
+    // Constructor for status responses
+    public InteractionResponse(boolean hasInteraction, String message) {
+        this.hasInteraction = hasInteraction;
+        this.message = message;
     }
 
 }

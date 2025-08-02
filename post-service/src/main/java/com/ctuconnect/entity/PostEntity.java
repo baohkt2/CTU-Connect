@@ -154,8 +154,15 @@ public class PostEntity {
             this.likes = reactions.values().stream().mapToInt(Integer::intValue).sum();
         }
 
+
+
+
         public int getTotalReactions() {
             return reactions.values().stream().mapToInt(Integer::intValue).sum();
+        }
+
+        public void decrementShares() {
+            this.shares = Math.max(0, this.shares - 1);
         }
     }
     

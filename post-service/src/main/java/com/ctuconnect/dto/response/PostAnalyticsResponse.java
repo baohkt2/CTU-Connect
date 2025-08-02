@@ -20,13 +20,13 @@ public class PostAnalyticsResponse {
     private long shares;
     private double engagementRate;
     private Map<InteractionEntity.ReactionType, Integer> reactions;
-
+    
     // Additional analytics data
     private long totalEngagements;
     private double clickThroughRate;
     private Map<String, Integer> demographicBreakdown;
     private Map<String, Integer> timeBasedEngagement;
-
+    
     public long getTotalEngagements() {
         return likes + comments + shares;
     }

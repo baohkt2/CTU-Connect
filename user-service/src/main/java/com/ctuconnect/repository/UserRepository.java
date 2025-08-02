@@ -297,23 +297,32 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
   * Find users by faculty ID (for post-service news feed algorithm)
   */
  @Query("MATCH (u:User)-[:WORKS_IN|BELONGS_TO]->(f:Faculty {id: $facultyId}) RETURN u")
- List<UserEntity> findUsersByFaculty(@Param("facultyId") String facultyId);
+ List<UserEntity> findUsersByFacultyId(@Param("facultyId") String facultyId);
 
  /**
   * Find users by major ID (for post-service news feed algorithm)
   */
  @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {id: $majorId}) RETURN u")
- List<UserEntity> findUsersByMajor(@Param("majorId") String majorId);
+ List<UserEntity> findUsersByMajorId(@Param("majorId") String majorId);
 
  /**
   * Find users by full name containing (for search functionality)
   * Uses case-insensitive search with Neo4j CONTAINS operator
   */
- @Query("MATCH (u:User) WHERE toLower(u.fullName) CONTAINS toLower($name) RETURN u")
- List<UserEntity> findByFullNameContainingIgnoreCase(@Param("name") String name);
+ @Query("MATCH (u:User) WHERE toLower(u.fullName) CONTAINS toLower($fullName) RETURN u")
+ List<UserEntity> findByFullNameContainingIgnoreCase(@Param("fullName") String fullName);
+
+ /**
+  * Find users by faculty name (for search functionality)
+  */
+ @Query("MATCH (u:User)-[:BELONGS_TO|WORKS_IN]->(f:Faculty {name: $facultyName}) RETURN u")
+ List<UserEntity> findUsersByFaculty(@Param("facultyName") String facultyName);
+
+ /**
+  * Find users by major name (for search functionality)
+  */
+ @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $majorName}) RETURN u")
+ List<UserEntity> findUsersByMajor(@Param("majorName") String majorName);
 
 
- List<UserEntity> findByFacultyId(String facultyId);
-
- List<UserEntity> findByMajorId(String majorId);
 }

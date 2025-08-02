@@ -93,21 +93,21 @@ public class PostService {
 
     public Page<PostResponse> getAllPosts(Pageable pageable) {
         Page<PostEntity> posts = postRepository.findAll(pageable);
-
+        
         // Recalculate stats for each post before returning
         posts.forEach(this::recalculatePostStats);
         postRepository.saveAll(posts.getContent());
-
+        
         return posts.map(PostResponse::new);
     }
 
     public Page<PostResponse> getPostsByAuthor(String authorId, Pageable pageable) {
         Page<PostEntity> posts = postRepository.findByAuthor_Id(authorId, pageable);
-
+        
         // Recalculate stats for each post before returning
         posts.forEach(this::recalculatePostStats);
         postRepository.saveAll(posts.getContent());
-
+        
         return posts.map(PostResponse::new);
     }
 
@@ -134,7 +134,7 @@ public class PostService {
             // Recalculate stats from database before returning
             recalculatePostStats(post);
             postRepository.save(post);
-
+            
             return new PostResponse(post);
         }
         throw new RuntimeException("Post not found with id: " + id);
@@ -149,15 +149,15 @@ public class PostService {
         long likeCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.LIKE);
         long bookmarkCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.BOOKMARK);
         long shareCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.SHARE);
-
+        
         // Count comments
         long commentCount = commentRepository.countByPostId(post.getId());
-
+        
         // Update post stats
         post.getStats().setLikes(likeCount);
-        post.getStats().setComments(commentCount);
+        post.getStats().setComments(commentCount); 
         post.getStats().setShares(shareCount);
-
+        
         // Update reactions map for LIKE type
         post.getStats().getReactions().put(InteractionEntity.ReactionType.LIKE, (int) likeCount);
     }

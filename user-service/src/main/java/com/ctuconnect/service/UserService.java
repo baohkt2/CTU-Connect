@@ -31,9 +31,6 @@ public class UserService {
     private UserEventPublisher userEventPublisher;
 
     @Autowired
-    private MajorRepository majorRepository;
-
-    @Autowired
     private FacultyRepository facultyRepository;
 
     @Autowired
@@ -53,6 +50,9 @@ public class UserService {
 
     @Autowired
     private CollegeRepository collegeRepository;
+
+    @Autowired
+    private MajorRepository majorRepository;
     /**
      * Create a new user
      */
@@ -357,7 +357,7 @@ public class UserService {
         // Kiểm tra xem có friend request ngược lại không (để auto-accept)
         if (userRepository.hasPendingFriendRequest(friendId, userId)) {
             // Tự động chấp nhận nếu đã có request ngược lại
-            userRepository.acceptFriendRequest(friendId, userId);
+        // Kiểm tra xem có friend request ngược lại không (để auto-accept)
 
             // Publish friend accepted event
             userEventPublisher.publishUserRelationshipChangedEvent(

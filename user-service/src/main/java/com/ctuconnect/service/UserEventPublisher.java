@@ -54,4 +54,48 @@ public class UserEventPublisher {
             log.error("Failed to publish user relationship changed event for user: {}", userId, e);
         }
     }
+
+    /**
+     * Enhanced method for post-service synchronization
+     * Publishes comprehensive user profile data including fullName and role
+     */
+    public void publishUserProfileUpdatedEventForPostService(String userId, String fullName, String email,
+                                                            String username, String avatarUrl, String role) {
+        try {
+            Map<String, Object> event = new HashMap<>();
+            event.put("userId", userId);
+            event.put("fullName", fullName);
+            event.put("email", email);
+            event.put("username", username);
+            event.put("avatarUrl", avatarUrl);
+            event.put("role", role);
+            event.put("eventType", "USER_PROFILE_UPDATED");
+            event.put("timestamp", System.currentTimeMillis());
+
+            kafkaTemplate.send("user-profile-updated", userId, event);
+            log.info("Published user profile updated event for post-service sync: {}", userId);
+
+        } catch (Exception e) {
+            log.error("Failed to publish user profile updated event for post-service sync: {}", userId, e);
+        }
+    }
+
+    /**
+     * Generic method to publish profile updates with flexible user data
+     */
+    public void publishUserProfileUpdatedEvent(String userId, Map<String, Object> userData) {
+        try {
+            Map<String, Object> event = new HashMap<>();
+            event.put("userId", userId);
+            event.put("userData", userData);
+            event.put("eventType", "USER_PROFILE_UPDATED");
+            event.put("timestamp", System.currentTimeMillis());
+
+            kafkaTemplate.send("user-profile-updated", userId, event);
+            log.info("Published user profile updated event with custom data for user: {}", userId);
+
+        } catch (Exception e) {
+            log.error("Failed to publish user profile updated event with custom data for user: {}", userId, e);
+        }
+    }
 }

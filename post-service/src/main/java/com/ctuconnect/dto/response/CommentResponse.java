@@ -2,13 +2,14 @@ package com.ctuconnect.dto.response;
 
 import com.ctuconnect.dto.AuthorInfo;
 import com.ctuconnect.entity.CommentEntity;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+
 public class CommentResponse {
 
     // Getters and Setters

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Post, CreateCommentRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
@@ -40,6 +40,23 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingInteraction, setIsLoadingInteraction] = useState(false);
+
+  // Load interaction status on component mount to fix state persistence
+  useEffect(() => {
+    const loadInteractionStatus = async () => {
+      try {
+        const status = await postService.getInteractionStatus(post.id);
+        setIsLiked(status.hasLiked);
+        setIsBookmarked(status.hasBookmarked);
+      } catch (error) {
+        // Silently fail - user might not be authenticated
+        // This prevents errors when viewing posts without login
+        console.debug('Could not load interaction status:', error);
+      }
+    };
+
+    loadInteractionStatus();
+  }, [post.id]);
 
   const handleShowComments = async () => {
     if (!showComments && comments.length === 0) {

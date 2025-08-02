@@ -125,7 +125,7 @@ public class SocialGraphService {
         try {
             // Get users from same faculty
             if (user.getFacultyId() != null) {
-                List<UserEntity> sameFacultyUsers = userRepository.findByFacultyId(user.getFacultyId());
+                List<UserEntity> sameFacultyUsers = userRepository.findUsersByFacultyId(user.getFacultyId());
                 suggestions.addAll(sameFacultyUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)
@@ -143,7 +143,7 @@ public class SocialGraphService {
 
             // Get users from same major
             if (user.getMajorId() != null) {
-                List<UserEntity> sameMajorUsers = userRepository.findByMajorId(user.getMajorId());
+                List<UserEntity> sameMajorUsers = userRepository.findUsersByMajorId(user.getMajorId());
                 suggestions.addAll(sameMajorUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)

@@ -47,7 +47,7 @@ public class FeignConfig {
      * Custom error decoder to handle service communication errors gracefully
      */
     public static class CustomFeignErrorDecoder implements ErrorDecoder {
-
+        
         @Override
         public Exception decode(String methodKey, feign.Response response) {
             switch (response.status()) {

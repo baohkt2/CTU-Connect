@@ -1,5 +1,7 @@
 package com.ctuconnect.controller;
 
+import com.ctuconnect.client.UserServiceClient;
+import com.ctuconnect.dto.AuthorInfo;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import com.ctuconnect.service.InteractionService;
 import com.ctuconnect.service.PostService;
 import com.ctuconnect.service.NewsFeedService;
 import com.ctuconnect.service.NotificationService;
+import com.ctuconnect.service.UserSyncService;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +51,11 @@ public class PostController {
 
     @Autowired(required = false)
     private NotificationService notificationService;
+
+    @Autowired
+    private UserSyncService userSyncService;
+    @Autowired
+    private UserServiceClient userServiceClient;
 
     // ========== ENHANCED ENDPOINTS (Primary) ==========
 
@@ -503,98 +511,118 @@ public class PostController {
         return ResponseEntity.ok(hasLiked);
     }
 
-    // ========== ANALYTICS & ADVANCED FEATURES ==========
+    // ========== INTERACTION STATUS ENDPOINTS ==========
 
     /**
-     * Get post analytics (for post author)
+     * Check if user has liked a post
+     * This endpoint helps frontend maintain like state after page refresh
      */
-    @GetMapping("/{postId}/analytics")
+    @GetMapping("/{postId}/interactions/like/status")
     @RequireAuth
-    public ResponseEntity<?> getPostAnalytics(@PathVariable String postId) {
+    public ResponseEntity<?> checkLikeStatus(@PathVariable String postId) {
         try {
-            String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            PostAnalyticsResponse analytics = postService.getPostAnalytics(postId, userId);
-            return ResponseEntity.ok(analytics);
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            boolean hasLiked = interactionService.hasUserLikedPost(postId, currentUserId);
+            return ResponseEntity.ok(Map.of(
+                "postId", postId,
+                "hasLiked", hasLiked,
+                "userId", currentUserId
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to get analytics", "message", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to check like status"));
         }
     }
 
     /**
-     * Schedule post for later publishing
+     * Check if user has bookmarked a post
+     * This endpoint helps frontend maintain bookmark state after page refresh
      */
-    @PostMapping("/schedule")
+    @GetMapping("/{postId}/interactions/bookmark/status")
     @RequireAuth
-    public ResponseEntity<?> schedulePost(@Valid @RequestBody ScheduledPostRequest request) {
+    public ResponseEntity<?> checkBookmarkStatus(@PathVariable String postId) {
         try {
-            String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            AuthenticatedUser user = new AuthenticatedUser(userId, null, null);
-            PostResponse scheduledPost = postService.schedulePost(request, user);
-            return ResponseEntity.ok(scheduledPost);
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            boolean hasBookmarked = interactionService.hasUserBookmarkedPost(postId, currentUserId);
+            return ResponseEntity.ok(Map.of(
+                "postId", postId,
+                "hasBookmarked", hasBookmarked,
+                "userId", currentUserId
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to schedule post", "message", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to check bookmark status"));
         }
     }
 
     /**
-     * Search posts with advanced filters
+     * Get all user interactions for a post
+     * This endpoint provides complete interaction state for frontend
      */
-    @GetMapping("/search")
-    public ResponseEntity<?> searchPosts(
-            @RequestParam String query,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String faculty,
-            @RequestParam(required = false) String dateRange,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
+    @GetMapping("/{postId}/interactions/status")
+    @RequireAuth
+    public ResponseEntity<?> getUserInteractionStatus(@PathVariable String postId) {
         try {
-            // Try enhanced search first
-            try {
-                List<PostResponse> results = postService.searchPosts(
-                    query, category, faculty, dateRange, PageRequest.of(page, size));
-                return ResponseEntity.ok(results);
-            } catch (Exception e) {
-                // Fallback to simple search
-                Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-                Page<PostResponse> results = postService.searchPosts(query, pageable);
-                return ResponseEntity.ok(results.getContent());
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            boolean hasLiked = interactionService.hasUserLikedPost(postId, currentUserId);
+            boolean hasBookmarked = interactionService.hasUserBookmarkedPost(postId, currentUserId);
+
+            return ResponseEntity.ok(Map.of(
+                "postId", postId,
+                "userId", currentUserId,
+                "hasLiked", hasLiked,
+                "hasBookmarked", hasBookmarked,
+                "interactions", Map.of(
+                    "LIKE", hasLiked,
+                    "BOOKMARK", hasBookmarked
+                )
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to get interaction status"));
+        }
+    }
+
+    // ========== USER PROFILE SYNCHRONIZATION ENDPOINTS ==========
+
+    /**
+     * Manual user profile synchronization endpoint
+     * This endpoint allows manual synchronization of user profile data across post-service
+     */
+    @PostMapping("/admin/sync-user-profile/{userId}")
+    @RequireAuth(roles = {"ADMIN"})
+    public ResponseEntity<?> syncUserProfile(@PathVariable String userId) {
+        try {
+            // Get updated user info from user-service
+            AuthorInfo updatedAuthor = userServiceClient.getAuthorInfo(userId);
+            if (updatedAuthor == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "User not found", "userId", userId));
             }
+
+            // Perform manual sync
+            userSyncService.manualSyncUserProfile(userId, updatedAuthor);
+
+            return ResponseEntity.ok(Map.of(
+                "message", "User profile synchronized successfully",
+                "userId", userId,
+                "updatedAuthor", updatedAuthor
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Admin access required"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to search posts", "message", e.getMessage()));
-        }
-    }
-
-    // ========== ADDITIONAL ENDPOINTS ==========
-
-    /**
-     * Get top viewed posts
-     */
-    @GetMapping("/top-viewed")
-    public ResponseEntity<?> getTopViewedPosts() {
-        try {
-            List<PostResponse> posts = postService.getTopViewedPosts();
-            return ResponseEntity.ok(posts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to retrieve top viewed posts", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get top liked posts
-     */
-    @GetMapping("/top-liked")
-    public ResponseEntity<?> getTopLikedPosts() {
-        try {
-            List<PostResponse> posts = postService.getTopLikedPosts();
-            return ResponseEntity.ok(posts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to retrieve top liked posts", "message", e.getMessage()));
+                    .body(Map.of("error", "Failed to sync user profile", "message", e.getMessage()));
         }
     }
 

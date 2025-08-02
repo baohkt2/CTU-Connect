@@ -33,4 +33,8 @@ public interface CommentRepository extends MongoRepository<CommentEntity, String
     // Add method that AdminController is calling (without underscore)
     @Query(value = "{ 'author.id': ?0 }", count = true)
     long countByAuthorId(String authorId);
+
+    // Method for user profile synchronization - find all comments by author ID
+    @Query("{ 'author.id': ?0 }")
+    List<CommentEntity> findByAuthor_Id(String authorId);
 }

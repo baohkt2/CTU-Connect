@@ -13,6 +13,7 @@ import com.ctuconnect.repository.PostRepository;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class InteractionService {
@@ -29,103 +30,123 @@ public class InteractionService {
     @Autowired
     private EventService eventService;
 
+    /**
+     * Create or toggle interaction (like/bookmark)
+     * Fixed to properly handle state persistence and prevent duplicates
+     */
     public InteractionResponse createInteraction(String postId, InteractionRequest request, String authorId) {
         AuthorInfo author = userServiceClient.getAuthorInfo(authorId);
+        if (author == null) {
+            throw new RuntimeException("Author not found with id: " + authorId);
+        }
+
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
         // Check if user already has this type of interaction with the post
         Optional<InteractionEntity> existingInteraction = interactionRepository
-                .findByPostIdAndUserIdAndType(postId, authorId, request.getReaction());
+                .findByPostIdAndAuthor_IdAndType(postId, authorId, request.getReaction());
 
         if (existingInteraction.isPresent()) {
             // User already has this interaction - remove it (toggle off)
             interactionRepository.delete(existingInteraction.get());
 
             // Update post stats
-            if (request.getReaction() == InteractionEntity.InteractionType.LIKE) {
-                post.getStats().decrementReaction(InteractionEntity.ReactionType.LIKE);
-            } else if (request.getReaction() == InteractionEntity.InteractionType.BOOKMARK) {
-                // Handle bookmark decrement if needed
-            }
-
+            updatePostStatsOnRemove(post, request.getReaction());
             postRepository.save(post);
+
             eventService.publishInteractionEvent(postId, authorId, "UN-" + request.getReaction().toString());
-            return null; // Interaction removed
+            return new InteractionResponse(false, "Interaction removed"); // Interaction removed
         } else {
             // Create new interaction
             InteractionEntity interaction = new InteractionEntity(postId, author, request.getReaction());
-            interaction.setMetadata(request.getMetadata());
+            if (request.getMetadata() != null) {
+                interaction.setMetadata(request.getMetadata());
+            }
             InteractionEntity saved = interactionRepository.save(interaction);
 
             // Update post stats
-            if (request.getReaction() == InteractionEntity.InteractionType.LIKE) {
-                post.getStats().incrementReaction(InteractionEntity.ReactionType.LIKE);
-            } else if (request.getReaction() == InteractionEntity.InteractionType.BOOKMARK) {
-                // Handle bookmark increment if needed
-            }
-
+            updatePostStatsOnAdd(post, request.getReaction());
             postRepository.save(post);
+
             eventService.publishInteractionEvent(postId, authorId, request.getReaction().toString());
             return new InteractionResponse(saved);
         }
     }
 
-    private InteractionResponse handleReaction(PostEntity post, AuthorInfo author, InteractionRequest request) {
-        InteractionEntity.InteractionType newReaction = request.getReaction();
+    /**
+     * Get user's interaction status for a post
+     * This method helps frontend determine current interaction state
+     */
+    public InteractionResponse getUserInteractionStatus(String postId, String userId) {
+        List<InteractionEntity> userInteractions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
 
-        Optional<InteractionEntity> existing = interactionRepository.findByPostIdAndAuthorAndType(
-                post.getId(), author, InteractionEntity.InteractionType.LIKE);
+        if (userInteractions.isEmpty()) {
+            return new InteractionResponse(false, "No interactions found");
+        }
 
-        if (existing.isPresent()) {
-            InteractionEntity current = existing.get();
-            InteractionEntity.InteractionType oldReaction = new InteractionEntity().getType();
+        // Return the first interaction (in case of multiple, though there shouldn't be)
+        return new InteractionResponse(userInteractions.get(0));
+    }
 
+    /**
+     * Check if user has liked a specific post
+     */
+    public boolean hasUserLikedPost(String postId, String userId) {
+        return interactionRepository.findByPostIdAndAuthor_IdAndType(
+            postId, userId, InteractionEntity.InteractionType.LIKE).isPresent();
+    }
 
-            if (oldReaction == newReaction) {
-                interactionRepository.delete(current);
-                post.getStats().decrementReaction(oldReaction.getReactionType());
-                postRepository.save(post);
+    /**
+     * Check if user has bookmarked a specific post
+     */
+    public boolean hasUserBookmarkedPost(String postId, String userId) {
+        return interactionRepository.findByPostIdAndAuthor_IdAndType(
+            postId, userId, InteractionEntity.InteractionType.BOOKMARK).isPresent();
+    }
 
-                eventService.publishInteractionEvent(post.getId(), author.getId(), "UN-" + newReaction.name());
-                return null;
-            } else {
-                current.setReaction(newReaction);
-                InteractionEntity saved = interactionRepository.save(current);
+    private void updatePostStatsOnAdd(PostEntity post, InteractionEntity.InteractionType type) {
+        switch (type) {
+            case LIKE:
 
-                post.getStats().decrementReaction(oldReaction.getReactionType());
-                post.getStats().incrementReaction(newReaction.getReactionType());
-                postRepository.save(post);
-
-                eventService.publishInteractionEvent(post.getId(), author.getId(), newReaction.name());
-                return new InteractionResponse(saved);
-            }
-        } else {
-            InteractionEntity newInteraction = new InteractionEntity(post.getId(), author, InteractionEntity.InteractionType.LIKE);
-            newInteraction.setReaction(newReaction);
-            newInteraction.setMetadata(request.getMetadata());
-            InteractionEntity saved = interactionRepository.save(newInteraction);
-
-            post.getStats().incrementReaction(newReaction.getReactionType());
-            postRepository.save(post);
-
-            eventService.publishInteractionEvent(post.getId(), author.getId(), newReaction.name());
-            return new InteractionResponse(saved);
+                post.getStats().incrementReaction(InteractionEntity.ReactionType.LIKE);
+                break;
+            case BOOKMARK:
+                // Handle bookmark stats if needed
+                break;
+            case SHARE:
+                post.getStats().incrementShares();
+                break;
+            default:
+                break;
         }
     }
 
-    private void updatePostStats(PostEntity post, InteractionEntity.InteractionType type) {
-        if (Objects.requireNonNull(type) == InteractionEntity.InteractionType.SHARE) {
-            post.getStats().incrementShares();
-        }
-    }
+    private void updatePostStatsOnRemove(PostEntity post, InteractionEntity.InteractionType type) {
+        switch (type) {
+            case LIKE:
 
-    public boolean hasUserReacted(String postId, String userId) {
-        return interactionRepository.findByPostIdAndUserIdAndType(
-                postId, userId, InteractionEntity.InteractionType.LIKE).isPresent();
+                post.getStats().decrementReaction(InteractionEntity.ReactionType.LIKE);
+                break;
+            case BOOKMARK:
+                // Handle bookmark stats if needed
+                break;
+            case SHARE:
+                post.getStats().decrementShares();
+                break;
+            default:
+                break;
+        }
     }
 
     public long getInteractionCount(String postId, InteractionEntity.InteractionType type) {
         return interactionRepository.countByPostIdAndType(postId, type);
+    }
+
+    /**
+     * Check if user has reacted to a post (for legacy compatibility)
+     */
+    public boolean hasUserReacted(String postId, String userId) {
+        return hasUserLikedPost(postId, userId);
     }
 }

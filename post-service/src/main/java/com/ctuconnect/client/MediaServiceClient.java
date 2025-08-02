@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ctuconnect.config.FeignConfig;
 
 @FeignClient(
-    name = "media-service",
-    url = "${media-service.url}",
+    name = "media-service", 
+    url = "${media-service.url}", 
     configuration = FeignConfig.class
 )
 public interface MediaServiceClient {

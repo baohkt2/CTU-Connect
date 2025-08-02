@@ -113,9 +113,9 @@ public class AdminController {
         Map<String, Long> stats = new HashMap<>();
         stats.put("totalPosts", postRepository.countByAuthorId(userId));
         stats.put("totalComments", commentRepository.countByAuthorId(userId));
-        stats.put("totalLikes", interactionRepository.countByUserIdAndType(userId,
+        stats.put("totalLikes", interactionRepository.countByAuthor_IdAndType(userId,
                 InteractionEntity.InteractionType.LIKE));
-        stats.put("totalBookmarks", interactionRepository.countByUserIdAndType(userId,
+        stats.put("totalBookmarks", interactionRepository.countByAuthor_IdAndType(userId,
                 InteractionEntity.InteractionType.BOOKMARK));
 
         return ResponseEntity.ok(stats);
