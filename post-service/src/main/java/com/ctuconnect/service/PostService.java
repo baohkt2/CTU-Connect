@@ -92,13 +92,23 @@ public class PostService {
     }
 
     public Page<PostResponse> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable)
-                .map(PostResponse::new);
+        Page<PostEntity> posts = postRepository.findAll(pageable);
+
+        // Recalculate stats for each post before returning
+        posts.forEach(this::recalculatePostStats);
+        postRepository.saveAll(posts.getContent());
+
+        return posts.map(PostResponse::new);
     }
 
     public Page<PostResponse> getPostsByAuthor(String authorId, Pageable pageable) {
-        return postRepository.findByAuthor_Id(authorId, pageable)
-                .map(PostResponse::new);
+        Page<PostEntity> posts = postRepository.findByAuthor_Id(authorId, pageable);
+
+        // Recalculate stats for each post before returning
+        posts.forEach(this::recalculatePostStats);
+        postRepository.saveAll(posts.getContent());
+
+        return posts.map(PostResponse::new);
     }
 
     public Page<PostResponse> getPostsByCategory(String category, Pageable pageable) {
@@ -121,9 +131,35 @@ public class PostService {
                 recordViewInteraction(post.getId(), currentUserId);
             }
 
+            // Recalculate stats from database before returning
+            recalculatePostStats(post);
+            postRepository.save(post);
+
             return new PostResponse(post);
         }
         throw new RuntimeException("Post not found with id: " + id);
+    }
+
+    /**
+     * Recalculate post stats from actual interactions in database
+     * This fixes the issue where stats show 0 even when interactions exist
+     */
+    private void recalculatePostStats(PostEntity post) {
+        // Count actual likes from interactions
+        long likeCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.LIKE);
+        long bookmarkCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.BOOKMARK);
+        long shareCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionEntity.InteractionType.SHARE);
+
+        // Count comments
+        long commentCount = commentRepository.countByPostId(post.getId());
+
+        // Update post stats
+        post.getStats().setLikes(likeCount);
+        post.getStats().setComments(commentCount);
+        post.getStats().setShares(shareCount);
+
+        // Update reactions map for LIKE type
+        post.getStats().getReactions().put(InteractionEntity.ReactionType.LIKE, (int) likeCount);
     }
 
     public PostResponse updatePost(String id, PostRequest request, String authorId) {

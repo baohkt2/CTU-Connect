@@ -3,8 +3,17 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
+      <Grants>1||-9223372036854775808|c|G
+1||10|c|G
+1||10|C|G
+1||10|T|G
+4||-9223372036854775808|c|G
+4||10|c|G
+4||10|C|G
+4||10|T|G</Grants>
+      <IntrospectionStateNumber>743</IntrospectionStateNumber>
       <ServerVersion>15.13</ServerVersion>
-      <StartupTime>1753726797</StartupTime>
+      <StartupTime>1754153572</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -801,6 +810,7 @@ true posixrules
 13270||10|C|G
 13270||-9223372036854775808|U|G
 13270||10|U|G</Grants>
+      <IntrospectionStateNumber>743</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -809,14 +819,14 @@ true posixrules
       <ObjectId>5</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
-    <role id="4" parent="1" name="pg_database_owner">
+    <role id="4" parent="1" name="pg_checkpoint">
+      <ObjectId>4544</ObjectId>
+    </role>
+    <role id="5" parent="1" name="pg_database_owner">
       <ObjectId>6171</ObjectId>
     </role>
-    <role id="5" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
-    </role>
-    <role id="6" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
+    <role id="6" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
     </role>
     <role id="7" parent="1" name="pg_monitor">
       <ObjectId>3373</ObjectId>
@@ -824,29 +834,29 @@ true posixrules
 3375
 3377</RoleGrants>
     </role>
-    <role id="8" parent="1" name="pg_read_all_settings">
+    <role id="8" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
+    </role>
+    <role id="9" parent="1" name="pg_read_all_settings">
       <ObjectId>3374</ObjectId>
     </role>
-    <role id="9" parent="1" name="pg_read_all_stats">
+    <role id="10" parent="1" name="pg_read_all_stats">
       <ObjectId>3375</ObjectId>
-    </role>
-    <role id="10" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
     </role>
     <role id="11" parent="1" name="pg_read_server_files">
       <ObjectId>4569</ObjectId>
     </role>
-    <role id="12" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
-    </role>
-    <role id="13" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
-    </role>
-    <role id="14" parent="1" name="pg_signal_backend">
+    <role id="12" parent="1" name="pg_signal_backend">
       <ObjectId>4200</ObjectId>
     </role>
-    <role id="15" parent="1" name="pg_checkpoint">
-      <ObjectId>4544</ObjectId>
+    <role id="13" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
+    </role>
+    <role id="14" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
+    </role>
+    <role id="15" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
     </role>
     <role id="16" parent="1" name="postgres">
       <BypassRls>1</BypassRls>
@@ -4218,18 +4228,121 @@ true posixrules
     <schema id="262" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2025-07-27.03:11:59</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>743</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-08-02.17:05:21</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>518</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
-    <sequence id="263" parent="262" name="media_id_seq">
-      <ObjectId>16398</ObjectId>
-      <SequenceIdentity>1</SequenceIdentity>
-      <StartValue>1</StartValue>
-      <StateNumber>749</StateNumber>
-      <StoredType>bigint|0s</StoredType>
+    <table id="263" parent="262" name="media">
+      <ObjectId>16385</ObjectId>
+      <StateNumber>726</StateNumber>
+      <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
-    </sequence>
+    </table>
+    <check id="264" parent="263" name="media_media_type_check">
+      <ColNames>media_type</ColNames>
+      <ObjectId>16388</ObjectId>
+      <Predicate>(media_type)::text = ANY ((ARRAY[&apos;IMAGE&apos;::character varying, &apos;VIDEO&apos;::character varying, &apos;AUDIO&apos;::character varying, &apos;DOCUMENT&apos;::character varying])::text[])</Predicate>
+      <StateNumber>726</StateNumber>
+    </check>
+    <column id="265" parent="263" name="id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>uuid|0s</StoredType>
+      <TypeId>2950</TypeId>
+    </column>
+    <column id="266" parent="263" name="cloudinary_public_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(512)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="267" parent="263" name="cloudinary_url">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(512)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="268" parent="263" name="content_type">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="269" parent="263" name="created_at">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="270" parent="263" name="description">
+      <Position>6</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(1024)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="271" parent="263" name="file_name">
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="272" parent="263" name="file_size">
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>bigint|0s</StoredType>
+      <TypeId>20</TypeId>
+    </column>
+    <column id="273" parent="263" name="media_type">
+      <NotNull>1</NotNull>
+      <Position>9</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="274" parent="263" name="original_file_name">
+      <NotNull>1</NotNull>
+      <Position>10</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="275" parent="263" name="updated_at">
+      <Position>11</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <column id="276" parent="263" name="uploaded_by">
+      <NotNull>1</NotNull>
+      <Position>12</Position>
+      <StateNumber>726</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <index id="277" parent="263" name="media_pkey">
+      <ColNames>id</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>16391</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>726</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <key id="278" parent="263" name="media_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>16392</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>726</StateNumber>
+      <UnderlyingIndexId>16391</UnderlyingIndexId>
+    </key>
   </database-model>
 </dataSource>

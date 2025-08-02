@@ -16,9 +16,4 @@ public class AuthorDTO {
     private String fullName; // Added for consistency
     private String avatarUrl; // Added for consistency
     private String role; // Added for consistency
-
-    public AuthorDTO(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

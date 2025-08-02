@@ -373,23 +373,23 @@ export const PostCard: React.FC<PostCardProps> = ({
             ) : (
               <div className="space-y-4">
                 {comments.map((comment) => (
-                  <div key={comment.id} className="flex space-x-3">
+                  <div key={comment.author.id} className="flex space-x-3">
                     <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0">
-                      {comment.authorAvatar ? (
+                      {comment.author.avatar ? (
                         <img
-                          src={comment.authorAvatar}
-                          alt={comment.authorName}
+                          src={comment.author.avatar}
+                          alt={comment.author.name}
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
                         <span className="text-xs font-medium text-gray-600 flex items-center justify-center w-full h-full">
-                          {(comment.authorName || 'A').charAt(0).toUpperCase()}
+                          {(comment.author.name || 'A').charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
                     <div className="flex-1">
                       <div className="bg-gray-100 rounded-lg px-3 py-2">
-                        <p className="font-semibold text-sm">{comment.authorName || 'Anonymous'}</p>
+                        <p className="font-semibold text-sm">{comment.author.name || 'Anonymous'}</p>
                         <p className="text-gray-900">{comment.content}</p>
                       </div>
                       <p className="text-xs text-gray-500 mt-1">

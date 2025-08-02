@@ -9,6 +9,7 @@ export const userService = {
   },
 
   async updateProfile(userData: Partial<User>): Promise<User> {
+    console.log('Updating user profile with data:', userData);
     const response = await api.put('/users/profile', userData);
     return response.data;
   },

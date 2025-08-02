@@ -34,15 +34,41 @@ public class InteractionService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
-        InteractionEntity interaction = new InteractionEntity(postId, author, request.getReaction());
-        interaction.setMetadata(request.getMetadata());
-        InteractionEntity saved = interactionRepository.save(interaction);
+        // Check if user already has this type of interaction with the post
+        Optional<InteractionEntity> existingInteraction = interactionRepository
+                .findByPostIdAndUserIdAndType(postId, authorId, request.getReaction());
 
-        updatePostStats(post, request.getReaction());
-        postRepository.save(post);
+        if (existingInteraction.isPresent()) {
+            // User already has this interaction - remove it (toggle off)
+            interactionRepository.delete(existingInteraction.get());
 
-        eventService.publishInteractionEvent(postId, authorId, request.getReaction().toString());
-        return new InteractionResponse(saved);
+            // Update post stats
+            if (request.getReaction() == InteractionEntity.InteractionType.LIKE) {
+                post.getStats().decrementReaction(InteractionEntity.ReactionType.LIKE);
+            } else if (request.getReaction() == InteractionEntity.InteractionType.BOOKMARK) {
+                // Handle bookmark decrement if needed
+            }
+
+            postRepository.save(post);
+            eventService.publishInteractionEvent(postId, authorId, "UN-" + request.getReaction().toString());
+            return null; // Interaction removed
+        } else {
+            // Create new interaction
+            InteractionEntity interaction = new InteractionEntity(postId, author, request.getReaction());
+            interaction.setMetadata(request.getMetadata());
+            InteractionEntity saved = interactionRepository.save(interaction);
+
+            // Update post stats
+            if (request.getReaction() == InteractionEntity.InteractionType.LIKE) {
+                post.getStats().incrementReaction(InteractionEntity.ReactionType.LIKE);
+            } else if (request.getReaction() == InteractionEntity.InteractionType.BOOKMARK) {
+                // Handle bookmark increment if needed
+            }
+
+            postRepository.save(post);
+            eventService.publishInteractionEvent(postId, authorId, request.getReaction().toString());
+            return new InteractionResponse(saved);
+        }
     }
 
     private InteractionResponse handleReaction(PostEntity post, AuthorInfo author, InteractionRequest request) {

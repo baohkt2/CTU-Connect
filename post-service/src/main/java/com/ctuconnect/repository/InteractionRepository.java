@@ -45,7 +45,13 @@ public interface InteractionRepository extends MongoRepository<InteractionEntity
     @Query("{ 'postId': ?0, 'author.id': ?1 }")
     List<InteractionEntity> findByPostIdAndAuthor_Id(String postId, String authorId);
 
-    Optional<Object> findByPostIdAndUserIdAndType(String postId, String userId, InteractionEntity.InteractionType interactionType);
+    // Find existing interaction by postId and userId (using author.id field)
+    @Query("{ 'postId': ?0, 'author.id': ?1, 'type': ?2 }")
+    Optional<InteractionEntity> findByPostIdAndUserIdAndType(String postId, String userId, InteractionEntity.InteractionType type);
+
+    // Check if user has any interaction with post
+    @Query("{ 'postId': ?0, 'author.id': ?1 }")
+    Optional<InteractionEntity> findByPostIdAndUserId(String postId, String userId);
 
     // Add method that AdminController is calling (using userId instead of authorId)
     @Query(value = "{ 'author.id': ?0, 'type': ?1 }", count = true)
