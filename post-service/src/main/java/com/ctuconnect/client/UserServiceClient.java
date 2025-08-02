@@ -4,10 +4,15 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.ctuconnect.dto.AuthorInfo;
+import com.ctuconnect.config.FeignConfig;
 
 import java.util.Set;
 
-@FeignClient(name = "user-service", url = "${user-service.url:http://localhost:8080}")
+@FeignClient(
+    name = "user-service",
+    url = "${user-service.url}",
+    configuration = FeignConfig.class
+)
 public interface UserServiceClient {
     @GetMapping("/api/users/sync/authors/{id}")
     AuthorInfo getAuthorInfo(@PathVariable("id") String authorId);

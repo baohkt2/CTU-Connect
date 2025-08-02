@@ -1002,78 +1002,131 @@ public class UserService {
     }
 
     /**
-     * Get users from same faculty
+     * Get users from same faculty (for post-service news feed algorithm)
      */
     public Set<String> getSameFacultyUserIds(String userId) {
         Optional<UserEntity> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent() && userOpt.get().getFacultyId() != null) {
-            String facultyId = userOpt.get().getFacultyId();
-            return userRepository.findByFacultyId(facultyId)
-                    .stream()
-                    .map(UserEntity::getId)
-                    .filter(id -> !id.equals(userId))
-                    .collect(Collectors.toSet());
+        if (userOpt.isEmpty()) {
+            return new HashSet<>();
         }
-        return new HashSet<>();
+
+        UserEntity user = userOpt.get();
+        if (user.getFaculty() == null) {
+            return new HashSet<>();
+        }
+
+        // Find all users in the same faculty
+        List<UserEntity> sameFacultyUsers = userRepository.findUsersByFaculty(user.getFaculty().getId());
+        return sameFacultyUsers.stream()
+                .map(UserEntity::getId)
+                .filter(id -> !id.equals(userId)) // Exclude self
+                .collect(Collectors.toSet());
     }
 
     /**
-     * Get users from same major
+     * Get users from same major (for post-service news feed algorithm)
      */
     public Set<String> getSameMajorUserIds(String userId) {
         Optional<UserEntity> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent() && userOpt.get().getMajorId() != null) {
-            String majorId = userOpt.get().getMajorId();
-            return userRepository.findByMajorId(majorId)
-                    .stream()
-                    .map(UserEntity::getId)
-                    .filter(id -> !id.equals(userId))
-                    .collect(Collectors.toSet());
+        if (userOpt.isEmpty()) {
+            return new HashSet<>();
         }
-        return new HashSet<>();
+
+        UserEntity user = userOpt.get();
+        if (user.getMajor() == null) {
+            return new HashSet<>();
+        }
+
+        // Find all users in the same major
+        List<UserEntity> sameMajorUsers = userRepository.findUsersByMajor(user.getMajor().getId());
+        return sameMajorUsers.stream()
+                .map(UserEntity::getId)
+                .filter(id -> !id.equals(userId)) // Exclude self
+                .collect(Collectors.toSet());
     }
 
     /**
-     * Get user's interest tags (derived from posts, interactions, etc.)
+     * Get user interest tags (for post-service content recommendation)
      */
     public Set<String> getUserInterestTags(String userId) {
-        // This would typically analyze user's post tags, liked posts, etc.
-        // For now, returning mock data
-        return Set.of("technology", "education", "research", "academic");
+        Optional<UserEntity> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        UserEntity user = userOpt.get();
+        Set<String> interestTags = new HashSet<>();
+
+        // Add tags based on user's major and faculty
+        if (user.getMajor() != null) {
+            interestTags.add(user.getMajor().getName().toLowerCase());
+            interestTags.add(user.getMajor().getId().toLowerCase());
+        }
+
+        if (user.getFaculty() != null) {
+            interestTags.add(user.getFaculty().getName().toLowerCase());
+        }
+
+        // Add role-based tags
+        if (user.getRole() != null) {
+            interestTags.add(user.getRole().toString().toLowerCase());
+        }
+
+        return interestTags;
     }
 
     /**
-     * Get user's preferred categories
+     * Get user preferred categories (for post-service content filtering)
      */
     public Set<String> getUserPreferredCategories(String userId) {
-        // This would typically analyze user's post categories, interactions
-        // For now, returning mock data based on user role
         Optional<UserEntity> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent()) {
-            UserEntity user = userOpt.get();
-            if (user.getRole() == Role.STUDENT) {
-                return Set.of("Student Life", "Academic", "Events");
-            } else if (user.getRole() == Role.LECTURER) { // Fixed: Changed from Role.FACULTY to Role.LECTURER
-                return Set.of("Research", "Academic", "Publications");
-            }
+        if (userOpt.isEmpty()) {
+            return new HashSet<>();
         }
-        return Set.of("General", "News");
+
+        UserEntity user = userOpt.get();
+        Set<String> preferredCategories = new HashSet<>();
+
+        // Add categories based on user profile
+        if (user.isStudent()) {
+            preferredCategories.add("academic");
+            preferredCategories.add("student_life");
+            if (user.getMajor() != null) {
+                preferredCategories.add(user.getMajor().getName().toLowerCase().replace(" ", "_"));
+            }
+        } else if (user.isFaculty()) {
+            preferredCategories.add("academic");
+            preferredCategories.add("research");
+            preferredCategories.add("teaching");
+        }
+
+        // Add general categories
+        preferredCategories.add("general");
+        preferredCategories.add("announcements");
+
+        return preferredCategories;
     }
 
     /**
-     * Get user's faculty ID
+     * Get user's faculty ID (for post-service group filtering)
      */
     public String getUserFacultyId(String userId) {
         Optional<UserEntity> userOpt = userRepository.findById(userId);
-        return userOpt.map(UserEntity::getFacultyId).orElse(null);
+        if (userOpt.isPresent() && userOpt.get().getFaculty() != null) {
+            return userOpt.get().getFaculty().getId();
+        }
+        return null;
     }
 
     /**
-     * Get user's major ID
+     * Get user's major ID (for post-service group filtering)
      */
     public String getUserMajorId(String userId) {
         Optional<UserEntity> userOpt = userRepository.findById(userId);
-        return userOpt.map(UserEntity::getMajorId).orElse(null);
+        if (userOpt.isPresent() && userOpt.get().getMajor() != null) {
+            return userOpt.get().getMajor().getId();
+        }
+        return null;
     }
 
     /**

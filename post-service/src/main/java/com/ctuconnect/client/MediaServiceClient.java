@@ -5,9 +5,13 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.ctuconnect.config.FeignConfig;
 
-
-@FeignClient(name = "media-service", url = "${media-service.url:http://localhost:8080}")
+@FeignClient(
+    name = "media-service",
+    url = "${media-service.url}",
+    configuration = FeignConfig.class
+)
 public interface MediaServiceClient {
 
     @PostMapping(value = "/api/media/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -2929,3 +2929,6 @@ Caused by: org.neo4j.internal.kernel.api.exceptions.ProcedureException: Unable t
 2025-08-02 11:06:49.087+0000 INFO  name: system
 2025-08-02 11:06:49.089+0000 INFO  creationDate: 2025-08-01T08:55:27.229Z
 2025-08-02 11:06:49.089+0000 INFO  Started.
+2025-08-02 15:15:30.386+0000 INFO  Neo4j Server shutdown initiated by request
+2025-08-02 15:15:30.403+0000 INFO  Stopping...
+2025-08-02 15:15:36.354+0000 INFO  Stopped.

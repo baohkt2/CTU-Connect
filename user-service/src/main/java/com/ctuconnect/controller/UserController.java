@@ -16,7 +16,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
-@RequireAuth // Yêu cầu xác thực cho tất cả endpoints
 public class UserController {
 
     @Autowired

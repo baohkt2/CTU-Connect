@@ -74,6 +74,7 @@ export const postService = {
     if (search) params.append('search', search);
 
     const response = await api.get(`/posts?${params.toString()}`);
+    console.log("Fetched posts:", response.data);
     return response.data;
   },
 
@@ -114,6 +115,7 @@ export const postService = {
   // Create interaction (like, share, bookmark)
   async createInteraction(postId: string, interactionData: CreateInteractionRequest): Promise<Interaction | null> {
     const response = await api.post(`/posts/${postId}/interactions`, interactionData);
+    console.log("Created interaction:", response.data);
     return response.data;
   },
 
@@ -151,6 +153,7 @@ export const postService = {
   // Get comments for post
   async getComments(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
     const response = await api.get(`/posts/${postId}/comments?page=${page}&size=${size}`);
+    console.log("Getting comments:", response.data);
     return response.data;
   },
 

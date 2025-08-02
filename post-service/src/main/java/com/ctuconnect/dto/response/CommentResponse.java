@@ -1,5 +1,6 @@
 package com.ctuconnect.dto.response;
 
+import com.ctuconnect.dto.AuthorInfo;
 import com.ctuconnect.entity.CommentEntity;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +15,7 @@ public class CommentResponse {
     private String id;
     private String postId;
     private String content;
-    private String authorId;
+    private AuthorInfo author;
     private String parentCommentId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,7 +27,7 @@ public class CommentResponse {
         this.id = comment.getId();
         this.postId = comment.getPostId();
         this.content = comment.getContent();
-        this.authorId = comment.getAuthorId();
+        this.author = comment.getAuthor();
         this.parentCommentId = comment.getParentCommentId();
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();

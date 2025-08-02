@@ -176,4 +176,20 @@ public class UserSyncService {
         dto.setAvatarUrl(userEntity.getAvatarUrl());
         return dto;
     }
+
+    /**
+     * Lấy thông tin tác giả cho post-service
+     * Method này được gọi từ post-service để lấy author info khi tạo/hiển thị posts
+     */
+    public AuthorDTO getAuthorInfo(String authorId) {
+        UserEntity user = userRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + authorId));
+
+        return AuthorDTO.builder()
+                .id(user.getId())
+                .fullName(user.getFullName() != null ? user.getFullName() : "Unknown User")
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole() != null ? user.getRole().toString() : "USER")
+                .build();
+    }
 }

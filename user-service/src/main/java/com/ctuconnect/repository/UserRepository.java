@@ -1,5 +1,6 @@
 package com.ctuconnect.repository;
 
+import com.ctuconnect.entity.FacultyEntity;
 import com.ctuconnect.entity.UserEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -103,29 +104,29 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
  @Modifying
  @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[r:ENROLLED_IN]->(:Faculty)
+        OPTIONAL MATCH (u)-[r:BELONGS_TO]->()
         DELETE r
         WITH u
         MATCH (newFaculty:Faculty {id: $facultyId})
-        MERGE (u)-[:ENROLLED_IN]->(newFaculty)
+        MERGE (u)-[:BELONGS_TO]->(newFaculty)
         """)
  void updateUserFaculty(@Param("userId") String userId, @Param("facultyId") String facultyId);
 
  @Modifying
  @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[r:ENROLLED_IN]->(:College)
+        OPTIONAL MATCH (u)-[r:STUDIES_AT]->()
         DELETE r
         WITH u
         MATCH (newCollege:College {id: $collegeId})
-        MERGE (u)-[:ENROLLED_IN]->(newCollege)
+        MERGE (u)-[:STUDIES_AT]->(newCollege)
         """)
  void updateUserCollege(@Param("userId") String userId, @Param("collegeId") String collegeId);
 
  @Modifying
  @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[r:WORKS_IN]->(:Faculty)
+        OPTIONAL MATCH (u)-[r:WORKS_IN]->()
         DELETE r
         WITH u
         MATCH (newFaculty:Faculty {id: $facultyId})
@@ -136,11 +137,11 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
  @Modifying
  @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[r:WORKS_IN]->(:College)
+        OPTIONAL MATCH (u)-[r:EMPLOYED_AT]->()
         DELETE r
         WITH u
         MATCH (newCollege:College {id: $collegeId})
-        MERGE (u)-[:WORKS_IN]->(newCollege)
+        MERGE (u)-[:EMPLOYED_AT]->(newCollege)
         """)
  void updateUserWorkingCollege(@Param("userId") String userId, @Param("collegeId") String collegeId);
 
@@ -177,228 +178,142 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
  void updateUserAcademic(@Param("userId") String userId, @Param("academicId") String academicId);
 
- // Quan hệ bạn bè (Friendship)
+ // ========================= FRIEND RELATIONSHIP QUERIES =========================
 
+ // Kiểm tra xem 2 user có phải bạn bè không
  @Query("""
-        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)
-        RETURN friend
-        """)
- List<UserEntity> findFriends(@Param("userId") String userId);
-
- @Query("""
-        MATCH (u1:User {id: $userId1})-[:FRIEND]-(friend:User),
-              (u2:User {id: $userId2})-[:FRIEND]-(friend)
-        WHERE friend.id <> $userId1 AND friend.id <> $userId2
-        RETURN DISTINCT friend
-        """)
- List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
-
- @Modifying
- @Query("""
-        MATCH (u1:User {id: $userId1}), (u2:User {id: $userId2})
-        WHERE u1.id <> u2.id
-        MERGE (u1)-[:FRIEND_REQUEST {createdAt: datetime(), status: 'PENDING'}]->(u2)
-        """)
- void sendFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
-
- @Modifying
- @Query("""
-        MATCH (u1:User {id: $userId1})-[r:FRIEND_REQUEST {status: 'PENDING'}]->(u2:User {id: $userId2})
-        DELETE r
-        MERGE (u1)-[:FRIEND {since: datetime()}]-(u2)
-        """)
- void acceptFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
-
- @Modifying
- @Query("""
-        MATCH (u1:User {id: $userId1})-[r:FRIEND_REQUEST]->(u2:User {id: $userId2})
-        DELETE r
-        """)
- void rejectFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
-
- @Modifying
- @Query("""
-        MATCH (u1:User {id: $userId1})-[r:FRIEND]-(u2:User {id: $userId2})
-        DELETE r
-        """)
- void deleteFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
-
- @Query("""
-        MATCH (u1:User {id: $userId1})-[:FRIEND]-(u2:User {id: $userId2})
+        MATCH (u1:User {id: $userId1})-[:FRIEND_WITH]-(u2:User {id: $userId2})
         RETURN COUNT(*) > 0
         """)
  boolean areFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
+ // Kiểm tra có friend request pending không
  @Query("""
-        MATCH (u1:User {id: $userId1})-[:FRIEND_REQUEST {status: 'PENDING'}]->(u2:User {id: $userId2})
+        MATCH (u1:User {id: $fromUserId})-[:FRIEND_REQUEST]->(u2:User {id: $toUserId})
         RETURN COUNT(*) > 0
         """)
- boolean hasPendingFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
+ boolean hasPendingFriendRequest(@Param("fromUserId") String fromUserId, @Param("toUserId") String toUserId);
 
+ // Gửi friend request
+ @Modifying
  @Query("""
-        MATCH (sender:User)-[:FRIEND_REQUEST {status: 'PENDING'}]->(u:User {id: $userId})
-        RETURN sender
+        MATCH (u1:User {id: $fromUserId}), (u2:User {id: $toUserId})
+        MERGE (u1)-[:FRIEND_REQUEST]->(u2)
+        """)
+ void sendFriendRequest(@Param("fromUserId") String fromUserId, @Param("toUserId") String toUserId);
+
+ // Chấp nhận friend request
+ @Modifying
+ @Query("""
+        MATCH (u1:User {id: $fromUserId})-[r:FRIEND_REQUEST]->(u2:User {id: $toUserId})
+        DELETE r
+        CREATE (u1)-[:FRIEND_WITH]->(u2)
+        CREATE (u2)-[:FRIEND_WITH]->(u1)
+        """)
+ void acceptFriendRequest(@Param("fromUserId") String fromUserId, @Param("toUserId") String toUserId);
+
+ // Từ chối friend request
+ @Modifying
+ @Query("""
+        MATCH (u1:User {id: $fromUserId})-[r:FRIEND_REQUEST]->(u2:User {id: $toUserId})
+        DELETE r
+        """)
+ void rejectFriendRequest(@Param("fromUserId") String fromUserId, @Param("toUserId") String toUserId);
+
+ // Xóa friendship
+ @Modifying
+ @Query("""
+        MATCH (u1:User {id: $userId1})-[r:FRIEND_WITH]-(u2:User {id: $userId2})
+        DELETE r
+        """)
+ void deleteFriendship(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+ // Lấy danh sách bạn bè
+ @Query("""
+        MATCH (u:User {id: $userId})-[:FRIEND_WITH]-(friend:User)
+        RETURN friend
+        """)
+ List<UserEntity> findFriends(@Param("userId") String userId);
+
+ // Lấy friend requests nhận được
+ @Query("""
+        MATCH (requester:User)-[:FRIEND_REQUEST]->(u:User {id: $userId})
+        RETURN requester
         """)
  List<UserEntity> findIncomingFriendRequests(@Param("userId") String userId);
 
+ // Lấy friend requests đã gửi
  @Query("""
-        MATCH (u:User {id: $userId})-[:FRIEND_REQUEST {status: 'PENDING'}]->(receiver:User)
+        MATCH (u:User {id: $userId})-[:FRIEND_REQUEST]->(receiver:User)
         RETURN receiver
         """)
  List<UserEntity> findOutgoingFriendRequests(@Param("userId") String userId);
 
- // Tìm bạn bè gợi ý dựa trên bạn chung
+ // Lấy bạn chung giữa 2 user
  @Query("""
-        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)-[:FRIEND]-(suggestion:User)
-        WHERE u.id <> suggestion.id
-          AND NOT (u)-[:FRIEND]-(suggestion)
-          AND NOT (u)-[:FRIEND_REQUEST]-(suggestion)
-        RETURN suggestion, COUNT(*) AS mutualFriends
+        MATCH (u1:User {id: $userId1})-[:FRIEND_WITH]-(mutual:User)-[:FRIEND_WITH]-(u2:User {id: $userId2})
+        RETURN mutual
+        """)
+ List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+ // Gợi ý kết bạn dựa trên bạn chung và profile tương tự
+ @Query("""
+        MATCH (u:User {id: $userId})
+        MATCH (u)-[:FRIEND_WITH]-(friend)-[:FRIEND_WITH]-(suggestion:User)
+        WHERE NOT (u)-[:FRIEND_WITH]-(suggestion) AND u.id <> suggestion.id
+        AND NOT (u)-[:FRIEND_REQUEST]-(suggestion)
+        RETURN suggestion, COUNT(*) as mutualFriends
         ORDER BY mutualFriends DESC
-        LIMIT 10
+        LIMIT 20
         """)
  List<UserEntity> findFriendSuggestions(@Param("userId") String userId);
 
- // Tìm kiếm user theo các bộ lọc
+ // Lọc user theo tiêu chí (cùng college, faculty, major, batch)
  @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[:ENROLLED_IN]->(uMajor:Major)
-        OPTIONAL MATCH (u)-[:IN_BATCH]->(uBatch:Batch)
-        OPTIONAL MATCH (uMajor)-[:BELONGS_TO]->(uFaculty:Faculty)
-        OPTIONAL MATCH (uFaculty)-[:PART_OF]->(uCollege:College)
-
-        MATCH (other:User)
-        OPTIONAL MATCH (other)-[:ENROLLED_IN]->(oMajor:Major)
-        OPTIONAL MATCH (other)-[:IN_BATCH]->(oBatch:Batch)
-        OPTIONAL MATCH (oMajor)-[:BELONGS_TO]->(oFaculty:Faculty)
-        OPTIONAL MATCH (oFaculty)-[:PART_OF]->(oCollege:College)
-
-        WHERE u.id <> other.id
-          AND ($isSameMajor = false OR uMajor.name = oMajor.name)
-          AND ($isSameBatch = false OR uBatch.year = oBatch.year)
-          AND ($isSameFaculty = false OR uFaculty.name = oFaculty.name)
-          AND ($isSameCollege = false OR uCollege.name = oCollege.name)
-
-        RETURN DISTINCT other
+        OPTIONAL MATCH (u)-[:STUDIES_AT|EMPLOYED_AT]->(college:College)
+        OPTIONAL MATCH (u)-[:BELONGS_TO|WORKS_IN]->(faculty:Faculty)
+        OPTIONAL MATCH (u)-[:ENROLLED_IN]->(major:Major)
+        OPTIONAL MATCH (u)-[:IN_BATCH]->(batch:Batch)
+        
+        MATCH (candidate:User)
+        WHERE candidate.id <> $userId
+        AND (NOT $sameCollege OR (candidate)-[:STUDIES_AT|EMPLOYED_AT]->(college))
+        AND (NOT $sameFaculty OR (candidate)-[:BELONGS_TO|WORKS_IN]->(faculty))
+        AND (NOT $sameMajor OR (candidate)-[:ENROLLED_IN]->(major))
+        AND (NOT $sameBatch OR (candidate)-[:IN_BATCH]->(batch))
+        
+        RETURN candidate
         """)
  List<UserEntity> findUsersWithFilters(
          @Param("userId") String userId,
-         @Param("isSameCollege") boolean isSameCollege,
-         @Param("isSameFaculty") boolean isSameFaculty,
-         @Param("isSameMajor") boolean isSameMajor,
-         @Param("isSameBatch") boolean isSameBatch);
+         @Param("sameCollege") boolean sameCollege,
+         @Param("sameFaculty") boolean sameFaculty,
+         @Param("sameMajor") boolean sameMajor,
+         @Param("sameBatch") boolean sameBatch
+ );
 
- @Query("""
-        MATCH (u:User {id: $userId})-[:FRIEND]-(friend:User)
-        OPTIONAL MATCH (u)-[:ENROLLED_IN]->(uMajor:Major)
-        OPTIONAL MATCH (friend)-[:ENROLLED_IN]->(fMajor:Major)
-        OPTIONAL MATCH (uMajor)-[:BELONGS_TO]->(uFaculty:Faculty)
-        OPTIONAL MATCH (fMajor)-[:BELONGS_TO]->(fFaculty:Faculty)
-        OPTIONAL MATCH (uFaculty)-[:PART_OF]->(uCollege:College)
-        OPTIONAL MATCH (fFaculty)-[:PART_OF]->(fCollege:College)
-        OPTIONAL MATCH (u)-[:IN_BATCH]->(uBatch:Batch)
-        OPTIONAL MATCH (friend)-[:IN_BATCH]->(fBatch:Batch)
+ /**
+  * Find users by faculty ID (for post-service news feed algorithm)
+  */
+ @Query("MATCH (u:User)-[:WORKS_IN|BELONGS_TO]->(f:Faculty {id: $facultyId}) RETURN u")
+ List<UserEntity> findUsersByFaculty(@Param("facultyId") String facultyId);
 
-        WHERE ($isSameMajor = false OR uMajor.name = fMajor.name)
-          AND ($isSameFaculty = false OR uFaculty.name = fFaculty.name)
-          AND ($isSameCollege = false OR uCollege.name = fCollege.name)
-          AND ($isSameBatch = false OR uBatch.year = fBatch.year)
+ /**
+  * Find users by major ID (for post-service news feed algorithm)
+  */
+ @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {id: $majorId}) RETURN u")
+ List<UserEntity> findUsersByMajor(@Param("majorId") String majorId);
 
-        RETURN DISTINCT friend
-        """)
- List<UserEntity> findFriendsWithFilters(
-         @Param("userId") String userId,
-         @Param("isSameCollege") boolean isSameCollege,
-         @Param("isSameFaculty") boolean isSameFaculty,
-         @Param("isSameMajor") boolean isSameMajor,
-         @Param("isSameBatch") boolean isSameBatch);
+ /**
+  * Find users by full name containing (for search functionality)
+  * Uses case-insensitive search with Neo4j CONTAINS operator
+  */
+ @Query("MATCH (u:User) WHERE toLower(u.fullName) CONTAINS toLower($name) RETURN u")
+ List<UserEntity> findByFullNameContainingIgnoreCase(@Param("name") String name);
 
- // Tìm người dùng theo các thuộc tính cụ thể
- @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $major}) RETURN u")
- List<UserEntity> findByMajor(@Param("major") String major);
 
- @Query("MATCH (u:User)-[:IN_BATCH]->(b:Batch {year: $batch}) RETURN u")
- List<UserEntity> findByBatch(@Param("batch") int batch);
+ List<UserEntity> findByFacultyId(String facultyId);
 
- @Query("""
-        MATCH (u:User)-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(:Faculty {name: $faculty})
-        RETURN u
-        """)
- List<UserEntity> findByFaculty(@Param("faculty") String faculty);
-
- @Query("""
-        MATCH (u:User)-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(:Faculty)-[:PART_OF]->(:College {name: $college})
-        RETURN u
-        """)
- List<UserEntity> findByCollege(@Param("college") String college);
-
- // Tìm user có cùng thuộc tính
- @Query("""
-        MATCH (u:User {id: $userId})-[:ENROLLED_IN]->(m:Major)<-[:ENROLLED_IN]-(other:User)
-        WHERE u.id <> other.id
-        RETURN other
-        """)
- List<UserEntity> findUsersWithSameMajor(@Param("userId") String userId);
-
- @Query("""
-        MATCH (u:User {id: $userId})-[:IN_BATCH]->(b:Batch)<-[:IN_BATCH]-(other:User)
-        WHERE u.id <> other.id
-        RETURN other
-        """)
- List<UserEntity> findUsersWithSameBatch(@Param("userId") String userId);
-
- @Query("""
-        MATCH (u:User {id: $userId})-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(f:Faculty)
-        MATCH (other:User)-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(f)
-        WHERE other.id <> $userId
-        RETURN other
-        """)
- List<UserEntity> findUsersWithSameFaculty(@Param("userId") String userId);
-
- @Query("""
-        MATCH (u:User {id: $userId})-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(:Faculty)-[:PART_OF]->(c:College)
-        MATCH (other:User)-[:ENROLLED_IN]->(:Major)-[:BELONGS_TO]->(:Faculty)-[:PART_OF]->(c)
-        WHERE other.id <> $userId
-        RETURN other
-        """)
- List<UserEntity> findUsersWithSameCollege(@Param("userId") String userId);
-
- // ========================= ADDITIONAL METHODS FOR USERSERVICE =========================
-    
-    /**
-     * Find users by faculty ID
-     */
-    @Query("MATCH (u:User)-[:WORKS_IN]->(f:Faculty {id: $facultyId}) RETURN u")
-    List<UserEntity> findByFacultyId(@Param("facultyId") String facultyId);
-    
-    /**
-     * Find users by major ID
-     */
-    @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {id: $majorId}) RETURN u")
-    List<UserEntity> findByMajorId(@Param("majorId") String majorId);
-    
-    /**
-     * Find users by full name containing (case insensitive)
-     */
-    @Query("MATCH (u:User) WHERE toLower(u.fullName) CONTAINS toLower($name) RETURN u")
-    List<UserEntity> findByFullNameContainingIgnoreCase(@Param("name") String name);
-    
-    /**
-     * Find users by college ID
-     */
-    @Query("MATCH (u:User)-[:BELONGS_TO]->(c:College {id: $collegeId}) RETURN u")
-    List<UserEntity> findByCollegeId(@Param("collegeId") String collegeId);
-    
-    /**
-     * Find users by batch ID
-     */
-    @Query("MATCH (u:User)-[:IN_BATCH]->(b:Batch {id: $batchId}) RETURN u")
-    List<UserEntity> findByBatchId(@Param("batchId") String batchId);
-    
-    /**
-     * Find users by gender ID
-     */
-    @Query("MATCH (u:User)-[:HAS_GENDER]->(g:Gender {id: $genderId}) RETURN u")
-    List<UserEntity> findByGenderId(@Param("genderId") String genderId);
-
+ List<UserEntity> findByMajorId(String majorId);
 }
