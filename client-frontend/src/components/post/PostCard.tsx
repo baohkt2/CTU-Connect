@@ -278,6 +278,36 @@ export const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
+      {/* Post Videos - NEW SECTION */}
+      {post.videos && post.videos.length > 0 && (
+        <div className="px-4 pb-3">
+          <div className={`grid gap-2 ${
+            post.videos.length === 1 ? 'grid-cols-1' : 
+            'grid-cols-2'
+          }`}>
+            {post.videos.slice(0, 2).map((video, index) => (
+              <div key={index} className="relative">
+                <video
+                  src={video}
+                  controls
+                  className="w-full h-48 object-cover rounded-lg"
+                  preload="metadata"
+                >
+                  Your browser does not support the video tag.
+                </video>
+                {index === 1 && post.videos && post.videos.length > 2 && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center pointer-events-none">
+                    <span className="text-white text-lg font-semibold">
+                      +{post.videos.length - 2} more videos
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Post Stats */}
       <div className="px-4 py-2 border-t border-gray-100">
         <div className="flex items-center justify-between text-sm text-gray-500">
@@ -390,12 +420,12 @@ export const PostCard: React.FC<PostCardProps> = ({
             ) : (
               <div className="space-y-4">
                 {comments.map((comment) => (
-                  <div key={comment.author.id} className="flex space-x-3">
+                  <div key={comment.id} className="flex space-x-3">
                     <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0">
                       {comment.author.avatar ? (
                         <img
                           src={comment.author.avatar}
-                          alt={comment.author.name}
+                          alt={comment.author.name || 'Author'}
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (

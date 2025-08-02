@@ -17,7 +17,8 @@ export const postService = {
   // Create post with proper structure matching backend
   async createPost(postData: CreatePostRequest, files?: File[]): Promise<Post> {
     try {
-      let mediaUrls: string[] = [];
+      let imageUrls: string[] = [];
+      let videoUrls: string[] = [];
 
       // Step 1: Upload files to media service first if files exist
       if (files && files.length > 0) {
@@ -27,17 +28,26 @@ export const postService = {
           'Post media files'
         );
 
-        // Extract cloudinary URLs from media responses
-        mediaUrls = mediaResponses.map(media => media.cloudinaryUrl);
-        console.log('Files uploaded successfully:', mediaUrls);
+        // Separate images and videos based on media type
+        mediaResponses.forEach(media => {
+          if (media.mediaType === 'IMAGE') {
+            imageUrls.push(media.cloudinaryUrl);
+          } else if (media.mediaType === 'VIDEO') {
+            videoUrls.push(media.cloudinaryUrl);
+          }
+        });
+
+        console.log('Files uploaded successfully - Images:', imageUrls, 'Videos:', videoUrls);
       }
 
-      // Step 2: Create post data with media URLs
+      // Step 2: Create post data with separated media URLs
       const postRequestData = {
         ...postData,
-        images: mediaUrls.length > 0 ? mediaUrls : undefined
+        images: imageUrls.length > 0 ? imageUrls : undefined,
+        videos: videoUrls.length > 0 ? videoUrls : undefined
       };
-      console.log('Uploading post request...', postRequestData);
+      console.log('Creating post request...', postRequestData);
+
       // Step 3: Create post via post service
       const response = await api.post('/posts', postRequestData, {
         headers: {
@@ -204,6 +214,7 @@ export const postService = {
     });
 
     const response = await api.get(`/posts/${postId}/comments?${params.toString()}`);
+    console.log("Fetched comments for post:", postId, response.data);
     return response.data;
   },
 

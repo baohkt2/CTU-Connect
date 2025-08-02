@@ -42,7 +42,8 @@ export interface Post {
   authorId: string;
   authorName?: string;
   authorAvatar?: string;
-  images?: string[]; // Array of image URLs or null if no images
+  images?: string[]; // Array of image URLs
+  videos?: string[]; // Array of video URLs - ADDED for video support
   tags?: string[];
   category?: string;
   visibility?: string;
@@ -82,13 +83,20 @@ export interface Comment {
   id: string;
   content: string;
   postId: string;
-  authorId: string;
-  authorName?: string;
+  author: Author;
+  authorName?: string ;
   authorAvatar?: string;
   stats?: CommentStats;
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Author {
+  id: string;
+  name: string;
+  avatar: string | null;
+}
+
 
 export interface CommentStats {
   likes: number;
