@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Document(collection = "interactions")
@@ -28,8 +29,9 @@ public class InteractionEntity {
 
     private InteractionType type;
 
+    // Getter for reaction type (backwards compatibility)
     // Add reactionType field for REACTION interactions
-    private InteractionType.ReactionType reactionType;
+    private ReactionType reactionType;
 
     private Map<String, Object> metadata = new HashMap<>();
 
@@ -37,65 +39,109 @@ public class InteractionEntity {
     private LocalDateTime createdAt;
 
     // Constructors
-    public InteractionEntity() {
-        this.createdAt = LocalDateTime.now();
-    }
-
     public InteractionEntity(String postId, AuthorInfo author, InteractionType type) {
-        this();
         this.postId = postId;
         this.author = author;
         this.type = type;
+        this.createdAt = LocalDateTime.now();
+        this.metadata = new HashMap<>();
     }
 
-    public InteractionType.ReactionType getReaction() {
-        if (reactionType != null) {
-            return reactionType;
+    // Pre-persist hook
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
         }
-        return InteractionType.ReactionType.NONE;
-    }
-
-    // Add getReactionType method that PostService is calling
-    public InteractionType.ReactionType getReactionType() {
-        return this.reactionType;
+        if (this.metadata == null) {
+            this.metadata = new HashMap<>();
+        }
     }
 
     public String getUserId() {
-        if (author != null) {
-            return author.getId();
-        }
-        return null;
+        return author != null ? author.getId() : null;
     }
 
     public void setReaction(InteractionType newReaction) {
-        // Default to LIKE if null
-        this.type = Objects.requireNonNullElse(newReaction, InteractionType.LIKE);
+        if (newReaction == null) {
+            throw new IllegalArgumentException("Interaction type cannot be null");
+        }
+        this.type = newReaction;
+        if (newReaction == InteractionType.REACTION) {
+            this.reactionType = newReaction.getReactionType();
+        } else {
+            this.reactionType = null; // Clear reaction type for non-REACTION interactions
+        }
     }
 
-    @Getter
+    // Enum for interaction types
     public enum InteractionType {
-        VIEW,
-        LIKE(ReactionType.LIKE),
+        LIKE,
         SHARE,
-        BOOKMARK(ReactionType.BOOKMARK),
+        BOOKMARK,
+        VIEW,
         COMMENT,
-        REPLY,
-        MENTION,
-        REPORT,
-        REACTION; // Add REACTION constant that PostService is looking for
+        REACTION // Add REACTION type
+        ;
 
-        private final ReactionType reactionType;
-
-        InteractionType() {
-            this.reactionType = null;
+        public ReactionType getReactionType() {
+            if (this == REACTION) {
+                return ReactionType.LIKE; // Default to LIKE for REACTION type
+            }
+            return null; // No reaction type for other interaction types
         }
+    }
 
-        InteractionType(ReactionType reactionType) {
-            this.reactionType = reactionType;
-        }
+    // Enum for reaction types (for REACTION interactions)
+    public enum ReactionType {
+        LIKE,
+        LOVE,
+        HAHA,
+        WOW,
+        SAD,
+        ANGRY
+    }
 
-        public enum ReactionType {
-            LIKE, LOVE, HAPPY, SAD, ANGRY, BOOKMARK, NONE
-        }
+    // Helper methods
+    public boolean isReaction() {
+        return this.type == InteractionType.REACTION;
+    }
+
+    public boolean isLike() {
+        return this.type == InteractionType.LIKE ||
+               (this.type == InteractionType.REACTION && this.reactionType == ReactionType.LIKE);
+    }
+
+    public boolean isView() {
+        return this.type == InteractionType.VIEW;
+    }
+
+    public boolean isShare() {
+        return this.type == InteractionType.SHARE;
+    }
+
+    public boolean isBookmark() {
+        return this.type == InteractionType.BOOKMARK;
+    }
+
+    public boolean isComment() {
+        return this.type == InteractionType.COMMENT;
+    }
+
+    // Equals and hashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InteractionEntity that = (InteractionEntity) o;
+        return Objects.equals(id, that.id) &&
+               Objects.equals(postId, that.postId) &&
+               Objects.equals(author, that.author) &&
+               type == that.type &&
+               reactionType == that.reactionType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, postId, author, type, reactionType);
     }
 }

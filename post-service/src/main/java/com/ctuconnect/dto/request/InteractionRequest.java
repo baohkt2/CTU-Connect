@@ -20,4 +20,16 @@ public class InteractionRequest {
     private InteractionEntity.InteractionType reaction;
 
     private Map<String, Object> metadata = new HashMap<>();
+
+    public void setType(String s) {
+        if (s != null) {
+            try {
+                this.reaction = InteractionEntity.InteractionType.valueOf(s.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid interaction type: " + s);
+            }
+        } else {
+            throw new IllegalArgumentException("Interaction type cannot be null");
+        }
+    }
 }

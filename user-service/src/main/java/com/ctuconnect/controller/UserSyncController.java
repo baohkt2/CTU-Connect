@@ -1,5 +1,6 @@
 package com.ctuconnect.controller;
 
+import com.ctuconnect.dto.AuthorDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.security.annotation.RequireAuth;
 import com.ctuconnect.service.UserSyncService;
@@ -66,5 +67,12 @@ public class UserSyncController {
             @RequestParam String role) {
         boolean isSynced = userSyncService.isUserSynced(userId, email, role);
         return ResponseEntity.ok(isSynced);
+    }
+
+    @GetMapping("/authors/{authorID}")
+    @RequireAuth(roles = {"SYSTEM", "ADMIN"})
+    public ResponseEntity<AuthorDTO> getUserById(@PathVariable String authorID) {
+        AuthorDTO authorDTO = userSyncService.getAuthorById(authorID);
+        return ResponseEntity.ok(authorDTO);
     }
 }

@@ -1,12 +1,17 @@
 package com.ctuconnect.dto.response;
 
 import com.ctuconnect.entity.InteractionEntity;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Data
 public class InteractionResponse {
 
+    // Getters and Setters
     private String id;
     private String postId;
     private String userId;
@@ -26,52 +31,4 @@ public class InteractionResponse {
         this.createdAt = interaction.getCreatedAt();
     }
 
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public InteractionEntity.InteractionType getType() {
-        return type;
-    }
-
-    public void setType(InteractionEntity.InteractionType type) {
-        this.type = type;
-    }
-
-    public Map<String, Object> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

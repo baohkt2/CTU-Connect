@@ -1,4 +1,5 @@
 import api from '@/lib/api';
+import { mediaService, MediaResponse } from './mediaService';
 import {
   Post,
   Comment,
@@ -15,35 +16,39 @@ import {
 export const postService = {
   // Create post with proper structure matching backend
   async createPost(postData: CreatePostRequest, files?: File[]): Promise<Post> {
-    if (files && files.length > 0) {
-      // Use multipart form data for posts with files
-      const formData = new FormData();
+    try {
+      let mediaUrls: string[] = [];
 
-      // Create post JSON and append as part
-      const postBlob = new Blob([JSON.stringify(postData)], {
-        type: 'application/json'
-      });
-      formData.append('post', postBlob);
+      // Step 1: Upload files to media service first if files exist
+      if (files && files.length > 0) {
+        console.log('Uploading files to media service...');
+        const mediaResponses: MediaResponse[] = await mediaService.uploadFiles(
+          files,
+          'Post media files'
+        );
 
-      // Append files
-      files.forEach((file) => {
-        formData.append('files', file);
-      });
+        // Extract cloudinary URLs from media responses
+        mediaUrls = mediaResponses.map(media => media.cloudinaryUrl);
+        console.log('Files uploaded successfully:', mediaUrls);
+      }
 
-      const response = await api.post('/posts', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } else {
-      // Use simple JSON endpoint for text-only posts
-      const response = await api.post('/posts/simple', postData, {
+      // Step 2: Create post data with media URLs
+      const postRequestData = {
+        ...postData,
+        images: mediaUrls.length > 0 ? mediaUrls : undefined
+      };
+      console.log('Uploading post request...', postRequestData);
+      // Step 3: Create post via post service
+      const response = await api.post('/posts', postRequestData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
       return response.data;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      throw error;
     }
   },
 

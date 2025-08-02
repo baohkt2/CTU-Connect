@@ -30,19 +30,19 @@ public class PostRequest {
     private String category;
 
     private String visibility = "PUBLIC"; // PUBLIC, FRIENDS, PRIVATE
-
+    
     // Enhanced fields for Facebook-like functionality
     @Builder.Default
     private List<String> images = new ArrayList<>();
-
+    
     @Builder.Default
     private List<String> videos = new ArrayList<>();
-
+    
     private String postType; // TEXT, IMAGE, VIDEO, LINK, POLL, EVENT, SHARED
-
+    
     private PostEntity.AudienceSettings audienceSettings;
-
+    
     private LocalDateTime scheduledAt;
-
+    
     private PostEntity.LocationInfo location;
 }

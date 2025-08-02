@@ -6,37 +6,50 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActivityDTO {
     private String id;
     private String userId;
-    private String activityType; // POST_CREATED, POST_LIKED, COMMENT_ADDED, FRIEND_ADDED, etc.
-    private String entityType; // POST, COMMENT, USER
-    private String entityId;
+    private String activityType; // POST_CREATED, POST_LIKED, COMMENT_ADDED, etc.
+    private String targetType; // POST, COMMENT, USER
+    private String targetId;
+    private String entityType; // Add missing entityType field
+    private String entityId; // Add missing entityId field
     private String description;
-    private Map<String, Object> metadata;
     private LocalDateTime timestamp;
-
-    // Display information
     private String actorName;
     private String actorAvatarUrl;
-    private String targetName;
-    private String previewText;
+
+    // For activity feed display
+    private String displayText;
     private String actionUrl;
+    private boolean isRead;
 
     public enum ActivityType {
         POST_CREATED,
         POST_LIKED,
-        POST_COMMENTED,
         POST_SHARED,
-        FRIEND_ADDED,
-        PROFILE_UPDATED,
-        GROUP_JOINED,
-        EVENT_ATTENDED
+        COMMENT_ADDED,
+        FRIEND_REQUEST_SENT,
+        FRIEND_REQUEST_ACCEPTED,
+        PROFILE_UPDATED
+    }
+
+    public enum TargetType {
+        POST,
+        COMMENT,
+        USER,
+        PROFILE
+    }
+
+    public enum EntityType {
+        POST,
+        COMMENT,
+        USER,
+        PROFILE
     }
 }

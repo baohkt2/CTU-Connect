@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mediaService, UploadResponse } from '@/services/mediaService';
+import { mediaService, MediaResponse } from '@/services/mediaService';
 import { useToast } from './useToast';
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
@@ -11,9 +11,8 @@ export function useUploadMedia() {
 
   const uploadMedia = async (
       file: File,
-      uploadedBy: string,
       description?: string
-  ): Promise<UploadResponse | null> => {
+  ): Promise<MediaResponse | null> => {
     try {
       setStatus('uploading');
       setProgress(0);
@@ -26,7 +25,7 @@ export function useUploadMedia() {
         });
       }, 100);
 
-      const response = await mediaService.uploadFile(file, uploadedBy, description);
+      const response = await mediaService.uploadFile(file, description);
 
       clearInterval(progressInterval);
       setProgress(100);

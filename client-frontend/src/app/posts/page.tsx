@@ -40,7 +40,7 @@ export default function PostsPage() {
   };
 
   const handlePostUpdate = (updatedPost: Post) => {
-    setPosts(prev => prev.map(post =>
+    setPosts(prev => prev.map(post => 
       post.id === updatedPost.id ? updatedPost : post
     ));
   };

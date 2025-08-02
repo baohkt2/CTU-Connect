@@ -9,7 +9,7 @@ import java.util.Set;
 
 @FeignClient(name = "user-service", url = "${user-service.url:http://localhost:8080}")
 public interface UserServiceClient {
-    @GetMapping("/api/users/authors/{id}")
+    @GetMapping("/api/users/sync/authors/{id}")
     AuthorInfo getAuthorInfo(@PathVariable("id") String authorId);
 
     @GetMapping("/api/users/{userId}/friends/ids")

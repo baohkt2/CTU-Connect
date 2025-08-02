@@ -24,7 +24,7 @@ public class NotificationDTO {
     private LocalDateTime readAt;
     private String imageUrl;
     private String actionUrl;
-
+    
     // Actor information for display
     private String actorName;
     private String actorAvatarUrl;

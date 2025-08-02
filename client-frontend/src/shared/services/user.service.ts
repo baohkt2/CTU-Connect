@@ -3,142 +3,114 @@ import { API_ENDPOINTS } from '@/shared/constants';
 import { createApiUrl } from '@/shared/utils';
 import {
   User,
-  UpdateUserRequest,
+  UserProfile,
+  UpdateProfileRequest,
   PaginatedResponse,
   ApiResponse,
-  UserStats,
-  FileUploadResponse,
 } from '@/shared/types';
 
 /**
- * User Service
- * Handles all user-related API calls
+ * User Service - Updated to sync with backend APIs
  */
 export class UserService {
   /**
-   * Get user profile by ID
+   * Get current user profile
    */
-  async getUserProfile(userId: string): Promise<User> {
-    const url = createApiUrl(API_ENDPOINTS.USERS.PROFILE, { id: userId });
+  async getCurrentUser(): Promise<User> {
+    return apiClient.get<User>(API_ENDPOINTS.USERS.PROFILE);
+  }
+
+  /**
+   * Get user by ID
+   */
+  async getUser(userId: string): Promise<User> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.BY_ID, { id: userId });
     return apiClient.get<User>(url);
   }
 
   /**
-   * Update current user profile
+   * Update user profile
    */
-  async updateProfile(userData: UpdateUserRequest): Promise<User> {
-    return apiClient.put<User>(API_ENDPOINTS.USERS.PROFILE, userData);
+  async updateProfile(updateData: UpdateProfileRequest): Promise<User> {
+    return apiClient.put<User>(API_ENDPOINTS.USERS.UPDATE_PROFILE, updateData);
   }
 
   /**
-   * Upload user avatar
-   */
-  async uploadAvatar(
-    file: File,
-    onProgress?: (progress: number) => void
-  ): Promise<FileUploadResponse> {
-    return apiClient.uploadFile<FileUploadResponse>(
-      API_ENDPOINTS.USERS.AVATAR,
-      file,
-      onProgress
-    );
-  }
-
-  /**
-   * Search users
+   * Search users - Updated to match EnhancedUserController
    */
   async searchUsers(
     query: string,
+    faculty?: string,
+    major?: string,
+    batch?: string,
     page = 0,
-    size = 10
-  ): Promise<PaginatedResponse<User>> {
+    size = 20
+  ): Promise<User[]> {
     const url = createApiUrl(API_ENDPOINTS.USERS.SEARCH, undefined, {
-      q: query,
+      query,
+      faculty,
+      major,
+      batch,
       page,
       size,
     });
-    return apiClient.get<PaginatedResponse<User>>(url);
+    return apiClient.get<User[]>(url);
   }
 
   /**
-   * Follow user
+   * Get friend suggestions - Updated to match backend
    */
-  async followUser(userId: string): Promise<ApiResponse<null>> {
-    const url = createApiUrl(API_ENDPOINTS.USERS.FOLLOW, { id: userId });
+  async getFriendSuggestions(limit = 10): Promise<any[]> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.FRIEND_SUGGESTIONS, undefined, { limit });
+    return apiClient.get<any[]>(url);
+  }
+
+  /**
+   * Send friend request - Updated to match backend
+   */
+  async sendFriendRequest(targetUserId: string): Promise<ApiResponse<null>> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.SEND_FRIEND_REQUEST, { id: targetUserId });
     return apiClient.post<ApiResponse<null>>(url);
   }
 
   /**
-   * Unfollow user
+   * Accept friend request - Updated to match backend
    */
-  async unfollowUser(userId: string): Promise<ApiResponse<null>> {
-    const url = createApiUrl(API_ENDPOINTS.USERS.FOLLOW, { id: userId });
-    return apiClient.delete<ApiResponse<null>>(url);
+  async acceptFriendRequest(requesterId: string): Promise<ApiResponse<null>> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.ACCEPT_FRIEND_REQUEST, { id: requesterId });
+    return apiClient.post<ApiResponse<null>>(url);
   }
 
   /**
-   * Get user followers
+   * Get user's friends
    */
-  async getFollowers(
-    userId: string,
-    page = 0,
-    size = 10
-  ): Promise<PaginatedResponse<User>> {
-    const url = createApiUrl(
-      API_ENDPOINTS.USERS.FOLLOWERS,
-      { id: userId },
-      { page, size }
-    );
-    return apiClient.get<PaginatedResponse<User>>(url);
+  async getFriends(userId: string): Promise<User[]> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.FRIENDS, { id: userId });
+    return apiClient.get<User[]>(url);
   }
 
   /**
-   * Get users that user is following
+   * Get mutual friends count - Updated to match backend
    */
-  async getFollowing(
-    userId: string,
-    page = 0,
-    size = 10
-  ): Promise<PaginatedResponse<User>> {
-    const url = createApiUrl(
-      API_ENDPOINTS.USERS.FOLLOWING,
-      { id: userId },
-      { page, size }
-    );
-    return apiClient.get<PaginatedResponse<User>>(url);
+  async getMutualFriendsCount(targetUserId: string): Promise<number> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.MUTUAL_FRIENDS, { id: targetUserId });
+    return apiClient.get<number>(url);
   }
 
   /**
-   * Get user friends
+   * Get user timeline - Updated to match backend
    */
-  async getFriends(
-    userId: string,
-    page = 0,
-    size = 10
-  ): Promise<PaginatedResponse<User>> {
-    const url = createApiUrl(
-      API_ENDPOINTS.USERS.FRIENDS,
-      { id: userId },
-      { page, size }
-    );
-    return apiClient.get<PaginatedResponse<User>>(url);
+  async getUserTimeline(userId: string, page = 0, size = 10): Promise<any[]> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.TIMELINE, { id: userId }, { page, size });
+    return apiClient.get<any[]>(url);
   }
 
   /**
-   * Get user statistics
+   * Get user activities - Updated to match backend
    */
-  async getUserStats(userId: string): Promise<UserStats> {
-    const url = createApiUrl('/users/:id/stats', { id: userId });
-    return apiClient.get<UserStats>(url);
-  }
-
-  /**
-   * Check if user is following another user
-   */
-  async isFollowing(userId: string): Promise<boolean> {
-    const url = createApiUrl('/users/:id/following/check', { id: userId });
-    const response = await apiClient.get<{ isFollowing: boolean }>(url);
-    return response.isFollowing;
+  async getUserActivities(userId: string, page = 0, size = 10): Promise<any[]> {
+    const url = createApiUrl(API_ENDPOINTS.USERS.ACTIVITIES, { id: userId }, { page, size });
+    return apiClient.get<any[]>(url);
   }
 }
 

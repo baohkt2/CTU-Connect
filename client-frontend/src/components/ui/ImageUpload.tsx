@@ -1,5 +1,5 @@
 import {ChangeEvent, useRef, useState} from 'react';
-import Image from 'next/image';
+
 import {Image as ImageIcon, Upload, XCircle} from 'lucide-react';
 import {useUploadMedia} from '@/hooks/useUploadMedia';
 
@@ -13,7 +13,7 @@ interface ImageUploadProps {
 }
 
 export default function ImageUpload({
-                                        currentUser,
+
                                         currentImageUrl,
                                         onImageUploaded,
                                         aspectRatio = '1/1',
@@ -23,7 +23,7 @@ export default function ImageUpload({
     const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const {uploadMedia, status, progress, isUploading} = useUploadMedia();
+    const {uploadMedia, progress, isUploading} = useUploadMedia();
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -40,7 +40,7 @@ export default function ImageUpload({
         setPreviewUrl(objectUrl);
 
         // Upload to server
-        const response = await uploadMedia(file, currentUser.id, `Ảnh ${imageType}`);
+        const response = await uploadMedia(file, `Ảnh ${imageType}`);
 
         // If upload successful, pass URL to parent component
         if (response) {

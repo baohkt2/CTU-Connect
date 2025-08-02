@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+
 interface PostCardProps {
   post: Post;
   onPostUpdate?: (updatedPost: Post) => void;
@@ -162,7 +163,8 @@ export const PostCard: React.FC<PostCardProps> = ({
     return count.toString();
   };
 
-  // @ts-ignore
+
+
   return (
     <Card className={`post-card bg-white rounded-lg shadow ${className}`}>
       {/* Post Header */}
@@ -246,7 +248,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                   alt={`Post image ${index + 1}`}
                   className="w-full h-48 object-cover rounded-lg"
                 />
-                {index === 3 && post.images.length > 4 && (
+                {index === 3 &&  post.images && post.images.length > 4 && (
                   <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
                     <span className="text-white text-lg font-semibold">
                       +{post.images.length - 4} more

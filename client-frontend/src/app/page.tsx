@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
-import CreatePostForm from '@/components/post/CreatePostForm';
-import {PostCard }from '@/components/post/PostCard';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { usePostHooks } from '@/hooks/usePostHooks';
-import { useRouter } from 'next/navigation';
+import {PostFeed} from "@/components/post";
 
 // Landing Page Component for non-authenticated users
 const LandingPage = () => {
@@ -96,49 +93,9 @@ const LandingPage = () => {
 
 // Home Page Component for authenticated users
 const HomePage = () => {
-  const { usePosts } = usePostHooks();
-  const { data: postsData, isLoading: postsLoading } = usePosts(0, 10);
-
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Create Post Form */}
-        <CreatePostForm />
-
-        {/* Posts Feed */}
-        <div>
-          {postsLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i} className="animate-pulse">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-300 rounded w-1/4 mb-2"></div>
-                      <div className="h-3 bg-gray-300 rounded w-1/6"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-gray-300 rounded w-full"></div>
-                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : postsData?.content && postsData.content.length > 0 ? (
-            <div className="space-y-4">
-              {postsData.content.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </div>
-          ) : (
-            <Card className="text-center py-8">
-              <p className="text-gray-600 mb-4">Chưa có bài viết nào.</p>
-              <p className="text-sm text-gray-500">Hãy tạo bài viết đầu tiên của bạn!</p>
-            </Card>
-          )}
-        </div>
-      </div>
+        <PostFeed></PostFeed>
     </Layout>
   );
 };

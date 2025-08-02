@@ -118,11 +118,11 @@ export const CreatePost: React.FC<CreatePostProps> = ({
   return (
     <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
       <h3 className="text-lg font-semibold mb-4">Create Post</h3>
-
+      
       {error && (
-        <ErrorAlert
-          message={error}
-          onClose={() => setError(null)}
+        <ErrorAlert 
+          message={error} 
+          onClose={() => setError(null)} 
           className="mb-4"
         />
       )}
@@ -164,7 +164,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
               Add
             </Button>
           </div>
-
+          
           {/* Display Tags */}
           {formData.tags && formData.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -207,13 +207,14 @@ export const CreatePost: React.FC<CreatePostProps> = ({
             }}
             className="hidden"
           />
-
+          
           <Button
             type="button"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             className="w-full"
           >
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image className="h-4 w-4 mr-2" />
             Add Photos/Videos
           </Button>

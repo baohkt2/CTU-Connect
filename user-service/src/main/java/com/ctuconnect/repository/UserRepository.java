@@ -364,37 +364,37 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
  List<UserEntity> findUsersWithSameCollege(@Param("userId") String userId);
 
  // ========================= ADDITIONAL METHODS FOR USERSERVICE =========================
-
+    
     /**
      * Find users by faculty ID
      */
     @Query("MATCH (u:User)-[:WORKS_IN]->(f:Faculty {id: $facultyId}) RETURN u")
     List<UserEntity> findByFacultyId(@Param("facultyId") String facultyId);
-
+    
     /**
      * Find users by major ID
      */
     @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {id: $majorId}) RETURN u")
     List<UserEntity> findByMajorId(@Param("majorId") String majorId);
-
+    
     /**
      * Find users by full name containing (case insensitive)
      */
     @Query("MATCH (u:User) WHERE toLower(u.fullName) CONTAINS toLower($name) RETURN u")
     List<UserEntity> findByFullNameContainingIgnoreCase(@Param("name") String name);
-
+    
     /**
      * Find users by college ID
      */
     @Query("MATCH (u:User)-[:BELONGS_TO]->(c:College {id: $collegeId}) RETURN u")
     List<UserEntity> findByCollegeId(@Param("collegeId") String collegeId);
-
+    
     /**
      * Find users by batch ID
      */
     @Query("MATCH (u:User)-[:IN_BATCH]->(b:Batch {id: $batchId}) RETURN u")
     List<UserEntity> findByBatchId(@Param("batchId") String batchId);
-
+    
     /**
      * Find users by gender ID
      */

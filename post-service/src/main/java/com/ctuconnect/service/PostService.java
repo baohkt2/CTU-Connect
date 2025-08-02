@@ -480,10 +480,10 @@ public class PostService {
     // Helper methods
     private void handleLikeInteraction(String postId, String userId, String reactionType,
                                      PostEntity post, AuthorInfo user) {
-        InteractionEntity.InteractionType.ReactionType reaction =
+        InteractionEntity.ReactionType reaction =
             reactionType != null ?
-            InteractionEntity.InteractionType.ReactionType.valueOf(reactionType.toUpperCase()) :
-            InteractionEntity.InteractionType.ReactionType.LIKE;
+            InteractionEntity.ReactionType.valueOf(reactionType.toUpperCase()) :
+            InteractionEntity.ReactionType.LIKE;
 
         // Check if user already reacted
         Optional<InteractionEntity> existingInteraction = interactionRepository

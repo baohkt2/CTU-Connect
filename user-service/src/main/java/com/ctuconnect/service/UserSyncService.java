@@ -1,5 +1,6 @@
 package com.ctuconnect.service;
 
+import com.ctuconnect.dto.AuthorDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.enums.Role;
@@ -163,4 +164,16 @@ public class UserSyncService {
         return dto;
     }
 
+    public AuthorDTO getAuthorById(String authorID) {
+        UserEntity userEntity = userRepository.findById(authorID)
+                .orElseThrow(() -> new RuntimeException("User not found: " + authorID));
+
+        // Chỉ trả về thông tin cần thiết cho author
+        AuthorDTO dto = new AuthorDTO();
+        dto.setId(userEntity.getId());
+        dto.setFullName(userEntity.getFullName());
+        dto.setRole(userEntity.getRole() != null ? userEntity.getRole().toString() : null);
+        dto.setAvatarUrl(userEntity.getAvatarUrl());
+        return dto;
+    }
 }

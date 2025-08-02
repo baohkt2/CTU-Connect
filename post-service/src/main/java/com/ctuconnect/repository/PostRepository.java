@@ -52,7 +52,5 @@ public interface PostRepository extends MongoRepository<PostEntity, String> {
     @Query("{ 'author.id': ?0 }")
     long countByAuthorId(String authorId);
 
-    // Find posts by author ID ordered by creation date (for timeline)
-    @Query("{ 'author.id': ?0 }")
-    List<PostEntity> findByAuthorIdOrderByCreatedAtDesc(String authorId, Pageable pageable);
+    List<PostEntity> findByAuthorIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 }

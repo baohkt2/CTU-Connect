@@ -67,13 +67,16 @@ export const PostFeed: React.FC<PostFeedProps> = ({
         };
       } else {
         // Latest posts
-        response = await postService.getPosts({
-          page,
-          size: 10,
-          authorId,
-          category,
-          search
-        });
+        response = await postService.getPosts(
+            page,           // number
+            10,             // size
+            'createdAt',    // sortBy
+            'desc',         // sortDir
+            authorId,       // string | undefined
+            category,       // string | undefined
+            search          // string | undefined
+        );
+
       }
 
       if (append) {
@@ -145,46 +148,48 @@ export const PostFeed: React.FC<PostFeedProps> = ({
     <div className={`space-y-6 ${className}`}>
       {/* Header with tabs and create button */}
       <div className="bg-white rounded-lg shadow-sm p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex space-x-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+          <div className="flex flex-wrap gap-2">
             {tabs.map(({ key, label, icon: Icon }) => (
-              <button
-                key={key}
-                onClick={() => handleTabChange(key as any)}
-                className={`flex items-center px-4 py-2 rounded-md transition-colors ${
-                  activeTab === key
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <Icon className="h-4 w-4 mr-2" />
-                {label}
-              </button>
+                <button
+                    key={key}
+                    onClick={() => handleTabChange(key as any)}
+                    className={`flex items-center px-3 py-2 sm:px-4 rounded-md transition-colors ${
+                        activeTab === key
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                >
+                  <Icon className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
+                  {label}
+                </button>
             ))}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isLoading}
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isLoading}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-5 w-5 sm:h-4 sm:w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            
+
             <Button
-              size="sm"
-              onClick={() => setShowCreatePost(!showCreatePost)}
+                size="sm"
+                onClick={() => setShowCreatePost(!showCreatePost)}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-5 w-5 sm:h-4 sm:w-4 mr-2" />
               Create Post
             </Button>
           </div>
         </div>
 
-        {/* Search/Filter Info */}
+
+
+      {/* Search/Filter Info */}
         {(search || category || authorId) && (
           <div className="text-sm text-gray-600 mb-2">
             Showing posts
@@ -212,37 +217,23 @@ export const PostFeed: React.FC<PostFeedProps> = ({
       )}
 
       {/* Posts List */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.length === 0 && !isLoading ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <div className="text-gray-500 mb-4">
-              <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p className="text-lg font-medium">No posts found</p>
-              <p className="text-sm">
-                {search || category 
-                  ? 'Try adjusting your search criteria' 
-                  : 'Be the first to share something!'
-                }
-              </p>
+            <div className="text-center py-12 bg-white rounded-lg shadow-sm col-span-full">
+              {/* Message no posts */}
             </div>
-            {!search && !category && !authorId && (
-              <Button onClick={() => setShowCreatePost(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Your First Post
-              </Button>
-            )}
-          </div>
         ) : (
-          posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onPostUpdate={handlePostUpdate}
-              onPostDelete={handlePostDelete}
-            />
-          ))
+            posts.map((post) => (
+                <PostCard
+                    key={post.id}
+                    post={post}
+                    onPostUpdate={handlePostUpdate}
+                    onPostDelete={handlePostDelete}
+                />
+            ))
         )}
       </div>
+
 
       {/* Load More Button */}
       {hasMore && posts.length > 0 && (

@@ -41,7 +41,7 @@ public class PostResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.author = post.getAuthor();
-
+        
         // Handle AuthorInfo properly
         if (post.getAuthor() != null) {
             this.authorId = post.getAuthor().getId();

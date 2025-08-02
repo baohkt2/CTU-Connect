@@ -19,7 +19,7 @@ public class PostAnalyticsResponse {
     private long comments;
     private long shares;
     private double engagementRate;
-    private Map<InteractionEntity.InteractionType.ReactionType, Integer> reactions;
+    private Map<InteractionEntity.ReactionType, Integer> reactions;
 
     // Additional analytics data
     private long totalEngagements;

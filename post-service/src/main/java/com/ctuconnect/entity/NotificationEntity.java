@@ -17,30 +17,30 @@ import java.time.LocalDateTime;
 @Builder
 @Document(collection = "notifications")
 public class NotificationEntity {
-
+    
     @Id
     private String id;
-
+    
     private String recipientId;
     private String actorId;
-
+    
     private NotificationType type;
     private String entityType; // POST, COMMENT, USER, etc.
     private String entityId;
-
+    
     private String message;
     private boolean isRead;
-
+    
     @Field("created_at")
     @CreatedDate
     private LocalDateTime createdAt;
-
+    
     private LocalDateTime readAt;
-
+    
     // Additional metadata for rich notifications
     private String imageUrl;
     private String actionUrl;
-
+    
     public enum NotificationType {
         POST_LIKED,
         POST_COMMENTED,
