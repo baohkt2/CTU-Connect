@@ -3,7 +3,7 @@ import {ChangeEvent, useRef, useState} from 'react';
 import {Image as ImageIcon, Upload, XCircle} from 'lucide-react';
 import {useUploadMedia} from '@/hooks/useUploadMedia';
 
-interface ImageUploadProps {
+interface UploadProps {
     currentUser: { id: string };
     currentImageUrl?: string;
     onImageUploaded: (url: string) => void;
@@ -12,14 +12,14 @@ interface ImageUploadProps {
     maxSizeMB?: number;
 }
 
-export default function ImageUpload({
+export default function UploadFile({
 
                                         currentImageUrl,
                                         onImageUploaded,
                                         aspectRatio = '1/1',
                                         imageType = 'avatar',
                                         maxSizeMB = 5
-                                    }: ImageUploadProps) {
+                                    }: UploadProps) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);

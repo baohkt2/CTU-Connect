@@ -17,7 +17,7 @@ import {
 } from '@/types';
 import { useToast } from '@/hooks/useToast';
 import { useAuth } from '@/contexts/AuthContext';
-import ImageUpload from '@/components/ui/ImageUpload';
+import UploadFile from '@/components/ui/UploadFile';
 
 interface LecturerProfileFormProps {
     user: User;
@@ -312,7 +312,7 @@ export default function LecturerProfileForm({ user }: LecturerProfileFormProps) 
             {/* Avatar */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh đại diện</label>
-                <ImageUpload
+                <UploadFile
                     currentUser={user}
                     currentImageUrl={formData.avatarUrl}
                     onImageUploaded={(url) => setFormData({ ...formData, avatarUrl: url })}
@@ -325,7 +325,7 @@ export default function LecturerProfileForm({ user }: LecturerProfileFormProps) 
             {/* Background */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh bìa</label>
-                <ImageUpload
+                <UploadFile
                     currentUser={user}
                     currentImageUrl={formData.backgroundUrl}
                     onImageUploaded={(url) => setFormData({ ...formData, backgroundUrl: url })}

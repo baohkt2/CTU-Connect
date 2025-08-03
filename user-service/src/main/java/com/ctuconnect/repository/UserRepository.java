@@ -323,6 +323,4 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
   */
  @Query("MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $majorName}) RETURN u")
  List<UserEntity> findUsersByMajor(@Param("majorName") String majorName);
-
-
 }
