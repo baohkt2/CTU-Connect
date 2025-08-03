@@ -87,6 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   };
 
+
   return (
       <div className="flex flex-col min-h-screen bg-gray-50">
         {/* Header: thanh bar nằm trên cùng */}
@@ -154,7 +155,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                   <div className="relative">
                     <Avatar
-                      src={user?.avatarUrl}
+                      src={user?.avatarUrl || '/default-avatar.png'}
                       alt={user?.fullName || user?.username || 'Avatar'}
                       size="md"
                       className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
@@ -183,7 +184,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <LeftSidebar />
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-2xl mx-auto px-4 py-6">
+          <main className="flex-1 min-w-0 px-4 py-6 sm:px-6 lg:px-8">
             <div className="min-h-full">
               {children}
             </div>

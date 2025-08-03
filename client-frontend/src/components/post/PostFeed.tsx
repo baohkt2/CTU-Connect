@@ -8,11 +8,11 @@ import { CreatePost } from './CreatePost';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
-import { RefreshCw, Plus, TrendingUp, Heart } from 'lucide-react';
+import { RefreshCw, Plus, TrendingUp, Heart, Filter } from 'lucide-react';
 
 interface PostFeedProps {
   authorId?: string;
-  authorName?: string; // dùng để hiển thị author name trong filter info
+  authorName?: string;
   category?: string;
   search?: string;
   className?: string;
@@ -117,7 +117,7 @@ export const PostFeed: React.FC<PostFeedProps> = ({
     if (tab !== activeTab) {
       setActiveTab(tab);
       setCurrentPage(0);
-      setPosts([]); // reset posts khi đổi tab để chuyển sạch
+      setPosts([]);
     }
   };
 
@@ -135,9 +135,9 @@ export const PostFeed: React.FC<PostFeedProps> = ({
   };
 
   const tabs = [
-    { key: 'latest', label: 'Latest', icon: RefreshCw },
-    { key: 'trending', label: 'Trending', icon: TrendingUp },
-    { key: 'top-liked', label: 'Most Liked', icon: Heart }
+    { key: 'latest', label: 'Mới nhất', icon: RefreshCw },
+    { key: 'trending', label: 'Thịnh hành', icon: TrendingUp },
+    { key: 'top-liked', label: 'Yêu thích', icon: Heart }
   ];
 
   if (isLoading && posts.length === 0) {
@@ -150,10 +150,36 @@ export const PostFeed: React.FC<PostFeedProps> = ({
 
   return (
       <main className={`space-y-6 ${className}`}>
-        {/* Header: tabs và nút tạo bài */}
-        <header className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <nav aria-label="Post sorting tabs" className="flex flex-wrap gap-2">
+        {/* Header */}
+        <header className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          {/* Hero top banner */}
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-700 px-6 py-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+            <div>
+              <h1 className="text-white text-2xl font-extrabold tracking-tight">
+                Bảng tin CTU Connect
+              </h1>
+              <p className="mt-1 text-indigo-200 text-sm max-w-md">
+                Khám phá, chia sẻ những điều thú vị với cộng đồng CTU
+              </p>
+            </div>
+
+              <Button
+                  onClick={() => setShowCreatePost((v) => !v)}
+                  aria-expanded={showCreatePost}
+                  aria-controls="create-post-form"
+                  variant="especially"
+                  size="sm"
+              >
+                <Plus className={`w-5 h-5 ${showCreatePost ? 'rotate-45' : ''}`} />
+                <span>{showCreatePost ? 'Hủy bài viết' : 'Tạo bài viết'}</span>
+              </Button>
+            </div>
+
+
+          {/* Tabs + Control */}
+          <div className="px-6 py-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Tabs */}
+            <nav aria-label="Bộ lọc bài viết" className="flex flex-wrap gap-3">
               {tabs.map(({ key, label, icon: Icon }) => {
                 const isActive = activeTab === key;
                 return (
@@ -162,79 +188,82 @@ export const PostFeed: React.FC<PostFeedProps> = ({
                         type="button"
                         aria-current={isActive ? 'page' : undefined}
                         onClick={() => handleTabChange(key as any)}
-                        className={`flex items-center px-4 py-2 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
+                    ${
                             isActive
-                                ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                : 'text-gray-600 hover:bg-gray-100'
-                        }`}
+                                ? 'bg-indigo-100 text-indigo-700 shadow-sm border border-indigo-300'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600 border border-transparent'
+                        }
+                  `}
+                        title={label}
                     >
-                      <Icon className="mr-2 h-5 w-5" aria-hidden="true" />
+                      <Icon
+                          className={`w-5 h-5 transition-transform ${
+                              isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-indigo-600'
+                          }`}
+                          aria-hidden="true"
+                      />
                       <span>{label}</span>
                     </button>
                 );
               })}
             </nav>
 
-            <div className="flex gap-2 justify-start sm:justify-end">
+            {/* Filter info + Refresh */}
+            <div className="flex flex-wrap gap-3 items-center">
+              {(search || category || authorId) && (
+                  <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-xs">
+                    <Filter className="w-4 h-4" />
+                    <span>
+                  Đang lọc:
+                      {search && ` "${search}"`}
+                      {category && ` ${category}`}
+                      {authorId && ` ${authorName ?? authorId}`}
+                </span>
+                  </div>
+              )}
+
               <Button
-                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={handleRefresh}
                   disabled={isLoading || isLoadingMore}
-                  aria-label="Refresh posts list"
+                  aria-label="Làm mới danh sách bài viết"
+                  className="flex items-center gap-2"
               >
                 <RefreshCw
-                    className={`mr-2 h-5 w-5 transition-transform ${
-                        isLoading ? 'animate-spin' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform ${isLoading ? 'animate-spin' : 'hover:rotate-180'}`}
                     aria-hidden="true"
                 />
-                Refresh
-              </Button>
-
-              <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => setShowCreatePost((v) => !v)}
-                  aria-expanded={showCreatePost}
-                  aria-controls="create-post-form"
-              >
-                <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
-                Create Post
+                <span className="hidden sm:inline">Làm mới</span>
               </Button>
             </div>
           </div>
-
-          {(search || category || authorId) && (
-              <p className="text-xs text-gray-600 select-none" aria-live="polite">
-                Showing posts
-                {search && ` matching "${search}"`}
-                {category && ` in category "${category}"`}
-                {authorId && ` by author "${authorName ?? authorId}"`}
-              </p>
-          )}
         </header>
 
         {/* Form tạo bài viết */}
         {showCreatePost && (
-            <section id="create-post-form" aria-label="Create a new post">
+            <section
+                id="create-post-form"
+                aria-label="Tạo bài viết mới"
+                className="animate-slide-up"
+            >
               <CreatePost onPostCreated={handlePostCreated} onCancel={() => setShowCreatePost(false)} />
             </section>
         )}
 
-        {/* Thông báo lỗi */}
+        {/* Error */}
         {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
 
-        {/* Danh sách bài viết cuộn dọc */}
+        {/* Post List */}
         <section
             aria-live="polite"
             aria-busy={isLoading}
-            className="max-h-[70vh] overflow-y-auto space-y-4"
-            aria-label="List of posts"
+            className="max-h-[100vh] overflow-y-auto space-y-4"
+            aria-label="Danh sách bài viết"
         >
           {!isLoading && posts.length === 0 ? (
-              <p className="text-center text-gray-500 py-12 select-none w-full">No posts found.</p>
+              <p className="text-center text-gray-500 py-12 select-none w-full">Không có bài viết nào.</p>
           ) : (
               posts.map((post) => (
                   <div key={post.id} className="w-full max-w-lg mx-auto">
@@ -244,7 +273,7 @@ export const PostFeed: React.FC<PostFeedProps> = ({
           )}
         </section>
 
-        {/* Load More Button */}
+        {/* Load More */}
         {hasMore && posts.length > 0 && (
             <div className="flex justify-center pt-4">
               <Button
@@ -252,14 +281,14 @@ export const PostFeed: React.FC<PostFeedProps> = ({
                   onClick={handleLoadMore}
                   disabled={isLoadingMore || isLoading}
                   loading={isLoadingMore}
-                  aria-label="Load more posts"
+                  aria-label="Xem thêm bài viết"
               >
-                {isLoadingMore ? 'Loading...' : 'Load More Posts'}
+                {isLoadingMore ? 'Đang tải...' : 'Xem thêm bài viết'}
               </Button>
             </div>
         )}
 
-        {/* Loading spinner ở cuối khi tải thêm */}
+        {/* Loading Spinner */}
         {isLoadingMore && (
             <div className="flex justify-center py-4" aria-hidden="true">
               <LoadingSpinner />

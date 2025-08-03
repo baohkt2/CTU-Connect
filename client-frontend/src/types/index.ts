@@ -5,6 +5,7 @@ export interface User {
   email: string;
   username: string;
   fullName?: string;
+  name?: string; // Optional for compatibility with older data
   bio?: string;
   studentId?: string;
   yearOfStudy?: number;

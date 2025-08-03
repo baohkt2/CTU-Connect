@@ -186,7 +186,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <Card className={`post-card bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 mb-6 ${className}`}>
+    <Card className={`post-card bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 mb-6  ${className}`}>
       {/* Action feedback */}
       {actionFeedback && (
         <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-4 py-2 rounded-lg text-sm animate-fade-in shadow-lg">
