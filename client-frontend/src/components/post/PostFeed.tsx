@@ -8,7 +8,7 @@ import { CreatePost } from './CreatePost';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/Button';
-import { RefreshCw, Plus, TrendingUp, Heart, Filter } from 'lucide-react';
+import { RefreshCw, Plus, TrendingUp, Heart, Filter, MessageCircle } from 'lucide-react';
 
 interface PostFeedProps {
   authorId?: string;
@@ -255,20 +255,34 @@ export const PostFeed: React.FC<PostFeedProps> = ({
         {/* Error */}
         {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
 
-        {/* Post List */}
+        {/* Enhanced Post List - Full Width */}
         <section
             aria-live="polite"
             aria-busy={isLoading}
-            className="max-h-[100vh] overflow-y-auto space-y-4"
+            className="space-y-6"
             aria-label="Danh sách bài viết"
         >
           {!isLoading && posts.length === 0 ? (
-              <p className="text-center text-gray-500 py-12 select-none w-full">Không có bài viết nào.</p>
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MessageCircle className="w-12 h-12 text-gray-400" />
+                </div>
+                <p className="text-gray-500 text-xl vietnamese-text font-medium">Không có bài viết nào</p>
+                <p className="text-gray-400 text-sm vietnamese-text mt-2">
+                  {activeTab === 'latest' && 'Hãy tạo bài viết đầu tiên của bạn!'}
+                  {activeTab === 'trending' && 'Chưa có bài viết thịnh hành nào.'}
+                  {activeTab === 'top-liked' && 'Chưa có bài viết được yêu thích nào.'}
+                </p>
+              </div>
           ) : (
               posts.map((post) => (
-                  <div key={post.id} className="w-full max-w-lg mx-auto">
-                    <PostCard post={post} onPostUpdate={handlePostUpdate} onPostDelete={handlePostDelete} />
-                  </div>
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    onPostUpdate={handlePostUpdate}
+                    onPostDelete={handlePostDelete}
+                    className="w-full"
+                  />
               ))
           )}
         </section>

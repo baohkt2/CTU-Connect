@@ -75,10 +75,43 @@ code, pre {
 /* Post card hover effects */
 .post-card {
   transition: all 0.3s ease-out;
+  width: 100%;
+  max-width: none; /* Remove max-width constraints */
 }
 
 .post-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Enhanced post card styling */
+.post-card-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.post-card-content {
+  min-height: 60px;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.post-card-media {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.post-card-actions {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.post-card-stats {
+  background: linear-gradient(135deg, #fafbfc 0%, #f4f6f8 100%);
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 /* Button hover effects */

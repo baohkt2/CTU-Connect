@@ -12,17 +12,17 @@ import {
   Heart,
   MessageCircle,
   Share,
-  Bookmark,
   MoreHorizontal,
   Send,
   Eye,
   Globe,
   Users,
-  Lock
+  Lock,
+  ThumbsUp
 } from 'lucide-react';
 
 interface PostCardProps {
-  post: any; // Sử dụng any để phù hợp với structure mới
+  post: any;
   onPostUpdate?: (updatedPost: any) => void;
   onPostDelete?: (postId: string) => void;
   className?: string;
@@ -64,7 +64,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   // Show feedback message temporarily
   const showFeedback = (message: string) => {
     setActionFeedback(message);
-    setTimeout(() => setActionFeedback(null), 2000);
+    setTimeout(() => setActionFeedback(null), 1500);
   };
 
   // Toggle phần comment
@@ -73,7 +73,6 @@ export const PostCard: React.FC<PostCardProps> = ({
       setIsLoadingComments(true);
       try {
         const response = await postService.getComments(post.id);
-        // Đọc từ response.content thay vì response trực tiếp
         setComments(response.content || []);
       } catch (error) {
         console.error('Không thể tải bình luận:', error);
@@ -166,13 +165,13 @@ export const PostCard: React.FC<PostCardProps> = ({
   const getPrivacyIcon = () => {
     switch (post.privacy || post.visibility) {
       case 'PUBLIC':
-        return <Globe className="h-3 w-3 text-green-600" />;
+        return <Globe className="h-3 w-3 text-gray-500" />;
       case 'FRIENDS':
-        return <Users className="h-3 w-3 text-blue-600" />;
+        return <Users className="h-3 w-3 text-gray-500" />;
       case 'PRIVATE':
-        return <Lock className="h-3 w-3 text-gray-600" />;
+        return <Lock className="h-3 w-3 text-gray-500" />;
       default:
-        return <Globe className="h-3 w-3 text-green-600" />;
+        return <Globe className="h-3 w-3 text-gray-500" />;
     }
   };
 
@@ -186,92 +185,88 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <Card className={`post-card bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 mb-6  ${className}`}>
-      {/* Action feedback */}
+    <Card className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 mb-4 ${className}`}>
+      {/* Feedback Toast */}
       {actionFeedback && (
-        <div className="absolute top-4 right-4 z-10 bg-green-500 text-white px-4 py-2 rounded-lg text-sm animate-fade-in shadow-lg">
+        <div className="absolute top-3 right-3 z-10 bg-gray-800 text-white px-3 py-1 rounded text-xs animate-fade-in">
           {actionFeedback}
         </div>
       )}
 
-      <header className="flex items-center justify-between p-6 pb-4">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            {post.author?.avatarUrl || post.authorAvatar ? (
-              <img
-                src={post.author?.avatarUrl || post.authorAvatar}
-                alt="Avatar"
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-sm"
-              />
-            ) : (
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                {(post.author?.fullName || post.author?.name || post.authorName)?.charAt(0)?.toUpperCase() || 'U'}
-              </div>
-            )}
-            {/* Online status indicator */}
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center space-x-2">
-              <h3 className="font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer transition-colors vietnamese-text">
-                {post.author?.fullName || post.author?.name || post.authorName || 'Người dùng'}
-              </h3>
-              {post.author?.role && (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  post.author.role === 'LECTURER' 
-                    ? 'bg-blue-100 text-blue-800' 
-                    : 'bg-green-100 text-green-800'
-                }`}>
-                  {post.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
-                </span>
+      {/* Header - Facebook Style */}
+      <div className="p-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {/* Avatar */}
+            <div className="relative">
+              {post.author?.avatarUrl || post.authorAvatar ? (
+                <img
+                  src={post.author?.avatarUrl || post.authorAvatar}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white font-medium">
+                  {(post.author?.fullName || post.author?.name || post.authorName)?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
               )}
             </div>
-            <div className="flex items-center space-x-2 mt-1">
-              <p className="text-sm text-gray-500">
-                {formatTimeAgo(post.createdAt)}
-              </p>
-              <span className="text-gray-300">•</span>
-              <div className="flex items-center space-x-1">
+
+            {/* User Info */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2">
+                <h3 className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer vietnamese-text">
+                  {post.author?.fullName || post.author?.name || post.authorName || 'Người dùng'}
+                </h3>
+                {post.author?.role && (
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    post.author.role === 'LECTURER' 
+                      ? 'bg-blue-100 text-blue-700' 
+                      : 'bg-green-100 text-green-700'
+                  }`}>
+                    {post.author.role === 'LECTURER' ? 'GV' : 'SV'}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-1 text-xs text-gray-500 mt-0.5">
+                <time dateTime={post.createdAt}>
+                  {formatTimeAgo(post.createdAt)}
+                </time>
+                <span>•</span>
                 {getPrivacyIcon()}
-                <span className="text-xs text-gray-500">{getPrivacyText()}</span>
               </div>
             </div>
           </div>
-        </div>
-        <Button variant="ghost" size="sm" aria-label="Tùy chọn khác" disabled>
-          <MoreHorizontal className="h-5 w-5" />
-        </Button>
-      </header>
 
-      <div className="px-6 pb-4">
+          {/* More Options */}
+          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <MoreHorizontal className="h-4 w-4 text-gray-500" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-3 pb-3">
         {/* Title */}
         {post.title && (
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2 vietnamese-text">
+          <h2 className="font-semibold text-gray-900 mb-2 vietnamese-text">
             {post.title}
           </h2>
         )}
 
-        {/* Content */}
-        <div className="text-gray-700 whitespace-pre-wrap leading-relaxed text-base mb-4 vietnamese-text">
+        {/* Text Content */}
+        <div className="text-gray-800 text-sm leading-relaxed vietnamese-text mb-3">
           {post.content}
         </div>
 
-        {/* Category */}
-        {post.category && (
-          <div className="mb-3">
-            <span className="inline-flex items-center bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">
-              📚 {post.category}
-            </span>
-          </div>
-        )}
-
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1 mb-3">
             {post.tags.map((tag: string, index: number) => (
               <span
                 key={index}
-                className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors cursor-pointer"
+                className="text-blue-600 hover:underline cursor-pointer text-sm"
               >
                 #{tag}
               </span>
@@ -281,8 +276,8 @@ export const PostCard: React.FC<PostCardProps> = ({
 
         {/* Media - Images */}
         {post.images && post.images.length > 0 && (
-          <div className="mb-4">
-            <div className={`grid gap-2 rounded-xl overflow-hidden ${
+          <div className="mb-3 -mx-3">
+            <div className={`grid gap-0.5 ${
               post.images.length === 1 ? 'grid-cols-1' :
               post.images.length === 2 ? 'grid-cols-2' :
               post.images.length === 3 ? 'grid-cols-2' : 'grid-cols-2'
@@ -291,8 +286,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 <div
                   key={index}
                   className={`relative bg-gray-100 ${
-                    post.images.length === 3 && index === 0 ? 'row-span-2' :
-                    post.images.length > 4 && index === 3 ? 'relative' : ''
+                    post.images.length === 3 && index === 0 ? 'row-span-2' : ''
                   }`}
                 >
                   <img
@@ -302,7 +296,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                     onClick={() => window.open(imageUrl, '_blank')}
                   />
                   {post.images.length > 4 && index === 3 && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer">
+                    <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center cursor-pointer">
                       <span className="text-white text-xl font-semibold">
                         +{post.images.length - 4}
                       </span>
@@ -316,182 +310,170 @@ export const PostCard: React.FC<PostCardProps> = ({
 
         {/* Media - Videos */}
         {post.videos && post.videos.length > 0 && (
-          <div className="mb-4">
-            <div className="grid gap-3">
-              {post.videos.map((videoUrl: string, index: number) => (
-                <div key={index} className="rounded-xl overflow-hidden bg-gray-50">
-                  <video
-                    src={videoUrl}
-                    controls
-                    className="w-full h-auto max-h-[500px] object-cover"
-                    preload="metadata"
-                  >
-                    Trình duyệt của bạn không hỗ trợ video.
-                  </video>
-                </div>
-              ))}
-            </div>
+          <div className="mb-3 -mx-3">
+            {post.videos.map((videoUrl: string, index: number) => (
+              <div key={index} className="bg-black">
+                <video
+                  src={videoUrl}
+                  controls
+                  className="w-full h-auto max-h-[500px]"
+                  preload="metadata"
+                >
+                  Trình duyệt của bạn không hỗ trợ video.
+                </video>
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Stats Bar */}
+      {/* Stats */}
       {(post.stats?.likes > 0 || post.stats?.comments > 0 || post.stats?.shares > 0) && (
-        <div className="px-6 py-3 border-t border-gray-100">
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <div className="flex items-center space-x-4">
+        <div className="px-3 py-2 border-t border-gray-100">
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center space-x-1">
               {post.stats?.likes > 0 && (
-                <span className="flex items-center space-x-1">
+                <>
                   <div className="flex -space-x-1">
-                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                      <Heart className="w-3 h-3 text-white fill-current" />
+                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                      <ThumbsUp className="w-2.5 h-2.5 text-white fill-current" />
+                    </div>
+                    <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                      <Heart className="w-2.5 h-2.5 text-white fill-current" />
                     </div>
                   </div>
                   <span>{formatStats(post.stats.likes)}</span>
-                </span>
+                </>
               )}
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {post.stats?.comments > 0 && (
-                <span>{formatStats(post.stats.comments)} bình luận</span>
+                <button
+                  onClick={toggleComments}
+                  className="hover:underline"
+                >
+                  {formatStats(post.stats.comments)} bình luận
+                </button>
               )}
               {post.stats?.shares > 0 && (
                 <span>{formatStats(post.stats.shares)} chia sẻ</span>
-              )}
-              {post.stats?.views > 0 && (
-                <span>{formatStats(post.stats.views)} lượt xem</span>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Action Buttons */}
-      <div className="border-t border-gray-100 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => handleInteraction('like')}
-              disabled={isLoadingInteraction}
-              className={`flex items-center space-x-2 px-4 py-3 rounded-xl transition-all duration-200 flex-1 justify-center ${
-                isLiked 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-red-600'
-              }`}
-              aria-label={isLiked ? t('posts.unlikePost') : t('posts.likePost')}
-            >
-              <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''} transition-transform hover:scale-110`} />
-              <span className="font-medium">Thích</span>
-            </button>
+      {/* Action Buttons - Facebook Style */}
+      <div className="border-t border-gray-100">
+        <div className="flex">
+          <button
+            onClick={() => handleInteraction('like')}
+            disabled={isLoadingInteraction}
+            className={`flex-1 flex items-center justify-center py-2 px-3 hover:bg-gray-50 transition-colors ${
+              isLiked ? 'text-blue-600' : 'text-gray-600'
+            }`}
+          >
+            <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+            <span className="text-sm font-medium">Thích</span>
+          </button>
 
-            <button
-              onClick={toggleComments}
-              className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-all duration-200 flex-1 justify-center"
-              aria-label={showComments ? t('posts.hideComments') : t('posts.viewComments')}
-            >
-              <MessageCircle className="h-5 w-5 transition-transform hover:scale-110" />
-              <span className="font-medium">Bình luận</span>
-            </button>
+          <button
+            onClick={toggleComments}
+            className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <MessageCircle className="h-4 w-4 mr-2" />
+            <span className="text-sm font-medium">Bình luận</span>
+          </button>
 
-            <button
-              onClick={() => handleInteraction('share')}
-              disabled={isLoadingInteraction}
-              className="flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-green-600 transition-all duration-200 flex-1 justify-center"
-              aria-label={t('posts.sharePost')}
-            >
-              <Share className="h-5 w-5 transition-transform hover:scale-110" />
-              <span className="font-medium">Chia sẻ</span>
-            </button>
-          </div>
+          <button
+            onClick={() => handleInteraction('share')}
+            disabled={isLoadingInteraction}
+            className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <Share className="h-4 w-4 mr-2" />
+            <span className="text-sm font-medium">Chia sẻ</span>
+          </button>
         </div>
       </div>
 
       {/* Comments Section */}
       {showComments && (
         <div className="border-t border-gray-100 bg-gray-50">
-          <div className="p-6">
+          <div className="p-3">
             {/* Comment Form */}
-            <form onSubmit={handleSubmitComment} className="mb-6">
-              <div className="flex space-x-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+            <form onSubmit={handleSubmitComment} className="mb-3">
+              <div className="flex space-x-2">
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
                   U
                 </div>
                 <div className="flex-1">
                   <Textarea
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
-                    placeholder={t('posts.writeComment')}
-                    className="min-h-[60px] resize-none border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-white"
+                    placeholder="Viết bình luận..."
+                    className="min-h-[32px] text-sm bg-gray-100 border-0 rounded-full px-3 py-2 resize-none vietnamese-text"
                     disabled={isSubmittingComment}
                   />
-                  <div className="flex justify-end mt-3">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={!commentText.trim() || isSubmittingComment}
-                      className="flex items-center space-x-2 rounded-xl"
-                    >
-                      {isSubmittingComment ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                      <span>{isSubmittingComment ? t('actions.loading') : 'Gửi'}</span>
-                    </Button>
-                  </div>
+                  {commentText.trim() && (
+                    <div className="flex justify-end mt-1">
+                      <Button
+                        type="submit"
+                        size="sm"
+                        disabled={isSubmittingComment}
+                        className="text-xs px-3 py-1"
+                      >
+                        {isSubmittingComment ? <LoadingSpinner size="sm" /> : 'Gửi'}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </form>
 
             {/* Comments List */}
             {isLoadingComments ? (
-              <div className="flex justify-center py-8">
-                <LoadingSpinner />
-                <span className="ml-3 text-gray-600">{t('actions.loading')}</span>
+              <div className="flex justify-center py-4">
+                <LoadingSpinner size="sm" />
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {comments.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8 italic vietnamese-text">
-                    Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+                  <p className="text-gray-500 text-sm text-center py-4 vietnamese-text">
+                    Chưa có bình luận nào
                   </p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment.id} className="flex space-x-4 bg-white p-4 rounded-xl">
-                      <div className="flex-shrink-0">
-                        {comment.author?.avatarUrl ? (
-                          <img
-                            src={comment.author.avatarUrl}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
-                          </div>
-                        )}
+                    <div key={comment.id} className="flex space-x-2">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                        {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="font-semibold text-gray-900 vietnamese-text">
-                            {comment.author?.fullName || comment.author?.name || 'Ẩn danh'}
-                          </span>
-                          {comment.author?.role && (
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              comment.author.role === 'LECTURER' 
-                                ? 'bg-blue-100 text-blue-800' 
-                                : 'bg-green-100 text-green-800'
-                            }`}>
-                              {comment.author.role === 'LECTURER' ? 'GV' : 'SV'}
+                        <div className="bg-gray-100 rounded-2xl px-3 py-2">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="font-medium text-sm text-gray-900 vietnamese-text">
+                              {comment.author?.fullName || comment.author?.name || 'Ẩn danh'}
                             </span>
-                          )}
-                          <span className="text-sm text-gray-500">
-                            {formatTimeAgo(comment.createdAt)}
-                          </span>
+                            {comment.author?.role && (
+                              <span className={`px-1.5 py-0.5 rounded text-xs ${
+                                comment.author.role === 'LECTURER' 
+                                  ? 'bg-blue-100 text-blue-700' 
+                                  : 'bg-green-100 text-green-700'
+                              }`}>
+                                {comment.author.role === 'LECTURER' ? 'GV' : 'SV'}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-800 vietnamese-text">
+                            {comment.content}
+                          </p>
                         </div>
-                        <p className="text-gray-700 leading-relaxed vietnamese-text">
-                          {comment.content}
-                        </p>
+                        <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500">
+                          <time dateTime={comment.createdAt}>
+                            {formatTimeAgo(comment.createdAt)}
+                          </time>
+                          <button className="hover:underline">Thích</button>
+                          <button className="hover:underline">Trả lời</button>
+                        </div>
                       </div>
                     </div>
                   ))
