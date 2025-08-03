@@ -8,7 +8,8 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { postService } from '@/services/postService';
 import { CreatePostRequest } from '@/types';
-import { X, Image, Hash, Globe, Users, Lock, Video } from 'lucide-react';
+import { t } from '@/utils/localization';
+import { X, Image, Hash, Globe, Users, Lock, Video, Plus, Upload } from 'lucide-react';
 
 interface CreatePostProps {
   onPostCreated?: (post: any) => void;
@@ -33,6 +34,8 @@ export const CreatePost: React.FC<CreatePostProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState('');
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (field: keyof CreatePostRequest, value: string) => {
@@ -40,13 +43,14 @@ export const CreatePost: React.FC<CreatePostProps> = ({
       ...prev,
       [field]: value
     }));
+    setError(null); // Clear error when user types
   };
 
   const handleAddTag = useCallback(() => {
     const newTag = tagInput.trim();
     const tags = formData.tags ?? [];
 
-    if (newTag && !tags.includes(newTag)) {
+    if (newTag && !tags.includes(newTag) && tags.length < 5) { // Limit to 5 tags
       setFormData(prev => ({
         ...prev,
         tags: [...(prev.tags ?? []), newTag]
@@ -62,25 +66,45 @@ export const CreatePost: React.FC<CreatePostProps> = ({
     }));
   }, []);
 
-
   const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       handleAddTag();
     } else if (e.key === 'Backspace' && tagInput === '' && formData.tags && formData.tags.length > 0) {
-      // Xóa tag cuối nếu input rỗng và backspace
       e.preventDefault();
       handleRemoveTag(formData.tags && formData.tags[formData.tags.length - 1]);
     }
   };
 
   const handleFileSelect = (selectedFiles: File[]) => {
-    // Lọc giữ file ảnh/video hợp lệ, tránh trùng (có thể mở rộng)
-    const filtered = selectedFiles.filter(f => {
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const maxFiles = 5;
+
+    const validFiles = selectedFiles.filter(f => {
       const type = f.type;
-      return type.startsWith('image/') || type.startsWith('video/');
+      const isValidType = type.startsWith('image/') || type.startsWith('video/');
+      const isValidSize = f.size <= maxSize;
+
+      if (!isValidType) {
+        setError('Chỉ hỗ trợ file ảnh và video');
+        return false;
+      }
+
+      if (!isValidSize) {
+        setError('Kích thước file không được vượt quá 50MB');
+        return false;
+      }
+
+      return true;
     });
-    setFiles(prev => [...prev, ...filtered]);
+
+    if (files.length + validFiles.length > maxFiles) {
+      setError(`Chỉ được tải lên tối đa ${maxFiles} file`);
+      return;
+    }
+
+    setFiles(prev => [...prev, ...validFiles]);
+    setError(null);
   };
 
   const handleRemoveFile = (index: number) => {
@@ -91,15 +115,32 @@ export const CreatePost: React.FC<CreatePostProps> = ({
     e.preventDefault();
 
     if (!formData.content.trim()) {
-      setError('Content is required');
+      setError('Nội dung bài viết không được để trống');
       return;
     }
 
     setIsLoading(true);
     setError(null);
+    setUploadProgress(0);
 
     try {
-      const post = await postService.createPost(formData, files.length > 0 ? files : undefined);
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      const result = await postService.createPost(formData, files);
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      setSuccessMessage('Đã tạo bài viết thành công!');
 
       // Reset form
       setFormData({
@@ -112,251 +153,301 @@ export const CreatePost: React.FC<CreatePostProps> = ({
       setFiles([]);
       setTagInput('');
 
-      if (onPostCreated) {
-        onPostCreated(post);
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create post');
+      onPostCreated?.(result);
+
+      // Hide success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
+
+    } catch (error: any) {
+      console.error('Không thể tạo bài viết:', error);
+      setError(error.response?.data?.message || 'Có lỗi xảy ra khi tạo bài viết');
     } finally {
       setIsLoading(false);
+      setUploadProgress(0);
     }
   };
 
-  const visibilityOptions = [
-    { value: 'PUBLIC', label: 'Public', icon: Globe },
-    { value: 'FRIENDS', label: 'Friends', icon: Users },
-    { value: 'PRIVATE', label: 'Private', icon: Lock }
-  ];
-
-  // Hiển thị thumbnail cho các file đã chọn (ảnh hoặc video)
-  const renderFilePreview = (file: File, index: number) => {
-    const isImage = file.type.startsWith('image/');
-    const previewUrl = URL.createObjectURL(file);
-
-    return (
-        <div key={index} className="relative w-24 h-24 rounded-md overflow-hidden border border-gray-300 flex-shrink-0">
-          {isImage ? (
-              <img
-                  src={previewUrl}
-                  alt={file.name}
-                  className="object-cover w-full h-full"
-                  loading="lazy"
-              />
-          ) : (
-              <video
-                  src={previewUrl}
-                  className="object-cover w-full h-full"
-                  preload="metadata"
-                  controls={false}
-                  muted
-              />
-          )}
-          <button
-              type="button"
-              aria-label={`Remove file ${file.name}`}
-              onClick={() => handleRemoveFile(index)}
-              className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1 text-white hover:bg-opacity-80 transition"
-          >
-            <X className="w-4 h-4 pointer-events-none" />
-          </button>
-        </div>
-    );
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (
-      <section className={`bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto ${className}`} aria-label="Create a new post">
-        <h3 className="text-lg font-semibold mb-4">Create Post</h3>
-
-        {error && (
-            <ErrorAlert
-                message={error}
-                onClose={() => setError(null)}
-                className="mb-4"
-            />
+    <div className={`create-post bg-white rounded-lg shadow-sm border border-gray-200 p-6 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+          <Plus className="h-5 w-5 mr-2 text-indigo-600" />
+          {t('posts.createPost')}
+        </h2>
+        {onCancel && (
+          <Button variant="ghost" size="sm" onClick={onCancel}>
+            <X className="h-4 w-4" />
+          </Button>
         )}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          {/* Title */}
+      {/* Success Message */}
+      {successMessage && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <ErrorAlert message={error} onClose={() => setError(null)} className="mb-4" />
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Title */}
+        <div>
           <Input
-              id="post-title"
-              placeholder="Post title (optional)"
-              value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              aria-label="Post title"
-              maxLength={150}
+            type="text"
+            value={formData.title}
+            onChange={(e) => handleInputChange('title', e.target.value)}
+            placeholder="Tiêu đề bài viết (tùy chọn)"
+            className="text-lg font-medium border-0 border-b-2 border-gray-200 focus:border-indigo-500 rounded-none px-0 bg-transparent"
+            maxLength={100}
           />
+          <div className="text-xs text-gray-500 mt-1 text-right">
+            {formData.title.length}/100
+          </div>
+        </div>
 
-          {/* Content */}
+        {/* Content */}
+        <div>
           <Textarea
-              id="post-content"
-              placeholder="What's on your mind?"
-              value={formData.content}
-              onChange={(e) => handleInputChange('content', e.target.value)}
-              rows={5}
-              required
-              aria-required="true"
-              aria-describedby="content-help"
-              maxLength={2000}
+            value={formData.content}
+            onChange={(e) => handleInputChange('content', e.target.value)}
+            placeholder="Bạn đang nghĩ gì? Hãy chia sẻ với cộng đồng CTU..."
+            className="min-h-[120px] border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 resize-none text-gray-700 leading-relaxed"
+            maxLength={2000}
+            required
           />
-          <p id="content-help" className="text-xs text-gray-500 select-none">
-            Max 2000 characters
-          </p>
+          <div className="text-xs text-gray-500 mt-1 text-right">
+            {formData.content.length}/2000
+          </div>
+        </div>
 
-          {/* Tags */}
-          <div>
-            <label htmlFor="tag-input" className="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700">
-              <Hash aria-hidden="true" /> Tags
-            </label>
-            <div className="flex gap-2 mb-3">
-              <Input
-                  id="tag-input"
-                  placeholder="Add tags (press Enter or comma)"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleTagInputKeyDown}
-                  maxLength={20}
-                  autoComplete="off"
-                  aria-describedby="tag-help"
-              />
-              <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddTag}
-                  disabled={!tagInput.trim()}
-                  aria-label="Add tag"
+        {/* Category Selection */}
+        <div>
+          <select
+            value={formData.category}
+            onChange={(e) => handleInputChange('category', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 text-gray-700"
+          >
+            <option value="">Chọn danh mục</option>
+            <option value="academic">📚 Học tập</option>
+            <option value="social">🎉 Sinh hoạt</option>
+            <option value="announcement">📢 Thông báo</option>
+            <option value="career">💼 Nghề nghiệp</option>
+            <option value="technology">💻 Công nghệ</option>
+            <option value="sports">⚽ Thể thao</option>
+            <option value="entertainment">🎬 Giải trí</option>
+            <option value="other">📝 Khác</option>
+          </select>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {formData.tags?.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
               >
-                Add
-              </Button>
+                #{tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="ml-2 text-blue-500 hover:text-blue-700"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flex-1 relative">
+              <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagInputKeyDown}
+                placeholder="Thêm thẻ (nhấn Enter hoặc dấu phẩy)"
+                className="pl-10"
+                maxLength={20}
+                disabled={formData.tags && formData.tags.length >= 5}
+              />
             </div>
-            <p id="tag-help" className="text-xs text-gray-500 select-none mb-2">
-              Press Enter or comma to add a tag. Maximum 20 characters per tag.
-            </p>
-            {formData.tags && formData.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 max-h-28 overflow-y-auto pb-1">
-                  {formData.tags && formData.tags.map((tag, i) => (
-                      <span
-                          key={i}
-                          className="inline-flex items-center px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full select-none"
-                      >
-                  #{tag}
-                        <button
-                            type="button"
-                            aria-label={`Remove tag ${tag}`}
-                            onClick={() => handleRemoveTag(tag)}
-                            className="ml-1 inline-flex justify-center items-center text-blue-600 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
-                        >
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleAddTag}
+              disabled={!tagInput.trim() || (formData.tags && formData.tags.length >= 5)}
+            >
+              Thêm
+            </Button>
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            Tối đa 5 thẻ, mỗi thẻ không quá 20 ký tự
+          </div>
+        </div>
+
+        {/* File Upload */}
+        <div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,video/*"
+            onChange={(e) => handleFileSelect(Array.from(e.target.files || []))}
+            className="hidden"
+          />
+
+          <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
+            <div className="text-center">
+              <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-indigo-600 hover:text-indigo-700 font-medium"
+              >
+                Thêm ảnh hoặc video
+              </button>
+              <p className="text-sm text-gray-500 mt-1">
+                Hỗ trợ JPG, PNG, GIF, MP4, AVI. Tối đa 50MB mỗi file, 5 file.
+              </p>
+            </div>
+          </div>
+
+          {/* File Preview */}
+          {files.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+              {files.map((file, index) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    {file.type.startsWith('image/') ? (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Video className="h-8 w-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
                     <X className="h-3 w-3" />
                   </button>
-                </span>
-                  ))}
+                  <div className="text-xs text-gray-500 mt-1 truncate">
+                    {file.name} ({formatFileSize(file.size)})
+                  </div>
                 </div>
-            )}
-          </div>
-
-          {/* Category */}
-          <Input
-              id="post-category"
-              placeholder="Category (optional)"
-              value={formData.category}
-              onChange={(e) => handleInputChange('category', e.target.value)}
-              aria-label="Category"
-              maxLength={50}
-          />
-
-          {/* File Upload */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Image className="h-4 w-4" aria-hidden="true" />
-              Photos/Videos
-            </label>
-            <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*,video/*"
-                onChange={(e) => {
-                  const selectedFiles = Array.from(e.target.files || []);
-                  handleFileSelect(selectedFiles);
-                  e.target.value = ''; // reset để có thể chọn lại file đã chọn trước đó
-                }}
-                className="sr-only"
-                aria-label="Add photos or videos"
-            />
-            <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                className="mb-3 w-full"
-            >
-              Add Photos/Videos
-            </Button>
-
-            {/* Preview files */}
-            {files.length > 0 && (
-                <div className="flex gap-3 flex-wrap max-h-36 overflow-y-auto">
-                  {files.map(renderFilePreview)}
-                </div>
-            )}
-          </div>
-
-          {/* Visibility */}
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Globe className="h-4 w-4" aria-hidden="true" /> Visibility
-            </legend>
-            <div className="flex gap-2 flex-wrap">
-              {visibilityOptions.map(({ value, label, icon: Icon }) => {
-                const isSelected = formData.visibility === value;
-                return (
-                    <button
-                        key={value}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() => handleInputChange('visibility', value)}
-                        className={`flex items-center gap-2 px-4 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            isSelected
-                                ? 'bg-blue-50 border-blue-400 text-blue-700'
-                                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                        }`}
-                    >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                      {label}
-                    </button>
-                );
-              })}
+              ))}
             </div>
-          </fieldset>
+          )}
+        </div>
 
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
-            {onCancel && (
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={onCancel}
-                    disabled={isLoading}
-                >
-                  Cancel
-                </Button>
-            )}
-            <Button
-                type="submit"
-                disabled={isLoading || !formData.content.trim()}
-                aria-disabled={isLoading || !formData.content.trim()}
-                loading={isLoading}
-            >
-              {isLoading ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    <span className="ml-2">Creating...</span>
-                  </>
-              ) : (
-                  'Create Post'
-              )}
-            </Button>
+        {/* Visibility */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Quyền riêng tư
+          </label>
+          <div className="flex space-x-4">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="visibility"
+                value="PUBLIC"
+                checked={formData.visibility === 'PUBLIC'}
+                onChange={(e) => handleInputChange('visibility', e.target.value)}
+                className="mr-2"
+              />
+              <Globe className="h-4 w-4 mr-1 text-green-600" />
+              <span className="text-sm">Công khai</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="visibility"
+                value="FRIENDS"
+                checked={formData.visibility === 'FRIENDS'}
+                onChange={(e) => handleInputChange('visibility', e.target.value)}
+                className="mr-2"
+              />
+              <Users className="h-4 w-4 mr-1 text-blue-600" />
+              <span className="text-sm">Bạn bè</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="visibility"
+                value="PRIVATE"
+                checked={formData.visibility === 'PRIVATE'}
+                onChange={(e) => handleInputChange('visibility', e.target.value)}
+                className="mr-2"
+              />
+              <Lock className="h-4 w-4 mr-1 text-gray-600" />
+              <span className="text-sm">Riêng tư</span>
+            </label>
           </div>
-        </form>
-      </section>
+        </div>
+
+        {/* Upload Progress */}
+        {isLoading && uploadProgress > 0 && (
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Đang tải lên...</span>
+              <span className="text-sm font-medium text-indigo-600">{uploadProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {/* Submit Buttons */}
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+          {onCancel && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isLoading}
+            >
+              {t('actions.cancel')}
+            </Button>
+          )}
+          <Button
+            type="submit"
+            disabled={isLoading || !formData.content.trim()}
+            className="flex items-center space-x-2"
+          >
+            {isLoading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <Plus className="h-4 w-4" />
+            )}
+            <span>{isLoading ? 'Đang đăng...' : 'Đăng bài viết'}</span>
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
