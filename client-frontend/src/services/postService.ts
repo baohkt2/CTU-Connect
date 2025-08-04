@@ -84,7 +84,7 @@ export const postService = {
     if (search) params.append('search', search);
 
     const response = await api.get(`/posts?${params.toString()}`);
-    console.log("Fetched posts:", response.data);
+
     return response.data;
   },
 
@@ -233,6 +233,7 @@ export const postService = {
 
   async getMyPosts(page = 0, size = 10): Promise<PaginatedResponse<Post>> {
     const response = await api.get(`/posts/me?page=${page}&size=${size}`);
+
     return response.data;
   },
 

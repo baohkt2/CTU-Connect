@@ -251,18 +251,32 @@ public class PostController {
     }
 
     @GetMapping("/me")
+    @RequireAuth
     public ResponseEntity<?> getMyPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            System.out.println("DEBUG: Getting posts for current user ID: " + currentUserId);
+
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
             Page<PostResponse> posts = postService.getPostsByAuthor(currentUserId, pageable);
+
+            System.out.println("DEBUG: Found " + posts.getTotalElements() + " posts for user " + currentUserId);
+
+            // Additional debugging - log first few post author IDs
+            posts.getContent().stream().limit(3).forEach(post -> {
+                System.out.println("DEBUG: Post ID: " + post.getId() + ", Author ID: " +
+                    (post.getAuthor() != null ? post.getAuthor().getId() : "null"));
+            });
+
             return ResponseEntity.ok(posts);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Authentication required", "message", e.getMessage()));
         } catch (Exception e) {
+            System.err.println("ERROR in getMyPosts: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to retrieve posts", "message", e.getMessage()));
         }

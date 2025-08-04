@@ -40,35 +40,39 @@ export const ProfilePostFeed: React.FC<ProfilePostFeedProps> = ({
       } else {
         setIsLoadingMore(true);
       }
-      let response;
-      // TODO: Replace with actual API call to get user posts
-      if (userId !== user?.id) {
-        response = await postService.getUserPosts(userId, page, 10, filter);
-      } else {
-        response = await postService.getMyPosts(page, 10);
-      }
 
-        const mockResponse: PaginatedResponse<Post> = response;
-      // Mock data for now - replace with actual API call
-      /*const mockResponse: PaginatedResponse<Post> = {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: 10,
-        number: page,
-        first: page === 0,
-        last: true
-      };*/
+      // Call the correct API endpoint based on whether it's own profile or not
+      let response: PaginatedResponse<Post>;
+
+      if (isOwnProfile) {
+        // For own profile, use getMyPosts which calls /posts/me
+        response = await postService.getMyPosts(page, 10);
+      } else {
+        // For other users, we need to implement getUserPosts in postService
+        // For now, let's create a temporary implementation
+        const apiResponse = await fetch(`/api/posts/user/${userId}?page=${page}&size=10`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!apiResponse.ok) {
+          throw new Error('Failed to fetch user posts');
+        }
+
+        response = await apiResponse.json();
+      }
 
       if (append) {
-        setPosts(prev => [...prev, ...mockResponse.content]);
+        setPosts(prev => [...prev, ...response.content]);
       } else {
-        setPosts(mockResponse.content);
+        setPosts(response.content);
       }
 
-      setTotalPosts(mockResponse.totalElements);
-      setHasMore(!mockResponse.last);
-      setCurrentPage(mockResponse.number);
+      setTotalPosts(response.totalElements);
+      setHasMore(!response.last);
+      setCurrentPage(response.number);
 
     } catch (err: any) {
       console.error('Error loading user posts:', err);
@@ -77,7 +81,7 @@ export const ProfilePostFeed: React.FC<ProfilePostFeedProps> = ({
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  }, [userId]);
+  }, [userId, isOwnProfile]);
 
   useEffect(() => {
     loadUserPosts(0, false, activeFilter);

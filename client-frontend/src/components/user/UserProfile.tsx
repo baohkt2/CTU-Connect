@@ -46,7 +46,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
   const loadUserProfile = async () => {
     try {
       setIsLoading(true);
-      const user = await userService.getMyProfile();
+      // Use the correct method based on whether it's own profile or not
+      const user = isOwnProfile
+        ? await userService.getMyProfile()
+        : await userService.getProfile(userId);
       setProfileUser(user);
 
       // Check if current user is following this user

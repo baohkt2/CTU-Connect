@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v1.2.2">
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/ProfilePostFeed.tsx" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v1.2.2.1">
       <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/posts/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/posts/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/profile/ProfilePostFeed.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/profile/ProfilePostFeed.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/user/UserProfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/user/UserProfile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,7 +188,7 @@
       <recent name="com.ctuconnect.config" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.user-service: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml.post-service: Compose Deployment">
     <configuration name="Recommender-service" type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/Recommender-service/main.py" />
       <module name="Recommender-service" />
@@ -398,8 +396,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
@@ -503,7 +501,7 @@
       <workItem from="1754127721460" duration="21699000" />
       <workItem from="1754156062039" duration="7803000" />
       <workItem from="1754227439238" duration="17628000" />
-      <workItem from="1754298588843" duration="19429000" />
+      <workItem from="1754298588843" duration="21417000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -865,7 +863,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754312384185</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="PostService v1.2.2.1">
+      <option name="closed" value="true" />
+      <created>1754319509444</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1754319509444</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -895,7 +901,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update profile v1.0" />
     <MESSAGE value="Update profile v1.1" />
     <MESSAGE value="Update profile v1.2" />
     <MESSAGE value="Update profile v1.3" />
@@ -920,7 +925,8 @@
     <MESSAGE value="PostService v1.2" />
     <MESSAGE value="PostService v1.2.1" />
     <MESSAGE value="PostService v1.2.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="PostService v1.2.2" />
+    <MESSAGE value="PostService v1.2.2.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="PostService v1.2.2.1" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
