@@ -250,6 +250,39 @@ public class PostController {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<PostResponse> posts = postService.getPostsByAuthor(currentUserId, pageable);
+            return ResponseEntity.ok(posts);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to retrieve posts", "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserPosts(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<PostResponse> posts = postService.getPostsByAuthor(userId, pageable);
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to retrieve user posts", "message", e.getMessage()));
+        }
+    }
+
     /**
      * Get post by ID (auto-record VIEW interaction)
      */

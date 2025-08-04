@@ -46,7 +46,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
   const loadUserProfile = async () => {
     try {
       setIsLoading(true);
-      const user = await userService.getProfile(userId);
+      const user = await userService.getMyProfile();
       setProfileUser(user);
 
       // Check if current user is following this user
@@ -66,7 +66,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
   const loadUserPosts = async () => {
     try {
       // TODO: Implement user-specific posts loading
-      // const posts = await postService.getUserPosts(userId);
+      const posts = await postService.getMyPosts();
       // setUserPosts(posts);
       setUserPosts([]); // Temporary empty array
     } catch (err) {
@@ -209,20 +209,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
         <div className="p-6">
           {activeTab === 'posts' && (
             <div className="space-y-6">
-              {userPosts.length > 0 ? (
-                <PostFeed posts={userPosts} />
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
-                    <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 vietnamese-text">
-                    {isOwnProfile ? 'Bạn chưa có bài viết nào' : 'Người dùng này chưa có bài viết nào'}
-                  </p>
-                </div>
-              )}
+              <PostFeed authorId={userId} />
             </div>
           )}
 

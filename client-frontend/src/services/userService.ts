@@ -4,7 +4,7 @@ import {categoryService} from './categoryService';
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {
-    const response = await api.get(`/users/${userId}`);
+    const response = await api.get(`/users/${userId}/profile`);
     return response.data;
   },
 

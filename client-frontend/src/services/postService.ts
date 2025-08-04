@@ -222,5 +222,11 @@ export const postService = {
   async createComment(postId: string, commentData: CreateCommentRequest): Promise<Comment> {
     const response = await api.post(`/posts/${postId}/comments`, commentData);
     return response.data;
-  }
+  },
+
+  async getMyPosts(page = 0, size = 10): Promise<PaginatedResponse<Post>> {
+    const response = await api.get(`/posts/me?page=${page}&size=${size}`);
+    return response.data;
+  },
+
 };

@@ -54,11 +54,11 @@ export const LecturerProfileInfo: React.FC<LecturerProfileInfoProps> = ({ user }
               {section.items.map((item, itemIndex) => (
                 <div key={itemIndex} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="text-gray-500">
-                    {item.icon}
+                    {item?.icon}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm text-gray-600 vietnamese-text">{item.label}</div>
-                    <div className="font-medium text-gray-900 vietnamese-text">{item.value}</div>
+                    <div className="text-sm text-gray-600 vietnamese-text">{item?.label}</div>
+                    <div className="font-medium text-gray-900 vietnamese-text">{item?.value}</div>
                   </div>
                 </div>
               ))}
