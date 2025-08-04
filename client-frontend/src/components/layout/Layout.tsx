@@ -158,8 +158,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       src={user?.avatarUrl || '/default-avatar.png'}
                       alt={user?.fullName || user?.username || 'Avatar'}
                       size="md"
-                      className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
-                    />
+                     />
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                 </div>

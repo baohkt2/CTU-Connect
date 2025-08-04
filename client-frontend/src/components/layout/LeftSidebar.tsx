@@ -81,8 +81,7 @@ const LeftSidebar: React.FC = () => {
               src={user?.avatarUrl || '/default-avatar.png'}
               alt={user?.fullName || user?.username || 'Avatar'}
               size="md"
-              className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
-          />
+           />
           <div className="flex-1">
             <p className="font-medium text-gray-900 vietnamese-text">
               {user?.fullName || user?.name || 'Người dùng'}

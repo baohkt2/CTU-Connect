@@ -18,7 +18,10 @@ import {
   Globe,
   Users,
   Lock,
-  ThumbsUp
+  ThumbsUp,
+  Flag,
+  Trash2,
+  EyeOff
 } from 'lucide-react';
 import Avatar from "@/components/ui/Avatar";
 import {useAuth} from "@/contexts/AuthContext";
@@ -46,6 +49,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingInteraction, setIsLoadingInteraction] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
+  const [commentMenus, setCommentMenus] = useState<{[key: string]: boolean}>({});
 
   // Load trạng thái like, bookmark khi mount
   useEffect(() => {
@@ -187,6 +191,38 @@ export const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  // Function to toggle comment menu
+  const toggleCommentMenu = (commentId: string) => {
+    setCommentMenus(prev => ({
+      ...prev,
+      [commentId]: !prev[commentId]
+    }));
+  };
+
+  // Function to handle comment actions
+  const handleCommentAction = async (action: 'report' | 'delete' | 'hide', commentId: string) => {
+    try {
+      switch (action) {
+        case 'report':
+          // Implement report logic
+          showFeedback('Đã báo cáo bình luận');
+          break;
+        case 'delete':
+          // Implement delete logic
+          showFeedback('Đã xóa bình luận');
+          break;
+        case 'hide':
+          // Implement hide logic
+          showFeedback('Đã ẩn bình luận');
+          break;
+      }
+    } catch (error) {
+      console.error('Lỗi khi thực hiện hành động:', error);
+      showFeedback('Không thể thực hiện hành động');
+    }
+    setCommentMenus(prev => ({ ...prev, [commentId]: false }));
+  };
+
   return (
     <Card className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 mb-4 ${className}`}>
       {/* Feedback Toast */}
@@ -201,19 +237,16 @@ export const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {/* Avatar */}
-            <div className="relative">
-              {post.author?.avatarUrl || post.authorAvatar ? (
-                <img
-                  src={post.author?.avatarUrl || post.authorAvatar}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full object-cover"
+            { post.author?.avatarUrl ? (
+                <Avatar
+                    src={post.author?.avatarUrl || '/default-avatar.png'}
+                    alt={ post.author?.fullName ||  post.author?.username || 'Avatar'}
+                    size="md"
                 />
-              ) : (
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white font-medium">
-                  {(post.author?.fullName || post.author?.name || post.authorName)?.charAt(0)?.toUpperCase() || 'U'}
+            ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                  { post.author?.fullName?.charAt(0) || post.author?.name?.charAt(0) || 'A'}
                 </div>
-              )}
-            </div>
+            )}
             
             {/* User Info */}
             <div className="flex-1">
@@ -411,8 +444,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                         src={ user?.avatarUrl || '/default-avatar.png'}
                         alt={ user?.fullName ||  user?.username || 'Avatar'}
                         size="md"
-                        className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
-                    />
+                        />
                 ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
                       { user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'A'}
                     </div>
@@ -447,61 +479,132 @@ export const PostCard: React.FC<PostCardProps> = ({
                 <LoadingSpinner size="sm" />
               </div>
             ) : (
-              <div className="space-y-2">
-                {comments.length === 0 ? (
-                  <p className="text-gray-500 text-sm text-center py-4 vietnamese-text">
-                    Chưa có bình luận nào
-                  </p>
-                ) : (
-                  comments.map((comment) => (
-                    <div key={comment.id} className="flex space-x-2">
+              <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                <div className="space-y-3 pr-2">
+                  {comments.length === 0 ? (
+                    <p className="text-gray-500 text-sm text-center py-8 vietnamese-text">
+                      Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+                    </p>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="flex space-x-3 group">
                         {/* Comment Author Avatar */}
-                      { comment.author?.avatarUrl ? (
+                        {comment.author?.avatarUrl ? (
                           <Avatar
-                              src={comment.author?.avatarUrl || '/default-avatar.png'}
-                              alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
-                              size="md"
-                              className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
+                            src={comment.author?.avatarUrl || '/default-avatar.png'}
+                            alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
+                            size="md"
                           />
-                      ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                        ) : (
+                          <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 shadow-sm">
                             {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
                           </div>
-                          )}
+                        )}
 
-                      <div className="flex-1">
-                        <div className="bg-gray-100 rounded-2xl px-3 py-2">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-medium text-sm text-gray-900 vietnamese-text">
-                              {comment.author?.fullName || comment.author?.name || 'Ẩn danh'}
-                            </span>
-                            {comment.author?.role && (
-                              <span className={`px-1.5 py-0.5 rounded text-xs ${
-                                comment.author.role === 'LECTURER' 
-                                  ? 'bg-blue-100 text-blue-700' 
-                                  : 'bg-green-100 text-green-700'
-                              }`}>
-                                {comment.author.role === 'LECTURER' ? 'GV' : 'SV'}
+                        <div className="flex-1 min-w-0">
+                          <div className="bg-gray-100 rounded-2xl px-4 py-3 relative">
+                            {/* Comment Menu Button */}
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="relative">
+                                <button
+                                  onClick={() => toggleCommentMenu(comment.id)}
+                                  className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                                >
+                                  <MoreHorizontal className="h-3 w-3 text-gray-500" />
+                                </button>
+
+                                {/* Comment Menu Dropdown */}
+                                {commentMenus[comment.id] && (
+                                  <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                                    { comment.author?.id != user?.id && (
+                                        <button
+                                            onClick={() => handleCommentAction('report', comment.id)}
+                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                        >
+                                          <Flag className="h-4 w-4 text-red-500" />
+                                          <span>Báo cáo</span>
+                                        </button>)}
+
+
+                                    {comment.author?.id === user?.id && (
+                                      <button
+                                        onClick={() => handleCommentAction('delete', comment.id)}
+                                        className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                        <span>Xóa</span>
+                                      </button>
+                                    )}
+                                    {comment.author?.id != user?.id && (
+                                        <button
+                                            onClick={() => handleCommentAction('hide', comment.id)}
+                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                        >
+                                          <EyeOff className="h-4 w-4" />
+                                          <span>Ẩn bình luận</span>
+                                        </button>)}
+
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="font-semibold text-sm text-gray-900 vietnamese-text truncate">
+                                {comment.author?.fullName || comment.author?.name || 'Người dùng ẩn danh'}
                               </span>
-                            )}
+                              {comment.author?.role && (
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
+                                  comment.author.role === 'LECTURER' 
+                                    ? 'bg-blue-100 text-blue-700' 
+                                    : 'bg-green-100 text-green-700'
+                                }`}>
+                                  {comment.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
+                              {comment.content}
+                            </p>
                           </div>
-                          <p className="text-sm text-gray-800 vietnamese-text">
-                            {comment.content}
-                          </p>
+
+                          {/* Comment Actions */}
+                          <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                            <time dateTime={comment.createdAt} className="flex-shrink-0">
+                              {formatTimeAgo(comment.createdAt)}
+                            </time>
+                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
+                              Thích
+                            </button>
+                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
+                              Trả lời
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500">
-                          <time dateTime={comment.createdAt}>
-                            {formatTimeAgo(comment.createdAt)}
-                          </time>
-                          <button className="hover:underline">Thích</button>
-                          <button className="hover:underline">Trả lời</button>
-                        </div> {/* <-- Thêm dấu đóng này */}
                       </div>
-                    </div>
-                  ))
+                    ))
+                  )}
+                </div>
+
+                {/* Load More Comments Button */}
+                {comments.length > 0 && (
+                  <div className="text-center pt-3 mt-3 border-t border-gray-200">
+                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                      Xem thêm bình luận
+                    </button>
+                  </div>
                 )}
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Action Feedback */}
+      {actionFeedback && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 vietnamese-text">
+          {actionFeedback}
         </div>
       )}
     </Card>
