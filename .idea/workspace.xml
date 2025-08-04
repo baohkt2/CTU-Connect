@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v1.1">
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v1.1.1">
       <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/LeftSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/LeftSidebar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostFeed.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostFeed.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -499,7 +499,8 @@
       <workItem from="1754125543070" duration="2149000" />
       <workItem from="1754127721460" duration="21699000" />
       <workItem from="1754156062039" duration="7803000" />
-      <workItem from="1754227439238" duration="16685000" />
+      <workItem from="1754227439238" duration="17628000" />
+      <workItem from="1754298588843" duration="2004000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -821,7 +822,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754245305775</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="PostService v1.1.1">
+      <option name="closed" value="true" />
+      <created>1754247633305</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1754247633305</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -851,7 +860,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="AuthService and UserService OK" />
     <MESSAGE value="Auth Client-Frontend v1" />
     <MESSAGE value="Auth Client-Frontend fixing" />
     <MESSAGE value="Pre-build Media-service" />
@@ -876,7 +884,8 @@
     <MESSAGE value="PostService v0.2.2" />
     <MESSAGE value="PostService v1" />
     <MESSAGE value="PostService v1.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="PostService v1.1" />
+    <MESSAGE value="PostService v1.1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="PostService v1.1.1" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -20,6 +20,8 @@ import {
   Lock,
   ThumbsUp
 } from 'lucide-react';
+import Avatar from "@/components/ui/Avatar";
+import {useAuth} from "@/contexts/AuthContext";
 
 interface PostCardProps {
   post: any;
@@ -34,6 +36,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                                                     onPostDelete,
                                                     className = ''
                                                   }) => {
+  const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -192,7 +195,7 @@ export const PostCard: React.FC<PostCardProps> = ({
           {actionFeedback}
         </div>
       )}
-
+      
       {/* Header - Facebook Style */}
       <div className="p-3">
         <div className="flex items-center justify-between">
@@ -211,7 +214,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 </div>
               )}
             </div>
-
+            
             {/* User Info */}
             <div className="flex-1">
               <div className="flex items-center space-x-2">
@@ -228,7 +231,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                   </span>
                 )}
               </div>
-
+              
               <div className="flex items-center space-x-1 text-xs text-gray-500 mt-0.5">
                 <time dateTime={post.createdAt}>
                   {formatTimeAgo(post.createdAt)}
@@ -238,7 +241,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               </div>
             </div>
           </div>
-
+          
           {/* More Options */}
           <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <MoreHorizontal className="h-4 w-4 text-gray-500" />
@@ -254,12 +257,12 @@ export const PostCard: React.FC<PostCardProps> = ({
             {post.title}
           </h2>
         )}
-
+        
         {/* Text Content */}
         <div className="text-gray-800 text-sm leading-relaxed vietnamese-text mb-3">
           {post.content}
         </div>
-
+        
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
@@ -403,15 +406,23 @@ export const PostCard: React.FC<PostCardProps> = ({
             {/* Comment Form */}
             <form onSubmit={handleSubmitComment} className="mb-3">
               <div className="flex space-x-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                  U
-                </div>
+                { user?.avatarUrl ? (
+                    <Avatar
+                        src={ user?.avatarUrl || '/default-avatar.png'}
+                        alt={ user?.fullName ||  user?.username || 'Avatar'}
+                        size="md"
+                        className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
+                    />
+                ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                      { user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'A'}
+                    </div>
+                   )}
                 <div className="flex-1">
                   <Textarea
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Viết bình luận..."
-                    className="min-h-[32px] text-sm bg-gray-100 border-0 rounded-full px-3 py-2 resize-none vietnamese-text"
+                    className="min-h-[32px] text-sm bg-gray-300 text-black border-0 rounded-full px-3 py-2 resize-none vietnamese-text"
                     disabled={isSubmittingComment}
                   />
                   {commentText.trim() && (
@@ -444,9 +455,19 @@ export const PostCard: React.FC<PostCardProps> = ({
                 ) : (
                   comments.map((comment) => (
                     <div key={comment.id} className="flex space-x-2">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                        {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
-                      </div>
+                        {/* Comment Author Avatar */}
+                      { comment.author?.avatarUrl ? (
+                          <Avatar
+                              src={comment.author?.avatarUrl || '/default-avatar.png'}
+                              alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
+                              size="md"
+                              className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
+                          />
+                      ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                            {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
+                          </div>
+                          )}
+
                       <div className="flex-1">
                         <div className="bg-gray-100 rounded-2xl px-3 py-2">
                           <div className="flex items-center space-x-2 mb-1">
@@ -473,7 +494,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                           </time>
                           <button className="hover:underline">Thích</button>
                           <button className="hover:underline">Trả lời</button>
-                        </div>
+                        </div> {/* <-- Thêm dấu đóng này */}
                       </div>
                     </div>
                   ))

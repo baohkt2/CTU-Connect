@@ -15,6 +15,7 @@ import {
   BuildingLibraryIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
+import Avatar from "@/components/ui/Avatar";
 
 const LeftSidebar: React.FC = () => {
   const { user } = useAuth();
@@ -76,9 +77,12 @@ const LeftSidebar: React.FC = () => {
       <div className="p-4 space-y-6">
         {/* User Profile Section */}
         <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-            {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
-          </div>
+          <Avatar
+              src={user?.avatarUrl || '/default-avatar.png'}
+              alt={user?.fullName || user?.username || 'Avatar'}
+              size="md"
+              className="ring-2 ring-white shadow-sm hover:ring-indigo-200 transition-all duration-200 cursor-pointer"
+          />
           <div className="flex-1">
             <p className="font-medium text-gray-900 vietnamese-text">
               {user?.fullName || user?.name || 'Người dùng'}
