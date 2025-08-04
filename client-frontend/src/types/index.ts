@@ -49,6 +49,8 @@ export interface Post {
   category?: string;
   visibility?: string;
   stats: PostStats;
+  isPinned?: boolean; // Added for pinning posts
+  isEdited?: boolean; // Added to indicate if the post has been edited
   createdAt: string;
   updatedAt: string;
 }

@@ -69,9 +69,13 @@ public class PostEntity {
     private LocalDateTime scheduledAt;
     
     private boolean isScheduled = false;
-    
+
+    private boolean isPinned = false; // For pinning important posts
+
+    private boolean isEdited = false; // Track if post has been edited
     // Edit history
     private List<EditHistory> editHistory = new ArrayList<>();
+
 
     @Field("created_at")
     @CreatedDate

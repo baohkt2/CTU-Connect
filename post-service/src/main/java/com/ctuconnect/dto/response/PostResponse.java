@@ -29,11 +29,14 @@ public class PostResponse {
     private String visibility;
     private String privacy; // For consistency with PostEntity
     private String postType; // Added for enhanced functionality
+    private Boolean isPinned; // Added for enhanced functionality
+    private Boolean isEdited; // Added for enhanced functionality
     private PostEntity.LocationInfo location; // Added for enhanced functionality
     private PostEntity.PostStats stats;
     private PostEntity.EngagementMetrics engagement; // Added for enhanced functionality
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 
     // Constructor for backward compatibility
     public PostResponse(PostEntity post) {
@@ -57,6 +60,8 @@ public class PostResponse {
         this.privacy = post.getPrivacy();
         this.postType = post.getPostType() != null ? post.getPostType().name() : null;
         this.location = post.getLocation();
+        this.isPinned = post.isPinned();
+        this.isEdited = post.isEdited();
         this.stats = post.getStats();
         this.engagement = post.getEngagement();
         this.createdAt = post.getCreatedAt();

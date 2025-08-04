@@ -1,27 +1,25 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Post, CreateCommentRequest } from '@/types';
+import { Post, CreateCommentRequest, UpdatePostRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ReactionButton } from '@/components/ui/ReactionButton';
+import { PostMenu } from '@/components/post/PostMenu';
+import { PostEditModal } from '@/components/post/PostEditModal';
+import { EditIndicator } from '@/components/post/EditIndicator';
+import { CommentItem } from '@/components/post/CommentItem';
 import { t, formatTimeAgo } from '@/utils/localization';
 import {
-  Heart,
   MessageCircle,
   Share,
-  MoreHorizontal,
-  Send,
   Eye,
   Globe,
   Users,
-  Lock,
-  ThumbsUp,
-  Flag,
-  Trash2,
-  EyeOff
+  Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff
 } from 'lucide-react';
 import Avatar from "@/components/ui/Avatar";
 import {useAuth} from "@/contexts/AuthContext";
@@ -34,11 +32,11 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
-                                                    post,
-                                                    onPostUpdate,
-                                                    onPostDelete,
-                                                    className = ''
-                                                  }) => {
+  post,
+  onPostUpdate,
+  onPostDelete,
+  className = ''
+}) => {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -49,7 +47,12 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingInteraction, setIsLoadingInteraction] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentReaction, setCurrentReaction] = useState<string | null>(null);
+  const [reactionCounts, setReactionCounts] = useState<{[key: string]: number}>({});
   const [commentMenus, setCommentMenus] = useState<{[key: string]: boolean}>({});
+
+  const isOwnPost = user?.id === post.authorId || user?.id === post.author?.id;
 
   // Load trạng thái like, bookmark khi mount
   useEffect(() => {
@@ -155,7 +158,7 @@ export const PostCard: React.FC<PostCardProps> = ({
       showFeedback('Đã thêm bình luận');
     } catch (error) {
       console.error('Không thể tạo bình luận:', error);
-      showFeedback('Không thể gửi bình luận');
+      showFeedback('Không th�� gửi bình luận');
     } finally {
       setIsSubmittingComment(false);
     }
@@ -199,28 +202,106 @@ export const PostCard: React.FC<PostCardProps> = ({
     }));
   };
 
-  // Function to handle comment actions
-  const handleCommentAction = async (action: 'report' | 'delete' | 'hide', commentId: string) => {
+  // New enhanced handlers for reactions and post actions
+  const handleReactionClick = useCallback(async (reactionId: string) => {
+    if (isLoadingInteraction) return;
+    setIsLoadingInteraction(true);
+
     try {
-      switch (action) {
-        case 'report':
-          // Implement report logic
-          showFeedback('Đã báo cáo bình luận');
-          break;
-        case 'delete':
-          // Implement delete logic
-          showFeedback('Đã xóa bình luận');
-          break;
-        case 'hide':
-          // Implement hide logic
-          showFeedback('Đã ẩn bình luận');
-          break;
-      }
+      // TODO: Implement reaction API call
+      // await postService.addReaction(post.id, reactionId);
+      setCurrentReaction(reactionId);
+
+      // Update reaction counts
+      setReactionCounts(prev => ({
+        ...prev,
+        [reactionId]: (prev[reactionId] || 0) + 1
+      }));
+
+      showFeedback(`Đã ${reactionId === 'LIKE' ? 'thích' : 'phản ứng'} bài viết`);
     } catch (error) {
-      console.error('Lỗi khi thực hiện hành động:', error);
-      showFeedback('Không thể thực hiện hành động');
+      console.error('Error adding reaction:', error);
+      showFeedback('Không thể thêm phản ứng');
+    } finally {
+      setIsLoadingInteraction(false);
     }
-    setCommentMenus(prev => ({ ...prev, [commentId]: false }));
+  }, [isLoadingInteraction, post.id]);
+
+  const handleReactionRemove = useCallback(async () => {
+    if (isLoadingInteraction || !currentReaction) return;
+    setIsLoadingInteraction(true);
+
+    try {
+      // TODO: Implement remove reaction API call
+      // await postService.removeReaction(post.id);
+
+      // Update reaction counts
+      setReactionCounts(prev => ({
+        ...prev,
+        [currentReaction]: Math.max((prev[currentReaction] || 0) - 1, 0)
+      }));
+
+      setCurrentReaction(null);
+      showFeedback('Đã bỏ phản ứng');
+    } catch (error) {
+      console.error('Error removing reaction:', error);
+      showFeedback('Không thể bỏ phản ứng');
+    } finally {
+      setIsLoadingInteraction(false);
+    }
+  }, [isLoadingInteraction, currentReaction, post.id]);
+
+  // Post menu handlers
+  const handlePostEdit = () => {
+    setShowEditModal(true);
+  };
+
+  const handlePostDelete = async () => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+      try {
+        await postService.deletePost(post.id);
+        onPostDelete?.(post.id);
+        showFeedback('Đã xóa bài viết');
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        showFeedback('Không thể xóa bài viết');
+      }
+    }
+  };
+
+  const handlePostSave = async (updatedPost: UpdatePostRequest) => {
+    try {
+      const result = await postService.updatePost(post.id, updatedPost);
+      onPostUpdate?.(result);
+      showFeedback('Đã cập nhật bài viết');
+    } catch (error) {
+      console.error('Error updating post:', error);
+      throw error;
+    }
+  };
+
+  const handlePostReport = () => {
+    // TODO: Implement report functionality
+    showFeedback('Đã báo cáo bài viết');
+  };
+
+  const handlePostHide = () => {
+    // TODO: Implement hide functionality
+    showFeedback('Đã ẩn bài viết');
+  };
+
+  const handlePostBlock = () => {
+    // TODO: Implement block functionality
+    showFeedback(`Đã chặn bài viết từ ${post.author?.fullName || post.author?.name || 'người dùng này'}`);
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
+      showFeedback('Đã sao chép liên kết');
+    } catch (error) {
+      showFeedback('Không thể sao chép liên kết');
+    }
   };
 
   return (
@@ -274,10 +355,24 @@ export const PostCard: React.FC<PostCardProps> = ({
           </div>
           
           {/* More Options */}
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <MoreHorizontal className="h-4 w-4 text-gray-500" />
-          </button>
+          <PostMenu
+            post={post}
+            onEdit={isOwnPost ? handlePostEdit : undefined}
+            onDelete={isOwnPost ? handlePostDelete : undefined}
+            onReport={!isOwnPost ? handlePostReport : undefined}
+            onHide={!isOwnPost ? handlePostHide : undefined}
+            onBlock={!isOwnPost ? handlePostBlock : undefined}
+            onBookmark={() => handleInteraction('bookmark')}
+            onShare={() => handleInteraction('share')}
+            onCopyLink={handleCopyLink}
+          />
         </div>
+
+        {/* Edit Indicator */}
+        <EditIndicator
+          isEdited={post.isEdited}
+          className="mt-1 ml-12"
+        />
       </div>
 
       {/* Content */}
@@ -599,6 +694,16 @@ export const PostCard: React.FC<PostCardProps> = ({
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 vietnamese-text">
           {actionFeedback}
         </div>
+      )}
+
+      {/* Edit Post Modal */}
+      {showEditModal && (
+        <PostEditModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          post={post}
+          onSave={handlePostSave}
+        />
       )}
     </Card>
   );

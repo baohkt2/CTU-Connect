@@ -1,71 +1,71 @@
-import { VI_LOCALE } from '@/lib/locales/vi';
+import { DateTime } from 'luxon'
+import { VI_LOCALE } from '@/lib/locales/vi'
 
-/**
- * Get localized text with parameter substitution
- * @param key - The key path to the localized text (e.g., 'actions.save', 'messages.error.loginFailed')
- * @param params - Parameters to substitute in the text
- * @returns Localized text string
- */
 export function t(key: string, params?: Record<string, string | number>): string {
-  const keys = key.split('.');
-  let value: any = VI_LOCALE;
+  const keys = key.split('.')
+  let value: any = VI_LOCALE
 
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
-      value = value[k];
+      value = value[k]
     } else {
-      console.warn(`Translation key not found: ${key}`);
-      return key;
+      console.warn(`Translation key not found: ${key}`)
+      return key
     }
   }
 
   if (typeof value !== 'string') {
-    console.warn(`Translation value is not a string: ${key}`);
-    return key;
+    console.warn(`Translation value is not a string: ${key}`)
+    return key
   }
 
-  // Replace parameters in the text
   if (params) {
-    return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
-      return params[paramKey]?.toString() || match;
-    });
+    return value.replace(/\{(\w+)\}/g, (_, paramKey) => {
+      return params[paramKey]?.toString() ?? `{${paramKey}}`
+    })
   }
 
-  return value;
+  return value
 }
 
 /**
- * Format time relative to now in Vietnamese
- * @param date - The date to format
- * @returns Formatted time string in Vietnamese
+ * Format time relative to now in Vietnamese using Hanoi timezone
+ * @param inputDate - ISO string or Date
  */
-export function formatTimeAgo(date: Date | string): string {
-  const now = new Date();
-  const targetDate = new Date(date);
-  const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000);
+export function formatTimeAgo(inputDate: string | Date): string {
+  const date = typeof inputDate === 'string'
+      ? DateTime.fromISO(inputDate, { zone: 'utc' }).setZone('Asia/Ho_Chi_Minh')
+      : DateTime.fromJSDate(inputDate).setZone('Asia/Ho_Chi_Minh')
+
+  const now = DateTime.now().setZone('Asia/Ho_Chi_Minh')
+
+  if (!date.isValid) return t('time.invalidDate')
+
+  const diffInSeconds = Math.floor(now.diff(date, 'seconds').seconds)
 
   if (diffInSeconds < 60) {
-    return t('time.now');
+    return t('time.now')
   } else if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return t('time.minutesAgo', { count: minutes.toString() });
+    const minutes = Math.floor(diffInSeconds / 60)
+    return t('time.minutesAgo', { count: minutes })
   } else if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return t('time.hoursAgo', { count: hours.toString() });
+    const hours = Math.floor(diffInSeconds / 3600)
+    return t('time.hoursAgo', { count: hours })
   } else if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return t('time.daysAgo', { count: days.toString() });
+    const days = Math.floor(diffInSeconds / 86400)
+    return t('time.daysAgo', { count: days })
   } else if (diffInSeconds < 2592000) {
-    const weeks = Math.floor(diffInSeconds / 604800);
-    return t('time.weeksAgo', { count: weeks.toString() });
+    const weeks = Math.floor(diffInSeconds / 604800)
+    return t('time.weeksAgo', { count: weeks })
   } else if (diffInSeconds < 31536000) {
-    const months = Math.floor(diffInSeconds / 2592000);
-    return t('time.monthsAgo', { count: months.toString() });
+    const months = Math.floor(diffInSeconds / 2592000)
+    return t('time.monthsAgo', { count: months })
   } else {
-    const years = Math.floor(diffInSeconds / 31536000);
-    return t('time.yearsAgo', { count: years.toString() });
+    const years = Math.floor(diffInSeconds / 31536000)
+    return t('time.yearsAgo', { count: years })
   }
 }
+
 
 /**
  * Format file size in Vietnamese
