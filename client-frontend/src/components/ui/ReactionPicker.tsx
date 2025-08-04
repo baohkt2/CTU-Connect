@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Heart, ThumbsUp, Laugh, Frown, Angry, Surprise } from 'lucide-react';
+import { Heart, ThumbsUp, Laugh, Frown, Angry, Zap  } from 'lucide-react';
 
 export interface ReactionType {
   id: string;
@@ -41,7 +41,7 @@ export const REACTIONS: ReactionType[] = [
     id: 'WOW',
     name: 'Wow',
     emoji: '😮',
-    icon: <Surprise className="w-6 h-6" />,
+    icon: <Zap  className="w-6 h-6" />,
     color: 'text-orange-600',
     hoverColor: 'hover:bg-orange-50'
   },
