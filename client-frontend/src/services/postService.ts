@@ -96,7 +96,14 @@ export const postService = {
 
   // Get posts by author
   async getUserPosts(authorId: string, page = 0, size = 10): Promise<PaginatedResponse<Post>> {
-    return this.getPosts(page, size, 'createdAt', 'desc', authorId);
+    const response = await api.get(`/posts/user/${authorId}`, {
+      params: {
+        page,
+        size
+      }
+    });
+    console.log("Fetched user posts:", response.data);
+    return response.data;
   },
 
   // Update post

@@ -272,7 +272,8 @@ public class PostController {
     public ResponseEntity<?> getUserPosts(
             @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size)
+    {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
             Page<PostResponse> posts = postService.getPostsByAuthor(userId, pageable);

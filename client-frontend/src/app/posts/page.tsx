@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, usseCallBack } from 'react';
 import { Post, PaginatedResponse } from '@/types';
 import { postService } from '@/services/postService';
 import { CreatePost } from '@/components/post/CreatePost';
@@ -16,8 +16,9 @@ export default function PostsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showCreatePost, setShowCreatePost] = useState(false);
 
-  const loadPosts = async () => {
+  const loadPosts = usseCallBack( async () => {
     try {
+      console("Loading posts...");
       setIsLoading(true);
       setError(null);
       const response: PaginatedResponse<Post> = await postService.getPosts();
@@ -28,7 +29,7 @@ export default function PostsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  });
 
   useEffect(() => {
     loadPosts();
@@ -40,7 +41,7 @@ export default function PostsPage() {
   };
 
   const handlePostUpdate = (updatedPost: Post) => {
-    setPosts(prev => prev.map(post => 
+    setPosts(prev => prev.map(post =>
       post.id === updatedPost.id ? updatedPost : post
     ));
   };

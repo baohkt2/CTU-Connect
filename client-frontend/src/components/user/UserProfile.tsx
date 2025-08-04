@@ -9,7 +9,7 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { ProfileStats } from '@/components/profile/ProfileStats';
 import { StudentProfileInfo } from '@/components/profile/StudentProfileInfo';
 import { LecturerProfileInfo } from '@/components/profile/LecturerProfileInfo';
-import { PostFeed } from '@/components/post/PostFeed';
+import { ProfilePostFeed } from '@/components/profile/ProfilePostFeed';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
@@ -66,7 +66,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
   const loadUserPosts = async () => {
     try {
       // TODO: Implement user-specific posts loading
-      const posts = await postService.getMyPosts();
+      //  const posts = await postService.getMyPosts();
       // setUserPosts(posts);
       setUserPosts([]); // Temporary empty array
     } catch (err) {
@@ -208,9 +208,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
         {/* Tab Content */}
         <div className="p-6">
           {activeTab === 'posts' && (
-            <div className="space-y-6">
-              <PostFeed authorId={userId} />
-            </div>
+            <ProfilePostFeed
+              userId={userId}
+              userName={profileUser.fullName || profileUser.name}
+              isOwnProfile={isOwnProfile}
+            />
           )}
 
           {activeTab === 'about' && (
