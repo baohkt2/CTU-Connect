@@ -104,6 +104,7 @@ export default function SearchPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <Avatar
+                            id={searchUser.id}
                           src={searchUser.avatarUrl || '/default-avatar.png'}
                           alt={searchUser.fullName}
                           size="md"

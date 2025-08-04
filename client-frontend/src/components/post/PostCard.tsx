@@ -237,16 +237,14 @@ export const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {/* Avatar */}
-            { post.author?.avatarUrl ? (
+
                 <Avatar
+                    id={post.author?.id}
                     src={post.author?.avatarUrl || '/default-avatar.png'}
                     alt={ post.author?.fullName ||  post.author?.username || 'Avatar'}
                     size="md"
                 />
-            ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                  { post.author?.fullName?.charAt(0) || post.author?.name?.charAt(0) || 'A'}
-                </div>
-            )}
+
             
             {/* User Info */}
             <div className="flex-1">
@@ -439,16 +437,14 @@ export const PostCard: React.FC<PostCardProps> = ({
             {/* Comment Form */}
             <form onSubmit={handleSubmitComment} className="mb-3">
               <div className="flex space-x-2">
-                { user?.avatarUrl ? (
+
                     <Avatar
+                        id={ user?.id}
                         src={ user?.avatarUrl || '/default-avatar.png'}
                         alt={ user?.fullName ||  user?.username || 'Avatar'}
                         size="md"
                         />
-                ) : (<div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                      { user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'A'}
-                    </div>
-                   )}
+
                 <div className="flex-1">
                   <Textarea
                     value={commentText}
@@ -489,17 +485,14 @@ export const PostCard: React.FC<PostCardProps> = ({
                     comments.map((comment) => (
                       <div key={comment.id} className="flex space-x-3 group">
                         {/* Comment Author Avatar */}
-                        {comment.author?.avatarUrl ? (
+
                           <Avatar
+                            id={comment.author?.id}
                             src={comment.author?.avatarUrl || '/default-avatar.png'}
                             alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
                             size="md"
                           />
-                        ) : (
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 shadow-sm">
-                            {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
-                          </div>
-                        )}
+
 
                         <div className="flex-1 min-w-0">
                           <div className="bg-gray-100 rounded-2xl px-4 py-3 relative">

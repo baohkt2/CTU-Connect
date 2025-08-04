@@ -155,6 +155,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                   <div className="relative">
                     <Avatar
+                        id={user?.id}
                       src={user?.avatarUrl || '/default-avatar.png'}
                       alt={user?.fullName || user?.username || 'Avatar'}
                       size="md"
