@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="test with google colab">
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="PostService v1.2.4">
+      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,9 +23,8 @@
         <option value="FastAPI main" />
         <option value="FastAPI test_main" />
         <option value="TypeScript File" />
-        <option value="Class" />
         <option value="Interface" />
-        <option value="Python Script" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -41,7 +44,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="fix-database" />
+        <entry key="$PROJECT_DIR$" value="c6273cfa1c24a7aeaaa484595bed69e57b599bc6" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,7 +59,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/baohkt2/CTU-Connect-Backend.git&quot;,
-    &quot;accountId&quot;: &quot;d644c288-eef9-4e42-bfd6-c3981bdd694c&quot;
+    &quot;accountId&quot;: &quot;29367579-14a9-4fa5-b6e3-d9686d39984a&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
@@ -90,17 +93,11 @@
     &quot;Docker.docker-compose.yml.api-gateway: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.auth-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.auth_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.eureka-server: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.kafka: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.media-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.media_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.neo4j: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.post-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.post_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.recommendation-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.recommendation_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.redis: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.user-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.eureka-server/Dockerfile build.executor&quot;: &quot;Run&quot;,
@@ -110,18 +107,9 @@
     &quot;JUnit.EmailServiceTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.JwtTokenProviderTest.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Node.js.console.js.executor&quot;: &quot;Run&quot;,
     &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
     &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
-    &quot;Python.data_migration.executor&quot;: &quot;Run&quot;,
-    &quot;Python.generate.executor&quot;: &quot;Run&quot;,
-    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
-    &quot;Python.load_trained_model (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.load_trained_model.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_migration.executor&quot;: &quot;Run&quot;,
-    &quot;Python.simple_migration.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train.executor&quot;: &quot;Run&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
     &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
@@ -131,30 +119,33 @@
     &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
     &quot;Spring Boot.AuthServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
     &quot;com.intellij.ide.FileNotInSourceRootChecker.no.check&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;demo&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
+    &quot;database.data.extractors.current.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix-PostService&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect/recom_temp&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect/post-service/src/main/java/com/ctuconnect&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.customInstructions.CopilotInstructionsConfigurable&quot;,
     &quot;settings.editor.splitter.proportion&quot;: &quot;0.28134558&quot;,
     &quot;ts.external.directory.path&quot;: &quot;D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
@@ -174,15 +165,16 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\LVTN\ctu-connect\recom_temp" />
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
+      <recent name="D:\LVTN\ctu-connect\media-service\src\main\java\vn\ctu\edu\mediaservice" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\vn\ctu\edu\postservice" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\LVTN\ctu-connect" />
-      <recent name="D:\LVTN\ctu-connect\recom_temp" />
-      <recent name="D:\LVTN\ctu-connect\recommendation-service" />
-      <recent name="D:\LVTN\ctu-connect\Recommender-service" />
+      <recent name="D:\LVTN\ctu-connect\client-frontend" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
+      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
+      <recent name="D:\LVTN\ctu-connect\client-frontend\public" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -190,54 +182,11 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.ctuconnect.UserMapper" />
     </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ctuconnect.config" />
+    </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.api-gateway: Compose Deployment">
-    <configuration name="generate" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="D:\LVTN\ctu-connect\recom_temp\generate.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="simple_migration" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="D:\LVTN\ctu-connect\recom_temp\simple_migration.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
     <configuration name="Recommender-service" type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/Recommender-service/main.py" />
       <module name="Recommender-service" />
@@ -288,6 +237,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="MediaServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="media-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.MediaServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MediaServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="media-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="vn.ctu.edu.mediaservice.MediaServiceApplication" />
@@ -298,6 +254,13 @@
     <configuration name="PostServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="post-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.postservice.PostServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PostServiceApplication (2)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="post-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.PostServiceApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -413,26 +376,37 @@
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
-      <item itemvalue="Python.generate" />
-      <item itemvalue="Python.simple_migration" />
+      <item itemvalue="Spring Boot.MediaServiceApplication (1)" />
+      <item itemvalue="Spring Boot.PostServiceApplication (2)" />
+      <item itemvalue="Spring Boot.MediaServiceApplication" />
+      <item itemvalue="Spring Boot.PostServiceApplication (1)" />
+      <item itemvalue="Spring Boot.ChatServiceApplication" />
+      <item itemvalue="Spring Boot.PostServiceApplication" />
+      <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      <item itemvalue="Spring Boot.UserServiceApplication (1)" />
+      <item itemvalue="Spring Boot.DemoApplication" />
+      <item itemvalue="Spring Boot.AuthServiceApplication" />
+      <item itemvalue="Spring Boot.EurekaServerApplication" />
+      <item itemvalue="Spring Boot.UserServiceApplication" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-b3ae9b5d7125-f0eec537fc84-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.23892.439" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
       </set>
     </attachedChunks>
   </component>
@@ -517,25 +491,15 @@
       <workItem from="1753580043883" duration="13711000" />
       <workItem from="1753625709674" duration="16295000" />
       <workItem from="1753703567557" duration="21143000" />
-      <workItem from="1755177062218" duration="1479000" />
-      <workItem from="1755183243249" duration="4988000" />
-      <workItem from="1755190132144" duration="6129000" />
-      <workItem from="1755212336432" duration="3678000" />
-      <workItem from="1755218416545" duration="596000" />
-      <workItem from="1755231088703" duration="1491000" />
-      <workItem from="1755239129006" duration="8245000" />
-      <workItem from="1755268520545" duration="945000" />
-      <workItem from="1755271170834" duration="5649000" />
-      <workItem from="1755317550533" duration="4421000" />
-      <workItem from="1755363408561" duration="7145000" />
-      <workItem from="1755389674358" duration="7000" />
-      <workItem from="1755433179357" duration="44000" />
-      <workItem from="1755434408312" duration="550000" />
-      <workItem from="1755455141134" duration="7782000" />
-      <workItem from="1755491751154" duration="29120000" />
-      <workItem from="1755556173444" duration="1445000" />
-      <workItem from="1755558538157" duration="1542000" />
-      <workItem from="1755563952015" duration="4705000" />
+      <workItem from="1754057799643" duration="12190000" />
+      <workItem from="1754070276763" duration="291000" />
+      <workItem from="1754070592565" duration="1928000" />
+      <workItem from="1754075149380" duration="4348000" />
+      <workItem from="1754125543070" duration="2149000" />
+      <workItem from="1754127721460" duration="21699000" />
+      <workItem from="1754156062039" duration="7803000" />
+      <workItem from="1754227439238" duration="17628000" />
+      <workItem from="1754298588843" duration="26976000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -769,143 +733,159 @@
       <option name="project" value="LOCAL" />
       <updated>1753728843314</updated>
     </task>
-    <task id="LOCAL-00030" summary="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9">
+    <task id="LOCAL-00030" summary="PostService v0.1">
       <option name="closed" value="true" />
-      <created>1755191879333</created>
+      <created>1754052118881</created>
       <option name="number" value="00030" />
       <option name="presentableId" value="LOCAL-00030" />
       <option name="project" value="LOCAL" />
-      <updated>1755191879333</updated>
+      <updated>1754052118881</updated>
     </task>
-    <task id="LOCAL-00031" summary="Point">
+    <task id="LOCAL-00031" summary="PostService v0.1.1">
       <option name="closed" value="true" />
-      <created>1755193035381</created>
+      <created>1754053375980</created>
       <option name="number" value="00031" />
       <option name="presentableId" value="LOCAL-00031" />
       <option name="project" value="LOCAL" />
-      <updated>1755193035381</updated>
+      <updated>1754053375980</updated>
     </task>
-    <task id="LOCAL-00032" summary="Tích hop Quilljs">
+    <task id="LOCAL-00032" summary="PostService v0.1.2">
       <option name="closed" value="true" />
-      <created>1755321259815</created>
+      <created>1754075892853</created>
       <option name="number" value="00032" />
       <option name="presentableId" value="LOCAL-00032" />
       <option name="project" value="LOCAL" />
-      <updated>1755321259815</updated>
+      <updated>1754075892853</updated>
     </task>
-    <task id="LOCAL-00033" summary="fix buttton like">
+    <task id="LOCAL-00033" summary="PostService v0.1.3">
       <option name="closed" value="true" />
-      <created>1755366087003</created>
+      <created>1754138712551</created>
       <option name="number" value="00033" />
       <option name="presentableId" value="LOCAL-00033" />
       <option name="project" value="LOCAL" />
-      <updated>1755366087003</updated>
+      <updated>1754138712551</updated>
     </task>
-    <task id="LOCAL-00034" summary="train ok, load ok">
+    <task id="LOCAL-00034" summary="PostService v0.1.4">
       <option name="closed" value="true" />
-      <created>1755366288474</created>
+      <created>1754152594464</created>
       <option name="number" value="00034" />
       <option name="presentableId" value="LOCAL-00034" />
       <option name="project" value="LOCAL" />
-      <updated>1755366288474</updated>
+      <updated>1754152594464</updated>
     </task>
-    <task id="LOCAL-00035" summary="quilljs ok">
+    <task id="LOCAL-00035" summary="PostService v0.1.5">
       <option name="closed" value="true" />
-      <created>1755367414568</created>
+      <created>1754154921945</created>
       <option name="number" value="00035" />
       <option name="presentableId" value="LOCAL-00035" />
       <option name="project" value="LOCAL" />
-      <updated>1755367414568</updated>
+      <updated>1754154921945</updated>
     </task>
-    <task id="LOCAL-00036" summary="neo4j">
+    <task id="LOCAL-00036" summary="PostService v0.2">
       <option name="closed" value="true" />
-      <created>1755457156696</created>
+      <created>1754160991983</created>
       <option name="number" value="00036" />
       <option name="presentableId" value="LOCAL-00036" />
       <option name="project" value="LOCAL" />
-      <updated>1755457156696</updated>
+      <updated>1754160991983</updated>
     </task>
-    <task id="LOCAL-00037" summary="up load được file">
+    <task id="LOCAL-00037" summary="PostService v0.2.1">
       <option name="closed" value="true" />
-      <created>1755460878481</created>
+      <created>1754162654016</created>
       <option name="number" value="00037" />
       <option name="presentableId" value="LOCAL-00037" />
       <option name="project" value="LOCAL" />
-      <updated>1755460878481</updated>
+      <updated>1754162654016</updated>
     </task>
-    <task id="LOCAL-00038" summary="tải được file">
+    <task id="LOCAL-00038" summary="PostService v0.2.2">
       <option name="closed" value="true" />
-      <created>1755462853150</created>
+      <created>1754239223639</created>
       <option name="number" value="00038" />
       <option name="presentableId" value="LOCAL-00038" />
       <option name="project" value="LOCAL" />
-      <updated>1755462853150</updated>
+      <updated>1754239223639</updated>
     </task>
-    <task id="LOCAL-00039" summary="Try fix comment">
+    <task id="LOCAL-00039" summary="PostService v1">
       <option name="closed" value="true" />
-      <created>1755499483231</created>
+      <created>1754241977615</created>
       <option name="number" value="00039" />
       <option name="presentableId" value="LOCAL-00039" />
       <option name="project" value="LOCAL" />
-      <updated>1755499483231</updated>
+      <updated>1754241977615</updated>
     </task>
-    <task id="LOCAL-00040" summary="Try fix ui comment">
+    <task id="LOCAL-00040" summary="PostService v1.1">
       <option name="closed" value="true" />
-      <created>1755501511449</created>
+      <created>1754245305775</created>
       <option name="number" value="00040" />
       <option name="presentableId" value="LOCAL-00040" />
       <option name="project" value="LOCAL" />
-      <updated>1755501511449</updated>
+      <updated>1754245305775</updated>
     </task>
-    <task id="LOCAL-00041" summary="Try fix ui comment v1">
+    <task id="LOCAL-00041" summary="PostService v1.1.1">
       <option name="closed" value="true" />
-      <created>1755505770527</created>
+      <created>1754247633305</created>
       <option name="number" value="00041" />
       <option name="presentableId" value="LOCAL-00041" />
       <option name="project" value="LOCAL" />
-      <updated>1755505770527</updated>
+      <updated>1754247633305</updated>
     </task>
-    <task id="LOCAL-00042" summary="Cmt temp">
+    <task id="LOCAL-00042" summary="PostService v1.1.2">
       <option name="closed" value="true" />
-      <created>1755511933442</created>
+      <created>1754300640828</created>
       <option name="number" value="00042" />
       <option name="presentableId" value="LOCAL-00042" />
       <option name="project" value="LOCAL" />
-      <updated>1755511933442</updated>
+      <updated>1754300640828</updated>
     </task>
-    <task id="LOCAL-00043" summary="before update show words">
+    <task id="LOCAL-00043" summary="PostService v1.2">
       <option name="closed" value="true" />
-      <created>1755517925079</created>
+      <created>1754302741861</created>
       <option name="number" value="00043" />
       <option name="presentableId" value="LOCAL-00043" />
       <option name="project" value="LOCAL" />
-      <updated>1755517925079</updated>
+      <updated>1754302741861</updated>
     </task>
-    <task id="LOCAL-00044" summary="Ready recom">
+    <task id="LOCAL-00044" summary="PostService v1.2.1">
       <option name="closed" value="true" />
-      <created>1755519212342</created>
+      <created>1754307571143</created>
       <option name="number" value="00044" />
       <option name="presentableId" value="LOCAL-00044" />
       <option name="project" value="LOCAL" />
-      <updated>1755519212342</updated>
+      <updated>1754307571143</updated>
     </task>
-    <task id="LOCAL-00045" summary="connect db">
+    <task id="LOCAL-00045" summary="PostService v1.2.2">
       <option name="closed" value="true" />
-      <created>1755530096716</created>
+      <created>1754312384185</created>
       <option name="number" value="00045" />
       <option name="presentableId" value="LOCAL-00045" />
       <option name="project" value="LOCAL" />
-      <updated>1755530096716</updated>
+      <updated>1754312384185</updated>
     </task>
-    <task id="LOCAL-00046" summary="test with google colab">
+    <task id="LOCAL-00046" summary="PostService v1.2.2.1">
       <option name="closed" value="true" />
-      <created>1756116761988</created>
+      <created>1754319509444</created>
       <option name="number" value="00046" />
       <option name="presentableId" value="LOCAL-00046" />
       <option name="project" value="LOCAL" />
-      <updated>1756116761988</updated>
+      <updated>1754319509444</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="PostService v1.2.3">
+      <option name="closed" value="true" />
+      <created>1754323356094</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1754323356094</updated>
+    </task>
+    <task id="LOCAL-00048" summary="PostService v1.2.4">
+      <option name="closed" value="true" />
+      <created>1754328218611</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1754328218611</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -922,7 +902,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="demo" />
+                        <option value="fix-PostService" />
                       </list>
                     </value>
                   </entry>
@@ -935,53 +915,32 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update profile v1.1" />
-    <MESSAGE value="Update profile v1.2" />
     <MESSAGE value="Update profile v1.3" />
     <MESSAGE value="Update profile v1.4" />
     <MESSAGE value="Update profile v1.4.1 fix loading" />
     <MESSAGE value="Update profile v1.4.2" />
     <MESSAGE value="Update profile v1.5" />
     <MESSAGE value="Update profile v2" />
-    <MESSAGE value="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9" />
-    <MESSAGE value="Point" />
-    <MESSAGE value="Tích hop Quilljs" />
-    <MESSAGE value="fix buttton like" />
-    <MESSAGE value="train ok, load ok" />
-    <MESSAGE value="quilljs ok" />
-    <MESSAGE value="neo4j" />
-    <MESSAGE value="up load được file" />
-    <MESSAGE value="tải được file" />
-    <MESSAGE value="Try fix comment" />
-    <MESSAGE value="Try fix ui comment" />
-    <MESSAGE value="Try fix ui comment v1" />
-    <MESSAGE value="Cmt temp" />
-    <MESSAGE value="before update show words" />
-    <MESSAGE value="Ready recom" />
-    <MESSAGE value="connect db" />
-    <MESSAGE value="test with google colab" />
-    <option name="LAST_COMMIT_MESSAGE" value="test with google colab" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/recommendation-service/Test/train.py</url>
-          <line>147</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>329</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>330</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="PostService v0.1" />
+    <MESSAGE value="PostService v0.1.1" />
+    <MESSAGE value="PostService v0.1.2" />
+    <MESSAGE value="PostService v0.1.3" />
+    <MESSAGE value="PostService v0.1.4" />
+    <MESSAGE value="PostService v0.1.5" />
+    <MESSAGE value="PostService v0.2" />
+    <MESSAGE value="PostService v0.2.1" />
+    <MESSAGE value="PostService v0.2.2" />
+    <MESSAGE value="PostService v1" />
+    <MESSAGE value="PostService v1.1" />
+    <MESSAGE value="PostService v1.1.1" />
+    <MESSAGE value="PostService v1.1.2" />
+    <MESSAGE value="PostService v1.2" />
+    <MESSAGE value="PostService v1.2.1" />
+    <MESSAGE value="PostService v1.2.2" />
+    <MESSAGE value="PostService v1.2.2.1" />
+    <MESSAGE value="PostService v1.2.3" />
+    <MESSAGE value="PostService v1.2.4" />
+    <option name="LAST_COMMIT_MESSAGE" value="PostService v1.2.4" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
