@@ -75,10 +75,6 @@ public class InteractionService {
 
             if (existingInteraction.isPresent()) {
                 // Toggle off the exact interaction
-                if (request.getReaction() == InteractionEntity.InteractionType.SHARE) {
-                    // Special case for share - we don't toggle off shares
-                    return new InteractionResponse(false, "Share interaction cannot be toggled off");
-                }
                 interactionRepository.delete(existingInteraction.get());
                 updatePostStatsOnRemove(post, request.getReaction());
                 postRepository.save(post);
@@ -124,7 +120,7 @@ public class InteractionService {
     /**
      * Get user's interaction status for a post
      */
-    public InteractionResponse getUserInteractionForPost(String postId, String userId) {
+    public InteractionResponse getUserInteractionStatus(String postId, String userId) {
         List<InteractionEntity> userInteractions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
 
         if (userInteractions.isEmpty()) {
@@ -140,19 +136,19 @@ public class InteractionService {
     }
 
     /**
-     * Check if user has liked a specific post - Fix method reference
+     * Check if user has liked a specific post
      */
     public boolean hasUserLikedPost(String postId, String userId) {
         List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
-        return interactions.stream().anyMatch(interaction -> interaction.isLike());
+        return interactions.stream().anyMatch(InteractionEntity::isLike);
     }
 
     /**
-     * Check if user has bookmarked a specific post - Fix method reference
+     * Check if user has bookmarked a specific post
      */
     public boolean hasUserBookmarkedPost(String postId, String userId) {
         List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
-        return interactions.stream().anyMatch(interaction -> interaction.isBookmark());
+        return interactions.stream().anyMatch(InteractionEntity::isBookmark);
     }
 
     private void updatePostStatsOnAdd(PostEntity post, InteractionEntity.InteractionType type) {
@@ -172,9 +168,6 @@ public class InteractionService {
             case COMMENT:
                 post.getStats().incrementComments();
                 break;
-            case REACTION:
-                // Handle reaction stats if needed
-                break;
             default:
                 break;
         }
@@ -191,31 +184,22 @@ public class InteractionService {
             case SHARE:
                 post.getStats().decrementShares();
                 break;
-            case VIEW:
-                // Handle view stats if needed
-                break;
             case COMMENT:
                 post.getStats().decrementComments();
-                break;
-            case REACTION:
-                // Handle reaction stats if needed
                 break;
             default:
                 break;
         }
     }
 
-    public InteractionResponse getUserInteractionStatus(String postId, String currentUserId) {
-        List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, currentUserId);
-        if (interactions.isEmpty()) {
-            return new InteractionResponse(false, "No interactions found");
-        }
+    public long getInteractionCount(String postId, InteractionEntity.InteractionType type) {
+        return interactionRepository.countByPostIdAndType(postId, type);
+    }
 
-        // Return the most recent interaction
-        InteractionEntity mostRecent = interactions.stream()
-                .max((i1, i2) -> i1.getCreatedAt().compareTo(i2.getCreatedAt()))
-                .orElse(interactions.get(0));
-
-        return new InteractionResponse(mostRecent);
+    /**
+     * Check if user has reacted to a post (for legacy compatibility)
+     */
+    public boolean hasUserReacted(String postId, String userId) {
+        return hasUserLikedPost(postId, userId);
     }
 }

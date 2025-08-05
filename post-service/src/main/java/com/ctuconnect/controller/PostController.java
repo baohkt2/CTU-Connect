@@ -2,8 +2,6 @@ package com.ctuconnect.controller;
 
 import com.ctuconnect.client.UserServiceClient;
 import com.ctuconnect.dto.AuthorInfo;
-import com.ctuconnect.dto.request.SearchRequest;
-import com.ctuconnect.dto.response.SearchResponse;
 import com.ctuconnect.entity.InteractionEntity;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +30,6 @@ import com.ctuconnect.service.PostService;
 import com.ctuconnect.service.NewsFeedService;
 import com.ctuconnect.service.NotificationService;
 import com.ctuconnect.service.UserSyncService;
-import com.ctuconnect.service.SearchService;
-import com.ctuconnect.service.PostInteractionService;
 
 import java.util.List;
 import java.util.Map;
@@ -59,15 +55,8 @@ public class PostController {
 
     @Autowired
     private UserSyncService userSyncService;
-
     @Autowired
     private UserServiceClient userServiceClient;
-
-    @Autowired
-    private SearchService searchService;
-
-    @Autowired
-    private PostInteractionService postInteractionService;
 
     // ========== ENHANCED ENDPOINTS (Primary) ==========
 
@@ -82,10 +71,13 @@ public class PostController {
             
             // Try enhanced service first, fallback to regular service
             PostResponse response;
-
+            try {
                 AuthenticatedUser user = new AuthenticatedUser(currentUserId, null, null);
                 response = postService.createEnhancedPost(request, user);
-
+            } catch (Exception e) {
+                // Fallback to regular post creation
+                response = postService.createPost(request, null, currentUserId);
+            }
             
             // Invalidate caches if newsFeedService is available
             if (newsFeedService != null) {
@@ -198,7 +190,7 @@ public class PostController {
     /**
      * Create post with file upload support
      */
-    /*@PostMapping("/upload")
+    @PostMapping("/upload")
     @RequireAuth
     public ResponseEntity<?> createPostWithFiles(
             @Valid @RequestPart("post") PostRequest request,
@@ -219,7 +211,7 @@ public class PostController {
                     .body(Map.of("error", "Internal server error", "message", "Failed to create post"));
         }
     }
-*/
+
     // ========== COMMON ENDPOINTS ==========
 
     /**
@@ -438,7 +430,7 @@ public class PostController {
     }
 
     /**
-     * Add comment to post - Enhanced with depth management
+     * Add comment to post - Legacy endpoint
      */
     @PostMapping("/{id}/comments")
     @RequireAuth
@@ -453,33 +445,15 @@ public class PostController {
             // Create notification if service is available
             if (notificationService != null) {
                 try {
-                    if (request.getParentCommentId() != null) {
-                        // This is a reply - notify parent comment author
-                        CommentResponse parentComment = commentService.getCommentById(request.getParentCommentId());
-                        if (!parentComment.getAuthor().getId().equals(currentUserId)) {
-                            notificationService.createNotification(
-                                parentComment.getAuthor().getId(),
-                                currentUserId,
-                                "COMMENT_REPLIED",
-                                "COMMENT",
-                                request.getParentCommentId(),
-                                "Someone replied to your comment"
-                            );
-                        }
-                    } else {
-                        // This is a root comment - notify post author
-                        String authorId = postService.getPostAuthorId(id);
-                        if (!authorId.equals(currentUserId)) {
-                            notificationService.createNotification(
-                                authorId,
-                                currentUserId,
-                                "POST_COMMENTED",
-                                "POST",
-                                id,
-                                "User commented on your post"
-                            );
-                        }
-                    }
+                    String authorId = postService.getPostAuthorId(id);
+                    notificationService.createNotification(
+                        authorId,
+                        currentUserId,
+                        "POST_COMMENTED",
+                        "POST",
+                        id,
+                        "User commented on your post"
+                    );
                 } catch (Exception e) {
                     // Log error but don't fail the request
                     System.err.println("Failed to create notification: " + e.getMessage());
@@ -541,88 +515,37 @@ public class PostController {
     }
 
     /**
-     * Get comments for post with hierarchical structure (Enhanced)
+     * Get comments for post
      */
     @GetMapping("/{id}/comments")
     public ResponseEntity<Page<CommentResponse>> getComments(
             @PathVariable String id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "10") int size) {
 
-        Sort sort = sortDir.equalsIgnoreCase("desc") ?
-            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
         Page<CommentResponse> comments = commentService.getCommentsByPost(id, pageable);
         return ResponseEntity.ok(comments);
     }
 
     /**
-     * Get all replies for a specific comment (both nested and flattened)
+     * Record interaction (LIKE/SHARE/BOOKMARK) - Legacy endpoint
      */
-    @GetMapping("/{postId}/comments/{commentId}/replies")
-    public ResponseEntity<List<CommentResponse>> getCommentReplies(
-            @PathVariable String postId,
-            @PathVariable String commentId) {
-        try {
-            List<CommentResponse> replies = commentService.getReplies(commentId);
-            return ResponseEntity.ok(replies);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
-
-    /**
-     * Get a specific comment by ID
-     */
-    @GetMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentResponse> getCommentById(
-            @PathVariable String postId,
-            @PathVariable String commentId) {
-        try {
-            CommentResponse comment = commentService.getCommentById(commentId);
-            return ResponseEntity.ok(comment);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    /**
-     * Delete a comment and all its replies
-     */
-    @DeleteMapping("/{postId}/comments/{commentId}")
+    @PostMapping("/{id}/interactions")
     @RequireAuth
-    public ResponseEntity<?> deleteComment(
-            @PathVariable String postId,
-            @PathVariable String commentId) {
+    public ResponseEntity<InteractionResponse> recordInteraction(
+            @PathVariable String id,
+            @Valid @RequestBody InteractionRequest request) {
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            commentService.deleteComment(commentId, currentUserId);
-            return ResponseEntity.ok(Map.of("message", "Comment deleted successfully"));
+            InteractionResponse interaction = interactionService.createInteraction(id, request, userId);
+            if (interaction == null) {
+                // Interaction was removed (e.g., unlike)
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(interaction);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "Unauthorized", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to delete comment", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get comment count for a post
-     */
-    @GetMapping("/{postId}/comments/count")
-    public ResponseEntity<Map<String, Long>> getCommentCount(@PathVariable String postId) {
-        try {
-            long count = commentService.getCommentCountByPost(postId);
-            return ResponseEntity.ok(Map.of("count", count));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("count", 0L));
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -681,28 +604,7 @@ public class PostController {
 
             InteractionRequest request = new InteractionRequest();
             request.setReaction(InteractionEntity.InteractionType.BOOKMARK);
-            // Don't set reactionType for bookmark - it's not a reaction
-
-            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
-            return ResponseEntity.ok(response);
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to toggle bookmark", "message", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/{postId}/share")
-    @RequireAuth
-    public ResponseEntity<?> toggleShare(@PathVariable String postId) {
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-
-            InteractionRequest request = new InteractionRequest();
-            request.setReaction(InteractionEntity.InteractionType.SHARE);
-            // Don't set reactionType for bookmark - it's not a reaction
+            request.setReactionType(InteractionEntity.ReactionType.BOOKMARK);
 
             InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
             return ResponseEntity.ok(response);
@@ -818,319 +720,6 @@ public class PostController {
                 return "BOOKMARK";
             default:
                 return "LIKE";
-        }
-    }
-
-    // ========== COMMENT ENDPOINTS (Proxy to CommentService, used by client-frontend) ==========
-
-    /**
-     * Toggle like for a comment (stub/no-op for now)
-     * Frontend performs optimistic update; backend can be enhanced later.
-     */
-    @PostMapping("/{postId}/comments/{commentId}/like")
-    @RequireAuth
-    public ResponseEntity<?> toggleCommentLike(
-            @PathVariable String postId,
-            @PathVariable String commentId) {
-        try {
-            String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            return ResponseEntity.ok(Map.of(
-                    "message", "Comment like toggled",
-                    "postId", postId,
-                    "commentId", commentId,
-                    "userId", userId
-            ));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to toggle like", "message", e.getMessage()));
-        }
-    }
-
-    // ========== ENHANCED SEARCH ENDPOINTS ==========
-
-    /**
-     * Advanced search endpoint with multiple filters
-     */
-    @PostMapping("/search/advanced")
-    public ResponseEntity<?> advancedSearch(@RequestBody SearchRequest searchRequest) {
-        try {
-            long startTime = System.currentTimeMillis();
-            SearchResponse response = searchService.searchPosts(searchRequest);
-            long endTime = System.currentTimeMillis();
-
-            response.setSearchTimeMs(endTime - startTime);
-            response.setPageSize(searchRequest.getSize());
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                .body(Map.of("error", "Advanced search failed", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get search suggestions for auto-complete
-     */
-    @GetMapping("/search/suggestions")
-    public ResponseEntity<?> getSearchSuggestions(
-            @RequestParam String query) {
-
-        try {
-            if (query == null || query.trim().length() < 2) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Query must be at least 2 characters long"));
-            }
-
-            var suggestions = searchService.getSearchSuggestions(query.trim());
-            return ResponseEntity.ok(suggestions);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                .body(Map.of("error", "Failed to get suggestions", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get related posts for a specific post
-     */
-    @GetMapping("/{postId}/related")
-    public ResponseEntity<?> getRelatedPosts(
-            @PathVariable String postId,
-            @RequestParam(defaultValue = "5") int limit) {
-
-        try {
-            List<PostResponse> relatedPosts = searchService.getRelatedPosts(postId, limit);
-            return ResponseEntity.ok(Map.of("relatedPosts", relatedPosts));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                .body(Map.of("error", "Failed to get related posts", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get trending search terms
-     */
-    @GetMapping("/search/trending")
-    public ResponseEntity<?> getTrendingSearchTerms() {
-        try {
-            List<String> trendingTerms = searchService.getTrendingSearchTerms();
-            return ResponseEntity.ok(Map.of("trendingTerms", trendingTerms));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                .body(Map.of("error", "Failed to get trending terms", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Record post view (for recommendation system)
-     */
-    @PostMapping("/{postId}/view")
-    public ResponseEntity<?> recordPostView(
-            @PathVariable String postId,
-            @RequestParam(required = false) String userId,
-            @RequestParam(required = false, defaultValue = "0") long readingTimeSeconds) {
-
-        try {
-            // Get user ID from authentication or parameter
-            String viewerId = SecurityContextHolder.getCurrentUserId();
-            if (viewerId == null && userId != null) {
-                viewerId = userId;
-            }
-
-            if (viewerId != null) {
-                // Record view interaction
-                postInteractionService.recordPostView(viewerId, postId);
-
-                // Record reading time if provided
-                if (readingTimeSeconds > 0) {
-                    postInteractionService.recordReadingTime(viewerId, postId, readingTimeSeconds);
-                }
-            }
-
-            return ResponseEntity.ok(Map.of("message", "View recorded successfully"));
-
-        } catch (Exception e) {
-            // Don't fail the request if tracking fails
-            return ResponseEntity.ok(Map.of("message", "View tracking failed but request processed"));
-        }
-    }
-
-    /**
-     * Enhanced like endpoint with interaction tracking
-     */
-    @PostMapping("/{postId}/like/enhanced")
-    @RequireAuth
-    public ResponseEntity<?> enhancedToggleLike(@PathVariable String postId) {
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-
-            // Check current like status
-            boolean currentlyLiked = interactionService.hasUserLikedPost(postId, currentUserId);
-
-            // Toggle like using existing service
-            InteractionRequest request = new InteractionRequest();
-            request.setReaction(InteractionEntity.InteractionType.LIKE);
-            request.setReactionType(InteractionEntity.ReactionType.LIKE);
-
-            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
-
-            // Record interaction for recommendation system
-            boolean isLike = !currentlyLiked; // Toggled state
-            postInteractionService.recordPostLike(currentUserId, postId, isLike);
-
-            // Create notification if it's a new like
-            if (isLike && notificationService != null) {
-                try {
-                    String authorId = postService.getPostAuthorId(postId);
-                    if (!authorId.equals(currentUserId)) {
-                        notificationService.createNotification(
-                            authorId,
-                            currentUserId,
-                            "POST_LIKED",
-                            "POST",
-                            postId,
-                            "User liked your post"
-                        );
-                    }
-                } catch (Exception e) {
-                    System.err.println("Failed to create notification: " + e.getMessage());
-                }
-            }
-
-            return ResponseEntity.ok(response);
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to toggle like", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Enhanced comment endpoint with interaction tracking
-     */
-    @PostMapping("/{id}/comments/enhanced")
-    @RequireAuth
-    public ResponseEntity<?> addEnhancedComment(
-            @PathVariable String id,
-            @Valid @RequestBody CommentRequest request) {
-
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-
-            // Add comment using existing service
-            CommentResponse comment = commentService.createComment(id, request, currentUserId);
-
-            // Record interaction for recommendation system
-            postInteractionService.recordPostComment(currentUserId, id);
-
-            // Create notification if service is available
-            if (notificationService != null) {
-                try {
-                    if (request.getParentCommentId() != null) {
-                        // Reply notification
-                        CommentResponse parentComment = commentService.getCommentById(request.getParentCommentId());
-                        if (!parentComment.getAuthor().getId().equals(currentUserId)) {
-                            notificationService.createNotification(
-                                parentComment.getAuthor().getId(),
-                                currentUserId,
-                                "COMMENT_REPLIED",
-                                "COMMENT",
-                                request.getParentCommentId(),
-                                "Someone replied to your comment"
-                            );
-                        }
-                    } else {
-                        // Comment notification
-                        String authorId = postService.getPostAuthorId(id);
-                        if (!authorId.equals(currentUserId)) {
-                            notificationService.createNotification(
-                                authorId,
-                                currentUserId,
-                                "POST_COMMENTED",
-                                "POST",
-                                id,
-                                "User commented on your post"
-                            );
-                        }
-                    }
-                } catch (Exception e) {
-                    System.err.println("Failed to create notification: " + e.getMessage());
-                }
-            }
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(comment);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Failed to add comment", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Enhanced share endpoint with interaction tracking
-     */
-    @PostMapping("/{postId}/share/enhanced")
-    @RequireAuth
-    public ResponseEntity<?> enhancedToggleShare(@PathVariable String postId) {
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-
-            // Use existing share logic
-            InteractionRequest request = new InteractionRequest();
-            request.setReaction(InteractionEntity.InteractionType.SHARE);
-
-            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
-
-            // Record interaction for recommendation system
-            postInteractionService.recordPostShare(currentUserId, postId);
-
-            return ResponseEntity.ok(response);
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to toggle share", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Get user's interaction preferences and history
-     */
-    @GetMapping("/interactions/preferences")
-    @RequireAuth
-    public ResponseEntity<?> getUserInteractionPreferences() {
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-
-            // Get user's content preferences
-            PostInteractionService.UserContentPreferences preferences =
-                postInteractionService.getUserContentPreferences(currentUserId);
-
-            // Get recent interaction history (last 30 days)
-            Map<String, Double> interactionHistory =
-                postInteractionService.getUserInteractionHistory(currentUserId, 30);
-
-            return ResponseEntity.ok(Map.of(
-                "preferences", preferences,
-                "recentInteractions", interactionHistory.size(),
-                "topCategories", preferences.getCategoryScores(),
-                "topTags", preferences.getTagScores(),
-                "topAuthors", preferences.getAuthorScores()
-            ));
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to get preferences", "message", e.getMessage()));
         }
     }
 }

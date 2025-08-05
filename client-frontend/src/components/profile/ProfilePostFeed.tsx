@@ -43,7 +43,7 @@ export const ProfilePostFeed: React.FC<ProfilePostFeedProps> = ({
 
       // Call the correct API endpoint based on whether it's own profile or not
       let response: PaginatedResponse<Post>;
-
+      
       if (isOwnProfile) {
         // For own profile, use getMyPosts which calls /posts/me
         response = await postService.getMyPosts(page, 10);
@@ -56,11 +56,11 @@ export const ProfilePostFeed: React.FC<ProfilePostFeedProps> = ({
             'Content-Type': 'application/json'
           }
         });
-
+        
         if (!apiResponse.ok) {
           throw new Error('Failed to fetch user posts');
         }
-
+        
         response = await apiResponse.json();
       }
 

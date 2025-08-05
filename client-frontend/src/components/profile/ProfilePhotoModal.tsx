@@ -42,7 +42,7 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
       // TODO: Implement actual upload logic
       // const uploadResult = await mediaService.uploadImage(selectedFile);
       // onPhotoUpdate(uploadResult.url);
-
+      
       // Mock upload for now
       setTimeout(() => {
         onPhotoUpdate(previewUrl || '');

@@ -28,7 +28,7 @@ public class InteractionEntity {
 
     private InteractionType type;
 
-    // Add reactionType field for REACTION interactions
+    // For REACTION type interactions, store the specific reaction
     private ReactionType reactionType;
 
     private Map<String, Object> metadata = new HashMap<>();
@@ -36,7 +36,7 @@ public class InteractionEntity {
     @Field("created_at")
     private LocalDateTime createdAt;
 
-    // Constructors
+    // Constructor
     public InteractionEntity(String postId, AuthorInfo author, InteractionType type) {
         this.postId = postId;
         this.author = author;
@@ -45,6 +45,7 @@ public class InteractionEntity {
         this.metadata = new HashMap<>();
     }
 
+    // Constructor with reaction type
     public InteractionEntity(String postId, AuthorInfo author, InteractionType type, ReactionType reactionType) {
         this.postId = postId;
         this.author = author;
@@ -68,55 +69,17 @@ public class InteractionEntity {
         return author != null ? author.getId() : null;
     }
 
-    // Add convenience methods for checking interaction types
-    public boolean isLike() {
-        return this.type == InteractionType.LIKE;
-    }
-
-    public boolean isReaction() {
-        return this.type == InteractionType.REACTION;
-    }
-
-    public boolean isBookmark() {
-        return this.type == InteractionType.BOOKMARK;
-    }
-
-    public boolean isShare() {
-        return this.type == InteractionType.SHARE;
-    }
-
-    public boolean isView() {
-        return this.type == InteractionType.VIEW;
-    }
-
-    public void setReaction(InteractionType newReaction) {
-        if (newReaction == null) {
-            throw new IllegalArgumentException("Interaction type cannot be null");
-        }
-        this.type = newReaction;
-        // Don't automatically set reactionType - it should be set separately when needed
-    }
-
-    // Static methods for method references - fix compilation errors
-    public static boolean isLike(InteractionEntity entity) {
-        return entity != null && entity.isLike();
-    }
-
-    public static boolean isBookmark(InteractionEntity entity) {
-        return entity != null && entity.isBookmark();
-    }
-
     // Enum for interaction types
     public enum InteractionType {
         LIKE,
         SHARE,
         BOOKMARK,
         VIEW,
-        REACTION,
-        COMMENT  // Add missing COMMENT enum
+        COMMENT,
+        REACTION
     }
 
-    // Separate enum for reaction types - add BOOKMARK
+    // Enum for reaction types
     public enum ReactionType {
         LIKE,
         LOVE,
@@ -124,6 +87,29 @@ public class InteractionEntity {
         WOW,
         SAD,
         ANGRY,
-        BOOKMARK  // Add missing BOOKMARK enum value
+        BOOKMARK
+    }
+
+    // Helper methods
+    public boolean isReaction() {
+        return this.type == InteractionType.REACTION;
+    }
+
+    public boolean isLike() {
+        return this.type == InteractionType.LIKE || 
+               (this.type == InteractionType.REACTION && this.reactionType == ReactionType.LIKE);
+    }
+
+    public boolean isBookmark() {
+        return this.type == InteractionType.BOOKMARK ||
+               (this.type == InteractionType.REACTION && this.reactionType == ReactionType.BOOKMARK);
+    }
+
+    public boolean isView() {
+        return this.type == InteractionType.VIEW;
+    }
+
+    public boolean isShare() {
+        return this.type == InteractionType.SHARE;
     }
 }

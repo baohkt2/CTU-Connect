@@ -77,8 +77,8 @@ export const PostEditModal: React.FC<PostEditModalProps> = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
+    <Modal 
+      isOpen={isOpen} 
       onClose={handleClose}
       title="Chỉnh sửa bài viết"
       size="lg"

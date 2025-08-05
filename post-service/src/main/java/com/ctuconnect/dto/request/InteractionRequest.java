@@ -19,34 +19,10 @@ public class InteractionRequest {
     @NotNull(message = "Interaction type is required")
     private InteractionEntity.InteractionType reaction;
 
+    // Add missing reactionType field for specific reaction types
     private InteractionEntity.ReactionType reactionType;
 
     private Map<String, Object> metadata = new HashMap<>();
-
-    // Getter and setter methods for compatibility
-    public InteractionEntity.InteractionType getReaction() {
-        return reaction;
-    }
-
-    public void setReaction(InteractionEntity.InteractionType reaction) {
-        this.reaction = reaction;
-    }
-
-    public InteractionEntity.ReactionType getReactionType() {
-        return reactionType;
-    }
-
-    public void setReactionType(InteractionEntity.ReactionType reactionType) {
-        this.reactionType = reactionType;
-    }
-
-    public Map<String, Object> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
-    }
 
     public void setType(String s) {
         if (s != null) {
@@ -58,5 +34,15 @@ public class InteractionRequest {
         } else {
             throw new IllegalArgumentException("Interaction type cannot be null");
         }
+    }
+
+    // Add missing setReactionType method
+    public void setReactionType(InteractionEntity.ReactionType reactionType) {
+        this.reactionType = reactionType;
+    }
+
+    // Add getter for reactionType
+    public InteractionEntity.ReactionType getReactionType() {
+        return this.reactionType;
     }
 }

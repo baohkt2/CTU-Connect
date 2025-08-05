@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/auth-service/auth-service.iml" filepath="$PROJECT_DIR$/auth-service/auth-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/client-frontend/client-frontend.iml" filepath="$PROJECT_DIR$/client-frontend/client-frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ctu-connect.iml" filepath="$PROJECT_DIR$/.idea/ctu-connect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recommendation-service/recommendation-service.iml" filepath="$PROJECT_DIR$/recommendation-service/recommendation-service.iml" />
     </modules>
   </component>
 </project>

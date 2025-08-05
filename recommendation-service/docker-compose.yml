@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  recommendation-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: recommendation_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - recommendation_db_data:/var/lib/postgresql/data
+    networks:
+      - recommendation-network
+
+  recommendation-redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - recommendation_redis_data:/data
+    networks:
+      - recommendation-network
+
+  recommendation-service:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:password@recommendation-db:5432/recommendation_db
+      - REDIS_URL=redis://recommendation-redis:6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DEBUG=true
+      - SECRET_KEY=dev-secret-key
+    depends_on:
+      - recommendation-db
+      - recommendation-redis
+    networks:
+      - recommendation-network
+      - ctu-connect-network
+    volumes:
+      - ./models:/app/models
+    restart: unless-stopped
+
+  mlflow:
+    image: python:3.11-slim
+    ports:
+      - "5001:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://postgres:password@recommendation-db:5432/recommendation_db
+    command: >
+      bash -c "
+        pip install mlflow psycopg2-binary &&
+        mlflow server 
+          --backend-store-uri postgresql://postgres:password@recommendation-db:5432/recommendation_db
+          --default-artifact-root ./mlruns
+          --host 0.0.0.0
+          --port 5000
+      "
+    depends_on:
+      - recommendation-db
+    networks:
+      - recommendation-network
+    volumes:
+      - mlflow_data:/mlruns
+
+volumes:
+  recommendation_db_data:
+  recommendation_redis_data:
+  mlflow_data:
+
+networks:
+  recommendation-network:
+    driver: bridge
+  ctu-connect-network:
+    external: true
