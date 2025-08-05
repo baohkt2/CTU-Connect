@@ -38,6 +38,16 @@ public class RouteConfig {
                         .path("/api/posts/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://post-service"))
+
+                .route("notification-service-route", r -> r
+                        .path("/api/notifications/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://notification-service"))
+
+                .route("chat-service-route", r -> r
+                        .path("/api/messages/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://chat-service"))
                 .build();
     }
 }

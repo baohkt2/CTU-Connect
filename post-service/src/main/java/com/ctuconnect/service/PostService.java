@@ -103,17 +103,17 @@ public class PostService {
 
     public Page<PostResponse> getPostsByAuthor(String authorId, Pageable pageable) {
         System.out.println("DEBUG: PostService.getPostsByAuthor called with authorId: " + authorId);
-
+        
         Page<PostEntity> posts = postRepository.findByAuthor_Id(authorId, pageable);
         System.out.println("DEBUG: Repository query returned " + posts.getTotalElements() + " posts");
-
+        
         // Debug first few posts from repository
         posts.getContent().stream().limit(3).forEach(post -> {
-            System.out.println("DEBUG: Repository returned post ID: " + post.getId() +
+            System.out.println("DEBUG: Repository returned post ID: " + post.getId() + 
                 ", Author ID: " + (post.getAuthor() != null ? post.getAuthor().getId() : "null") +
                 ", Author Name: " + (post.getAuthor() != null ? post.getAuthor().getName() : "null"));
         });
-
+        
         // Recalculate stats for each post before returning
         posts.forEach(this::recalculatePostStats);
         postRepository.saveAll(posts.getContent());

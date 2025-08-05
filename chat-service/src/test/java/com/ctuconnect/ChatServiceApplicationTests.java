@@ -1,4 +1,4 @@
-package vn.ctu.edu.chatservice;
+package com.ctuconnect;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
