@@ -585,7 +585,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                         comment={comment}
                         postId={post.id}
                         onCommentUpdate={(updatedComment) => {
-                          setComments(prev =>
+                          setComments(prev => 
                             prev.map(c => c.id === updatedComment.id ? updatedComment : c)
                           );
                         }}

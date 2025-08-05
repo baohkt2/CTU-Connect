@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  MoreHorizontal,
-  Edit3,
-  Trash2,
-  Flag,
-  EyeOff,
+import { 
+  MoreHorizontal, 
+  Edit3, 
+  Trash2, 
+  Flag, 
+  EyeOff, 
   UserX,
   Copy,
   Bookmark,
@@ -64,7 +64,7 @@ export const PostMenu: React.FC<PostMenuProps> = ({
         className: 'text-red-600 hover:bg-red-50'
       }
     ] : []),
-
+    
     // Common actions
     {
       icon: <Bookmark className="h-4 w-4" />,
@@ -84,7 +84,7 @@ export const PostMenu: React.FC<PostMenuProps> = ({
       action: onCopyLink,
       className: 'text-gray-700 hover:bg-gray-50'
     },
-
+    
     // Other user's post actions
     ...(!isOwnPost ? [
       {
@@ -121,11 +121,11 @@ export const PostMenu: React.FC<PostMenuProps> = ({
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
+          <div 
+            className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-
+          
           {/* Menu */}
           <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 min-w-[220px]">
             {menuItems.map((item, index) => (
@@ -141,7 +141,7 @@ export const PostMenu: React.FC<PostMenuProps> = ({
                 <span>{item.label}</span>
               </button>
             ))}
-
+            
             {menuItems.length === 0 && (
               <div className="px-4 py-2 text-sm text-gray-500 vietnamese-text">
                 Không có tùy chọn nào

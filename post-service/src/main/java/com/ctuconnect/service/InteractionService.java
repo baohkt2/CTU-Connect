@@ -43,40 +43,82 @@ public class InteractionService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
-        // Check if user already has this type of interaction with the post
-        Optional<InteractionEntity> existingInteraction = interactionRepository
-                .findByPostIdAndAuthor_IdAndType(postId, authorId, request.getReaction());
+        // For reaction-based interactions, check if user already has ANY reaction on this post
+        if (request.getReaction() == InteractionEntity.InteractionType.LIKE ||
+            request.getReaction() == InteractionEntity.InteractionType.REACTION) {
 
-        if (existingInteraction.isPresent()) {
-            // User already has this interaction - remove it (toggle off)
-            interactionRepository.delete(existingInteraction.get());
+            // Remove any existing reactions from this user on this post
+            List<InteractionEntity> existingReactions = interactionRepository
+                    .findByPostIdAndAuthor_Id(postId, authorId);
 
-            // Update post stats
-            updatePostStatsOnRemove(post, request.getReaction());
-            postRepository.save(post);
-
-            eventService.publishInteractionEvent(postId, authorId, "UN-" + request.getReaction().toString());
-            return new InteractionResponse(false, "Interaction removed"); // Interaction removed
-        } else {
-            // Create new interaction
-            InteractionEntity interaction = new InteractionEntity(postId, author, request.getReaction());
-            if (request.getMetadata() != null) {
-                interaction.setMetadata(request.getMetadata());
+            for (InteractionEntity existing : existingReactions) {
+                if (existing.isLike() || existing.isReaction()) {
+                    interactionRepository.delete(existing);
+                    updatePostStatsOnRemove(post, existing.getType());
+                }
             }
-            InteractionEntity saved = interactionRepository.save(interaction);
 
-            // Update post stats
-            updatePostStatsOnAdd(post, request.getReaction());
-            postRepository.save(post);
+            // Check if this is the same reaction being toggled off
+            boolean sameReaction = existingReactions.stream()
+                    .anyMatch(existing -> isSameReaction(existing, request));
 
-            eventService.publishInteractionEvent(postId, authorId, request.getReaction().toString());
-            return new InteractionResponse(saved);
+            if (sameReaction) {
+                // Same reaction clicked again - just remove it (toggle off)
+                postRepository.save(post);
+                eventService.publishInteractionEvent(postId, authorId, "UN-" + request.getReaction().toString());
+                return new InteractionResponse(false, "Reaction removed");
+            }
+        } else {
+            // For non-reaction interactions (bookmark, share, etc.), check for exact match
+            Optional<InteractionEntity> existingInteraction = interactionRepository
+                    .findByPostIdAndAuthor_IdAndType(postId, authorId, request.getReaction());
+
+            if (existingInteraction.isPresent()) {
+                // Toggle off the exact interaction
+                interactionRepository.delete(existingInteraction.get());
+                updatePostStatsOnRemove(post, request.getReaction());
+                postRepository.save(post);
+                eventService.publishInteractionEvent(postId, authorId, "UN-" + request.getReaction().toString());
+                return new InteractionResponse(false, "Interaction removed");
+            }
         }
+
+        // Create new interaction
+        InteractionEntity interaction;
+        if (request.getReactionType() != null) {
+            interaction = new InteractionEntity(postId, author, request.getReaction(), request.getReactionType());
+        } else {
+            interaction = new InteractionEntity(postId, author, request.getReaction());
+        }
+
+        if (request.getMetadata() != null) {
+            interaction.setMetadata(request.getMetadata());
+        }
+
+        InteractionEntity saved = interactionRepository.save(interaction);
+
+        // Update post stats
+        updatePostStatsOnAdd(post, request.getReaction());
+        postRepository.save(post);
+
+        eventService.publishInteractionEvent(postId, authorId, request.getReaction().toString());
+        return new InteractionResponse(saved);
+    }
+
+    private boolean isSameReaction(InteractionEntity existing, InteractionRequest request) {
+        if (existing.getType() == InteractionEntity.InteractionType.LIKE &&
+            request.getReaction() == InteractionEntity.InteractionType.LIKE) {
+            return true;
+        }
+        if (existing.getType() == InteractionEntity.InteractionType.REACTION &&
+            request.getReaction() == InteractionEntity.InteractionType.REACTION) {
+            return Objects.equals(existing.getReactionType(), request.getReactionType());
+        }
+        return false;
     }
 
     /**
      * Get user's interaction status for a post
-     * This method helps frontend determine current interaction state
      */
     public InteractionResponse getUserInteractionStatus(String postId, String userId) {
         List<InteractionEntity> userInteractions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
@@ -85,30 +127,33 @@ public class InteractionService {
             return new InteractionResponse(false, "No interactions found");
         }
 
-        // Return the first interaction (in case of multiple, though there shouldn't be)
-        return new InteractionResponse(userInteractions.get(0));
+        // Return the most recent interaction
+        InteractionEntity mostRecent = userInteractions.stream()
+                .max((i1, i2) -> i1.getCreatedAt().compareTo(i2.getCreatedAt()))
+                .orElse(userInteractions.get(0));
+
+        return new InteractionResponse(mostRecent);
     }
 
     /**
      * Check if user has liked a specific post
      */
     public boolean hasUserLikedPost(String postId, String userId) {
-        return interactionRepository.findByPostIdAndAuthor_IdAndType(
-            postId, userId, InteractionEntity.InteractionType.LIKE).isPresent();
+        List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
+        return interactions.stream().anyMatch(InteractionEntity::isLike);
     }
 
     /**
      * Check if user has bookmarked a specific post
      */
     public boolean hasUserBookmarkedPost(String postId, String userId) {
-        return interactionRepository.findByPostIdAndAuthor_IdAndType(
-            postId, userId, InteractionEntity.InteractionType.BOOKMARK).isPresent();
+        List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
+        return interactions.stream().anyMatch(InteractionEntity::isBookmark);
     }
 
     private void updatePostStatsOnAdd(PostEntity post, InteractionEntity.InteractionType type) {
         switch (type) {
             case LIKE:
-
                 post.getStats().incrementReaction(InteractionEntity.ReactionType.LIKE);
                 break;
             case BOOKMARK:
@@ -116,6 +161,12 @@ public class InteractionService {
                 break;
             case SHARE:
                 post.getStats().incrementShares();
+                break;
+            case VIEW:
+                post.getStats().incrementViews();
+                break;
+            case COMMENT:
+                post.getStats().incrementComments();
                 break;
             default:
                 break;
@@ -125,7 +176,6 @@ public class InteractionService {
     private void updatePostStatsOnRemove(PostEntity post, InteractionEntity.InteractionType type) {
         switch (type) {
             case LIKE:
-
                 post.getStats().decrementReaction(InteractionEntity.ReactionType.LIKE);
                 break;
             case BOOKMARK:
@@ -133,6 +183,9 @@ public class InteractionService {
                 break;
             case SHARE:
                 post.getStats().decrementShares();
+                break;
+            case COMMENT:
+                post.getStats().decrementComments();
                 break;
             default:
                 break;

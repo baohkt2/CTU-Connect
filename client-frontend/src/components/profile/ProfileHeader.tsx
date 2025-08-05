@@ -51,7 +51,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         ) : (
           <div className="w-full h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
         )}
-
+        
         {/* Cover Photo Edit Button */}
         {isOwnProfile && (
           <button
@@ -84,7 +84,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   </div>
                 )}
               </div>
-
+              
               {/* Avatar Edit Button */}
               {isOwnProfile && (
                 <button
@@ -110,7 +110,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   </div>
                 )}
               </div>
-
+              
               <div className="flex items-center space-x-2 mt-1">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                   user.role === 'LECTURER' 
@@ -135,14 +135,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     <span>{user.major.name}</span>
                   </div>
                 )}
-
+                
                 {user.role === 'LECTURER' && user.faculty && (
                   <div className="flex items-center space-x-1">
                     <Briefcase className="h-4 w-4" />
                     <span>{user.faculty.name}</span>
                   </div>
                 )}
-
+                
                 {user.createdAt && (
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
@@ -176,7 +176,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   <UserPlus className="h-4 w-4" />
                   <span>{isFollowing ? 'Đang theo dõi' : 'Theo dõi'}</span>
                 </Button>
-
+                
                 <Button
                   onClick={onMessage}
                   variant="outline"
@@ -185,7 +185,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   <MessageCircle className="h-4 w-4" />
                   <span>Nhắn tin</span>
                 </Button>
-
+                
                 <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                   <MoreHorizontal className="h-5 w-5 text-gray-600" />
                 </button>
@@ -199,8 +199,8 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <div className="mt-6 bg-gray-50 rounded-lg p-4">
             <h3 className="font-semibold text-gray-900 mb-2">Giới thiệu</h3>
             <p className="text-gray-700 vietnamese-text leading-relaxed">
-              {showFullBio || user.bio.length <= 200
-                ? user.bio
+              {showFullBio || user.bio.length <= 200 
+                ? user.bio 
                 : `${user.bio.substring(0, 200)}...`
               }
             </p>

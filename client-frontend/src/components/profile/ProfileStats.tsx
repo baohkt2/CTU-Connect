@@ -62,7 +62,7 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({ stats, onStatsClick 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-6 vietnamese-text">Thống kê</h2>
-
+      
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {statItems.map((item) => (
           <div

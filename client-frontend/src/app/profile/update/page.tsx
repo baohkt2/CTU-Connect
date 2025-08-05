@@ -131,14 +131,14 @@ export default function UpdateProfilePage() {
                   </div>
                 )}
               </div>
-
+              
               <h1 className="text-3xl font-bold text-gray-900 mb-2 vietnamese-text">
                 Cập nhật thông tin cá nhân
               </h1>
               <p className="text-gray-600 vietnamese-text">
                 Vui lòng hoàn thiện thông tin để sử dụng đầy đủ các tính năng của hệ thống
               </p>
-
+              
               {/* Role Badge */}
               <div className="mt-4">
                 <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
@@ -167,9 +167,9 @@ export default function UpdateProfilePage() {
                 <p className="text-gray-600 vietnamese-text">
                   Vai trò người dùng không hợp lệ để cập nhật thông tin cá nhân.
                 </p>
-                <Button
-                  variant="outline"
-                  onClick={() => router.push('/profile/me')}
+                <Button 
+                  variant="outline" 
+                  onClick={() => router.push('/profile/me')} 
                   className="mt-4"
                 >
                   Quay lại trang cá nhân

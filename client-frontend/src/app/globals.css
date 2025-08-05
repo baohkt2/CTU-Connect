@@ -371,3 +371,21 @@ code, pre {
     background: white !important;
   }
 }
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-popIn {
+  animation: popIn 0.3s ease forwards;
+}

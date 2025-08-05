@@ -293,7 +293,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder={`Trả lời ${comment.author?.fullName || comment.author?.name || 'bình luận này'}...`}
-                    className="min-h-[80px] text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 resize-none vietnamese-text"
+                    className="min-h-[80px] text-sm bg-white text-black border border-gray-200 rounded-lg px-3 py-2 resize-none vietnamese-text"
                     disabled={isSubmittingReply}
                   />
 

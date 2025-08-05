@@ -42,4 +42,13 @@ public class InteractionResponse {
         this.message = message;
     }
 
+    // Add missing isActive method - this determines if the interaction is currently active
+    public boolean isActive() {
+        return this.hasInteraction;
+    }
+
+    // Alternative method name for clarity
+    public boolean hasActiveInteraction() {
+        return this.hasInteraction;
+    }
 }

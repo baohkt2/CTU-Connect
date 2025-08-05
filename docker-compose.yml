@@ -32,7 +32,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     networks:
       - ctuconnect-network
     healthcheck:
@@ -369,9 +369,84 @@ services:
         - action: rebuild
           path: .
 
-networks:
-  ctuconnect-network:
-    driver: bridge
+  # Recommendation Service Redis
+  recommendation-redis:
+    image: redis:7-alpine
+    container_name: recommendation-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - recommendation_redis_data:/data
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # MLflow for ML experiment tracking
+  mlflow-server:
+    image: python:3.11-slim
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
+    command: >
+      bash -c "
+        pip install mlflow psycopg2-binary &&
+        mlflow server 
+          --backend-store-uri postgresql://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
+          --default-artifact-root ./mlruns
+          --host 0.0.0.0
+          --port 5000
+      "
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    networks:
+      - ctuconnect-network
+    volumes:
+      - mlflow_data:/mlruns
+
+  # Recommendation Service
+  recommendation-service:
+    build:
+      context: ./recommendation-service
+    container_name: recommendation-service
+    ports:
+      - "8080:8000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
+      - REDIS_URL=redis://recommendation-redis:6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SECRET_KEY=${RECOMMENDATION_SECRET_KEY:-recommendation-secret-key}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - DEBUG=false
+      - API_GATEWAY_URL=http://api-gateway:8090
+    depends_on:
+      auth_db:
+        condition: service_healthy
+      recommendation-redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - ctuconnect-network
+    volumes:
+      - ./recommendation-service/models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
 
 volumes:
   auth_db_data:
@@ -380,3 +455,9 @@ volumes:
   kafka-data:
   media_data:
   post-data:
+  recommendation_redis_data:
+  mlflow_data:
+
+networks:
+  ctuconnect-network:
+    driver: bridge
