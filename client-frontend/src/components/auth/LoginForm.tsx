@@ -95,8 +95,8 @@ const LoginForm: React.FC = () => {
         recaptchaToken
       };
 
-      await login(loginData);
-      router.push('/');
+      await login(loginData).then(() => {router.replace('/')});
+
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         const apiError = err as AxiosError<ApiErrorResponse>;
@@ -129,7 +129,7 @@ const LoginForm: React.FC = () => {
 
           <Card className="p-6 space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {error && <div className="text-sm text-red-600 bg-red-100 p-2 rounded">{error}</div>}
+              {error && <div className="text-sm text-red-600 bg-red-100 p-2 rounded">Thông tin đăng nhập không đúng</div>}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

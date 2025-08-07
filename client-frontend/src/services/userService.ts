@@ -1,13 +1,15 @@
 import api from '@/lib/api';
-import { User, ApiResponse, PaginatedResponse } from '@/types';
+import {ApiResponse, LecturerProfileUpdateRequest, PaginatedResponse, StudentProfileUpdateRequest, User} from '@/types';
+import {categoryService} from './categoryService';
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {
-    const response = await api.get(`/users/${userId}`);
+    const response = await api.get(`/users/${userId}/profile`);
     return response.data;
   },
 
   async updateProfile(userData: Partial<User>): Promise<User> {
+    console.log('Updating user profile with data:', userData);
     const response = await api.put('/users/profile', userData);
     return response.data;
   },
@@ -51,5 +53,23 @@ export const userService = {
   async getFriends(userId: string, page = 0, size = 10): Promise<PaginatedResponse<User>> {
     const response = await api.get(`/users/${userId}/friends?page=${page}&size=${size}`);
     return response.data;
-  }
+  },
+
+  async getMyProfile(): Promise<User> {
+    const response = await api.get('/users/me/profile');
+    return response.data;
+  },
+
+  async updateMyProfile(userData: StudentProfileUpdateRequest | LecturerProfileUpdateRequest): Promise<User> {
+    const response = await api.put('/users/me/profile', userData);
+    return response.data;
+  },
+
+  async checkProfileCompletion(): Promise<boolean> {
+    const response = await api.get('/users/checkMyInfo');
+    return response.data;
+  },
+
+  // Delegate category operations to categoryService
+  ...categoryService,
 };

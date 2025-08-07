@@ -14,34 +14,23 @@ import {
 } from '@/shared/types';
 
 /**
- * Post Service
- * Handles all post-related API calls
+ * Post Service - Updated to sync with backend APIs
  */
 export class PostService {
   /**
-   * Create new post
+   * Create new post - Updated to match EnhancedPostController
    */
   async createPost(postData: CreatePostRequest): Promise<Post> {
-    const formData = new FormData();
-    formData.append('content', postData.content);
+    // Use JSON instead of FormData to match EnhancedPostController
+    return apiClient.post<Post>(API_ENDPOINTS.POSTS.BASE, postData);
+  }
 
-    if (postData.visibility) {
-      formData.append('visibility', postData.visibility);
-    }
-
-    if (postData.tags) {
-      postData.tags.forEach(tag => formData.append('tags', tag));
-    }
-
-    if (postData.images) {
-      postData.images.forEach(image => formData.append('images', image));
-    }
-
-    return apiClient.post<Post>(API_ENDPOINTS.POSTS.BASE, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+  /**
+   * Get personalized feed - Updated to match backend
+   */
+  async getPersonalizedFeed(page = 0, size = 10): Promise<Post[]> {
+    const url = createApiUrl(API_ENDPOINTS.POSTS.FEED, undefined, { page, size });
+    return apiClient.get<Post[]>(url);
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.ctuconnect.service;
 
+import com.ctuconnect.dto.AuthorDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.enums.Role;
@@ -37,6 +38,7 @@ public class UserSyncService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userId); // ID đồng bộ với auth-db
         userEntity.setEmail(email);
+        userEntity.setIsProfileCompleted(false);
         userEntity.setRole(Role.valueOf(role));
         userEntity.setCreatedAt(LocalDateTime.now());
         userEntity.setUpdatedAt(LocalDateTime.now());
@@ -127,46 +129,24 @@ public class UserSyncService {
         dto.setRole(entity.getRole() != null ? entity.getRole().toString() : null);
         dto.setBio(entity.getBio());
         dto.setIsActive(entity.getIsActive());
+        dto.setIsProfileCompleted(entity.getIsProfileCompleted());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
         // Student fields
         dto.setStudentId(entity.getStudentId());
-
-        // Faculty fields
+        dto.setMajor(entity.getMajor());
+        dto.setBatch(entity.getBatch());
+        // Lecturer fields
         dto.setStaffCode(entity.getStaffCode());
-        dto.setPosition(entity.getPosition());
-        dto.setAcademicTitle(entity.getAcademicTitle());
+        dto.setAcademic(entity.getAcademic());
         dto.setDegree(entity.getDegree());
+        dto.setPosition(entity.getPosition());
 
-        // Academic information - codes
-        dto.setMajorCode(entity.getMajorCode());
-        dto.setFacultyCode(entity.getFacultyCode());
-        dto.setCollegeCode(entity.getCollegeCode());
-        dto.setGenderCode(entity.getGenderCode());
-
-        // Academic information - names
-        dto.setMajorName(entity.getMajorName());
-        dto.setFacultyName(entity.getFacultyName());
-        dto.setCollegeName(entity.getCollegeName());
-        dto.setGenderName(entity.getGenderName());
-
-        // Batch information
-        if (entity.getBatchYear() != null) {
-            try {
-                dto.setBatchYear(Integer.valueOf(entity.getBatchYear()));
-            } catch (NumberFormatException e) {
-                // Handle invalid batch year format
-                dto.setBatch(entity.getBatchYear());
-            }
-        }
-
-        // Legacy fields for backward compatibility
-        dto.setMajor(entity.getMajorName());
-        dto.setFaculty(entity.getFacultyName());
-        dto.setCollege(entity.getCollegeName());
-        dto.setGender(entity.getGenderName());
-        dto.setBatch(entity.getBatchYear());
+        // Common fields
+        dto.setFaculty(entity.getFaculty());
+        dto.setCollege(entity.getCollege());
+        dto.setGender(entity.getGender());
 
         // Media fields
         dto.setAvatarUrl(entity.getAvatarUrl());
@@ -184,4 +164,32 @@ public class UserSyncService {
         return dto;
     }
 
+    public AuthorDTO getAuthorById(String authorID) {
+        UserEntity userEntity = userRepository.findById(authorID)
+                .orElseThrow(() -> new RuntimeException("User not found: " + authorID));
+
+        // Chỉ trả về thông tin cần thiết cho author
+        AuthorDTO dto = new AuthorDTO();
+        dto.setId(userEntity.getId());
+        dto.setFullName(userEntity.getFullName());
+        dto.setRole(userEntity.getRole() != null ? userEntity.getRole().toString() : null);
+        dto.setAvatarUrl(userEntity.getAvatarUrl());
+        return dto;
+    }
+
+    /**
+     * Lấy thông tin tác giả cho post-service
+     * Method này được gọi từ post-service để lấy author info khi tạo/hiển thị posts
+     */
+    public AuthorDTO getAuthorInfo(String authorId) {
+        UserEntity user = userRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + authorId));
+
+        return AuthorDTO.builder()
+                .id(user.getId())
+                .fullName(user.getFullName() != null ? user.getFullName() : "Unknown User")
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole() != null ? user.getRole().toString() : "USER")
+                .build();
+    }
 }

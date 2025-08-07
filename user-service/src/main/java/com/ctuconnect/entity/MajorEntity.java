@@ -9,11 +9,21 @@ import org.springframework.data.neo4j.core.schema.*;
 @AllArgsConstructor
 @Builder
 public class MajorEntity {
-    @Id
-    private String code; // e.g., CNPM01
 
     private String name;
 
-    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
-    private FacultyEntity faculty;
+    @Id
+    private String code;
+
+    private String faculty; // Tên faculty mà major thuộc về (theo database structure)
+
+    @Relationship(type = "HAS_MAJOR", direction = Relationship.Direction.INCOMING)
+    private FacultyEntity facultyEntity;
+
+    @Relationship(type = "ENROLLED_IN", direction = Relationship.Direction.INCOMING)
+    private UserEntity users; // Sinh viên thuộc major này
+
+    public String getId() {
+        return code; // Sử dụng name làm ID để tương thích với database
+    }
 }

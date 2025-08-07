@@ -45,4 +45,9 @@ public interface AuthService {
      * Logout a user by invalidating their refresh token
      */
     void logout(String refreshToken);
+
+    /**
+     * Get current user information from access token
+     */
+    AuthResponse getCurrentUser(String accessToken);
 }

@@ -104,7 +104,8 @@ export default function SearchPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <Avatar
-                          src={searchUser.avatar}
+                            id={searchUser.id}
+                          src={searchUser.avatarUrl || '/default-avatar.png'}
                           alt={searchUser.fullName}
                           size="md"
                           online={searchUser.isOnline}
@@ -121,7 +122,7 @@ export default function SearchPage() {
                           </p>
                           {searchUser.faculty && (
                             <p className="text-xs text-gray-400">
-                              {searchUser.faculty}
+                              {searchUser.faculty.name}
                             </p>
                           )}
                         </div>

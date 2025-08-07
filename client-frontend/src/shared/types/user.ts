@@ -19,6 +19,36 @@ export interface User extends BaseEntity {
 }
 
 // ============================
+// User Profile (Extended User Info)
+// ============================
+export interface UserProfile extends User {
+  avatarUrl?: string;
+  facultyId?: string;
+  facultyName?: string;
+  majorId?: string;
+  majorName?: string;
+  batchId?: string;
+  batchName?: string;
+  collegeId?: string;
+  collegeName?: string;
+  genderId?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
+  address?: string;
+  interests?: string[];
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+  privacySettings?: {
+    profileVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
+    contactInfoVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
+  };
+}
+
+// ============================
 // Create / Update DTOs
 // ============================
 export interface CreateUserRequest {
@@ -33,6 +63,33 @@ export interface UpdateUserRequest {
   bio?: string;
   faculty?: string;
   yearOfStudy?: number;
+}
+
+// ============================
+// Update Profile Request (More comprehensive than UpdateUserRequest)
+// ============================
+export interface UpdateProfileRequest {
+  fullName?: string;
+  bio?: string;
+  facultyId?: string;
+  majorId?: string;
+  batchId?: string;
+  collegeId?: string;
+  genderId?: string;
+  phoneNumber?: string;
+  dateOfBirth?: string;
+  address?: string;
+  interests?: string[];
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+  privacySettings?: {
+    profileVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
+    contactInfoVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
+  };
 }
 
 // ============================

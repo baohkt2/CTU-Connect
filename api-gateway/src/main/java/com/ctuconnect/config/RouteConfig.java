@@ -24,11 +24,36 @@ public class RouteConfig {
                         .uri("lb://auth-service"))
 
                 // User Service Routes - Protected endpoints that require JWT validation
-                .route("user-service-profile-route", r -> r
+                .route("user-service-route", r -> r
                         .path("/api/users/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://user-service"))
 
+                .route("media-service-route", r -> r
+                        .path("/api/media/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://media-service"))
+
+                .route("post-service-route", r -> r
+                        .path("/api/posts/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://post-service"))
+
+                .route("notification-service-route", r -> r
+                        .path("/api/notifications/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://notification-service"))
+
+                .route("chat-service-route", r -> r
+                        .path("/api/chats/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://chat-service"))
+
+                // WebSocket Chat Route - Special handling for WebSocket connections
+                .route("chat-websocket-route", r -> r
+                        .path("/ws/chat/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://chat-service"))
                 .build();
     }
 }

@@ -1,73 +1,68 @@
 import React from 'react';
-import { ExclamationTriangleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import {
+    ExclamationTriangleIcon,
+    InformationCircleIcon,
+    XCircleIcon,
+    XMarkIcon
+} from '@heroicons/react/24/outline';
 
 interface ErrorAlertProps {
-  message: string;
-  type?: 'error' | 'warning' | 'info';
-  onClose?: () => void;
-  showIcon?: boolean;
+    message: string;
+    type?: 'error' | 'warning' | 'info';
+    onClose?: () => void;
+    showIcon?: boolean;
+    className?: string;
 }
 
-const ErrorAlert: React.FC<ErrorAlertProps> = ({
-  message,
-  type = 'error',
-  onClose,
-  showIcon = true
-}) => {
-  const getAlertStyles = () => {
-    switch (type) {
-      case 'error':
-        return 'bg-red-50 border-red-200 text-red-800';
-      case 'warning':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
-      case 'info':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
-      default:
-        return 'bg-red-50 border-red-200 text-red-800';
-    }
-  };
-
-  const getIcon = () => {
-    switch (type) {
-      case 'error':
-        return <XCircleIcon className="h-5 w-5 text-red-400" />;
-      case 'warning':
-        return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" />;
-      case 'info':
-        return <InformationCircleIcon className="h-5 w-5 text-blue-400" />;
-      default:
-        return <XCircleIcon className="h-5 w-5 text-red-400" />;
-    }
-  };
-
-  return (
-    <div className={`border rounded-md p-4 ${getAlertStyles()}`}>
-      <div className="flex">
-        {showIcon && (
-          <div className="flex-shrink-0">
-            {getIcon()}
-          </div>
-        )}
-        <div className={showIcon ? 'ml-3' : ''}>
-          <p className="text-sm font-medium">{message}</p>
-        </div>
-        {onClose && (
-          <div className="ml-auto pl-3">
-            <div className="-mx-1.5 -my-1.5">
-              <button
-                type="button"
-                onClick={onClose}
-                className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-100"
-              >
-                <span className="sr-only">Đóng</span>
-                <XCircleIcon className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+const alertStyles = {
+    error: 'bg-red-50 border-red-200 text-red-800',
+    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+    info: 'bg-blue-50 border-blue-200 text-blue-800'
 };
 
+const alertIcons = {
+    error: <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />,
+    warning: <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true" />,
+    info: <InformationCircleIcon className="h-5 w-5 text-blue-400" aria-hidden="true" />
+};
+
+const ErrorAlert: React.FC<ErrorAlertProps> = ({
+                                                   message,
+                                                   type = 'error',
+                                                   onClose,
+                                                   showIcon = true,
+                                                   className = ''
+                                               }) => {
+    const styles = alertStyles[type] || alertStyles.error;
+    const icon = alertIcons[type] || alertIcons.error;
+
+    return (
+        <div
+            role="alert"
+            aria-live="assertive"
+            className={`border rounded-md p-4 flex items-start gap-3 ${styles} ${className}`}
+        >
+            {showIcon && (
+                <div className="flex-shrink-0 mt-0.5">
+                    {icon}
+                </div>
+            )}
+            <div className="flex-1 text-sm font-medium">
+                {message}
+            </div>
+            {onClose && (
+                <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Đóng cảnh báo"
+                    className="ml-auto p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                >
+                    <XMarkIcon className="h-5 w-5 text-current" aria-hidden="true" />
+                </button>
+            )}
+        </div>
+    );
+};
+
+export { ErrorAlert };
 export default ErrorAlert;

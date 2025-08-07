@@ -6,15 +6,16 @@ import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.security.SecurityContextHolder;
 import com.ctuconnect.security.annotation.RequireAuth;
 import com.ctuconnect.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
-@RequireAuth // Yêu cầu xác thực cho tất cả endpoints
 public class UserController {
 
     @Autowired
@@ -26,6 +27,13 @@ public class UserController {
     @RequireAuth(roles = {"ADMIN"}) // Chỉ admin mới có thể tạo user mới
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
+    }
+
+    @GetMapping("/checkMyInfo")
+    @RequireAuth(selfOnly = true) // Kiểm tra đã nhập thông tin cá nhân hay chưa
+    public Boolean checkMyInfo() {
+        String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        return (userService.checkProfile(currentUserId));
     }
 
     @GetMapping("/{userId}/profile")
@@ -43,9 +51,22 @@ public class UserController {
 
     @PutMapping("/me/profile")
     @RequireAuth(selfOnly = true) // Cập nhật profile của chính mình
-    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateMyProfile(@RequestBody Object profileRequest) {
         String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        return ResponseEntity.ok(userService.updateUserProfile(currentUserId, userDTO));
+
+        // Xác định loại request dựa trên user role và fields có trong request
+        UserDTO currentUser = userService.getUserProfile(currentUserId);
+
+        if (currentUser.getRole().equals("STUDENT")) {
+            // Convert to StudentProfileUpdateRequest và xử lý
+            return ResponseEntity.ok(userService.updateStudentProfile(currentUserId, profileRequest));
+        } else if (currentUser.getRole().equals("LECTURER")) {
+            // Convert to FacultyProfileUpdateRequest và xử lý
+            return ResponseEntity.ok(userService.updateLecturerProfile(currentUserId, profileRequest));
+        } else {
+            // Fallback to original UserDTO update
+            return ResponseEntity.ok(userService.updateUserProfile(currentUserId, (UserDTO) profileRequest));
+        }
     }
 
     // ===================== FRIEND REQUEST MANAGEMENT =====================

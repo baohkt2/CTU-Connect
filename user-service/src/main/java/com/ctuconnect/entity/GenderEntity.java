@@ -13,4 +13,11 @@ public class GenderEntity {
     private String code; // "M" or "F"
 
     private String name; // "Nam", "Nữ"
+
+    @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.INCOMING)
+    private UserEntity user; // Người dùng có giới tính này
+
+    public String getId() {
+        return code;
+    }
 }
