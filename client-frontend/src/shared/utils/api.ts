@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from '@/shared/constants';
-
 /**
  * Build API URL with path parameters
  */

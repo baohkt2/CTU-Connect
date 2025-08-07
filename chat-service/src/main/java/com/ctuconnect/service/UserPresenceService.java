@@ -106,7 +106,7 @@ public class UserPresenceService {
 
             log.debug("User {} stopped typing in conversation {}", userId, conversationId);
         }
-        
+
         // Broadcast typing status
         webSocketService.broadcastTypingStatus(conversationId, userId, isTyping);
     }
@@ -124,14 +124,14 @@ public class UserPresenceService {
         if (cached != null) {
             return convertToResponse(cached);
         }
-        
+
         // Nếu không có cache, query database
         Optional<UserPresence> presence = userPresenceRepository.findByUserId(userId);
         if (presence.isPresent()) {
             cacheUserPresence(presence.get());
             return convertToResponse(presence.get());
         }
-        
+
         // Nếu không tìm thấy, tạo presence mặc định
         return createDefaultPresence(userId);
     }
@@ -148,7 +148,7 @@ public class UserPresenceService {
             .map(this::convertToResponse)
             .collect(Collectors.toList());
     }
-    
+
     public void setUserAway(String userId) {
         log.info("Setting user {} as away", userId);
 
@@ -174,7 +174,7 @@ public class UserPresenceService {
         String cacheKey = PRESENCE_CACHE_PREFIX + presence.getUserId();
         redisTemplate.opsForValue().set(cacheKey, presence, 5, TimeUnit.MINUTES);
     }
-    
+
     private UserPresence getCachedUserPresence(String userId) {
         String cacheKey = PRESENCE_CACHE_PREFIX + userId;
         return (UserPresence) redisTemplate.opsForValue().get(cacheKey);
@@ -204,5 +204,68 @@ public class UserPresenceService {
         response.setCurrentActivity(presence.getCurrentActivity());
         response.setLastSeenAt(presence.getLastSeenAt());
         return response;
+    }
+
+    public void updateUserPresence(String userId, String status) {
+        log.info("Updating user {} presence to {}", userId, status);
+
+        Optional<UserPresence> existingPresence = userPresenceRepository.findByUserId(userId);
+        if (existingPresence.isPresent()) {
+            UserPresence presence = existingPresence.get();
+            presence.setStatus(UserPresence.PresenceStatus.valueOf(status.toUpperCase()));
+            presence.setUpdatedAt(LocalDateTime.now());
+
+            userPresenceRepository.save(presence);
+
+            // Cache trong Redis
+            cacheUserPresence(presence);
+
+            // Broadcast presence update
+            webSocketService.broadcastPresenceUpdate(convertToResponse(presence));
+        } else {
+            log.warn("User {} not found for presence update", userId);
+        }
+    }
+
+    public void updateActiveConversation(String userId, String conversationId) {
+        log.info("Updating active conversation for user {}: {}", userId, conversationId);
+
+        Optional<UserPresence> existingPresence = userPresenceRepository.findByUserId(userId);
+        if (existingPresence.isPresent()) {
+            UserPresence presence = existingPresence.get();
+            presence.setCurrentActivity("active in " + conversationId);
+            presence.setUpdatedAt(LocalDateTime.now());
+
+            userPresenceRepository.save(presence);
+
+            // Cache trong Redis
+            cacheUserPresence(presence);
+
+            // Broadcast presence update
+            webSocketService.broadcastPresenceUpdate(convertToResponse(presence));
+        } else {
+            log.warn("User {} not found for active conversation update", userId);
+        }
+    }
+
+    public void clearActiveConversation(String userId) {
+        log.info("Clearing active conversation for user {}", userId);
+
+        Optional<UserPresence> existingPresence = userPresenceRepository.findByUserId(userId);
+        if (existingPresence.isPresent()) {
+            UserPresence presence = existingPresence.get();
+            presence.setCurrentActivity(null);
+            presence.setUpdatedAt(LocalDateTime.now());
+
+            userPresenceRepository.save(presence);
+
+            // Cache trong Redis
+            cacheUserPresence(presence);
+
+            // Broadcast presence update
+            webSocketService.broadcastPresenceUpdate(convertToResponse(presence));
+        } else {
+            log.warn("User {} not found for clearing active conversation", userId);
+        }
     }
 }

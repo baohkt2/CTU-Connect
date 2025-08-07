@@ -1,437 +1,324 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { chatService, Conversation, Message, UserPresence } from '../services/chatService';
+'use client';
 
-// Chat State
-interface ChatState {
-  conversations: Conversation[];
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { webSocketService, TypingEvent, PresenceEvent } from '@/services/websocket.service';
+import { chatService } from '@/features/chat/services/chat.service';
+import { useAuth } from '@/contexts/AuthContext';
+import { ChatMessage, ChatRoom } from '@/shared/types/chat';
+import { PaginatedResponse } from '@/shared/types';
+
+// Chat State Interface
+export interface ChatState {
+  conversations: ChatRoom[];
   activeConversationId: string | null;
-  messages: Record<string, Message[]>;
-  onlineUsers: UserPresence[];
-  typingUsers: Record<string, string[]>; // conversationId -> userIds
-  unreadCounts: Record<string, number>;
+  messages: { [conversationId: string]: ChatMessage[] };
+  onlineUsers: Set<string>;
+  typingUsers: { [conversationId: string]: Set<string> };
   isConnected: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
-// Actions
-type ChatAction =
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'SET_CONNECTED'; payload: boolean }
-  | { type: 'SET_CONVERSATIONS'; payload: Conversation[] }
-  | { type: 'ADD_CONVERSATION'; payload: Conversation }
-  | { type: 'UPDATE_CONVERSATION'; payload: Conversation }
-  | { type: 'SET_ACTIVE_CONVERSATION'; payload: string | null }
-  | { type: 'SET_MESSAGES'; payload: { conversationId: string; messages: Message[] } }
-  | { type: 'ADD_MESSAGE'; payload: Message }
-  | { type: 'UPDATE_MESSAGE'; payload: Message }
-  | { type: 'DELETE_MESSAGE'; payload: { conversationId: string; messageId: string } }
-  | { type: 'SET_ONLINE_USERS'; payload: UserPresence[] }
-  | { type: 'UPDATE_USER_PRESENCE'; payload: UserPresence }
-  | { type: 'SET_TYPING_USERS'; payload: { conversationId: string; userIds: string[] } }
-  | { type: 'SET_UNREAD_COUNT'; payload: { conversationId: string; count: number } };
+// Chat Context Interface
+export interface ChatContextType extends ChatState {
+  // Connection management
+  connectToChat: () => Promise<void>;
+  disconnectFromChat: () => Promise<void>;
 
-// Initial State
-const initialState: ChatState = {
-  conversations: [],
-  activeConversationId: null,
-  messages: {},
-  onlineUsers: [],
-  typingUsers: {},
-  unreadCounts: {},
-  isConnected: false,
-  isLoading: false,
-  error: null,
-};
-
-// Reducer
-function chatReducer(state: ChatState, action: ChatAction): ChatState {
-  switch (action.type) {
-    case 'SET_LOADING':
-      return { ...state, isLoading: action.payload };
-    
-    case 'SET_ERROR':
-      return { ...state, error: action.payload };
-    
-    case 'SET_CONNECTED':
-      return { ...state, isConnected: action.payload };
-    
-    case 'SET_CONVERSATIONS':
-      return { ...state, conversations: action.payload };
-    
-    case 'ADD_CONVERSATION':
-      return {
-        ...state,
-        conversations: [action.payload, ...state.conversations],
-      };
-    
-    case 'UPDATE_CONVERSATION':
-      return {
-        ...state,
-        conversations: state.conversations.map(conv =>
-          conv.id === action.payload.id ? action.payload : conv
-        ),
-      };
-    
-    case 'SET_ACTIVE_CONVERSATION':
-      return { ...state, activeConversationId: action.payload };
-    
-    case 'SET_MESSAGES':
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [action.payload.conversationId]: action.payload.messages,
-        },
-      };
-    
-    case 'ADD_MESSAGE':
-      const conversationId = action.payload.conversationId;
-      const currentMessages = state.messages[conversationId] || [];
-      
-      // Check if message already exists (prevent duplicates)
-      const messageExists = currentMessages.some(msg => msg.id === action.payload.id);
-      if (messageExists) return state;
-      
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [conversationId]: [...currentMessages, action.payload],
-        },
-        // Update conversation's last message
-        conversations: state.conversations.map(conv =>
-          conv.id === conversationId
-            ? { ...conv, lastMessage: action.payload, lastMessageAt: action.payload.createdAt }
-            : conv
-        ),
-      };
-    
-    case 'UPDATE_MESSAGE':
-      const msgConversationId = action.payload.conversationId;
-      const messagesForConv = state.messages[msgConversationId] || [];
-      
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [msgConversationId]: messagesForConv.map(msg =>
-            msg.id === action.payload.id ? action.payload : msg
-          ),
-        },
-      };
-    
-    case 'DELETE_MESSAGE':
-      const { conversationId: delConvId, messageId } = action.payload;
-      const messagesForDelConv = state.messages[delConvId] || [];
-      
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [delConvId]: messagesForDelConv.filter(msg => msg.id !== messageId),
-        },
-      };
-    
-    case 'SET_ONLINE_USERS':
-      return { ...state, onlineUsers: action.payload };
-    
-    case 'UPDATE_USER_PRESENCE':
-      return {
-        ...state,
-        onlineUsers: state.onlineUsers.map(user =>
-          user.userId === action.payload.userId ? action.payload : user
-        ),
-      };
-    
-    case 'SET_TYPING_USERS':
-      return {
-        ...state,
-        typingUsers: {
-          ...state.typingUsers,
-          [action.payload.conversationId]: action.payload.userIds,
-        },
-      };
-    
-    case 'SET_UNREAD_COUNT':
-      return {
-        ...state,
-        unreadCounts: {
-          ...state.unreadCounts,
-          [action.payload.conversationId]: action.payload.count,
-        },
-      };
-    
-    default:
-      return state;
-  }
-}
-
-// Context
-interface ChatContextType {
-  state: ChatState;
-  dispatch: React.Dispatch<ChatAction>;
-  // Actions
-  connectToChat: (userId: string) => Promise<void>;
-  disconnectFromChat: () => void;
-  loadConversations: () => Promise<void>;
-  loadMessages: (conversationId: string) => Promise<void>;
-  sendMessage: (conversationId: string, content: string, replyToMessageId?: string) => Promise<void>;
+  // Conversation management
   setActiveConversation: (conversationId: string | null) => void;
-  sendTypingStatus: (conversationId: string, isTyping: boolean) => void;
-  markAsRead: (conversationId: string) => Promise<void>;
-  addReaction: (messageId: string, emoji: string) => Promise<void>;
-  removeReaction: (messageId: string) => Promise<void>;
-  createConversation: (participantIds: string[], name?: string, type?: 'DIRECT' | 'GROUP') => Promise<Conversation>;
+  loadConversations: () => Promise<void>;
+
+  // Message management
+  sendMessage: (conversationId: string, content: string, type?: string) => void;
+  loadMessages: (conversationId: string, page?: number) => Promise<void>;
+
+  // Typing indicators
+  startTyping: (conversationId: string) => void;
+  stopTyping: (conversationId: string) => void;
+
+  // Utilities
+  clearError: () => void;
+  getUnreadCount: (conversationId: string) => number;
+  markAsRead: (conversationId: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-// Provider
+export const useChat = () => {
+  const context = useContext(ChatContext);
+  if (context === undefined) {
+    throw new Error('useChat must be used within a ChatProvider');
+  }
+  return context;
+};
+
 interface ChatProviderProps {
   children: ReactNode;
 }
 
-export function ChatProvider({ children }: ChatProviderProps) {
-  const [state, dispatch] = useReducer(chatReducer, initialState);
+export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
+  const { user, token } = useAuth();
+  const [state, setState] = useState<ChatState>({
+    conversations: [],
+    activeConversationId: null,
+    messages: {},
+    onlineUsers: new Set(),
+    typingUsers: {},
+    isConnected: false,
+    isLoading: false,
+    error: null,
+  });
 
-  // Connect to chat
-  const connectToChat = async (userId: string) => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      dispatch({ type: 'SET_ERROR', payload: null });
-
-      chatService.setCurrentUserId(userId);
-      
-      // Connect WebSocket
-      await chatService.connectWebSocket(userId);
-      dispatch({ type: 'SET_CONNECTED', payload: true });
-
-      // Setup WebSocket event listeners
-      setupWebSocketListeners();
-
-      // Load initial data
-      await loadConversations();
-      await loadOnlineUsers();
-
-      dispatch({ type: 'SET_LOADING', payload: false });
-    } catch (error) {
-      console.error('Failed to connect to chat:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Không thể kết nối đến chat' });
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  };
-
-  // Disconnect from chat
-  const disconnectFromChat = () => {
-    chatService.disconnectWebSocket();
-    dispatch({ type: 'SET_CONNECTED', payload: false });
-  };
-
-  // Setup WebSocket event listeners
-  const setupWebSocketListeners = () => {
-    // New message
-    chatService.onNewMessage((message: Message) => {
-      dispatch({ type: 'ADD_MESSAGE', payload: message });
-      
-      // Update unread count if not in active conversation
-      if (message.conversationId !== state.activeConversationId) {
-        const currentCount = state.unreadCounts[message.conversationId] || 0;
-        dispatch({
-          type: 'SET_UNREAD_COUNT',
-          payload: { conversationId: message.conversationId, count: currentCount + 1 }
-        });
+  // WebSocket event handlers
+  const handleMessage = useCallback((message: ChatMessage) => {
+    setState(prev => ({
+      ...prev,
+      messages: {
+        ...prev.messages,
+        [message.roomId]: [
+          ...(prev.messages[message.roomId] || []),
+          message
+        ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
       }
-    });
-
-    // Message update (edit)
-    chatService.onMessageUpdate((message: Message) => {
-      dispatch({ type: 'UPDATE_MESSAGE', payload: message });
-    });
-
-    // Message delete
-    chatService.onMessageDelete((messageId: string) => {
-      // Find which conversation this message belongs to
-      for (const [conversationId, messages] of Object.entries(state.messages)) {
-        if (messages.some(msg => msg.id === messageId)) {
-          dispatch({ type: 'DELETE_MESSAGE', payload: { conversationId, messageId } });
-          break;
-        }
-      }
-    });
-
-    // Typing indicator
-    chatService.onTyping(({ userId, isTyping }: { userId: string; isTyping: boolean }) => {
-      // This would need the conversationId from the server
-      // For now, we'll handle this in the component level
-    });
-
-    // Presence update
-    chatService.onPresenceUpdate((presence: UserPresence) => {
-      dispatch({ type: 'UPDATE_USER_PRESENCE', payload: presence });
-    });
-
-    // Reaction update
-    chatService.onReactionUpdate((message: Message) => {
-      dispatch({ type: 'UPDATE_MESSAGE', payload: message });
-    });
-  };
-
-  // Load conversations
-  const loadConversations = async () => {
-    try {
-      const response = await chatService.getConversations();
-      dispatch({ type: 'SET_CONVERSATIONS', payload: response.content });
-      
-      // Load unread counts for all conversations
-      for (const conversation of response.content) {
-        const unreadCount = await chatService.getUnreadCount(conversation.id);
-        dispatch({
-          type: 'SET_UNREAD_COUNT',
-          payload: { conversationId: conversation.id, count: unreadCount }
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load conversations:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Không thể tải danh sách cuộc trò chuyện' });
-    }
-  };
-
-  // Load messages for a conversation
-  const loadMessages = async (conversationId: string) => {
-    try {
-      const response = await chatService.getMessages(conversationId);
-      dispatch({
-        type: 'SET_MESSAGES',
-        payload: { conversationId, messages: response.content.reverse() } // Reverse to show oldest first
-      });
-    } catch (error) {
-      console.error('Failed to load messages:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Không thể tải tin nhắn' });
-    }
-  };
-
-  // Load online users
-  const loadOnlineUsers = async () => {
-    try {
-      const onlineUsers = await chatService.getOnlineUsers();
-      dispatch({ type: 'SET_ONLINE_USERS', payload: onlineUsers });
-    } catch (error) {
-      console.error('Failed to load online users:', error);
-    }
-  };
-
-  // Send message
-  const sendMessage = async (conversationId: string, content: string, replyToMessageId?: string) => {
-    try {
-      const message = await chatService.sendMessage({
-        conversationId,
-        content,
-        replyToMessageId
-      });
-      // Message will be added via WebSocket event
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Không thể gửi tin nhắn' });
-    }
-  };
-
-  // Set active conversation
-  const setActiveConversation = async (conversationId: string | null) => {
-    dispatch({ type: 'SET_ACTIVE_CONVERSATION', payload: conversationId });
-    
-    if (conversationId) {
-      // Load messages if not already loaded
-      if (!state.messages[conversationId]) {
-        await loadMessages(conversationId);
-      }
-      
-      // Mark as read
-      await markAsRead(conversationId);
-    }
-  };
-
-  // Send typing status
-  const sendTypingStatus = (conversationId: string, isTyping: boolean) => {
-    chatService.sendTypingStatus(conversationId, isTyping);
-  };
-
-  // Mark conversation as read
-  const markAsRead = async (conversationId: string) => {
-    try {
-      await chatService.markAsRead(conversationId);
-      dispatch({
-        type: 'SET_UNREAD_COUNT',
-        payload: { conversationId, count: 0 }
-      });
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
-    }
-  };
-
-  // Add reaction
-  const addReaction = async (messageId: string, emoji: string) => {
-    try {
-      await chatService.addReaction({ messageId, emoji });
-      // Reaction will be updated via WebSocket event
-    } catch (error) {
-      console.error('Failed to add reaction:', error);
-    }
-  };
-
-  // Remove reaction
-  const removeReaction = async (messageId: string) => {
-    try {
-      await chatService.removeReaction(messageId);
-      // Reaction will be updated via WebSocket event
-    } catch (error) {
-      console.error('Failed to remove reaction:', error);
-    }
-  };
-
-  // Create conversation
-  const createConversation = async (
-    participantIds: string[], 
-    name?: string, 
-    type: 'DIRECT' | 'GROUP' = 'DIRECT'
-  ): Promise<Conversation> => {
-    try {
-      const conversation = await chatService.createConversation({
-        participantIds,
-        name,
-        type
-      });
-      dispatch({ type: 'ADD_CONVERSATION', payload: conversation });
-      return conversation;
-    } catch (error) {
-      console.error('Failed to create conversation:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Không thể tạo cuộc trò chuyện' });
-      throw error;
-    }
-  };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      disconnectFromChat();
-    };
+    }));
   }, []);
 
+  const handleTyping = useCallback((event: TypingEvent) => {
+    setState(prev => {
+      const conversationTyping = new Set(prev.typingUsers[event.conversationId] || []);
+
+      if (event.isTyping) {
+        conversationTyping.add(event.userId);
+      } else {
+        conversationTyping.delete(event.userId);
+      }
+
+      return {
+        ...prev,
+        typingUsers: {
+          ...prev.typingUsers,
+          [event.conversationId]: conversationTyping
+        }
+      };
+    });
+  }, []);
+
+  const handlePresence = useCallback((event: PresenceEvent) => {
+    setState(prev => {
+      const newOnlineUsers = new Set(prev.onlineUsers);
+
+      if (event.status === 'ONLINE') {
+        newOnlineUsers.add(event.userId);
+      } else {
+        newOnlineUsers.delete(event.userId);
+      }
+
+      return {
+        ...prev,
+        onlineUsers: newOnlineUsers
+      };
+    });
+  }, []);
+
+  const handleConnected = useCallback(() => {
+    setState(prev => ({ ...prev, isConnected: true, error: null }));
+  }, []);
+
+  const handleDisconnected = useCallback(() => {
+    setState(prev => ({ ...prev, isConnected: false }));
+  }, []);
+
+  const handleError = useCallback((error: Error) => {
+    setState(prev => ({ ...prev, error: error.message, isConnected: false }));
+  }, []);
+
+  // Connection management
+  const connectToChat = useCallback(async () => {
+    if (!token) {
+      setState(prev => ({ ...prev, error: 'Authentication token not available' }));
+      return;
+    }
+
+    try {
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+      // Setup event listeners
+      webSocketService.on('message', handleMessage);
+      webSocketService.on('typing', handleTyping);
+      webSocketService.on('presence', handlePresence);
+      webSocketService.on('connected', handleConnected);
+      webSocketService.on('disconnected', handleDisconnected);
+      webSocketService.on('error', handleError);
+
+      await webSocketService.connect(token);
+
+      // Load conversations after connection
+      await loadConversations();
+
+      setState(prev => ({ ...prev, isLoading: false }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Connection failed',
+        isLoading: false
+      }));
+    }
+  }, [token, handleMessage, handleTyping, handlePresence, handleConnected, handleDisconnected, handleError]);
+
+  const disconnectFromChat = useCallback(async () => {
+    await webSocketService.disconnect();
+    webSocketService.removeAllListeners();
+
+    setState(prev => ({
+      ...prev,
+      isConnected: false,
+      activeConversationId: null,
+      typingUsers: {}
+    }));
+  }, []);
+
+  // Conversation management
+  const setActiveConversation = useCallback((conversationId: string | null) => {
+    setState(prev => {
+      // Leave previous conversation
+      if (prev.activeConversationId && prev.activeConversationId !== conversationId) {
+        webSocketService.leaveConversation(prev.activeConversationId);
+      }
+
+      // Join new conversation
+      if (conversationId) {
+        webSocketService.joinConversation(conversationId);
+        // Load messages for this conversation
+        loadMessages(conversationId);
+      }
+
+      return { ...prev, activeConversationId: conversationId };
+    });
+  }, []);
+
+  const loadConversations = useCallback(async () => {
+    try {
+      setState(prev => ({ ...prev, isLoading: true }));
+
+      const response: PaginatedResponse<ChatRoom> = await chatService.getChatRooms();
+
+      setState(prev => ({
+        ...prev,
+        conversations: response.content,
+        isLoading: false
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to load conversations',
+        isLoading: false
+      }));
+    }
+  }, []);
+
+  // Message management
+  const sendMessage = useCallback((conversationId: string, content: string, type = 'TEXT') => {
+    if (state.isConnected) {
+      webSocketService.sendMessage(conversationId, content, type);
+    } else {
+      setState(prev => ({ ...prev, error: 'Not connected to chat service' }));
+    }
+  }, [state.isConnected]);
+
+  const loadMessages = useCallback(async (conversationId: string, page = 0) => {
+    try {
+      const response: PaginatedResponse<ChatMessage> = await chatService.getMessages(conversationId, page, 50);
+
+      setState(prev => ({
+        ...prev,
+        messages: {
+          ...prev.messages,
+          [conversationId]: page === 0 ? response.content : [
+            ...response.content,
+            ...(prev.messages[conversationId] || [])
+          ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        }
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to load messages'
+      }));
+    }
+  }, []);
+
+  // Typing indicators
+  const startTyping = useCallback((conversationId: string) => {
+    if (state.isConnected) {
+      webSocketService.sendTyping(conversationId, true);
+    }
+  }, [state.isConnected]);
+
+  const stopTyping = useCallback((conversationId: string) => {
+    if (state.isConnected) {
+      webSocketService.sendTyping(conversationId, false);
+    }
+  }, [state.isConnected]);
+
+  // Utilities
+  const clearError = useCallback(() => {
+    setState(prev => ({ ...prev, error: null }));
+  }, []);
+
+  const getUnreadCount = useCallback((conversationId: string) => {
+    const messages = state.messages[conversationId] || [];
+    return messages.filter(msg =>
+      msg.senderId !== user?.id &&
+      !msg.readBy?.some(readStatus => readStatus.userId === user?.id)
+    ).length;
+  }, [state.messages, user?.id]);
+
+  const markAsRead = useCallback(async (conversationId: string) => {
+    try {
+      await chatService.markRoomAsRead(conversationId);
+
+      setState(prev => ({
+        ...prev,
+        messages: {
+          ...prev.messages,
+          [conversationId]: prev.messages[conversationId]?.map(msg => {
+            const alreadyRead = msg.readBy?.some(readStatus => readStatus.userId === user?.id);
+
+            if (alreadyRead) return msg;
+
+            const newReadStatus = {
+              userId: user?.id || '',
+              user: user!,
+              readAt: new Date().toISOString()
+            };
+
+            return {
+              ...msg,
+              readBy: [...(msg.readBy || []), newReadStatus],
+              isRead: true
+            };
+          }) || []
+        }
+      }));
+    } catch (error) {
+      console.error('Failed to mark messages as read:', error);
+    }
+  }, [user]);
+
   const contextValue: ChatContextType = {
-    state,
-    dispatch,
+    ...state,
     connectToChat,
     disconnectFromChat,
-    loadConversations,
-    loadMessages,
-    sendMessage,
     setActiveConversation,
-    sendTypingStatus,
+    loadConversations,
+    sendMessage,
+    loadMessages,
+    startTyping,
+    stopTyping,
+    clearError,
+    getUnreadCount,
     markAsRead,
-    addReaction,
-    removeReaction,
-    createConversation,
   };
 
   return (
@@ -439,13 +326,4 @@ export function ChatProvider({ children }: ChatProviderProps) {
       {children}
     </ChatContext.Provider>
   );
-}
-
-// Hook to use Chat Context
-export function useChat() {
-  const context = useContext(ChatContext);
-  if (context === undefined) {
-    throw new Error('useChat must be used within a ChatProvider');
-  }
-  return context;
-}
+};

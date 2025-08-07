@@ -37,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register STOMP endpoint for WebSocket connection
         registry.addEndpoint("/ws/chat")
-                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:3001")
+                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:3001", "http://localhost:8080")
                 .withSockJS();
     }
 
@@ -49,20 +49,28 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    // Extract user ID from headers
-                    String userId = accessor.getFirstNativeHeader("userId");
+                    // Extract user info from headers (passed by API Gateway after JWT validation)
+                    String userId = accessor.getFirstNativeHeader("X-User-Id");
+                    String username = accessor.getFirstNativeHeader("X-Username");
                     String sessionId = accessor.getSessionId();
 
-                    if (userId != null && sessionId != null) {
+                    if (userId != null && !userId.isEmpty()) {
+                        // Set user principal from Gateway headers
                         accessor.setUser(() -> userId);
-                        // UserPresence sẽ được handle trong Controller hoặc Service layer
-                        log.debug("User {} connected with session {}", userId, sessionId);
+                        log.debug("User {} (username: {}) connected with session {}", userId, username, sessionId);
+
+                        // Store user session mapping for presence tracking
+                        accessor.getSessionAttributes().put("userId", userId);
+                        accessor.getSessionAttributes().put("username", username);
+                    } else {
+                        log.warn("Missing user information in WebSocket connection headers");
+                        throw new IllegalArgumentException("User authentication required");
                     }
                 } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     String userId = accessor.getUser() != null ? accessor.getUser().getName() : null;
                     if (userId != null) {
-                        // UserPresence sẽ được handle trong Controller hoặc Service layer
                         log.debug("User {} disconnected", userId);
+                        // Handle user presence cleanup
                     }
                 }
 

@@ -50,10 +50,17 @@ export const API_ENDPOINTS = {
 
   // Chat endpoints
   CHAT: {
-    BASE: '/api/chat',
-    ROOMS: '/api/chat/rooms',
-    MESSAGES: '/api/chat/rooms/:roomId/messages',
-    SEND_MESSAGE: '/api/chat/rooms/:roomId/messages'
+    BASE: '/api/chats',
+    ROOMS: '/api/chats/conversations',
+    MESSAGES: '/api/chats/messages',
+    SEND_MESSAGE: '/api/chats/messages',
+    MARK_READ: '/api/chats/messages/:id/read',
+    ROOM_READ: '/api/chats/conversations/:id/read',
+    UNREAD_COUNT: '/api/chats/messages/unread-count',
+    ONLINE_USERS: '/api/chats/users/online',
+    TYPING_START: '/api/chats/conversations/:roomId/typing/start',
+    TYPING_STOP: '/api/chats/conversations/:roomId/typing/stop',
+    USER_PRESENCE: '/api/chats/users/presence'
   },
 
   // Media endpoints

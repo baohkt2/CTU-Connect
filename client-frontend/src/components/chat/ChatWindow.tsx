@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useChat } from '../../contexts/ChatContext';
+import { useChat } from '@/contexts/ChatContext';
 import ConversationList from './ConversationList';
 import MessageArea from './MessageArea';
 import UserPresenceBar from './UserPresenceBar';
@@ -13,7 +13,19 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId }) => {
-  const { state, connectToChat, disconnectFromChat } = useChat();
+  const {
+    conversations,
+    activeConversationId,
+    messages,
+    isConnected,
+    isLoading,
+    error,
+    connectToChat,
+    disconnectFromChat,
+    setActiveConversation,
+    clearError
+  } = useChat();
+
   const [showNewConversationModal, setShowNewConversationModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showConversationList, setShowConversationList] = useState(true);
@@ -23,7 +35,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId 
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -31,147 +43,157 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId 
 
   // Connect to chat when component mounts
   useEffect(() => {
-    if (isOpen && currentUserId && !state.isConnected) {
-      connectToChat(currentUserId);
+    if (isOpen && currentUserId && !isConnected && !isLoading) {
+      connectToChat();
     }
-    
+
     return () => {
       if (!isOpen) {
         disconnectFromChat();
       }
     };
-  }, [isOpen, currentUserId, state.isConnected, connectToChat, disconnectFromChat]);
+  }, [isOpen, currentUserId, isConnected, isLoading, connectToChat, disconnectFromChat]);
 
   // On mobile, hide conversation list when a conversation is selected
   useEffect(() => {
-    if (isMobile && state.activeConversationId) {
+    if (isMobile && activeConversationId) {
       setShowConversationList(false);
     }
-  }, [isMobile, state.activeConversationId]);
+  }, [isMobile, activeConversationId]);
+
+  // Clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   const handleBackToConversations = () => {
     setShowConversationList(true);
+    setActiveConversation(null);
   };
 
-  if (!isOpen) return null;
+  const currentConversation = conversations.find(conv => conv.id === activeConversationId);
+  const currentMessages = activeConversationId ? messages[activeConversationId] || [] : [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full h-full md:w-4/5 md:h-4/5 max-w-6xl flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white rounded-t-lg">
-          <h2 className="text-lg font-semibold">Chat</h2>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setShowNewConversationModal(true)}
-              className="p-2 hover:bg-blue-700 rounded-full transition-colors"
-              title="Tạo cuộc trò chuyện mới"
-            >
-              <PlusIcon className="h-5 w-5" />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-blue-700 rounded-full transition-colors"
-            >
-              <XMarkIcon className="h-5 w-5" />
-            </button>
+    <div className="fixed inset-0 bg-white z-50 flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center space-x-3">
+          <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+          {!isConnected && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              Disconnected
+            </span>
+          )}
+          {isConnected && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Connected
+            </span>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setShowNewConversationModal(true)}
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+            title="New conversation"
+          >
+            <PlusIcon className="h-5 w-5" />
+          </button>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={clearError}
+                className="text-red-400 hover:text-red-600"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Main Content */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Conversation List */}
-          <div className={`${
-            isMobile 
-              ? (showConversationList ? 'w-full' : 'hidden') 
-              : 'w-1/3 border-r'
-          } flex flex-col`}>
-            <ConversationList 
-              isMobile={isMobile}
-              onConversationSelect={() => isMobile && setShowConversationList(false)}
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <span className="ml-2 text-gray-600">Loading...</span>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Desktop Layout or Mobile Conversation List */}
+        {(!isMobile || showConversationList) && (
+          <div className={`${isMobile ? 'w-full' : 'w-1/3 border-r border-gray-200'} flex flex-col`}>
+            <ConversationList
+              conversations={conversations}
+              activeConversationId={activeConversationId}
+              onConversationSelect={(conversationId) => {
+                setActiveConversation(conversationId);
+                if (isMobile) {
+                  setShowConversationList(false);
+                }
+              }}
+              currentUserId={currentUserId}
             />
           </div>
+        )}
 
-          {/* Message Area */}
-          <div className={`${
-            isMobile 
-              ? (showConversationList ? 'hidden' : 'w-full') 
-              : 'flex-1'
-          } flex flex-col`}>
-            {state.activeConversationId ? (
-              <MessageArea 
-                conversationId={state.activeConversationId}
-                isMobile={isMobile}
-                onBackClick={isMobile ? handleBackToConversations : undefined}
+        {/* Desktop Message Area or Mobile Message View */}
+        {(!isMobile || !showConversationList) && (
+          <div className={`${isMobile ? 'w-full' : 'flex-1'} flex flex-col`}>
+            {activeConversationId && currentConversation ? (
+              <MessageArea
+                conversation={currentConversation}
+                messages={currentMessages}
+                currentUserId={currentUserId}
+                onBack={isMobile ? handleBackToConversations : undefined}
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
+              <div className="flex-1 flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                  <div className="mb-4">
-                    <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Chọn một cuộc trò chuyện</h3>
-                  <p className="text-sm text-gray-500">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin</p>
+                  <div className="text-gray-400 text-lg mb-2">💬</div>
+                  <p className="text-gray-500">Select a conversation to start messaging</p>
                 </div>
               </div>
             )}
           </div>
-
-          {/* User Presence Sidebar (Desktop only) */}
-          {!isMobile && (
-            <div className="w-64 border-l bg-gray-50">
-              <UserPresenceBar />
-            </div>
-          )}
-        </div>
-
-        {/* Loading Overlay */}
-        {state.isLoading && (
-          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
-            <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-              <span className="text-gray-600">Đang kết nối...</span>
-            </div>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {state.error && (
-          <div className="absolute top-16 left-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <span className="block sm:inline">{state.error}</span>
-          </div>
-        )}
-
-        {/* Connection Status */}
-        {!state.isConnected && !state.isLoading && (
-          <div className="absolute bottom-4 left-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded-lg text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-              <span>Đang kết nối lại...</span>
-            </div>
-          </div>
-        )}
-
-        {state.isConnected && (
-          <div className="absolute bottom-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded-lg text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Đã kết nối</span>
-            </div>
-          </div>
         )}
       </div>
 
+      {/* User Presence Bar */}
+      <UserPresenceBar />
+
       {/* New Conversation Modal */}
-      {showNewConversationModal && (
-        <NewConversationModal
-          isOpen={showNewConversationModal}
-          onClose={() => setShowNewConversationModal(false)}
-          currentUserId={currentUserId}
-        />
-      )}
+      <NewConversationModal
+        isOpen={showNewConversationModal}
+        onClose={() => setShowNewConversationModal(false)}
+        currentUserId={currentUserId}
+      />
     </div>
   );
 };

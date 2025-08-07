@@ -58,6 +58,13 @@ export const authService = {
     return response.data;
   },
 
+  async getWebSocketToken(): Promise<{ token: string }> {
+    const response = await api.get('/auth/websocket-token', {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
   /**
    * Kiểm tra xác thực người dùng và trả về thông tin người dùng nếu đã xác thực
    * @returns {Promise<{ isAuthenticated: boolean; user: User | null; error?: any }>}

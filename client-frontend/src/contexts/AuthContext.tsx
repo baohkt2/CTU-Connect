@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User, LoginRequest, RegisterRequest } from '@/types';
 import { authService } from '@/services/authService';
 import { usePathname } from 'next/navigation';
@@ -7,12 +7,9 @@ import {userService} from "@/services/userService";
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   loading: boolean;
-  login: (credentials: {
-    identifier: string;
-    password: string;
-    recaptchaToken: string
-  }) => Promise<void>;
+  login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
@@ -44,6 +41,7 @@ const PUBLIC_ROUTES = [
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
   const pathname = usePathname();
@@ -113,12 +111,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, [isHydrated, pathname]);
 
+  // Function to get WebSocket token when needed
+  const getWebSocketToken = useCallback(async () => {
+    if (!user) return null;
+
+    try {
+      const response = await authService.getWebSocketToken();
+      setToken(response.token);
+      return response.token;
+    } catch (error) {
+      console.error('Failed to get WebSocket token:', error);
+      return null;
+    }
+  }, [user]);
+
+  // Get WebSocket token after user login
+  useEffect(() => {
+    if (user && !token) {
+      getWebSocketToken();
+    }
+  }, [user, token, getWebSocketToken]);
+
   const login = async (credentials: LoginRequest) => {
     try {
       const response = await authService.login(credentials);
       console.log('Login response:', response);
       if (response.user) {
         setUser(response.user);
+        // Get WebSocket token after successful login
+        const wsToken = await authService.getWebSocketToken();
+        setToken(wsToken.token);
       }
     } catch (error) {
       throw error;
@@ -135,13 +157,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      // authService.logout sẽ call API để clear HttpOnly cookies
       await authService.logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear user state
+      // Clear user state and token
       setUser(null);
+      setToken(null);
       // Redirect to login page
       if (typeof window !== 'undefined') {
         window.location.replace('/');
@@ -157,6 +179,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
+    token,
     loading,
     login,
     register,

@@ -2,6 +2,7 @@ package com.ctuconnect.controller;
 
 import com.ctuconnect.dto.request.CreateConversationRequest;
 import com.ctuconnect.dto.response.ConversationResponse;
+import com.ctuconnect.security.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/conversations")
+@RequestMapping("/api/chats/conversations")
 @RequiredArgsConstructor
 public class ConversationController {
 
@@ -27,10 +28,9 @@ public class ConversationController {
 
     @PostMapping
     public ResponseEntity<ConversationResponse> createConversation(
-            @Valid @RequestBody CreateConversationRequest request,
-            Authentication authentication) {
+            @Valid @RequestBody CreateConversationRequest request) {
 
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         ConversationResponse response = conversationService.createConversation(request, userId);
         return ResponseEntity.ok(response);
     }
@@ -38,20 +38,18 @@ public class ConversationController {
     @GetMapping
     public ResponseEntity<Page<ConversationResponse>> getUserConversations(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            Authentication authentication) {
+            @RequestParam(defaultValue = "20") int size) {
 
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         Page<ConversationResponse> conversations = conversationService.getUserConversations(userId, page, size);
         return ResponseEntity.ok(conversations);
     }
 
     @GetMapping("/{conversationId}")
     public ResponseEntity<ConversationResponse> getConversation(
-            @PathVariable String conversationId,
-            Authentication authentication) {
+            @PathVariable String conversationId) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         ConversationResponse response = conversationService.getConversationById(conversationId, userId);
         return ResponseEntity.ok(response);
     }
@@ -59,10 +57,9 @@ public class ConversationController {
     @PutMapping("/{conversationId}")
     public ResponseEntity<ConversationResponse> updateConversation(
             @PathVariable String conversationId,
-            @Valid @RequestBody UpdateConversationRequest request,
-            Authentication authentication) {
+            @Valid @RequestBody UpdateConversationRequest request) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         ConversationResponse response = conversationService.updateConversation(conversationId, request, userId);
         return ResponseEntity.ok(response);
     }
@@ -70,10 +67,9 @@ public class ConversationController {
     @PostMapping("/{conversationId}/participants")
     public ResponseEntity<Void> addParticipant(
             @PathVariable String conversationId,
-            @RequestParam String participantId,
-            Authentication authentication) {
+            @RequestParam String participantId) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         conversationService.addParticipant(conversationId, participantId, userId);
         return ResponseEntity.ok().build();
     }
@@ -81,30 +77,27 @@ public class ConversationController {
     @DeleteMapping("/{conversationId}/participants/{participantId}")
     public ResponseEntity<Void> removeParticipant(
             @PathVariable String conversationId,
-            @PathVariable String participantId,
-            Authentication authentication) {
+            @PathVariable String participantId) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         conversationService.removeParticipant(conversationId, participantId, userId);
         return ResponseEntity.ok().build();
     }
     
     @GetMapping("/search")
     public ResponseEntity<List<ConversationResponse>> searchConversations(
-            @RequestParam String query,
-            Authentication authentication) {
+            @RequestParam String query) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         List<ConversationResponse> results = conversationService.searchConversations(userId, query);
         return ResponseEntity.ok(results);
     }
     
     @DeleteMapping("/{conversationId}")
     public ResponseEntity<Void> deleteConversation(
-            @PathVariable String conversationId,
-            Authentication authentication) {
+            @PathVariable String conversationId) {
         
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         conversationService.deleteConversation(conversationId, userId);
         return ResponseEntity.noContent().build();
     }
@@ -112,7 +105,7 @@ public class ConversationController {
     // WebSocket message mappings for real-time features
     @MessageMapping("/conversation/{conversationId}/typing")
     public void handleTyping(@Payload TypingRequest request, Authentication authentication) {
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userPresenceService.setTypingStatus(userId, request.getConversationId(), request.isTyping());
     }
 }

@@ -45,7 +45,13 @@ public class RouteConfig {
                         .uri("lb://notification-service"))
 
                 .route("chat-service-route", r -> r
-                        .path("/api/messages/**")
+                        .path("/api/chats/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://chat-service"))
+
+                // WebSocket Chat Route - Special handling for WebSocket connections
+                .route("chat-websocket-route", r -> r
+                        .path("/ws/chat/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://chat-service"))
                 .build();

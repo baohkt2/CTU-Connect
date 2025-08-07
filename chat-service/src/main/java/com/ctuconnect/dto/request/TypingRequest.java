@@ -1,17 +1,27 @@
 package com.ctuconnect.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TypingRequest {
-    @NotBlank(message = "ID conversation không được trống")
+
+    @NotBlank(message = "Conversation ID cannot be blank")
     private String conversationId;
 
+    @NotNull(message = "Typing status cannot be null")
     private boolean isTyping;
+
+    private Long timestamp;
+
+    public TypingRequest() {
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    public TypingRequest(String conversationId, boolean isTyping) {
+        this.conversationId = conversationId;
+        this.isTyping = isTyping;
+        this.timestamp = System.currentTimeMillis();
+    }
 }

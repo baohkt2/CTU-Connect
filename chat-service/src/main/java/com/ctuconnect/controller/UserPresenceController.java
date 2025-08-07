@@ -1,5 +1,6 @@
 package com.ctuconnect.controller;
 
+import com.ctuconnect.security.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -10,7 +11,7 @@ import com.ctuconnect.service.UserPresenceService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/presence")
+@RequestMapping("/api/chats/presence")
 @RequiredArgsConstructor
 public class UserPresenceController {
 
@@ -37,7 +38,7 @@ public class UserPresenceController {
 
     @PostMapping("/away")
     public ResponseEntity<Void> setAway(Authentication authentication) {
-        String userId = authentication.getName();
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
         userPresenceService.setUserAway(userId);
         return ResponseEntity.ok().build();
     }
