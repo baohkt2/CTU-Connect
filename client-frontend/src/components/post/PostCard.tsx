@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Post, CreateCommentRequest, UpdatePostRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import  Card  from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReactionButton } from '@/components/ui/ReactionButton';
@@ -585,7 +585,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                         comment={comment}
                         postId={post.id}
                         onCommentUpdate={(updatedComment) => {
-                          setComments(prev => 
+                          setComments(prev =>
                             prev.map(c => c.id === updatedComment.id ? updatedComment : c)
                           );
                         }}

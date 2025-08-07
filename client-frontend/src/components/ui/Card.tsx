@@ -60,5 +60,4 @@ const Card = forwardRef<HTMLElement, CardProps>(
 
 Card.displayName = 'Card';
 
-export { Card };
 export default Card;

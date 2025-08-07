@@ -1,331 +1,252 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useChat } from '../../contexts/ChatContext';
-import { Message } from '../../services/chatService';
-import MessageBubble from './MessageBubble';
-import MessageInput from './MessageInput';
-import TypingIndicator from './TypingIndicator';
-import { ArrowLeftIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import React, { useState, useRef, useEffect } from 'react';
+import { useChat } from '@/contexts/ChatContext';
+import { ChatMessage, ChatRoom } from '@/shared/types/chat';
 import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import {
+  PaperAirplaneIcon,
+  ArrowLeftIcon,
+  FaceSmileIcon,
+  PaperClipIcon,
+  PhoneIcon,
+  VideoCameraIcon,
+  InformationCircleIcon
+} from '@heroicons/react/24/outline';
 
 interface MessageAreaProps {
-  conversationId: string;
-  isMobile: boolean;
-  onBackClick?: () => void;
+  conversation: ChatRoom;
+  messages: ChatMessage[];
+  currentUserId: string;
+  onBack?: () => void;
 }
 
-const MessageArea: React.FC<MessageAreaProps> = ({ conversationId, isMobile, onBackClick }) => {
-  const { state, loadMessages, sendMessage, sendTypingStatus, markAsRead } = useChat();
-  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+const MessageArea: React.FC<MessageAreaProps> = ({
+  conversation,
+  messages,
+  currentUserId,
+  onBack
+}) => {
+  const { sendMessage, startTyping, stopTyping, typingUsers, onlineUsers } = useChat();
+  const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const conversation = state.conversations.find(c => c.id === conversationId);
-  const messages = state.messages[conversationId] || [];
-  const typingUsers = state.typingUsers[conversationId] || [];
+  const typingTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
-    scrollToBottom();
-  }, [messages.length]);
-
-  // Load messages when conversation changes
-  useEffect(() => {
-    loadMessages(conversationId);
-    markAsRead(conversationId);
-  }, [conversationId, loadMessages, markAsRead]);
-
-  // Clear typing timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [messages]);
 
-  const handleSendMessage = async (content: string) => {
-    if (!content.trim()) return;
+  // Handle typing indicators
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setNewMessage(value);
 
-    try {
-      await sendMessage(conversationId, content, replyToMessage?.id);
-      setReplyToMessage(null);
-    } catch (error) {
-      console.error('Failed to send message:', error);
+    if (value.trim() && !isTyping) {
+      setIsTyping(true);
+      startTyping(conversation.id);
     }
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set new timeout to stop typing indicator
+    typingTimeoutRef.current = setTimeout(() => {
+      if (isTyping) {
+        setIsTyping(false);
+        stopTyping(conversation.id);
+      }
+    }, 1000);
   };
 
-  const handleTyping = (isTyping: boolean) => {
-    sendTypingStatus(conversationId, isTyping);
-    
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newMessage.trim()) return;
+
+    sendMessage(conversation.id, newMessage.trim());
+    setNewMessage('');
+
+    // Stop typing indicator
     if (isTyping) {
-      // Clear existing timeout
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-      
-      // Set timeout to stop typing after 3 seconds of inactivity
-      typingTimeoutRef.current = setTimeout(() => {
-        sendTypingStatus(conversationId, false);
-      }, 3000);
-    } else {
-      // Clear timeout and send stop typing immediately
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
+      setIsTyping(false);
+      stopTyping(conversation.id);
     }
   };
 
-  const handleReplyToMessage = (message: Message) => {
-    setReplyToMessage(message);
-  };
-
-  const handleCancelReply = () => {
-    setReplyToMessage(null);
-  };
-
-  const getConversationTitle = () => {
-    if (!conversation) return 'Chat';
-    
-    if (conversation.type === 'GROUP') {
-      return conversation.name || 'Nhóm chat';
-    } else {
-      // For direct messages, show the other participant's name
-      const otherParticipant = conversation.participants.find(
-        p => p.userId !== state.activeConversationId // This should be current user ID
-      );
-      return otherParticipant?.userName || 'Chat trực tiếp';
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e);
     }
   };
 
-  const getOnlineStatus = () => {
-    if (!conversation || conversation.type === 'GROUP') return null;
-    
-    const otherParticipant = conversation.participants.find(
-      p => p.userId !== state.activeConversationId // This should be current user ID
-    );
-    
-    if (!otherParticipant) return null;
-    
-    const onlineUser = state.onlineUsers.find(u => u.userId === otherParticipant.userId);
-    return onlineUser?.status || 'OFFLINE';
-  };
+  // Get other participants (excluding current user)
+  const otherParticipants = conversation.participants.filter(p => p.id !== currentUserId);
+  const conversationName = conversation.name || otherParticipants.map(p => p.name).join(', ');
 
-  const getLastSeenTime = () => {
-    if (!conversation || conversation.type === 'GROUP') return null;
-    
-    const otherParticipant = conversation.participants.find(
-      p => p.userId !== state.activeConversationId // This should be current user ID
-    );
-    
-    if (!otherParticipant) return null;
-    
-    const onlineUser = state.onlineUsers.find(u => u.userId === otherParticipant.userId);
-    if (!onlineUser || onlineUser.status === 'ONLINE') return null;
-    
-    try {
-      return formatDistanceToNow(new Date(onlineUser.lastSeenAt), {
-        addSuffix: true,
-        locale: vi
-      });
-    } catch {
-      return null;
-    }
-  };
-
-  const loadMoreMessages = async () => {
-    if (isLoadingMore || !hasMoreMessages) return;
-    
-    setIsLoadingMore(true);
-    try {
-      // This would need pagination support in the backend
-      // For now, just simulate loading more messages
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setHasMoreMessages(false);
-    } catch (error) {
-      console.error('Failed to load more messages:', error);
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
-
-  const handleScroll = () => {
-    if (messagesContainerRef.current) {
-      const { scrollTop } = messagesContainerRef.current;
-      if (scrollTop === 0 && hasMoreMessages) {
-        loadMoreMessages();
-      }
-    }
-  };
-
-  if (!conversation) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <p>Không tìm thấy cuộc trò chuyện</p>
-        </div>
-      </div>
-    );
-  }
+  // Get typing users for this conversation
+  const currentTypingUsers = typingUsers[conversation.id] || new Set();
+  const typingUserNames = Array.from(currentTypingUsers);
 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b bg-white">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {isMobile && onBackClick && (
-              <button
-                onClick={onBackClick}
-                className="p-1 hover:bg-gray-100 rounded-full"
-              >
-                <ArrowLeftIcon className="h-5 w-5" />
-              </button>
-            )}
-            
-            <div className="flex items-center space-x-3">
-              {/* Avatar */}
-              <div className="relative">
-                {conversation.avatarUrl ? (
-                  <img
-                    src={conversation.avatarUrl}
-                    alt={getConversationTitle()}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-600">
-                      {getConversationTitle().charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                
-                {/* Online indicator */}
-                {conversation.type === 'DIRECT' && getOnlineStatus() === 'ONLINE' && (
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                )}
-              </div>
-              
-              {/* Conversation Info */}
-              <div>
-                <h3 className="font-medium text-gray-900">{getConversationTitle()}</h3>
-                <div className="text-sm text-gray-500">
-                  {conversation.type === 'GROUP' ? (
-                    <span>{conversation.participants.length} thành viên</span>
-                  ) : (
-                    <span>
-                      {getOnlineStatus() === 'ONLINE' 
-                        ? 'Đang hoạt động' 
-                        : getLastSeenTime() 
-                          ? `Hoạt động ${getLastSeenTime()}`
-                          : 'Không hoạt động'
-                      }
-                    </span>
-                  )}
-                </div>
-              </div>
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center space-x-3">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <ArrowLeftIcon className="h-5 w-5" />
+            </button>
+          )}
+
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">{conversationName}</h2>
+            <div className="flex items-center space-x-2">
+              {otherParticipants.map((participant) => {
+                const isOnline = onlineUsers.has(participant.id);
+                return (
+                  <span key={participant.id} className="text-sm text-gray-500 flex items-center">
+                    <span className={`w-2 h-2 rounded-full mr-1 ${isOnline ? 'bg-green-400' : 'bg-gray-300'}`} />
+                    {participant.name}
+                  </span>
+                );
+              })}
             </div>
           </div>
-          
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <InformationCircleIcon className="h-5 w-5 text-gray-500" />
-            </button>
-          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full">
+            <PhoneIcon className="h-5 w-5" />
+          </button>
+          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full">
+            <VideoCameraIcon className="h-5 w-5" />
+          </button>
+          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full">
+            <InformationCircleIcon className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
-      {/* Messages Area */}
-      <div 
-        ref={messagesContainerRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
-      >
-        {/* Load More Button */}
-        {hasMoreMessages && (
-          <div className="text-center">
-            <button
-              onClick={loadMoreMessages}
-              disabled={isLoadingMore}
-              className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg disabled:opacity-50"
-            >
-              {isLoadingMore ? 'Đang tải...' : 'Tải thêm tin nhắn'}
-            </button>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+            <div className="text-4xl mb-4">💬</div>
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        ) : (
+          messages.map((message, index) => {
+            const isOwn = message.senderId === currentUserId;
+            const showAvatar = index === 0 || messages[index - 1].senderId !== message.senderId;
+            const showTimestamp = index === 0 ||
+              new Date(message.createdAt).getTime() - new Date(messages[index - 1].createdAt).getTime() > 300000; // 5 minutes
+
+            return (
+              <div key={message.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+                  {/* Avatar */}
+                  {showAvatar && !isOwn && (
+                    <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full mr-3 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        {message.sender.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className={`${!showAvatar && !isOwn ? 'ml-11' : ''}`}>
+                    {/* Timestamp */}
+                    {showTimestamp && (
+                      <div className="text-xs text-gray-500 text-center mb-2">
+                        {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
+                      </div>
+                    )}
+
+                    {/* Message bubble */}
+                    <div
+                      className={`px-4 py-2 rounded-lg ${
+                        isOwn
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-gray-100 text-gray-900'
+                      }`}
+                    >
+                      {!isOwn && showAvatar && (
+                        <div className="text-xs font-medium mb-1">{message.sender.name}</div>
+                      )}
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+
+                      {/* Message status */}
+                      {isOwn && (
+                        <div className="text-xs text-indigo-200 mt-1 text-right">
+                          {message.isRead ? 'Read' : 'Sent'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+
+        {/* Typing indicator */}
+        {typingUserNames.length > 0 && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 rounded-lg px-4 py-2 text-sm text-gray-600">
+              {typingUserNames.length === 1
+                ? `${typingUserNames[0]} is typing...`
+                : `${typingUserNames.join(', ')} are typing...`
+              }
+            </div>
           </div>
         )}
 
-        {/* Messages */}
-        {messages.map((message, index) => {
-          const prevMessage = index > 0 ? messages[index - 1] : null;
-          const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
-          
-          const showSenderInfo = !prevMessage || prevMessage.senderId !== message.senderId;
-          const showTimestamp = !nextMessage || 
-            nextMessage.senderId !== message.senderId ||
-            (new Date(nextMessage.createdAt).getTime() - new Date(message.createdAt).getTime()) > 300000; // 5 minutes
-
-          return (
-            <MessageBubble
-              key={message.id}
-              message={message}
-              showSenderInfo={showSenderInfo}
-              showTimestamp={showTimestamp}
-              onReply={() => handleReplyToMessage(message)}
-              isMobile={isMobile}
-            />
-          );
-        })}
-
-        {/* Typing Indicator */}
-        {typingUsers.length > 0 && (
-          <TypingIndicator userIds={typingUsers} />
-        )}
-
-        {/* Scroll to bottom anchor */}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Reply Preview */}
-      {replyToMessage && (
-        <div className="px-4 py-2 bg-gray-50 border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <p className="text-sm text-gray-600">
-                Trả lời <span className="font-medium">{replyToMessage.senderName}</span>
-              </p>
-              <p className="text-sm text-gray-800 truncate">
-                {replyToMessage.content}
-              </p>
-            </div>
-            <button
-              onClick={handleCancelReply}
-              className="ml-2 p-1 hover:bg-gray-200 rounded"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Message Input */}
-      <MessageInput
-        onSendMessage={handleSendMessage}
-        onTyping={handleTyping}
-        disabled={!state.isConnected}
-        placeholder={
-          state.isConnected 
-            ? "Nhập tin nhắn..." 
-            : "Đang kết nối..."
-        }
-      />
+      <div className="p-4 border-t border-gray-200">
+        <form onSubmit={handleSendMessage} className="flex items-end space-x-2">
+          <button
+            type="button"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <PaperClipIcon className="h-5 w-5" />
+          </button>
+
+          <div className="flex-1">
+            <textarea
+              value={newMessage}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder="Type a message..."
+              rows={1}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+              style={{ minHeight: '40px', maxHeight: '120px' }}
+            />
+          </div>
+
+          <button
+            type="button"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <FaceSmileIcon className="h-5 w-5" />
+          </button>
+
+          <button
+            type="submit"
+            disabled={!newMessage.trim()}
+            className="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <PaperAirplaneIcon className="h-5 w-5" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
