@@ -70,6 +70,60 @@ export const userService = {
     return response.data;
   },
 
-  // Delegate category operations to categoryService
-  ...categoryService,
+  // ========================= FRIENDS MANAGEMENT =========================
+
+  // Get current user's friends
+  async getMyFriends(): Promise<PaginatedResponse<User>> {
+    const response = await api.get('/users/me/friends');
+    return response.data;
+  },
+
+  // Get friend requests received
+  async getFriendRequests(): Promise<User[]> {
+    const response = await api.get('/users/me/friend-requests');
+    return response.data;
+  },
+
+  // Get friend requests sent
+  async getSentFriendRequests(): Promise<User[]> {
+    const response = await api.get('/users/me/friend-requested');
+    return response.data;
+  },
+
+  // Get friend suggestions
+  async getFriendSuggestions(): Promise<PaginatedResponse<User>> {
+    const response = await api.get('/users/me/friend-suggestions');
+    return response.data;
+  },
+
+  // Get mutual friends with another user
+  async getMutualFriends(otherUserId: string): Promise<PaginatedResponse<User>> {
+    const response = await api.get(`/users/me/mutual-friends/${otherUserId}`);
+    return response.data;
+  },
+
+  // Send friend request
+  async sendFriendRequest(friendId: string): Promise<ApiResponse<string>> {
+    const response = await api.post(`/users/me/invite/${friendId}`);
+    return response.data;
+  },
+
+  // Accept friend request
+  async acceptFriendRequest(friendId: string): Promise<ApiResponse<string>> {
+    const response = await api.post(`/users/me/accept-invite/${friendId}`);
+    return response.data;
+  },
+
+  // Reject friend request
+  async rejectFriendRequest(friendId: string): Promise<ApiResponse<string>> {
+    const response = await api.post(`/users/me/reject-invite/${friendId}`);
+    return response.data;
+  },
+
+  // Remove friend
+  async removeFriend(friendId: string): Promise<ApiResponse<string>> {
+    const response = await api.delete(`/users/me/friends/${friendId}`);
+    return response.data;
+  }
+
 };

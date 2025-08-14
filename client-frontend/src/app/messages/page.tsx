@@ -1,15 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { ChatProvider } from '@/contexts/ChatContext';
 import Layout from '@/components/layout/Layout';
-import Card from '@/components/ui/Card';
+import ChatWindow from '@/components/chat/ChatWindow';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function MessagesPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [isChatOpen, setIsChatOpen] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -31,18 +33,14 @@ export default function MessagesPage() {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
-        <Card className="min-h-[600px]">
-          <div className="text-center py-16">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tin nhắn</h1>
-            <p className="text-gray-600 mb-8">Tính năng chat sẽ sớm được phát triển</p>
-            <div className="bg-gray-50 rounded-lg p-8">
-              <p className="text-sm text-gray-500">
-                Chức năng nhắn tin đang được phát triển và sẽ có sẵn trong phiên bản tiếp theo.
-              </p>
-            </div>
-          </div>
-        </Card>
+      <div className="h-[calc(100vh-8rem)] max-w-7xl mx-auto">
+        <ChatProvider>
+          <ChatWindow
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            currentUserId={user.id}
+          />
+        </ChatProvider>
       </div>
     </Layout>
   );

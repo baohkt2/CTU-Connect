@@ -167,8 +167,8 @@ export const postService = {
 
   // Get top viewed posts
   async getTopViewedPosts(): Promise<Post[]> {
-    const response = await api.get('/posts/top-viewed');
-    return response.data;
+    const topViewedResponse = await api.get('/posts/top-viewed');
+    return topViewedResponse.data;
   },
 
   // Get top liked posts

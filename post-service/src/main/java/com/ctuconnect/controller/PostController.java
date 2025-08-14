@@ -2,6 +2,7 @@ package com.ctuconnect.controller;
 
 import com.ctuconnect.client.UserServiceClient;
 import com.ctuconnect.dto.AuthorInfo;
+import com.ctuconnect.entity.InteractionEntity;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -549,94 +550,127 @@ public class PostController {
     }
 
     /**
-     * Check if user has liked post
+     * Toggle like on a post
      */
-    @GetMapping("/{id}/likes/check")
+    @PostMapping("/{postId}/like")
     @RequireAuth
-    public ResponseEntity<Boolean> hasUserLikedPost(@PathVariable String id) {
-        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        boolean hasLiked = interactionService.hasUserReacted(id, userId);
-        return ResponseEntity.ok(hasLiked);
+    public ResponseEntity<?> toggleLike(@PathVariable String postId) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+            InteractionRequest request = new InteractionRequest();
+            request.setReaction(InteractionEntity.InteractionType.LIKE);
+            request.setReactionType(InteractionEntity.ReactionType.LIKE);
+
+            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
+
+            // Create notification if it's a new like
+            if (response.isActive() && notificationService != null) {
+                try {
+                    String authorId = postService.getPostAuthorId(postId);
+                    if (!authorId.equals(currentUserId)) { // Don't notify self
+                        notificationService.createNotification(
+                            authorId,
+                            currentUserId,
+                            "POST_LIKED",
+                            "POST",
+                            postId,
+                            "User liked your post"
+                        );
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to create notification: " + e.getMessage());
+                }
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to toggle like", "message", e.getMessage()));
+        }
     }
 
-    // ========== INTERACTION STATUS ENDPOINTS ==========
+    /**
+     * Toggle bookmark on a post
+     */
+    @PostMapping("/{postId}/bookmark")
+    @RequireAuth
+    public ResponseEntity<?> toggleBookmark(@PathVariable String postId) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+            InteractionRequest request = new InteractionRequest();
+            request.setReaction(InteractionEntity.InteractionType.BOOKMARK);
+            request.setReactionType(InteractionEntity.ReactionType.BOOKMARK);
+
+            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
+            return ResponseEntity.ok(response);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to toggle bookmark", "message", e.getMessage()));
+        }
+    }
 
     /**
      * Check if user has liked a post
-     * This endpoint helps frontend maintain like state after page refresh
      */
-    @GetMapping("/{postId}/interactions/like/status")
+    @GetMapping("/{postId}/likes/check")
     @RequireAuth
-    public ResponseEntity<?> checkLikeStatus(@PathVariable String postId) {
+    public ResponseEntity<?> checkUserLike(@PathVariable String postId) {
         try {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
             boolean hasLiked = interactionService.hasUserLikedPost(postId, currentUserId);
-            return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "hasLiked", hasLiked,
-                "userId", currentUserId
-            ));
+            return ResponseEntity.ok(hasLiked);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required"));
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to check like status"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to check like status", "message", e.getMessage()));
         }
     }
 
     /**
      * Check if user has bookmarked a post
-     * This endpoint helps frontend maintain bookmark state after page refresh
      */
-    @GetMapping("/{postId}/interactions/bookmark/status")
+    @GetMapping("/{postId}/bookmarks/check")
     @RequireAuth
-    public ResponseEntity<?> checkBookmarkStatus(@PathVariable String postId) {
+    public ResponseEntity<?> checkUserBookmark(@PathVariable String postId) {
         try {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
             boolean hasBookmarked = interactionService.hasUserBookmarkedPost(postId, currentUserId);
-            return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "hasBookmarked", hasBookmarked,
-                "userId", currentUserId
-            ));
+            return ResponseEntity.ok(hasBookmarked);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required"));
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to check bookmark status"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to check bookmark status", "message", e.getMessage()));
         }
     }
 
     /**
-     * Get all user interactions for a post
-     * This endpoint provides complete interaction state for frontend
+     * Get user's interaction status for a post
      */
     @GetMapping("/{postId}/interactions/status")
     @RequireAuth
     public ResponseEntity<?> getUserInteractionStatus(@PathVariable String postId) {
         try {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            boolean hasLiked = interactionService.hasUserLikedPost(postId, currentUserId);
-            boolean hasBookmarked = interactionService.hasUserBookmarkedPost(postId, currentUserId);
-
-            return ResponseEntity.ok(Map.of(
-                "postId", postId,
-                "userId", currentUserId,
-                "hasLiked", hasLiked,
-                "hasBookmarked", hasBookmarked,
-                "interactions", Map.of(
-                    "LIKE", hasLiked,
-                    "BOOKMARK", hasBookmarked
-                )
-            ));
+            InteractionResponse response = interactionService.getUserInteractionStatus(postId, currentUserId);
+            return ResponseEntity.ok(response);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Authentication required"));
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to get interaction status"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to get interaction status", "message", e.getMessage()));
         }
     }
 
