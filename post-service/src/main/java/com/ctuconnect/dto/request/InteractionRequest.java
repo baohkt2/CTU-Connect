@@ -19,9 +19,6 @@ public class InteractionRequest {
     @NotNull(message = "Interaction type is required")
     private InteractionEntity.InteractionType reaction;
 
-    // Add missing reactionType field for specific reaction types
-    private InteractionEntity.ReactionType reactionType;
-
     private Map<String, Object> metadata = new HashMap<>();
 
     public void setType(String s) {
@@ -36,13 +33,5 @@ public class InteractionRequest {
         }
     }
 
-    // Add missing setReactionType method
-    public void setReactionType(InteractionEntity.ReactionType reactionType) {
-        this.reactionType = reactionType;
-    }
 
-    // Add getter for reactionType
-    public InteractionEntity.ReactionType getReactionType() {
-        return this.reactionType;
-    }
 }
