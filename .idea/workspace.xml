@@ -4,31 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="build chat-service v1.1">
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/app/friends/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/UserCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/FriendRequests.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/FriendSuggestions.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/FriendsDashboard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/FriendsList.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/MutualFriends.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/features/users/components/friends/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9">
+      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_8_1_2025_8_18_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_8_1_2025_8_18_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert_[Changes]/shelved.patch" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert_[Changes]/shelved.patch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ProfileGuard.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/user/UserProfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/user/UserProfile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/ChatContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/ChatContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/features/users/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/features/users/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/features/users/services/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/features/users/services/user.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/userService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/constants/api-endpoints.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/constants/api-endpoints.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/shared/types/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/shared/types/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/profile/update/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/profile/update/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/chatService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/chatService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,12 +26,12 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Dockerfile" />
         <option value="FastAPI main" />
         <option value="FastAPI test_main" />
         <option value="TypeScript File" />
-        <option value="Interface" />
         <option value="Class" />
-        <option value="Dockerfile" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -63,7 +51,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="c6273cfa1c24a7aeaaa484595bed69e57b599bc6" />
+        <entry key="$PROJECT_DIR$" value="fix-database" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -75,12 +63,12 @@
     &quot;assignee&quot;: &quot;baohkt2&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/baohkt2/CTU-Connect-Backend.git",
-    "accountId": "d644c288-eef9-4e42-bfd6-c3981bdd694c"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/baohkt2/CTU-Connect-Backend.git&quot;,
+    &quot;accountId&quot;: &quot;d644c288-eef9-4e42-bfd6-c3981bdd694c&quot;
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///JetClient Request Console" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/AppData/Local/JetBrains/IntelliJIdea2025.1/tmp/jetclient/scripts/d71a7eaf/Drafts_folder-post-response_drafts.js" root0="FORCE_HIGHLIGHTING" />
@@ -112,15 +100,11 @@
     &quot;Docker.docker-compose.yml.api-gateway: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.auth-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.auth_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.chat-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.media-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.media_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.mlflow-server: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.neo4j: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.post-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.recommendation-redis: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml.recommendation-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml.user-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.eureka-server/Dockerfile build.executor&quot;: &quot;Run&quot;,
@@ -132,8 +116,6 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
     &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
-    &quot;PowerShell.start.ps1 (1).executor&quot;: &quot;Run&quot;,
-    &quot;PowerShell.start.ps1.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
@@ -147,31 +129,26 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;Shell Script.start.sh.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.AuthServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
     &quot;com.intellij.ide.FileNotInSourceRootChecker.no.check&quot;: &quot;true&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
-    &quot;database.data.extractors.current.id&quot;: &quot;JSON-Groovy.json.groovy&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;fix-PostService&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;demo&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect/chat-service/src/main/java/vn/ctu/edu/chatservice&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect/post-service/src/main/java/vn/ctu/edu/postservice&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.customInstructions.CopilotInstructionsConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
     &quot;settings.editor.splitter.proportion&quot;: &quot;0.28134558&quot;,
     &quot;ts.external.directory.path&quot;: &quot;D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
@@ -191,17 +168,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\LVTN\ctu-connect\chat-service\src\main\java\vn\ctu\edu\chatservice" />
-      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
-      <recent name="D:\LVTN\ctu-connect\media-service\src\main\java\vn\ctu\edu\mediaservice" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\vn\ctu\edu\postservice" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\LVTN\ctu-connect\client-frontend" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
       <recent name="D:\LVTN\ctu-connect\client-frontend\public" />
+      <recent name="D:\LVTN\ctu-connect\client-frontend\src\assets" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -209,11 +183,8 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.ctuconnect.UserMapper" />
     </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.ctuconnect.config" />
-    </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.user-service: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml.media-service: Compose Deployment">
     <configuration name="Recommender-service" type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/Recommender-service/main.py" />
       <module name="Recommender-service" />
@@ -264,13 +235,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MediaServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="media-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.MediaServiceApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="MediaServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="media-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="vn.ctu.edu.mediaservice.MediaServiceApplication" />
@@ -281,13 +245,6 @@
     <configuration name="PostServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="post-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.postservice.PostServiceApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="PostServiceApplication (2)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="post-service" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ctuconnect.PostServiceApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -334,12 +291,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.auth-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="auth-service" />
+              <option value="api-gateway" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -347,12 +304,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.chat-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.auth-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="chat-service" />
+              <option value="auth-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -401,14 +358,12 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.chat-service: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
       <item itemvalue="FastAPI.Recommender-service" />
-      <item itemvalue="Spring Boot.MediaServiceApplication (1)" />
-      <item itemvalue="Spring Boot.PostServiceApplication (2)" />
       <item itemvalue="Spring Boot.MediaServiceApplication" />
       <item itemvalue="Spring Boot.PostServiceApplication (1)" />
       <item itemvalue="Spring Boot.ChatServiceApplication" />
@@ -422,19 +377,19 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.chat-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
       </set>
     </attachedChunks>
   </component>
@@ -519,20 +474,25 @@
       <workItem from="1753580043883" duration="13711000" />
       <workItem from="1753625709674" duration="16295000" />
       <workItem from="1753703567557" duration="21143000" />
-      <workItem from="1754057799643" duration="12190000" />
-      <workItem from="1754070276763" duration="291000" />
-      <workItem from="1754070592565" duration="1928000" />
-      <workItem from="1754075149380" duration="4348000" />
-      <workItem from="1754125543070" duration="2149000" />
-      <workItem from="1754127721460" duration="21699000" />
-      <workItem from="1754156062039" duration="7803000" />
-      <workItem from="1754227439238" duration="17628000" />
-      <workItem from="1754298588843" duration="28392000" />
-      <workItem from="1754330468274" duration="2608000" />
-      <workItem from="1754369051452" duration="12512000" />
-      <workItem from="1754384186438" duration="733000" />
-      <workItem from="1754384937759" duration="3456000" />
-      <workItem from="1754560407397" duration="10832000" />
+      <workItem from="1755177062218" duration="1479000" />
+      <workItem from="1755183243249" duration="4988000" />
+      <workItem from="1755190132144" duration="1000000" />
+    </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1751809284361</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1751809284361</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Complete Login/ Sign up">
+      <option name="closed" value="true" />
+      <created>1751884648943</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1751884648944</updated>
     </task>
     <task id="LOCAL-00003" summary="Complete Token v1">
       <option name="closed" value="true" />
@@ -750,183 +710,7 @@
       <option name="project" value="LOCAL" />
       <updated>1753728843314</updated>
     </task>
-    <task id="LOCAL-00030" summary="PostService v0.1">
-      <option name="closed" value="true" />
-      <created>1754052118881</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1754052118881</updated>
-    </task>
-    <task id="LOCAL-00031" summary="PostService v0.1.1">
-      <option name="closed" value="true" />
-      <created>1754053375980</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1754053375980</updated>
-    </task>
-    <task id="LOCAL-00032" summary="PostService v0.1.2">
-      <option name="closed" value="true" />
-      <created>1754075892853</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1754075892853</updated>
-    </task>
-    <task id="LOCAL-00033" summary="PostService v0.1.3">
-      <option name="closed" value="true" />
-      <created>1754138712551</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1754138712551</updated>
-    </task>
-    <task id="LOCAL-00034" summary="PostService v0.1.4">
-      <option name="closed" value="true" />
-      <created>1754152594464</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1754152594464</updated>
-    </task>
-    <task id="LOCAL-00035" summary="PostService v0.1.5">
-      <option name="closed" value="true" />
-      <created>1754154921945</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1754154921945</updated>
-    </task>
-    <task id="LOCAL-00036" summary="PostService v0.2">
-      <option name="closed" value="true" />
-      <created>1754160991983</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1754160991983</updated>
-    </task>
-    <task id="LOCAL-00037" summary="PostService v0.2.1">
-      <option name="closed" value="true" />
-      <created>1754162654016</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1754162654016</updated>
-    </task>
-    <task id="LOCAL-00038" summary="PostService v0.2.2">
-      <option name="closed" value="true" />
-      <created>1754239223639</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1754239223639</updated>
-    </task>
-    <task id="LOCAL-00039" summary="PostService v1">
-      <option name="closed" value="true" />
-      <created>1754241977615</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1754241977615</updated>
-    </task>
-    <task id="LOCAL-00040" summary="PostService v1.1">
-      <option name="closed" value="true" />
-      <created>1754245305775</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1754245305775</updated>
-    </task>
-    <task id="LOCAL-00041" summary="PostService v1.1.1">
-      <option name="closed" value="true" />
-      <created>1754247633305</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1754247633305</updated>
-    </task>
-    <task id="LOCAL-00042" summary="PostService v1.1.2">
-      <option name="closed" value="true" />
-      <created>1754300640828</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1754300640828</updated>
-    </task>
-    <task id="LOCAL-00043" summary="PostService v1.2">
-      <option name="closed" value="true" />
-      <created>1754302741861</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1754302741861</updated>
-    </task>
-    <task id="LOCAL-00044" summary="PostService v1.2.1">
-      <option name="closed" value="true" />
-      <created>1754307571143</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1754307571143</updated>
-    </task>
-    <task id="LOCAL-00045" summary="PostService v1.2.2">
-      <option name="closed" value="true" />
-      <created>1754312384185</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1754312384185</updated>
-    </task>
-    <task id="LOCAL-00046" summary="PostService v1.2.2.1">
-      <option name="closed" value="true" />
-      <created>1754319509444</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1754319509444</updated>
-    </task>
-    <task id="LOCAL-00047" summary="PostService v1.2.3">
-      <option name="closed" value="true" />
-      <created>1754323356094</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1754323356094</updated>
-    </task>
-    <task id="LOCAL-00048" summary="PostService v1.2.4">
-      <option name="closed" value="true" />
-      <created>1754328218611</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1754328218611</updated>
-    </task>
-    <task id="LOCAL-00049" summary="PostService v1.2.4.1">
-      <option name="closed" value="true" />
-      <created>1754329208558</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1754329208558</updated>
-    </task>
-    <task id="LOCAL-00050" summary="build recommendation-service">
-      <option name="closed" value="true" />
-      <created>1754378468362</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1754378468363</updated>
-    </task>
-    <task id="LOCAL-00051" summary="build chat-service v1.1">
-      <option name="closed" value="true" />
-      <created>1754565589601</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1754565589602</updated>
-    </task>
-    <option name="localTasksCounter" value="52" />
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -956,32 +740,32 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="Complete Token ok" />
+    <MESSAGE value="Test user-service" />
+    <MESSAGE value="Dang fix profile" />
+    <MESSAGE value="Dang fix profile v2" />
+    <MESSAGE value="Dang fix profile v3" />
+    <MESSAGE value="init client-frontend and admin-frontend" />
+    <MESSAGE value="config friends v0" />
+    <MESSAGE value="user-service fix v2" />
+    <MESSAGE value="add admin-frontend" />
+    <MESSAGE value="create an admin account ok" />
+    <MESSAGE value="addFriend v1" />
+    <MESSAGE value="AuthService and UserService OK" />
+    <MESSAGE value="Auth Client-Frontend v1" />
+    <MESSAGE value="Auth Client-Frontend fixing" />
+    <MESSAGE value="Pre-build Media-service" />
+    <MESSAGE value="Media service OK" />
+    <MESSAGE value="Update profile v1.0" />
+    <MESSAGE value="Update profile v1.1" />
+    <MESSAGE value="Update profile v1.2" />
+    <MESSAGE value="Update profile v1.3" />
+    <MESSAGE value="Update profile v1.4" />
+    <MESSAGE value="Update profile v1.4.1 fix loading" />
     <MESSAGE value="Update profile v1.4.2" />
     <MESSAGE value="Update profile v1.5" />
     <MESSAGE value="Update profile v2" />
-    <MESSAGE value="PostService v0.1" />
-    <MESSAGE value="PostService v0.1.1" />
-    <MESSAGE value="PostService v0.1.2" />
-    <MESSAGE value="PostService v0.1.3" />
-    <MESSAGE value="PostService v0.1.4" />
-    <MESSAGE value="PostService v0.1.5" />
-    <MESSAGE value="PostService v0.2" />
-    <MESSAGE value="PostService v0.2.1" />
-    <MESSAGE value="PostService v0.2.2" />
-    <MESSAGE value="PostService v1" />
-    <MESSAGE value="PostService v1.1" />
-    <MESSAGE value="PostService v1.1.1" />
-    <MESSAGE value="PostService v1.1.2" />
-    <MESSAGE value="PostService v1.2" />
-    <MESSAGE value="PostService v1.2.1" />
-    <MESSAGE value="PostService v1.2.2" />
-    <MESSAGE value="PostService v1.2.2.1" />
-    <MESSAGE value="PostService v1.2.3" />
-    <MESSAGE value="PostService v1.2.4" />
-    <MESSAGE value="PostService v1.2.4.1" />
-    <MESSAGE value="build recommendation-service" />
-    <MESSAGE value="build chat-service v1.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="build chat-service v1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update profile v2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -43,7 +43,7 @@ export const chatService = {
   },
 
   async getUnreadCount(): Promise<number> {
-    const response = await api.get('/chat/unread-count');
-    return response.data;
+   /* const response = await api.get('/chat/unread-count');*/
+    return 0;
   }
 };

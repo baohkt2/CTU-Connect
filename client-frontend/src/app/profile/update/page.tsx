@@ -13,39 +13,49 @@ import { ArrowLeft, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export default function UpdateProfilePage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) {
+    // Wait for AuthContext to finish loading before making decisions
+    if (loading) {
+      return;
+    }
+
+    // Only redirect to login if AuthContext has finished loading and user is still null
+    if (!loading && !user) {
       router.push('/login');
       return;
     }
 
-    const fetchUserProfile = async () => {
-      try {
-        const profile = await userService.getMyProfile();
-        setCurrentUser(profile);
-        console.log('Current user profile:', profile);
-      } catch (err) {
-        console.error('Error fetching user profile:', err);
-        setError('Không thể tải thông tin người dùng');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // If we have a user, fetch their profile
+    if (user) {
+      const fetchUserProfile = async () => {
+        try {
+          const profile = await userService.getMyProfile();
+          setCurrentUser(profile);
+          console.log('Current user profile:', profile);
+        } catch (err) {
+          console.error('Error fetching user profile:', err);
+          setError('Không thể tải thông tin người dùng');
+        } finally {
+          setPageLoading(false);
+        }
+      };
 
-    fetchUserProfile();
-  }, [user, router]);
+      fetchUserProfile();
+    }
+  }, [user, loading, router]);
 
   const handleBackToProfile = () => {
     router.push('/profile/me');
   };
 
-  if (loading) {
+  // Show loading while AuthContext is still loading or while fetching profile
+  if (loading || pageLoading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gray-50">

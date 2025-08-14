@@ -32,4 +32,6 @@ public class InteractionRequest {
             throw new IllegalArgumentException("Interaction type cannot be null");
         }
     }
+
+
 }

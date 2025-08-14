@@ -39,7 +39,8 @@ const PUBLIC_ROUTES = [
   '/register',
   '/change-password',
   '/verify-email',
-  '/resend-verification'
+  '/resend-verification',
+
 ];
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -87,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (!myProfile.isProfileCompleted) {
             console.log('DEBUG: User profile not completed, redirecting to profile update');
             // Redirect to profile update page if profile is not completed
-            if (typeof window !== 'undefined' && window.location.pathname !== '/profile/update') {
+           if (typeof window !== 'undefined' && window.location.pathname !== '/profile/update') {
               window.location.replace('/profile/update');
             }
           }
