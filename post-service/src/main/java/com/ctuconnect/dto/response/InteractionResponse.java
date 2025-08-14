@@ -16,6 +16,7 @@ public class InteractionResponse {
     private String postId;
     private String userId;
     private InteractionEntity.InteractionType type;
+    private InteractionEntity.ReactionType reactionType;
     private Map<String, Object> metadata;
     private LocalDateTime createdAt;
 
@@ -31,6 +32,7 @@ public class InteractionResponse {
         this.postId = interaction.getPostId();
         this.userId = interaction.getUserId();
         this.type = interaction.getType();
+        this.reactionType = interaction.getReactionType();
         this.metadata = interaction.getMetadata();
         this.createdAt = interaction.getCreatedAt();
         this.hasInteraction = true;
@@ -42,13 +44,8 @@ public class InteractionResponse {
         this.message = message;
     }
 
-    // Add missing isActive method - this determines if the interaction is currently active
+    // Add isActive method for backwards compatibility
     public boolean isActive() {
-        return this.hasInteraction;
-    }
-
-    // Alternative method name for clarity
-    public boolean hasActiveInteraction() {
-        return this.hasInteraction;
+        return hasInteraction;
     }
 }
