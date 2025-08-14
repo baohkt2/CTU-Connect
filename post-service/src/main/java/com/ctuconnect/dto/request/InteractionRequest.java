@@ -19,6 +19,8 @@ public class InteractionRequest {
     @NotNull(message = "Interaction type is required")
     private InteractionEntity.InteractionType reaction;
 
+    private InteractionEntity.ReactionType reactionType;
+
     private Map<String, Object> metadata = new HashMap<>();
 
     public void setType(String s) {
@@ -33,5 +35,11 @@ public class InteractionRequest {
         }
     }
 
+    public InteractionEntity.ReactionType getReactionType() {
+        return reactionType;
+    }
 
+    public void setReactionType(InteractionEntity.ReactionType reactionType) {
+        this.reactionType = reactionType;
+    }
 }

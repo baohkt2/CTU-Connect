@@ -168,6 +168,9 @@ public class InteractionService {
             case COMMENT:
                 post.getStats().incrementComments();
                 break;
+            case REACTION:
+                // Handle reaction stats if needed
+                break;
             default:
                 break;
         }
@@ -184,8 +187,14 @@ public class InteractionService {
             case SHARE:
                 post.getStats().decrementShares();
                 break;
+            case VIEW:
+                // Handle view stats if needed
+                break;
             case COMMENT:
                 post.getStats().decrementComments();
+                break;
+            case REACTION:
+                // Handle reaction stats if needed
                 break;
             default:
                 break;

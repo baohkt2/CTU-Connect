@@ -9,7 +9,6 @@ import com.ctuconnect.dto.AuthorInfo;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +28,6 @@ public class InteractionEntity {
 
     private InteractionType type;
 
-    // Getter for reaction type (backwards compatibility)
     // Add reactionType field for REACTION interactions
     private ReactionType reactionType;
 
@@ -43,6 +41,15 @@ public class InteractionEntity {
         this.postId = postId;
         this.author = author;
         this.type = type;
+        this.createdAt = LocalDateTime.now();
+        this.metadata = new HashMap<>();
+    }
+
+    public InteractionEntity(String postId, AuthorInfo author, InteractionType type, ReactionType reactionType) {
+        this.postId = postId;
+        this.author = author;
+        this.type = type;
+        this.reactionType = reactionType;
         this.createdAt = LocalDateTime.now();
         this.metadata = new HashMap<>();
     }
@@ -61,16 +68,33 @@ public class InteractionEntity {
         return author != null ? author.getId() : null;
     }
 
+    // Add convenience methods for checking interaction types
+    public boolean isLike() {
+        return this.type == InteractionType.LIKE;
+    }
+
+    public boolean isReaction() {
+        return this.type == InteractionType.REACTION;
+    }
+
+    public boolean isBookmark() {
+        return this.type == InteractionType.BOOKMARK;
+    }
+
+    public boolean isShare() {
+        return this.type == InteractionType.SHARE;
+    }
+
+    public boolean isView() {
+        return this.type == InteractionType.VIEW;
+    }
+
     public void setReaction(InteractionType newReaction) {
         if (newReaction == null) {
             throw new IllegalArgumentException("Interaction type cannot be null");
         }
         this.type = newReaction;
-        if (newReaction == InteractionType.REACTION) {
-            this.reactionType = newReaction.getReactionType();
-        } else {
-            this.reactionType = null; // Clear reaction type for non-REACTION interactions
-        }
+        // Don't automatically set reactionType - it should be set separately when needed
     }
 
     // Enum for interaction types
@@ -79,69 +103,18 @@ public class InteractionEntity {
         SHARE,
         BOOKMARK,
         VIEW,
-        COMMENT,
-        REACTION // Add REACTION type
-        ;
-
-        public ReactionType getReactionType() {
-            if (this == REACTION) {
-                return ReactionType.LIKE; // Default to LIKE for REACTION type
-            }
-            return null; // No reaction type for other interaction types
-        }
+        REACTION,
+        COMMENT  // Add missing COMMENT enum
     }
 
-    // Enum for reaction types (for REACTION interactions)
+    // Separate enum for reaction types
     public enum ReactionType {
         LIKE,
         LOVE,
         HAHA,
         WOW,
         SAD,
-        ANGRY
-    }
-
-    // Helper methods
-    public boolean isReaction() {
-        return this.type == InteractionType.REACTION;
-    }
-
-    public boolean isLike() {
-        return this.type == InteractionType.LIKE ||
-               (this.type == InteractionType.REACTION && this.reactionType == ReactionType.LIKE);
-    }
-
-    public boolean isView() {
-        return this.type == InteractionType.VIEW;
-    }
-
-    public boolean isShare() {
-        return this.type == InteractionType.SHARE;
-    }
-
-    public boolean isBookmark() {
-        return this.type == InteractionType.BOOKMARK;
-    }
-
-    public boolean isComment() {
-        return this.type == InteractionType.COMMENT;
-    }
-
-    // Equals and hashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InteractionEntity that = (InteractionEntity) o;
-        return Objects.equals(id, that.id) &&
-               Objects.equals(postId, that.postId) &&
-               Objects.equals(author, that.author) &&
-               type == that.type &&
-               reactionType == that.reactionType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, postId, author, type, reactionType);
+        ANGRY,
+        BOOKMARK
     }
 }
