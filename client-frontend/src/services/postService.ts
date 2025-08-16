@@ -187,8 +187,76 @@ export const postService = {
     hasBookmarked: boolean;
     interactions: { LIKE: boolean; BOOKMARK: boolean };
   }> {
-    const response = await api.get(`/posts/${postId}/interactions/status`);
-    return response.data;
+    try {
+      const response = await api.get(`/posts/${postId}/interactions/status`);
+      const data = response.data;
+
+      // Add debugging to understand the actual response structure
+      console.log('Backend interaction status response:', data);
+
+      // Handle the actual backend response structure
+      // Backend returns: { id, postId, userId, type, reactionType, hasInteraction, active, ... }
+
+      let hasLiked = false;
+      let hasBookmarked = false;
+
+      // If data is an array of interactions
+      if (Array.isArray(data)) {
+        console.log('Processing array of interactions:', data.length);
+        hasLiked = data.some(interaction => {
+          const isLike = interaction.type === 'LIKE' && interaction.hasInteraction && interaction.active;
+          console.log('Checking interaction for LIKE:', interaction, 'Result:', isLike);
+          return isLike;
+        });
+        hasBookmarked = data.some(interaction => {
+          const isBookmark = interaction.type === 'BOOKMARK' && interaction.hasInteraction && interaction.active;
+          console.log('Checking interaction for BOOKMARK:', interaction, 'Result:', isBookmark);
+          return isBookmark;
+        });
+      }
+      // If data is a single interaction object
+      else if (data && typeof data === 'object') {
+        console.log('Processing single interaction object:', data);
+        // Check if it's the structure you showed: { hasInteraction: true, type: "LIKE", ... }
+        if (data.hasInteraction && data.active) {
+          hasLiked = data.type === 'LIKE';
+          hasBookmarked = data.type === 'BOOKMARK';
+          console.log('Single interaction - hasLiked:', hasLiked, 'hasBookmarked:', hasBookmarked);
+        }
+        // Or if it's already in the expected format
+        else if ('hasLiked' in data) {
+          hasLiked = data.hasLiked;
+          hasBookmarked = data.hasBookmarked;
+          console.log('Expected format - hasLiked:', hasLiked, 'hasBookmarked:', hasBookmarked);
+        }
+      }
+
+      console.log('Final interaction status:', { hasLiked, hasBookmarked });
+
+      return {
+        postId,
+        userId: data?.userId || '',
+        hasLiked,
+        hasBookmarked,
+        interactions: {
+          LIKE: hasLiked,
+          BOOKMARK: hasBookmarked
+        }
+      };
+    } catch (error) {
+      console.error('Error fetching interaction status:', error);
+      // Return default values on error
+      return {
+        postId,
+        userId: '',
+        hasLiked: false,
+        hasBookmarked: false,
+        interactions: {
+          LIKE: false,
+          BOOKMARK: false
+        }
+      };
+    }
   },
 
   // Check like status specifically

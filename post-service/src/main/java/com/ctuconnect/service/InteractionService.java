@@ -120,7 +120,7 @@ public class InteractionService {
     /**
      * Get user's interaction status for a post
      */
-    public InteractionResponse getUserInteractionStatus(String postId, String userId) {
+    public InteractionResponse getUserInteractionForPost(String postId, String userId) {
         List<InteractionEntity> userInteractions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
 
         if (userInteractions.isEmpty()) {
@@ -136,19 +136,19 @@ public class InteractionService {
     }
 
     /**
-     * Check if user has liked a specific post
+     * Check if user has liked a specific post - Fix method reference
      */
     public boolean hasUserLikedPost(String postId, String userId) {
         List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
-        return interactions.stream().anyMatch(InteractionEntity::isLike);
+        return interactions.stream().anyMatch(interaction -> interaction.isLike());
     }
 
     /**
-     * Check if user has bookmarked a specific post
+     * Check if user has bookmarked a specific post - Fix method reference
      */
     public boolean hasUserBookmarkedPost(String postId, String userId) {
         List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, userId);
-        return interactions.stream().anyMatch(InteractionEntity::isBookmark);
+        return interactions.stream().anyMatch(interaction -> interaction.isBookmark());
     }
 
     private void updatePostStatsOnAdd(PostEntity post, InteractionEntity.InteractionType type) {
@@ -201,14 +201,17 @@ public class InteractionService {
         }
     }
 
-    public long getInteractionCount(String postId, InteractionEntity.InteractionType type) {
-        return interactionRepository.countByPostIdAndType(postId, type);
-    }
+    public InteractionResponse getUserInteractionStatus(String postId, String currentUserId) {
+        List<InteractionEntity> interactions = interactionRepository.findByPostIdAndAuthor_Id(postId, currentUserId);
+        if (interactions.isEmpty()) {
+            return new InteractionResponse(false, "No interactions found");
+        }
 
-    /**
-     * Check if user has reacted to a post (for legacy compatibility)
-     */
-    public boolean hasUserReacted(String postId, String userId) {
-        return hasUserLikedPost(postId, userId);
+        // Return the most recent interaction
+        InteractionEntity mostRecent = interactions.stream()
+                .max((i1, i2) -> i1.getCreatedAt().compareTo(i2.getCreatedAt()))
+                .orElse(interactions.get(0));
+
+        return new InteractionResponse(mostRecent);
     }
 }

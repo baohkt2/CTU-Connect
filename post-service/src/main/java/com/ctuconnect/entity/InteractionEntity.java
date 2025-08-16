@@ -97,6 +97,15 @@ public class InteractionEntity {
         // Don't automatically set reactionType - it should be set separately when needed
     }
 
+    // Static methods for method references - fix compilation errors
+    public static boolean isLike(InteractionEntity entity) {
+        return entity != null && entity.isLike();
+    }
+
+    public static boolean isBookmark(InteractionEntity entity) {
+        return entity != null && entity.isBookmark();
+    }
+
     // Enum for interaction types
     public enum InteractionType {
         LIKE,
@@ -107,7 +116,7 @@ public class InteractionEntity {
         COMMENT  // Add missing COMMENT enum
     }
 
-    // Separate enum for reaction types
+    // Separate enum for reaction types - add BOOKMARK
     public enum ReactionType {
         LIKE,
         LOVE,
@@ -115,6 +124,6 @@ public class InteractionEntity {
         WOW,
         SAD,
         ANGRY,
-        BOOKMARK
+        BOOKMARK  // Add missing BOOKMARK enum value
     }
 }

@@ -1,22 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Post, CreateCommentRequest, UpdatePostRequest } from '@/types';
+import { CreateCommentRequest, UpdatePostRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ReactionButton } from '@/components/ui/ReactionButton';
 import { PostMenu } from '@/components/post/PostMenu';
 import { PostEditModal } from '@/components/post/PostEditModal';
 import { EditIndicator } from '@/components/post/EditIndicator';
-import { CommentItem } from '@/components/post/CommentItem';
-import { t, formatTimeAgo } from '@/utils/localization';
+import { formatTimeAgo } from '@/utils/localization';
 import {
   MessageCircle,
   Share,
-  Eye,
   Globe,
   Users,
   Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff
@@ -38,8 +35,8 @@ export const PostCard: React.FC<PostCardProps> = ({
   className = ''
 }) => {
   const { user } = useAuth();
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState<boolean | null>(null); // null means loading state
+  const [isBookmarked, setIsBookmarked] = useState<boolean | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<any[]>([]);
@@ -54,10 +51,13 @@ export const PostCard: React.FC<PostCardProps> = ({
 
   const isOwnPost = user?.id === post.authorId || user?.id === post.author?.id;
 
-  // Load trạng thái like, bookmark khi mount
+  // Load trạng thái like, bookmark khi mount - với proper loading state
   useEffect(() => {
     let mounted = true;
-    (async () => {
+
+    const loadInteractionStatus = async () => {
+      if (!user?.id || !post.id) return;
+
       try {
         const status = await postService.getInteractionStatus(post.id);
         if (mounted) {
@@ -66,10 +66,17 @@ export const PostCard: React.FC<PostCardProps> = ({
         }
       } catch (error) {
         console.debug('Không thể tải trạng thái tương tác:', error);
+        // Set default values if API call fails
+        if (mounted) {
+          setIsLiked(false);
+          setIsBookmarked(false);
+        }
       }
-    })();
+    };
+
+    loadInteractionStatus();
     return () => { mounted = false; };
-  }, [post.id]);
+  }, [post.id, user?.id]);
 
   // Show feedback message temporarily
   const showFeedback = (message: string) => {
@@ -94,40 +101,56 @@ export const PostCard: React.FC<PostCardProps> = ({
     setShowComments(v => !v);
   }, [showComments, comments.length, post.id]);
 
-  // Chức năng tương tác: like, bookmark, share
+  // Chức năng tương tác: like, bookmark, share - with optimistic updates
   const handleInteraction = useCallback(async (type: 'like' | 'bookmark' | 'share') => {
     if (isLoadingInteraction) return;
     setIsLoadingInteraction(true);
+
     try {
       if (type === 'like') {
-        await postService.toggleLike(post.id);
-        setIsLiked(l => {
-          const newLiked = !l;
-          const newLikes = newLiked ? post.stats.likes + 1 : post.stats.likes - 1;
+        // Optimistic update
+        const previousLiked = isLiked;
+        const newLiked = !isLiked;
+        setIsLiked(newLiked);
+
+        try {
+          await postService.toggleLike(post.id);
+          // Update post stats
+          const newLikes = newLiked ? (post.stats?.likes || 0) + 1 : Math.max((post.stats?.likes || 0) - 1, 0);
           onPostUpdate?.({
             ...post,
             stats: { ...post.stats, likes: newLikes }
           });
           showFeedback(newLiked ? 'Đã thích bài viết' : 'Đã bỏ thích');
-          return newLiked;
-        });
+        } catch (error) {
+          // Revert optimistic update on error
+          setIsLiked(previousLiked);
+          throw error;
+        }
       } else if (type === 'bookmark') {
-        await postService.toggleBookmark(post.id);
-        setIsBookmarked(b => {
-          const newBookmarked = !b;
-          const newBookmarks = newBookmarked ? post.stats.bookmarks + 1 : post.stats.bookmarks - 1;
+        // Optimistic update for bookmark
+        const previousBookmarked = isBookmarked;
+        const newBookmarked = !isBookmarked;
+        setIsBookmarked(newBookmarked);
+
+        try {
+          await postService.toggleBookmark(post.id);
+          const newBookmarks = newBookmarked ? (post.stats?.bookmarks || 0) + 1 : Math.max((post.stats?.bookmarks || 0) - 1, 0);
           onPostUpdate?.({
             ...post,
             stats: { ...post.stats, bookmarks: newBookmarks }
           });
           showFeedback(newBookmarked ? 'Đã lưu bài viết' : 'Đã bỏ lưu bài viết');
-          return newBookmarked;
-        });
+        } catch (error) {
+          // Revert optimistic update on error
+          setIsBookmarked(previousBookmarked);
+          throw error;
+        }
       } else if (type === 'share') {
         await postService.sharePost(post.id);
         onPostUpdate?.({
           ...post,
-          stats: { ...post.stats, shares: post.stats.shares + 1 }
+          stats: { ...post.stats, shares: (post.stats?.shares || 0) + 1 }
         });
         await navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
         showFeedback('Đã sao chép liên kết bài viết');
@@ -138,7 +161,7 @@ export const PostCard: React.FC<PostCardProps> = ({
     } finally {
       setIsLoadingInteraction(false);
     }
-  }, [isLoadingInteraction, onPostUpdate, post]);
+  }, [isLoadingInteraction, isLiked, isBookmarked, onPostUpdate, post]);
 
   // Gửi comment
   const handleSubmitComment = useCallback(async (e: React.FormEvent) => {
@@ -201,6 +224,38 @@ export const PostCard: React.FC<PostCardProps> = ({
       [commentId]: !prev[commentId]
     }));
   };
+
+  // Handle comment actions (report, delete, hide)
+  const handleCommentAction = useCallback(async (action: 'report' | 'delete' | 'hide', commentId: string) => {
+    try {
+      switch (action) {
+        case 'delete':
+          if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+            // TODO: Implement delete comment API call
+            // await postService.deleteComment(commentId);
+            setComments(prev => prev.filter(comment => comment.id !== commentId));
+            showFeedback('Đã xóa bình luận');
+          }
+          break;
+        case 'report':
+          // TODO: Implement report comment functionality
+          showFeedback('Đã báo cáo bình luận');
+          break;
+        case 'hide':
+          setComments(prev => prev.filter(comment => comment.id !== commentId));
+          showFeedback('Đã ẩn bình luận');
+          break;
+      }
+      // Close the menu after action
+      setCommentMenus(prev => ({
+        ...prev,
+        [commentId]: false
+      }));
+    } catch (error) {
+      console.error(`Error ${action} comment:`, error);
+      showFeedback(`Không thể ${action === 'delete' ? 'xóa' : action === 'report' ? 'báo cáo' : 'ẩn'} bình luận`);
+    }
+  }, []);
 
   // New enhanced handlers for reactions and post actions
   const handleReactionClick = useCallback(async (reactionId: string) => {
@@ -497,13 +552,15 @@ export const PostCard: React.FC<PostCardProps> = ({
         <div className="flex">
           <button
             onClick={() => handleInteraction('like')}
-            disabled={isLoadingInteraction}
+            disabled={isLoadingInteraction || isLiked === null}
             className={`flex-1 flex items-center justify-center py-2 px-3 hover:bg-gray-50 transition-colors ${
               isLiked ? 'text-blue-600' : 'text-gray-600'
-            }`}
+            } ${isLiked === null ? 'opacity-50' : ''}`}
           >
             <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-            <span className="text-sm font-medium">Thích</span>
+            <span className="text-sm font-medium">
+              {isLiked === null ? 'Đang tải...' : 'Thích'}
+            </span>
           </button>
 
           <button

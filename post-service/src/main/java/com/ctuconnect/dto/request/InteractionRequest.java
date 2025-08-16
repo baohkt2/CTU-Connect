@@ -23,6 +23,31 @@ public class InteractionRequest {
 
     private Map<String, Object> metadata = new HashMap<>();
 
+    // Getter and setter methods for compatibility
+    public InteractionEntity.InteractionType getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(InteractionEntity.InteractionType reaction) {
+        this.reaction = reaction;
+    }
+
+    public InteractionEntity.ReactionType getReactionType() {
+        return reactionType;
+    }
+
+    public void setReactionType(InteractionEntity.ReactionType reactionType) {
+        this.reactionType = reactionType;
+    }
+
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
     public void setType(String s) {
         if (s != null) {
             try {
@@ -33,13 +58,5 @@ public class InteractionRequest {
         } else {
             throw new IllegalArgumentException("Interaction type cannot be null");
         }
-    }
-
-    public InteractionEntity.ReactionType getReactionType() {
-        return reactionType;
-    }
-
-    public void setReactionType(InteractionEntity.ReactionType reactionType) {
-        this.reactionType = reactionType;
     }
 }
