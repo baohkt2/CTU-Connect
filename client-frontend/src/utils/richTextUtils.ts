@@ -41,14 +41,22 @@ export const truncateHtml = (html: string, maxLength: number): string => {
 };
 
 /**
- * Sanitize HTML content (basic sanitization)
+ * Sanitize HTML content for safe display - Basic sanitization without external dependencies
  */
 export const sanitizeHtml = (html: string): string => {
+  if (!html) return '';
+
   // Basic sanitization - remove script tags and dangerous attributes
   return html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/javascript:/gi, '');
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:\s*[^"'\s]*/gi, '')
+    .replace(/<iframe[^>]*>/gi, '')
+    .replace(/<embed[^>]*>/gi, '')
+    .replace(/<object[^>]*>/gi, '')
+    .replace(/<form[^>]*>/gi, '')
+    .replace(/<input[^>]*>/gi, '')
+    .replace(/<button[^>]*>/gi, '');
 };
 
 /**
@@ -64,4 +72,17 @@ export const htmlToText = (html: string): string => {
 export const validateContent = (html: string, minLength: number = 1): boolean => {
   const text = stripHtml(html).trim();
   return text.length >= minLength;
+};
+
+/**
+ * Prepare HTML content for safe display
+ */
+export const prepareHtmlForDisplay = (html: string): string => {
+  if (!html) return '';
+
+  // First sanitize the HTML to remove dangerous content
+  const sanitized = sanitizeHtml(html);
+
+  // Return the sanitized HTML
+  return sanitized;
 };

@@ -51,11 +51,10 @@ export const CreatePost: React.FC<CreatePostProps> = ({
 
   const handleContentChange = (content: string) => {
     setRichContent(content);
-    // Convert HTML to plain text for the API
-    const plainText = stripHtml(content);
+    // Save the rich HTML content instead of stripping it
     setFormData(prev => ({
       ...prev,
-      content: plainText
+      content: content // Save HTML content with formatting
     }));
     setError(null);
   };

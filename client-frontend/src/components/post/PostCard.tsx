@@ -11,6 +11,7 @@ import { PostMenu } from '@/components/post/PostMenu';
 import { PostEditModal } from '@/components/post/PostEditModal';
 import { EditIndicator } from '@/components/post/EditIndicator';
 import { formatTimeAgo } from '@/utils/localization';
+import { prepareHtmlForDisplay } from '@/utils/richTextUtils';
 import {
   MessageCircle,
   Share,
@@ -440,10 +441,90 @@ export const PostCard: React.FC<PostCardProps> = ({
         )}
         
         {/* Text Content */}
-        <div className="text-gray-800 text-sm leading-relaxed vietnamese-text mb-3">
-          {post.content}
-        </div>
-        
+        <div
+          className="text-gray-800 text-sm leading-relaxed vietnamese-text mb-3 rich-text-content"
+          dangerouslySetInnerHTML={{ __html: prepareHtmlForDisplay(post.content) }}
+        />
+
+        {/* Custom CSS for rich text content display */}
+        <style jsx>{`
+          .rich-text-content h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.75rem 0;
+            line-height: 1.4;
+          }
+          .rich-text-content h2 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            line-height: 1.4;
+          }
+          .rich-text-content h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            line-height: 1.4;
+          }
+          .rich-text-content strong {
+            font-weight: bold;
+          }
+          .rich-text-content em {
+            font-style: italic;
+          }
+          .rich-text-content u {
+            text-decoration: underline;
+          }
+          .rich-text-content s {
+            text-decoration: line-through;
+          }
+          .rich-text-content ol {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            margin: 0.5rem 0 0.5rem 1.5rem;
+          }
+          .rich-text-content ul {
+            list-style-type: disc;
+            margin: 0.5rem 0 0.5rem 1.5rem;
+          }
+          .rich-text-content li {
+            margin: 0.25rem 0;
+          }
+          .rich-text-content blockquote {
+            border-left: 4px solid #e5e7eb;
+            padding-left: 1rem;
+            margin: 0.75rem 0;
+            font-style: italic;
+            color: #6b7280;
+          }
+          .rich-text-content pre {
+            background-color: #f3f4f6;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+          }
+          .rich-text-content code {
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+          }
+          .rich-text-content a {
+            color: #3b82f6;
+            text-decoration: underline;
+          }
+          .rich-text-content a:hover {
+            color: #1d4ed8;
+          }
+          .rich-text-content p {
+            margin: 0.5rem 0;
+          }
+        `}</style>
+
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">

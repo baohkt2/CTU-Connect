@@ -4,21 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Tích hop Quilljs">
-      <change afterPath="$PROJECT_DIR$/recommendation-service/Test/generate.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/Test/retrain.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/Test/train.py" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="train ok, load ok">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -521,7 +514,7 @@
       <workItem from="1755268520545" duration="945000" />
       <workItem from="1755271170834" duration="5649000" />
       <workItem from="1755317550533" duration="4421000" />
-      <workItem from="1755363408561" duration="2111000" />
+      <workItem from="1755363408561" duration="3449000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -779,7 +772,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755321259815</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="fix buttton like">
+      <option name="closed" value="true" />
+      <created>1755366087003</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1755366087003</updated>
+    </task>
+    <task id="LOCAL-00034" summary="train ok, load ok">
+      <option name="closed" value="true" />
+      <created>1755366288474</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1755366288474</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -809,8 +818,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Dang fix profile v2" />
-    <MESSAGE value="Dang fix profile v3" />
     <MESSAGE value="init client-frontend and admin-frontend" />
     <MESSAGE value="config friends v0" />
     <MESSAGE value="user-service fix v2" />
@@ -834,24 +841,26 @@
     <MESSAGE value="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9" />
     <MESSAGE value="Point" />
     <MESSAGE value="Tích hop Quilljs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tích hop Quilljs" />
+    <MESSAGE value="fix buttton like" />
+    <MESSAGE value="train ok, load ok" />
+    <option name="LAST_COMMIT_MESSAGE" value="train ok, load ok" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/train.py</url>
-          <line>406</line>
+          <line>232</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>331</line>
+          <line>330</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>332</line>
+          <line>331</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
