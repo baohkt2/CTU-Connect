@@ -10,7 +10,7 @@ import { postService } from '@/services/postService';
 import { CreatePostRequest } from '@/types';
 import { t } from '@/utils/localization';
 import { stripHtml, isHtmlEmpty, validateContent } from '@/utils/richTextUtils';
-import { X, Image, Hash, Globe, Users, Lock, Video, Plus, Upload, FileText } from 'lucide-react';
+import { X, Image, Hash, Globe, Users, Lock, Video, Plus, Upload } from 'lucide-react';
 
 interface CreatePostProps {
   onPostCreated?: (post: any) => void;
@@ -33,14 +33,12 @@ export const CreatePost: React.FC<CreatePostProps> = ({
 
   const [richContent, setRichContent] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
-  const [documents, setDocuments] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const documentInputRef = useRef<HTMLInputElement>(null);
   const richTextEditorRef = useRef<RichTextEditorRef>(null);
 
   const handleInputChange = (field: keyof CreatePostRequest, value: string) => {
@@ -53,10 +51,11 @@ export const CreatePost: React.FC<CreatePostProps> = ({
 
   const handleContentChange = (content: string) => {
     setRichContent(content);
-    // Save the rich HTML content instead of stripping it
+    // Convert HTML to plain text for the API
+    const plainText = stripHtml(content);
     setFormData(prev => ({
       ...prev,
-      content: content // Save HTML content with formatting
+      content: plainText
     }));
     setError(null);
   };
@@ -92,7 +91,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
   };
 
   const handleFileSelect = (selectedFiles: File[]) => {
-    const maxSize = 10 * 1024 * 1024; // 50MB
+    const maxSize = 50 * 1024 * 1024; // 50MB
     const maxFiles = 5;
 
     const validFiles = selectedFiles.filter(f => {
@@ -106,7 +105,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
       }
 
       if (!isValidSize) {
-        setError('Kích thước file không được vượt quá 10MB');
+        setError('Kích thước file không được vượt quá 50MB');
         return false;
       }
 
@@ -122,43 +121,8 @@ export const CreatePost: React.FC<CreatePostProps> = ({
     setError(null);
   };
 
-  const handleDocumentSelect = (selectedDocuments: File[]) => {
-    const maxSize = 10 * 1024 * 1024; // 50MB
-    const maxFiles = 5;
-
-    const validDocuments = selectedDocuments.filter(doc => {
-      const type = doc.type;
-      const isValidType = type.startsWith('application/pdf') || type.startsWith('application/msword') || type.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-      const isValidSize = doc.size <= maxSize;
-
-      if (!isValidType) {
-        setError('Chỉ hỗ trợ file PDF và Word');
-        return false;
-      }
-
-      if (!isValidSize) {
-        setError('Kích thước file không được vượt quá 10MB');
-        return false;
-      }
-
-      return true;
-    });
-
-    if (documents.length + validDocuments.length > maxFiles) {
-      setError(`Chỉ được tải lên tối đa ${maxFiles} tài liệu`);
-      return;
-    }
-
-    setDocuments(prev => [...prev, ...validDocuments]);
-    setError(null);
-  };
-
   const handleRemoveFile = (index: number) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleRemoveDocument = (index: number) => {
-    setDocuments(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -186,9 +150,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
         });
       }, 200);
 
-      // Combine files and documents for upload
-      const allFiles = [...files, ...documents];
-      const result = await postService.createPost(formData, allFiles);
+      const result = await postService.createPost(formData, files);
 
       clearInterval(progressInterval);
       setUploadProgress(100);
@@ -205,7 +167,6 @@ export const CreatePost: React.FC<CreatePostProps> = ({
       });
       setRichContent('');
       setFiles([]);
-      setDocuments([]);
       setTagInput('');
 
       onPostCreated?.(result);
@@ -367,37 +328,18 @@ export const CreatePost: React.FC<CreatePostProps> = ({
             className="hidden"
           />
 
-          <input
-            ref={documentInputRef}
-            type="file"
-            multiple
-            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            onChange={(e) => handleDocumentSelect(Array.from(e.target.files || []))}
-            className="hidden"
-          />
-
           <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
             <div className="text-center">
               <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-              <div className="flex justify-center space-x-4">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  Thêm ảnh hoặc video
-                </button>
-                <span className="text-gray-400">|</span>
-                <button
-                  type="button"
-                  onClick={() => documentInputRef.current?.click()}
-                  className="text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  Thêm tài liệu
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-indigo-600 hover:text-indigo-700 font-medium"
+              >
+                Thêm ảnh hoặc video
+              </button>
               <p className="text-sm text-gray-500 mt-1">
-                Ảnh/Video: JPG, PNG, GIF, MP4, AVI | Tài liệu: PDF, DOC, DOCX, ZIP, RAR
+                Hỗ trợ JPG, PNG, GIF, MP4, AVI. Tối đa 50MB mỗi file, 5 file.
               </p>
             </div>
           </div>
@@ -432,34 +374,6 @@ export const CreatePost: React.FC<CreatePostProps> = ({
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Document Preview */}
-          {documents.length > 0 && (
-            <div className="mt-3 border-t border-gray-200 pt-3">
-              <div className="text-sm font-medium text-gray-700 mb-2">
-                Tài liệu đính kèm:
-              </div>
-              <div className="space-y-2">
-                {documents.map((doc, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 border border-gray-200">
-                    <div className="flex items-center space-x-2">
-                      <DocumentIcon file={doc} className="h-8 w-8 text-gray-400" />
-                      <div className="text-sm text-gray-700 truncate">
-                        {doc.name} ({formatFileSize(doc.size)})
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveDocument(index)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
@@ -551,26 +465,6 @@ export const CreatePost: React.FC<CreatePostProps> = ({
           </Button>
         </div>
       </form>
-    </div>
-  );
-};
-
-const DocumentIcon: React.FC<{ file: File; className?: string }> = ({ file, className }) => {
-  const getIconAndColor = () => {
-    const type = file.type;
-    if (type.startsWith('application/pdf')) {
-      return { icon: <FileText className={className} />, color: 'text-red-600 bg-red-50' };
-    } else if (type.startsWith('application/msword') || type.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
-      return { icon: <FileText className={className} />, color: 'text-blue-600 bg-blue-50' };
-    }
-    return { icon: <FileText className={className} />, color: 'text-gray-600 bg-gray-50' };
-  };
-
-  const { icon, color } = getIconAndColor();
-
-  return (
-    <div className={`flex items-center justify-center w-10 h-10 rounded-full ${color}`}>
-      {icon}
     </div>
   );
 };

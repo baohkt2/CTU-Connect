@@ -4,12 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9">
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Point">
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/InteractionRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/InteractionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/InteractionEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/RichTextEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/RichTextEditor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/contexts/AuthContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/UserSyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/UserSyncService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/BatchInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/BatchInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/Info.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/dto/Info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/entity/UserEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/AcademicRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/AcademicRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/DegreeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/DegreeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/MajorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/MajorRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/PositionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/PositionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/ctuconnect/service/UserService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +41,7 @@
         <option value="TypeScript File" />
         <option value="Class" />
         <option value="Interface" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -164,11 +181,11 @@
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\vn\ctu\edu\postservice" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect\Recommender-service" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
       <recent name="D:\LVTN\ctu-connect\client-frontend\public" />
-      <recent name="D:\LVTN\ctu-connect\client-frontend\src\assets" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -177,7 +194,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.post-service: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
     <configuration name="Recommender-service" type="Python.FastAPI">
       <option name="file" value="$PROJECT_DIR$/Recommender-service/main.py" />
       <module name="Recommender-service" />
@@ -370,11 +387,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -469,7 +486,14 @@
       <workItem from="1753703567557" duration="21143000" />
       <workItem from="1755177062218" duration="1479000" />
       <workItem from="1755183243249" duration="4988000" />
-      <workItem from="1755190132144" duration="2807000" />
+      <workItem from="1755190132144" duration="6129000" />
+      <workItem from="1755212336432" duration="3678000" />
+      <workItem from="1755218416545" duration="596000" />
+      <workItem from="1755231088703" duration="1491000" />
+      <workItem from="1755239129006" duration="8245000" />
+      <workItem from="1755268520545" duration="945000" />
+      <workItem from="1755271170834" duration="5649000" />
+      <workItem from="1755317550533" duration="3250000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -711,7 +735,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755191879333</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Point">
+      <option name="closed" value="true" />
+      <created>1755193035381</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1755193035381</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -741,7 +773,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Test user-service" />
     <MESSAGE value="Dang fix profile" />
     <MESSAGE value="Dang fix profile v2" />
     <MESSAGE value="Dang fix profile v3" />
@@ -766,7 +797,8 @@
     <MESSAGE value="Update profile v1.5" />
     <MESSAGE value="Update profile v2" />
     <MESSAGE value="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9" />
-    <option name="LAST_COMMIT_MESSAGE" value="Revert &quot;build chat-service v1.1.2&quot;&#10;&#10;This reverts commit 233bdbd9" />
+    <MESSAGE value="Point" />
+    <option name="LAST_COMMIT_MESSAGE" value="Point" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

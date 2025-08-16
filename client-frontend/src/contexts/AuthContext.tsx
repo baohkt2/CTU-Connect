@@ -35,9 +35,10 @@ const PUBLIC_ROUTES = [
     '/login',
   '/register',
   '/change-password',
+    '/forgot-password',
   '/verify-email',
   '/resend-verification',
-
+    '/reset-password',
 ];
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
