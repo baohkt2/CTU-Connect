@@ -604,7 +604,7 @@ public class PostController {
 
             InteractionRequest request = new InteractionRequest();
             request.setReaction(InteractionEntity.InteractionType.BOOKMARK);
-            request.setReactionType(InteractionEntity.ReactionType.BOOKMARK);
+            // Don't set reactionType for bookmark - it's not a reaction
 
             InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
             return ResponseEntity.ok(response);

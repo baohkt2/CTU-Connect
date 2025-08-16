@@ -1,22 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Post, CreateCommentRequest, UpdatePostRequest } from '@/types';
+import { CreateCommentRequest, UpdatePostRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
-import  Card  from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { ReactionButton } from '@/components/ui/ReactionButton';
 import { PostMenu } from '@/components/post/PostMenu';
 import { PostEditModal } from '@/components/post/PostEditModal';
 import { EditIndicator } from '@/components/post/EditIndicator';
-import { CommentItem } from '@/components/post/CommentItem';
-import { t, formatTimeAgo } from '@/utils/localization';
+import { formatTimeAgo } from '@/utils/localization';
 import {
   MessageCircle,
   Share,
-  Eye,
   Globe,
   Users,
   Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff
@@ -38,8 +35,8 @@ export const PostCard: React.FC<PostCardProps> = ({
   className = ''
 }) => {
   const { user } = useAuth();
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState<boolean | null>(null); // null means loading state
+  const [isBookmarked, setIsBookmarked] = useState<boolean | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<any[]>([]);
@@ -54,10 +51,13 @@ export const PostCard: React.FC<PostCardProps> = ({
 
   const isOwnPost = user?.id === post.authorId || user?.id === post.author?.id;
 
-  // Load trạng thái like, bookmark khi mount
+  // Load trạng thái like, bookmark khi mount - với proper loading state
   useEffect(() => {
     let mounted = true;
-    (async () => {
+
+    const loadInteractionStatus = async () => {
+      if (!user?.id || !post.id) return;
+
       try {
         const status = await postService.getInteractionStatus(post.id);
         if (mounted) {
@@ -66,10 +66,17 @@ export const PostCard: React.FC<PostCardProps> = ({
         }
       } catch (error) {
         console.debug('Không thể tải trạng thái tương tác:', error);
+        // Set default values if API call fails
+        if (mounted) {
+          setIsLiked(false);
+          setIsBookmarked(false);
+        }
       }
-    })();
+    };
+
+    loadInteractionStatus();
     return () => { mounted = false; };
-  }, [post.id]);
+  }, [post.id, user?.id]);
 
   // Show feedback message temporarily
   const showFeedback = (message: string) => {
@@ -94,40 +101,56 @@ export const PostCard: React.FC<PostCardProps> = ({
     setShowComments(v => !v);
   }, [showComments, comments.length, post.id]);
 
-  // Chức năng tương tác: like, bookmark, share
+  // Chức năng tương tác: like, bookmark, share - with optimistic updates
   const handleInteraction = useCallback(async (type: 'like' | 'bookmark' | 'share') => {
     if (isLoadingInteraction) return;
     setIsLoadingInteraction(true);
+
     try {
       if (type === 'like') {
-        await postService.toggleLike(post.id);
-        setIsLiked(l => {
-          const newLiked = !l;
-          const newLikes = newLiked ? post.stats.likes + 1 : post.stats.likes - 1;
+        // Optimistic update
+        const previousLiked = isLiked;
+        const newLiked = !isLiked;
+        setIsLiked(newLiked);
+
+        try {
+          await postService.toggleLike(post.id);
+          // Update post stats
+          const newLikes = newLiked ? (post.stats?.likes || 0) + 1 : Math.max((post.stats?.likes || 0) - 1, 0);
           onPostUpdate?.({
             ...post,
             stats: { ...post.stats, likes: newLikes }
           });
           showFeedback(newLiked ? 'Đã thích bài viết' : 'Đã bỏ thích');
-          return newLiked;
-        });
+        } catch (error) {
+          // Revert optimistic update on error
+          setIsLiked(previousLiked);
+          throw error;
+        }
       } else if (type === 'bookmark') {
-        await postService.toggleBookmark(post.id);
-        setIsBookmarked(b => {
-          const newBookmarked = !b;
-          const newBookmarks = newBookmarked ? post.stats.bookmarks + 1 : post.stats.bookmarks - 1;
+        // Optimistic update for bookmark
+        const previousBookmarked = isBookmarked;
+        const newBookmarked = !isBookmarked;
+        setIsBookmarked(newBookmarked);
+
+        try {
+          await postService.toggleBookmark(post.id);
+          const newBookmarks = newBookmarked ? (post.stats?.bookmarks || 0) + 1 : Math.max((post.stats?.bookmarks || 0) - 1, 0);
           onPostUpdate?.({
             ...post,
             stats: { ...post.stats, bookmarks: newBookmarks }
           });
           showFeedback(newBookmarked ? 'Đã lưu bài viết' : 'Đã bỏ lưu bài viết');
-          return newBookmarked;
-        });
+        } catch (error) {
+          // Revert optimistic update on error
+          setIsBookmarked(previousBookmarked);
+          throw error;
+        }
       } else if (type === 'share') {
         await postService.sharePost(post.id);
         onPostUpdate?.({
           ...post,
-          stats: { ...post.stats, shares: post.stats.shares + 1 }
+          stats: { ...post.stats, shares: (post.stats?.shares || 0) + 1 }
         });
         await navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
         showFeedback('Đã sao chép liên kết bài viết');
@@ -138,7 +161,7 @@ export const PostCard: React.FC<PostCardProps> = ({
     } finally {
       setIsLoadingInteraction(false);
     }
-  }, [isLoadingInteraction, onPostUpdate, post]);
+  }, [isLoadingInteraction, isLiked, isBookmarked, onPostUpdate, post]);
 
   // Gửi comment
   const handleSubmitComment = useCallback(async (e: React.FormEvent) => {
@@ -201,6 +224,38 @@ export const PostCard: React.FC<PostCardProps> = ({
       [commentId]: !prev[commentId]
     }));
   };
+
+  // Handle comment actions (report, delete, hide)
+  const handleCommentAction = useCallback(async (action: 'report' | 'delete' | 'hide', commentId: string) => {
+    try {
+      switch (action) {
+        case 'delete':
+          if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+            // TODO: Implement delete comment API call
+            // await postService.deleteComment(commentId);
+            setComments(prev => prev.filter(comment => comment.id !== commentId));
+            showFeedback('Đã xóa bình luận');
+          }
+          break;
+        case 'report':
+          // TODO: Implement report comment functionality
+          showFeedback('Đã báo cáo bình luận');
+          break;
+        case 'hide':
+          setComments(prev => prev.filter(comment => comment.id !== commentId));
+          showFeedback('Đã ẩn bình luận');
+          break;
+      }
+      // Close the menu after action
+      setCommentMenus(prev => ({
+        ...prev,
+        [commentId]: false
+      }));
+    } catch (error) {
+      console.error(`Error ${action} comment:`, error);
+      showFeedback(`Không thể ${action === 'delete' ? 'xóa' : action === 'report' ? 'báo cáo' : 'ẩn'} bình luận`);
+    }
+  }, []);
 
   // New enhanced handlers for reactions and post actions
   const handleReactionClick = useCallback(async (reactionId: string) => {
@@ -492,28 +547,28 @@ export const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {/* Action Buttons - Enhanced with Reactions */}
+      {/* Action Buttons - Facebook Style */}
       <div className="border-t border-gray-100">
         <div className="flex">
-          {/* Enhanced Reaction Button */}
-          <div className="flex-1 flex justify-center">
-            <ReactionButton
-              onReactionClick={handleReactionClick}
-              onReactionRemove={handleReactionRemove}
-              currentReaction={currentReaction}
-              reactionCounts={reactionCounts}
-              disabled={isLoadingInteraction}
-              size="md"
-              showPicker={true}
-            />
-          </div>
+          <button
+            onClick={() => handleInteraction('like')}
+            disabled={isLoadingInteraction || isLiked === null}
+            className={`flex-1 flex items-center justify-center py-2 px-3 hover:bg-gray-50 transition-colors ${
+              isLiked ? 'text-blue-600' : 'text-gray-600'
+            } ${isLiked === null ? 'opacity-50' : ''}`}
+          >
+            <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+            <span className="text-sm font-medium">
+              {isLiked === null ? 'Đang tải...' : 'Thích'}
+            </span>
+          </button>
 
           <button
             onClick={toggleComments}
             className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium vietnamese-text">Bình luận</span>
+            <span className="text-sm font-medium">Bình luận</span>
           </button>
 
           <button
@@ -522,7 +577,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <Share className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium vietnamese-text">Chia sẻ</span>
+            <span className="text-sm font-medium">Chia sẻ</span>
           </button>
         </div>
       </div>
@@ -566,7 +621,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               </div>
             </form>
 
-            {/* Comments List - Enhanced with CommentItem */}
+            {/* Comments List */}
             {isLoadingComments ? (
               <div className="flex justify-center py-4">
                 <LoadingSpinner size="sm" />
@@ -580,24 +635,99 @@ export const PostCard: React.FC<PostCardProps> = ({
                     </p>
                   ) : (
                     comments.map((comment) => (
-                      <CommentItem
-                        key={comment.id}
-                        comment={comment}
-                        postId={post.id}
-                        onCommentUpdate={(updatedComment) => {
-                          setComments(prev =>
-                            prev.map(c => c.id === updatedComment.id ? updatedComment : c)
-                          );
-                        }}
-                        onCommentDelete={(commentId) => {
-                          setComments(prev => prev.filter(c => c.id !== commentId));
-                          onPostUpdate?.({
-                            ...post,
-                            stats: { ...post.stats, comments: Math.max(post.stats.comments - 1, 0) }
-                          });
-                        }}
-                        depth={0}
-                      />
+                      <div key={comment.id} className="flex space-x-3 group">
+                        {/* Comment Author Avatar */}
+
+                          <Avatar
+                            id={comment.author?.id}
+                            src={comment.author?.avatarUrl || '/default-avatar.png'}
+                            alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
+                            size="md"
+                          />
+
+
+                        <div className="flex-1 min-w-0">
+                          <div className="bg-gray-100 rounded-2xl px-4 py-3 relative">
+                            {/* Comment Menu Button */}
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="relative">
+                                <button
+                                  onClick={() => toggleCommentMenu(comment.id)}
+                                  className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                                >
+                                  <MoreHorizontal className="h-3 w-3 text-gray-500" />
+                                </button>
+
+                                {/* Comment Menu Dropdown */}
+                                {commentMenus[comment.id] && (
+                                  <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                                    { comment.author?.id != user?.id && (
+                                        <button
+                                            onClick={() => handleCommentAction('report', comment.id)}
+                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                        >
+                                          <Flag className="h-4 w-4 text-red-500" />
+                                          <span>Báo cáo</span>
+                                        </button>)}
+
+
+                                    {comment.author?.id === user?.id && (
+                                      <button
+                                        onClick={() => handleCommentAction('delete', comment.id)}
+                                        className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                        <span>Xóa</span>
+                                      </button>
+                                    )}
+                                    {comment.author?.id != user?.id && (
+                                        <button
+                                            onClick={() => handleCommentAction('hide', comment.id)}
+                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                        >
+                                          <EyeOff className="h-4 w-4" />
+                                          <span>Ẩn bình luận</span>
+                                        </button>)}
+
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="font-semibold text-sm text-gray-900 vietnamese-text truncate">
+                                {comment.author?.fullName || comment.author?.name || 'Người dùng ẩn danh'}
+                              </span>
+                              {comment.author?.role && (
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
+                                  comment.author.role === 'LECTURER' 
+                                    ? 'bg-blue-100 text-blue-700' 
+                                    : 'bg-green-100 text-green-700'
+                                }`}>
+                                  {comment.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
+                              {comment.content}
+                            </p>
+                          </div>
+
+                          {/* Comment Actions */}
+                          <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                            <time dateTime={comment.createdAt} className="flex-shrink-0">
+                              {formatTimeAgo(comment.createdAt)}
+                            </time>
+                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
+                              Thích
+                            </button>
+                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
+                              Trả lời
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     ))
                   )}
                 </div>
@@ -605,7 +735,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 {/* Load More Comments Button */}
                 {comments.length > 0 && (
                   <div className="text-center pt-3 mt-3 border-t border-gray-200">
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors vietnamese-text">
+                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
                       Xem thêm bình luận
                     </button>
                   </div>

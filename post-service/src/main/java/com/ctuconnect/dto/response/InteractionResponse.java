@@ -48,4 +48,21 @@ public class InteractionResponse {
     public boolean isActive() {
         return hasInteraction;
     }
+
+    // Getter and setter methods
+    public boolean getHasInteraction() {
+        return hasInteraction;
+    }
+
+    public void setHasInteraction(boolean hasInteraction) {
+        this.hasInteraction = hasInteraction;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
