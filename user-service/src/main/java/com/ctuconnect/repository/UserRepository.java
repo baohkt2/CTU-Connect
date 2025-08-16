@@ -74,7 +74,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:ENROLLED_IN]->()
         DELETE r
         WITH u
-        MATCH (newMajor:Major {id: $majorId})
+        MATCH (newMajor:Major {code: $majorId})
         MERGE (u)-[:ENROLLED_IN]->(newMajor)
         """)
  void updateUserMajor(@Param("userId") String userId, @Param("majorId") String majorId);
@@ -85,7 +85,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:IN_BATCH]->()
         DELETE r
         WITH u
-        MATCH (newBatch:Batch {id: $batchId})
+        MATCH (newBatch:Batch {code: $batchId})
         MERGE (u)-[:IN_BATCH]->(newBatch)
         """)
  void updateUserBatch(@Param("userId") String userId, @Param("batchId") String batchId);
@@ -96,7 +96,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:HAS_GENDER]->()
         DELETE r
         WITH u
-        MATCH (newGender:Gender {id: $genderId})
+        MATCH (newGender:Gender {code: $genderId})
         MERGE (u)-[:HAS_GENDER]->(newGender)
         """)
  void updateUserGender(@Param("userId") String userId, @Param("genderId") String genderId);
@@ -107,7 +107,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:BELONGS_TO]->()
         DELETE r
         WITH u
-        MATCH (newFaculty:Faculty {id: $facultyId})
+        MATCH (newFaculty:Faculty {code: $facultyId})
         MERGE (u)-[:BELONGS_TO]->(newFaculty)
         """)
  void updateUserFaculty(@Param("userId") String userId, @Param("facultyId") String facultyId);
@@ -118,7 +118,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:STUDIES_AT]->()
         DELETE r
         WITH u
-        MATCH (newCollege:College {id: $collegeId})
+        MATCH (newCollege:College {code: $collegeId})
         MERGE (u)-[:STUDIES_AT]->(newCollege)
         """)
  void updateUserCollege(@Param("userId") String userId, @Param("collegeId") String collegeId);
@@ -129,7 +129,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:WORKS_IN]->()
         DELETE r
         WITH u
-        MATCH (newFaculty:Faculty {id: $facultyId})
+        MATCH (newFaculty:Faculty {code: $facultyId})
         MERGE (u)-[:WORKS_IN]->(newFaculty)
         """)
  void updateUserWorkingFaculty(@Param("userId") String userId, @Param("facultyId") String facultyId);
@@ -140,7 +140,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:EMPLOYED_AT]->()
         DELETE r
         WITH u
-        MATCH (newCollege:College {id: $collegeId})
+        MATCH (newCollege:College {code: $collegeId})
         MERGE (u)-[:EMPLOYED_AT]->(newCollege)
         """)
  void updateUserWorkingCollege(@Param("userId") String userId, @Param("collegeId") String collegeId);
@@ -151,7 +151,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:HAS_DEGREE]->()
         DELETE r
         WITH u
-        MATCH (newDegree:Degree {id: $degreeId})
+        MATCH (newDegree:Degree {code: $degreeId})
         MERGE (u)-[:HAS_DEGREE]->(newDegree)
         """)
  void updateUserDegree(@Param("userId") String userId, @Param("degreeId") String degreeId);
@@ -162,7 +162,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:HAS_POSITION]->()
         DELETE r
         WITH u
-        MATCH (newPosition:Position {id: $positionId})
+        MATCH (newPosition:Position {code: $positionId})
         MERGE (u)-[:HAS_POSITION]->(newPosition)
         """)
  void updateUserPosition(@Param("userId") String userId, @Param("positionId") String positionId);
@@ -173,7 +173,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         OPTIONAL MATCH (u)-[r:HAS_ACADEMIC]->()
         DELETE r
         WITH u
-        MATCH (newAcademic:Academic {id: $academicId})
+        MATCH (newAcademic:Academic {code: $academicId})
         MERGE (u)-[:HAS_ACADEMIC]->(newAcademic)
         """)
  void updateUserAcademic(@Param("userId") String userId, @Param("academicId") String academicId);

@@ -40,12 +40,10 @@ public class UserSyncService {
      * Listen for user profile update events from user-service
      */
     @KafkaListener(topics = "user-profile-updated", groupId = "post-service-group")
-    public void handleUserProfileUpdate(String message) {
+    public void handleUserProfileUpdate(Map<String, Object> userUpdate) {
         try {
-            log.info("Received user profile update event: {}", message);
+            log.info("Received user profile update event: {}", userUpdate);
 
-            // Parse the message to extract user information
-            Map<String, Object> userUpdate = objectMapper.readValue(message, Map.class);
             String userId = (String) userUpdate.get("userId");
 
             if (userId == null) {

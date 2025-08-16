@@ -196,7 +196,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
         // Verify major exists
-        majorRepository.findById(majorId)
+        majorRepository.findByCode(majorId)
                 .orElseThrow(() -> new RuntimeException("Major not found with id: " + majorId));
 
         // Update relationship - this will delete old relationship and create new one
@@ -211,7 +211,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        batchRepository.findById(batchId)
+        batchRepository.findByYear(batchId)
                 .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
 
         userRepository.updateUserBatch(userId, batchId);
@@ -225,7 +225,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        genderRepository.findById(genderId)
+        genderRepository.findByCode(genderId)
                 .orElseThrow(() -> new RuntimeException("Gender not found with id: " + genderId));
 
         userRepository.updateUserGender(userId, genderId);
@@ -239,7 +239,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        facultyRepository.findById(facultyId)
+        facultyRepository.findByCode(facultyId)
                 .orElseThrow(() -> new RuntimeException("Faculty not found with id: " + facultyId));
 
         userRepository.updateUserFaculty(userId, facultyId);
@@ -253,7 +253,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        collegeRepository.findById(collegeId)
+        collegeRepository.findByCode(collegeId)
                 .orElseThrow(() -> new RuntimeException("College not found with id: " + collegeId));
 
         userRepository.updateUserCollege(userId, collegeId);
@@ -267,7 +267,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        facultyRepository.findById(facultyId)
+        facultyRepository.findByCode(facultyId)
                 .orElseThrow(() -> new RuntimeException("Faculty not found with id: " + facultyId));
 
         userRepository.updateUserWorkingFaculty(userId, facultyId);
@@ -281,7 +281,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        collegeRepository.findById(collegeId)
+        collegeRepository.findByCode(collegeId)
                 .orElseThrow(() -> new RuntimeException("College not found with id: " + collegeId));
 
         userRepository.updateUserWorkingCollege(userId, collegeId);
@@ -295,7 +295,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        degreeRepository.findById(degreeId)
+        degreeRepository.findByCode(degreeId)
                 .orElseThrow(() -> new RuntimeException("Degree not found with id: " + degreeId));
 
         userRepository.updateUserDegree(userId, degreeId);
@@ -309,7 +309,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        positionRepository.findById(positionId)
+        positionRepository.findByCode(positionId)
                 .orElseThrow(() -> new RuntimeException("Position not found with id: " + positionId));
 
         userRepository.updateUserPosition(userId, positionId);
@@ -323,7 +323,7 @@ public class UserService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        academicRepository.findById(academicId)
+        academicRepository.findByCode(academicId)
                 .orElseThrow(() -> new RuntimeException("Academic not found with id: " + academicId));
 
         userRepository.updateUserAcademic(userId, academicId);
@@ -808,8 +808,7 @@ public class UserService {
                 updateUserGender(userId, genderCode);
             }
         }
-
-        userEntity.setUpdatedAt(LocalDateTime.now());
+        userEntity.setIsProfileCompleted(true);
         UserEntity updatedUser = userRepository.save(userEntity);
 
         // CRITICAL FIX: Publish profile update event for post-service synchronization
@@ -879,7 +878,7 @@ public class UserService {
             }
         }
 
-        userEntity.setUpdatedAt(LocalDateTime.now());
+        userEntity.setIsProfileCompleted(true);
         UserEntity updatedUser = userRepository.save(userEntity);
 
         // CRITICAL FIX: Publish profile update event for post-service synchronization

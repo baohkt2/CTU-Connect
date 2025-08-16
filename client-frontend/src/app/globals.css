@@ -356,7 +356,7 @@ code, pre {
 @media (prefers-color-scheme: dark) {
   :root {
     --background: rgb(3.9% 3.9% 3.9%);
-    --foreground: rgb(98% 98% 98%);
+    --foreground: rgb(0, 0, 0);
   }
 }
 

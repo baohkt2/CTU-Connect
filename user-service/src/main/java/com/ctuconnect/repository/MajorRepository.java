@@ -20,9 +20,12 @@ public interface MajorRepository extends Neo4jRepository<MajorEntity, String> {
     @Query("MATCH (m:Major {name: $name}) RETURN m")
     Optional<MajorEntity> findByNameWithFacultyAndCollege(String name);
 
-    Optional<MajorEntity> findByName(String name);
-
+    @Query("MATCH (m:Major {code: $code}) RETURN m")
     Optional<MajorEntity> findByCode(String code);
 
+    Optional<MajorEntity> findByName(String name);
+
     List<MajorEntity> findByFaculty(String faculty);
+
+
 }

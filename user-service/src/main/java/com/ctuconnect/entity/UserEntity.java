@@ -40,7 +40,7 @@ public class UserEntity {
     @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.OUTGOING)
     private GenderEntity gender;
 
-    @Relationship(type = "FRIEND", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "FRIEND_WITH", direction = Relationship.Direction.OUTGOING)
     private Set<UserEntity> friends = new HashSet<>();
 
     @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)

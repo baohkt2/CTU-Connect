@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Recommender-service/Recommender-service.iml" filepath="$PROJECT_DIR$/Recommender-service/Recommender-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/client-frontend/admin-frontend/admin-frontend.iml" filepath="$PROJECT_DIR$/client-frontend/admin-frontend/admin-frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/auth-service/auth-service.iml" filepath="$PROJECT_DIR$/auth-service/auth-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/client-frontend/client-frontend.iml" filepath="$PROJECT_DIR$/client-frontend/client-frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ctu-connect.iml" filepath="$PROJECT_DIR$/.idea/ctu-connect.iml" />
     </modules>

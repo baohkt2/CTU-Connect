@@ -11,5 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface DegreeRepository extends Neo4jRepository<DegreeEntity, String> {
-
+    Optional<DegreeEntity> findByName(String name);
+    Optional<DegreeEntity> findByCode(String code);
 }

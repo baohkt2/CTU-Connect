@@ -2,13 +2,14 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Textarea } from '@/components/ui/Textarea';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import RichTextEditor, { RichTextEditorRef } from '@/components/ui/RichTextEditor';
 import { postService } from '@/services/postService';
 import { CreatePostRequest } from '@/types';
 import { t } from '@/utils/localization';
+import { stripHtml, isHtmlEmpty, validateContent } from '@/utils/richTextUtils';
 import { X, Image, Hash, Globe, Users, Lock, Video, Plus, Upload } from 'lucide-react';
 
 interface CreatePostProps {
@@ -30,6 +31,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
     visibility: 'PUBLIC'
   });
 
+  const [richContent, setRichContent] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +39,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const richTextEditorRef = useRef<RichTextEditorRef>(null);
 
   const handleInputChange = (field: keyof CreatePostRequest, value: string) => {
     setFormData(prev => ({
@@ -44,6 +47,17 @@ export const CreatePost: React.FC<CreatePostProps> = ({
       [field]: value
     }));
     setError(null); // Clear error when user types
+  };
+
+  const handleContentChange = (content: string) => {
+    setRichContent(content);
+    // Convert HTML to plain text for the API
+    const plainText = stripHtml(content);
+    setFormData(prev => ({
+      ...prev,
+      content: plainText
+    }));
+    setError(null);
   };
 
   const handleAddTag = useCallback(() => {
@@ -114,7 +128,8 @@ export const CreatePost: React.FC<CreatePostProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.content.trim()) {
+    // Validate using rich text content
+    if (isHtmlEmpty(richContent) || !validateContent(richContent, 1)) {
       setError('Nội dung bài viết không được để trống');
       return;
     }
@@ -142,7 +157,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
 
       setSuccessMessage('Đã tạo bài viết thành công!');
 
-      // Reset form
+      // Reset form including rich text content
       setFormData({
         title: '',
         content: '',
@@ -150,6 +165,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
         category: '',
         visibility: 'PUBLIC'
       });
+      setRichContent('');
       setFiles([]);
       setTagInput('');
 
@@ -214,18 +230,18 @@ export const CreatePost: React.FC<CreatePostProps> = ({
             maxLength={100}
           />
           <div className="text-xs text-gray-500 mt-1 text-right">
-            {formData.title.length}/100
+            {formData.title?.length}/100
           </div>
         </div>
 
         {/* Content */}
         <div>
-          <Textarea
-            value={formData.content}
-            onChange={(e) => handleInputChange('content', e.target.value)}
+          <RichTextEditor
+            value={richContent}
+            onChange={handleContentChange}
             placeholder="Bạn đang nghĩ gì? Hãy chia sẻ với cộng đồng CTU..."
             className="min-h-[120px] border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 resize-none text-gray-700 leading-relaxed"
-            maxLength={2000}
+            ref={richTextEditorRef}
             required
           />
           <div className="text-xs text-gray-500 mt-1 text-right">
@@ -241,13 +257,14 @@ export const CreatePost: React.FC<CreatePostProps> = ({
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500 text-gray-700"
           >
             <option value="">Chọn danh mục</option>
-            <option value="academic">📚 Học tập</option>
-            <option value="social">🎉 Sinh hoạt</option>
-            <option value="announcement">📢 Thông báo</option>
-            <option value="career">💼 Nghề nghiệp</option>
-            <option value="technology">💻 Công nghệ</option>
-            <option value="sports">⚽ Thể thao</option>
-            <option value="entertainment">🎬 Giải trí</option>
+            <option value="research">🔬 Nghiên cứu khoa học</option>
+            <option value="teaching">🎓 Đào tạo & Giảng dạy</option>
+            <option value="aquaculture">🐟 Thủy sản & Nuôi trồng</option>
+            <option value="technology">💻 Công nghệ & Kỹ thuật</option>
+            <option value="climate">🌡️ Khí hậu & Môi trường</option>
+            <option value="student">👥 Sinh viên CTU</option>
+            <option value="events">📅 Sự kiện CTU</option>
+            <option value="discussion">💬 Trao đổi học thuật</option>
             <option value="other">📝 Khác</option>
           </select>
         </div>
