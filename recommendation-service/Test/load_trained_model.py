@@ -319,17 +319,18 @@ def recommend_articles(user_id, data_df, posts_df, model_path, config_path=None,
 # Main function
 def main():
     """Hàm main để chạy gợi ý bài viết"""
-    model_path = 'trained_models/best_ctu_model.pt'
+    # model_path = 'trained_models/best_ctu_model.pt'
+    model_path = 'trained_models/ctu_checkpoint.pt'
     config_path = 'trained_models/ctu_config.json'
-    user_id = '1e2ae772-5902-4ea4-87d7-1a2278e02034'
+    user_id = '873e13c6-b46f-44cf-9a13-118fb5e46dce'
     top_n = 5
     batch_size = 16
     seen_posts = None  # Sẽ lấy từ data_df
     freshness_weight = 0.3
     epsilon = 0.1
 
-    data_path = 'sample_data/ctu_connect_training.csv'
-    posts_path = 'sample_data/ctu_connect_posts.csv'
+    data_path = 'data1/ctu_connect_training.csv'
+    posts_path = 'data1/ctu_connect_posts.csv'
     if not os.path.exists(data_path):
         print(f"❌ Error: Data file ({data_path}) not found!")
         return
