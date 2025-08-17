@@ -36,13 +36,25 @@ public class MediaService {
             // Determine media type
             Media.MediaType mediaType = determineMediaType(file.getContentType());
 
+            // Prepare upload options based on media type
+            Map<String, Object> uploadOptions = ObjectUtils.asMap(
+                "resource_type", getCloudinaryResourceType(mediaType),
+                "folder", "ctu-connect/" + mediaType.toString().toLowerCase(),
+                "public_id", generatePublicId(file.getOriginalFilename(), uploadedBy)
+            );
+
+            // Special handling for PDFs and documents to ensure browser compatibility
+            if (mediaType == Media.MediaType.DOCUMENT) {
+                uploadOptions.put("flags", "attachment");
+                uploadOptions.put("format", "pdf");
+                if (file.getContentType().contains("pdf")) {
+                    // For PDFs, we want them to be viewable in browser
+                    uploadOptions.remove("flags"); // Remove attachment flag to allow inline viewing
+                }
+            }
+
             // Upload to Cloudinary
-            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                ObjectUtils.asMap(
-                    "resource_type", getCloudinaryResourceType(mediaType),
-                    "folder", "ctu-connect/" + mediaType.toString().toLowerCase(),
-                    "public_id", generatePublicId(file.getOriginalFilename(), uploadedBy)
-                ));
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadOptions);
 
             // Save metadata to database
             Media media = new Media();

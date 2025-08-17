@@ -17,7 +17,7 @@ import {
   Share,
   Globe,
   Users,
-  Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff
+  Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff, FileText, Download
 } from 'lucide-react';
 import Avatar from "@/components/ui/Avatar";
 import {useAuth} from "@/contexts/AuthContext";
@@ -590,6 +590,44 @@ export const PostCard: React.FC<PostCardProps> = ({
             ))}
           </div>
         )}
+
+        {/* Documents */}
+        {post.documents && post.documents.length > 0 && (
+          <div className="mb-3">
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              📎 Tài liệu đính kèm ({post.documents.length})
+            </div>
+            <div className="space-y-2">
+              {post.documents.map((doc: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between bg-gray-50 rounded-lg p-3 border border-gray-200 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <PostDocumentIcon document={doc} className="h-8 w-8 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-900 truncate">
+                        {doc.originalFileName || doc.fileName}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {formatFileSize(doc.fileSize)} • {getDocumentType(doc.contentType)}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDocumentDownload(doc)}
+                    className="flex items-center space-x-1 bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Tải xuống</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats */}
@@ -846,3 +884,181 @@ export const PostCard: React.FC<PostCardProps> = ({
     </Card>
   );
 };
+
+// Helper functions for document handling
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+const getDocumentType = (contentType: string): string => {
+  switch (contentType) {
+    case 'application/pdf':
+      return 'PDF';
+    case 'application/msword':
+      return 'Word Document';
+    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      return 'Word Document';
+    default:
+      return 'Document';
+  }
+};
+
+const handleDocumentDownload = async (document: any) => {
+  try {
+    // Check if it's a PDF and user wants to view it
+    if (document.contentType?.includes('pdf')) {
+      // Try to open PDF in a new tab for viewing
+      const pdfUrl = document.url;
+
+      // Create a proper PDF viewer URL that works with Cloudinary
+      const viewerWindow = window.open('', '_blank');
+      if (viewerWindow) {
+        viewerWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${document.originalFileName || 'Document'}</title>
+              <style>
+                body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+                .error { 
+                  padding: 20px; 
+                  text-align: center; 
+                  font-size: 16px;
+                  color: #666;
+                }
+                .retry-btn {
+                  background: #3b82f6;
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  margin-top: 10px;
+                }
+                .retry-btn:hover {
+                  background: #2563eb;
+                }
+                iframe {
+                  width: 100%;
+                  height: 100vh;
+                  border: none;
+                }
+                .loading {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  font-size: 18px;
+                  color: #666;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="loading" id="loading">
+                <div>
+                  <div>Đang tải tài liệu...</div>
+                  <div style="margin-top: 10px; font-size: 14px;">Nếu không tải được, hãy thử tải xuống</div>
+                </div>
+              </div>
+              <div id="content"></div>
+              <script>
+                const pdfUrl = '${pdfUrl}';
+                const fileName = '${document.originalFileName || document.fileName}';
+                
+                function showError() {
+                  document.getElementById('loading').style.display = 'none';
+                  document.getElementById('content').innerHTML = \`
+                    <div class="error">
+                      <h3>Không thể hiển thị tài liệu PDF</h3>
+                      <p>Trình duyệt không thể hiển thị file PDF này. Bạn có thể:</p>
+                      <button class="retry-btn" onclick="downloadFile()">Tải xuống file</button>
+                      <button class="retry-btn" onclick="window.open('\${pdfUrl}', '_self')">Mở trực tiếp</button>
+                    </div>
+                  \`;
+                }
+                
+                function downloadFile() {
+                  const link = document.createElement('a');
+                  link.href = pdfUrl;
+                  link.download = fileName;
+                  link.click();
+                }
+                
+                // Try to load PDF
+                setTimeout(() => {
+                  const iframe = document.createElement('iframe');
+                  iframe.src = pdfUrl;
+                  iframe.onload = () => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').appendChild(iframe);
+                  };
+                  iframe.onerror = showError;
+                  
+                  // Fallback timeout
+                  setTimeout(() => {
+                    if (document.getElementById('loading').style.display !== 'none') {
+                      showError();
+                    }
+                  }, 10000);
+                }, 1000);
+              </script>
+            </body>
+          </html>
+        `);
+        viewerWindow.document.close();
+      } else {
+        // Popup blocked, fallback to direct download
+        throw new Error('Popup blocked');
+      }
+    } else {
+      // For non-PDF documents, trigger download
+      const link = document.createElement('a');
+      link.href = document.url;
+      link.download = document.originalFileName || document.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  } catch (error) {
+    console.error('Error opening document:', error);
+    // Fallback: direct download
+    try {
+      const link = document.createElement('a');
+      link.href = document.url;
+      link.download = document.originalFileName || document.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (downloadError) {
+      console.error('Error downloading document:', downloadError);
+      // Last resort: open in new tab
+      window.open(document.url, '_blank');
+    }
+  }
+};
+
+// PostDocumentIcon component
+const PostDocumentIcon: React.FC<{ document: any; className?: string }> = ({ document, className }) => {
+  const getIconAndColor = () => {
+    const contentType = document.contentType;
+    if (contentType?.includes('pdf')) {
+      return { icon: <FileText className={className} />, color: 'text-red-600 bg-red-50' };
+    } else if (contentType?.includes('word') || contentType?.includes('document')) {
+      return { icon: <FileText className={className} />, color: 'text-blue-600 bg-blue-50' };
+    }
+    return { icon: <FileText className={className} />, color: 'text-gray-600 bg-gray-50' };
+  };
+
+  const { icon, color } = getIconAndColor();
+
+  return (
+    <div className={`flex items-center justify-center w-10 h-10 rounded-full ${color}`}>
+      {icon}
+    </div>
+  );
+};
+

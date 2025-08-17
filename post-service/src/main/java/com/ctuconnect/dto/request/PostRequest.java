@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.ctuconnect.entity.PostEntity;
+import com.ctuconnect.dto.MediaDocument;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class PostRequest {
     @Builder.Default
     private List<String> videos = new ArrayList<>();
     
+    @Builder.Default
+    private List<MediaDocument> documents = new ArrayList<>();
+
     private String postType; // TEXT, IMAGE, VIDEO, LINK, POLL, EVENT, SHARED
     
     private PostEntity.AudienceSettings audienceSettings;

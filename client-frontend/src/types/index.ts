@@ -45,6 +45,7 @@ export interface Post {
   authorAvatar?: string;
   images?: string[]; // Array of image URLs
   videos?: string[]; // Array of video URLs - ADDED for video support
+  documents?: MediaDocument[]; // Array of document attachments
   tags?: string[];
   category?: string;
   visibility?: string;
@@ -53,6 +54,17 @@ export interface Post {
   isEdited?: boolean; // Added to indicate if the post has been edited
   createdAt: string;
   updatedAt: string;
+}
+
+// Document interface for post attachments
+export interface MediaDocument {
+  id: string;
+  fileName: string;
+  originalFileName: string;
+  url: string;
+  contentType: string;
+  fileSize: number;
+  uploadedAt: string;
 }
 
 export interface PostStats {

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.ctuconnect.entity.PostEntity;
 import com.ctuconnect.dto.AuthorInfo;
+import com.ctuconnect.dto.MediaDocument;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +25,7 @@ public class PostResponse {
     private String authorAvatar;
     private List<String> images;
     private List<String> videos; // Added for enhanced functionality
+    private List<MediaDocument> documents; // Added for document attachments
     private List<String> tags;
     private String category;
     private String visibility;
@@ -54,6 +56,7 @@ public class PostResponse {
 
         this.images = post.getImages();
         this.videos = post.getVideos();
+        this.documents = post.getDocuments();
         this.tags = post.getTags();
         this.category = post.getCategory();
         this.visibility = post.getVisibility();

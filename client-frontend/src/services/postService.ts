@@ -10,7 +10,8 @@ import {
   Interaction,
   PaginatedResponse,
   InteractionType,
-  ReactionType
+  ReactionType,
+  MediaDocument
 } from '@/types';
 
 export const postService = {
@@ -19,6 +20,7 @@ export const postService = {
     try {
       let imageUrls: string[] = [];
       let videoUrls: string[] = [];
+      let documentUrls: MediaDocument[] = [];
 
       // Step 1: Upload files to media service first if files exist
       if (files && files.length > 0) {
@@ -28,23 +30,34 @@ export const postService = {
           'Post media files'
         );
 
-        // Separate images and videos based on media type
+        // Separate images, videos, and documents based on media type
         mediaResponses.forEach(media => {
           if (media.mediaType === 'IMAGE') {
             imageUrls.push(media.cloudinaryUrl);
           } else if (media.mediaType === 'VIDEO') {
             videoUrls.push(media.cloudinaryUrl);
+          } else if (media.mediaType === 'DOCUMENT') {
+            documentUrls.push({
+              id: media.id,
+              fileName: media.fileName,
+              originalFileName: media.originalFileName,
+              url: media.cloudinaryUrl,
+              contentType: media.contentType,
+              fileSize: media.fileSize,
+              uploadedAt: media.createdAt
+            });
           }
         });
 
-        console.log('Files uploaded successfully - Images:', imageUrls, 'Videos:', videoUrls);
+        console.log('Files uploaded successfully - Images:', imageUrls, 'Videos:', videoUrls, 'Documents:', documentUrls);
       }
 
-      // Step 2: Create post data with separated media URLs
+      // Step 2: Create post data with separated media URLs and documents
       const postRequestData = {
         ...postData,
         images: imageUrls.length > 0 ? imageUrls : undefined,
-        videos: videoUrls.length > 0 ? videoUrls : undefined
+        videos: videoUrls.length > 0 ? videoUrls : undefined,
+        documents: documentUrls.length > 0 ? documentUrls : undefined
       };
       console.log('Creating post request...', postRequestData);
 

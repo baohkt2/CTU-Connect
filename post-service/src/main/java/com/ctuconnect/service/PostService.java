@@ -48,48 +48,6 @@ public class PostService {
     @Autowired
     private EventService eventService;
 
-    public PostResponse createPost(PostRequest request, List<MultipartFile> files, String authorId) {
-        AuthorInfo author = userServiceClient.getAuthorInfo(authorId);
-        if (author == null) {
-            throw new RuntimeException("Author not found with id: " + authorId);
-        }
-
-        PostEntity post = PostEntity.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .author(author)
-                .images(new ArrayList<>())
-                .tags(request.getTags() != null ? request.getTags() : new ArrayList<>())
-                .category(request.getCategory())
-                .privacy(request.getVisibility() != null ? request.getVisibility() : "PUBLIC")
-                .stats(new PostEntity.PostStats())
-                .build();
-
-        // Upload files to media-service
-        if (files != null && !files.isEmpty()) {
-            List<String> imageUrls = new ArrayList<>();
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    try {
-                        MediaServiceClient.MediaUploadResponse uploadResponse =
-                            mediaServiceClient.uploadFile(file, getFileType(file));
-                        imageUrls.add(uploadResponse.getFileUrl());
-                    } catch (Exception e) {
-                        // Log error but continue processing
-                        System.err.println("Failed to upload file: " + e.getMessage());
-                    }
-                }
-            }
-            post.setImages(imageUrls);
-        }
-
-        PostEntity savedPost = postRepository.save(post);
-
-        // Publish event
-        eventService.publishPostEvent("POST_CREATED", savedPost.getId(), savedPost.getAuthorId(), savedPost);
-
-        return new PostResponse(savedPost);
-    }
 
     public Page<PostResponse> getAllPosts(Pageable pageable) {
         Page<PostEntity> posts = postRepository.findAll(pageable);
@@ -303,6 +261,7 @@ public class PostService {
                 .author(author)
                 .images(request.getImages() != null ? request.getImages() : new ArrayList<>())
                 .videos(request.getVideos() != null ? request.getVideos() : new ArrayList<>())
+                .documents(request.getDocuments() != null ? request.getDocuments() : new ArrayList<>())
                 .tags(request.getTags() != null ? request.getTags() : new ArrayList<>())
                 .category(request.getCategory())
                 .privacy(request.getVisibility() != null ? request.getVisibility() : "PUBLIC")

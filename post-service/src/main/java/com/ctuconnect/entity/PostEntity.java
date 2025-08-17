@@ -1,6 +1,7 @@
 package com.ctuconnect.entity;
 
 import com.ctuconnect.dto.AuthorInfo;
+import com.ctuconnect.dto.MediaDocument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +42,8 @@ public class PostEntity {
     private List<String> images = new ArrayList<>();
     
     private List<String> videos = new ArrayList<>(); // Support for video content
+
+    private List<MediaDocument> documents = new ArrayList<>(); // Support for document attachments
 
     private List<String> tags = new ArrayList<>();
 

@@ -71,13 +71,10 @@ public class PostController {
             
             // Try enhanced service first, fallback to regular service
             PostResponse response;
-            try {
+
                 AuthenticatedUser user = new AuthenticatedUser(currentUserId, null, null);
                 response = postService.createEnhancedPost(request, user);
-            } catch (Exception e) {
-                // Fallback to regular post creation
-                response = postService.createPost(request, null, currentUserId);
-            }
+
             
             // Invalidate caches if newsFeedService is available
             if (newsFeedService != null) {
@@ -190,7 +187,7 @@ public class PostController {
     /**
      * Create post with file upload support
      */
-    @PostMapping("/upload")
+    /*@PostMapping("/upload")
     @RequireAuth
     public ResponseEntity<?> createPostWithFiles(
             @Valid @RequestPart("post") PostRequest request,
@@ -211,7 +208,7 @@ public class PostController {
                     .body(Map.of("error", "Internal server error", "message", "Failed to create post"));
         }
     }
-
+*/
     // ========== COMMON ENDPOINTS ==========
 
     /**
