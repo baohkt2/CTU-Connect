@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/recommendation-service/install.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/recommendation-service/trainEmbedding.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/import/init.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/import/init.cypher" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/generate.py" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation-service/Test/generate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/generate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/interface.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/retrain.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/trainEmbedding.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/trainwithspark.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,6 +116,8 @@
     &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
     &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
     &quot;Python.generate.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
+    &quot;Python.load_trained_model (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.load_trained_model.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.train.executor&quot;: &quot;Run&quot;,
@@ -182,7 +189,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate">
+  <component name="RunManager" selected="Python.interface">
     <configuration name="generate" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ctu-connect" />
       <option name="ENV_FILES" value="" />
@@ -206,6 +213,52 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="interface" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ctu-connect" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.11 (recommendation-service)" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/interface.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="load_trained_model (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ctu-connect" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.11 (recommendation-service)" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/load_trained_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="load_trained_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ctu-connect" />
       <option name="ENV_FILES" value="" />
@@ -221,29 +274,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service/Test" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/Test/train.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -358,19 +388,6 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="api-gateway" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <configuration name="docker-compose.yml.post-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -387,26 +404,25 @@
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+      <item itemvalue="Python.interface" />
+      <item itemvalue="Python.load_trained_model (1)" />
       <item itemvalue="Python.generate" />
       <item itemvalue="Python.load_trained_model" />
-      <item itemvalue="Python.train" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.interface" />
+        <item itemvalue="Python.load_trained_model (1)" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
         <item itemvalue="Python.generate" />
         <item itemvalue="Python.load_trained_model" />
-        <item itemvalue="Python.train" />
-        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
+        <option value="bundled-python-sdk-b3ae9b5d7125-f0eec537fc84-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.23892.439" />
       </set>
     </attachedChunks>
   </component>
