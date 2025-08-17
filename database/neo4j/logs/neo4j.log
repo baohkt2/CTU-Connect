@@ -3315,3 +3315,12 @@ Caused by: org.neo4j.internal.kernel.api.exceptions.ProcedureException: Unable t
 2025-08-17 12:12:40.407+0000 INFO  Started.
 2025-08-17 12:16:35.009+0000 WARN  [bolt-9] The client is unauthorized due to authentication failure.
 2025-08-17 12:17:05.544+0000 WARN  [bolt-24] The client is unauthorized due to authentication failure.
+2025-08-17 13:39:15.736+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 41.  Encountered: <EOF> after : "", reference 0fba2edf-0343-4574-ace5-4725a31d032c.
+2025-08-17 13:39:21.381+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 43.  Encountered: <EOF> after : "", reference f93f15e7-1f44-4028-b38f-691ae36632b8.
+2025-08-17 13:39:24.936+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 43.  Encountered: <EOF> after : "", reference b7db34b4-ac87-4b3e-b159-8299a1905849.
+2025-08-17 13:39:27.532+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 45.  Encountered: <EOF> after : "", reference 13d3f7a5-841c-4cf9-8b1b-f67d6dfd76a7.
+2025-08-17 13:39:29.641+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 45.  Encountered: <EOF> after : "", reference d90a05e6-e7fc-46ab-8ec1-d5df5d6e1873.
+2025-08-17 13:39:31.609+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 47.  Encountered: <EOF> after : "", reference 0f524a9c-7d21-4136-9f88-d342db0e96cd.
+2025-08-17 13:39:33.587+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 49.  Encountered: <EOF> after : "", reference 92af4a2c-a526-4b8e-8ffa-7c7e06ac259c.
+2025-08-17 13:39:35.668+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 51.  Encountered: <EOF> after : "", reference 7938ccc4-c6a2-429f-84e8-26e2af430348.
+2025-08-17 13:39:37.686+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 53.  Encountered: <EOF> after : "", reference 433f8afe-b0e3-40fe-9393-19045c0eb1f6.

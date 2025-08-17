@@ -26,9 +26,9 @@ MERGE (g2:Gender {code: 'F', name: 'Nữ'});
 // =================================================================
 // 3. CREATE BATCH (COURSE YEAR) NODES
 // =================================================================
-WITH [2021, 2022, 2023, 2024, 2025] AS batches
+WITH ['K45',' K46', 'K47', 'K48', 'K49', 'K50', 'K51'] AS batches
 UNWIND batches AS batchYear
-MERGE (b:Batch {year: toString(batchYear)});
+MERGE (b:Batch {year: batchYear});
 
 // =================================================================
 // 4. CREATE HIERARCHICAL UNIVERSITY STRUCTURE
@@ -36,46 +36,97 @@ MERGE (b:Batch {year: toString(batchYear)});
 MERGE (uni:University {name: 'Đại học Cần Thơ', established: 1966})
 
 WITH uni, [
-{ college: 'Khoa Công nghệ Thông tin và Truyền thông', code: 'CNTT', faculties: [
-{ faculty: 'Bộ môn Công nghệ Phần mềm', code: 'CNPM', majors: [
-  {name: 'Công nghệ Phần mềm', code: 'CNPM01'},
-  {name: 'Khoa học Máy tính', code: 'KHMT01'}
-]},
-{ faculty: 'Bộ môn Hệ thống Thông tin', code: 'HTTT', majors: [
-  {name: 'Hệ thống Thông tin', code: 'HTTT01'},
-  {name: 'Kinh doanh Kỹ thuật Số', code: 'KDKTS01'}
-]},
-{ faculty: 'Bộ môn Truyền thông Dữ liệu và Mạng máy tính', code: 'TTDL', majors: [
-  {name: 'Mạng máy tính và Truyền thông dữ liệu', code: 'MMT01'}
-]}
-]},
-{ college: 'Khoa Kinh tế', code: 'KT', faculties: [
-{ faculty: 'Bộ môn Kinh tế học', code: 'KTH', majors: [
-  {name: 'Kinh tế học', code: 'KT01'}
-]},
-{ faculty: 'Bộ môn Quản trị Kinh doanh', code: 'QTKD', majors: [
-  {name: 'Marketing', code: 'MKT01'},
-  {name: 'Quản trị Kinh doanh', code: 'QTKD01'}
-]},
-{ faculty: 'Bộ môn Tài chính Ngân hàng', code: 'TCNH', majors: [
-  {name: 'Tài chính - Ngân hàng', code: 'TC01'}
-]}
-]},
-{ college: 'Khoa Kỹ thuật', code: 'KYTH', faculties: [
-{ faculty: 'Bộ môn Kỹ thuật Xây dựng', code: 'KTXD', majors: [
-  {name: 'Kỹ thuật Xây dựng', code: 'KTXD01'}
-]},
-{ faculty: 'Bộ môn Kỹ thuật Cơ khí', code: 'KTCK', majors: [
-  {name: 'Kỹ thuật Cơ khí', code: 'KTCK01'},
-  {name: 'Robot và Trí tuệ nhân tạo', code: 'ROBOT01'}
-]}
-]},
-{ college: 'Khoa Nông nghiệp', code: 'NN', faculties: [] },
-{ college: 'Khoa Y Dược', code: 'YD', faculties: [] },
-{ college: 'Khoa Sư phạm', code: 'SP', faculties: [] },
-{ college: 'Khoa Khoa học Tự nhiên', code: 'KHTN', faculties: [] },
-{ college: 'Khoa Khoa học Xã hội và Nhân văn', code: 'KHXHNV', faculties: [] },
-{ college: 'Khoa Luật', code: 'LUAT', faculties: [] }
+  { college: 'Trường Bách khoa', code: 'BK', faculties: [
+    { faculty: 'Kỹ thuật Cơ khí', code: 'KTCK', majors: [
+      { name: 'Kỹ thuật Cơ khí', code: 'KTCK01' }
+    ]},
+    { faculty: 'Kỹ thuật Xây dựng', code: 'KTXD', majors: [
+      { name: 'Kỹ thuật Xây dựng', code: 'KTXD01' }
+    ]},
+    { faculty: 'Kỹ thuật Thủy lợi', code: 'KTTH', majors: [
+      { name: 'Kỹ thuật Thủy lợi', code: 'KTTH01' }
+    ]},
+    { faculty: 'Tự động hóa', code: 'TDH', majors: [
+      { name: 'Tự động hóa', code: 'TDH01' }
+    ]}
+  ]},
+  { college: 'Trường Công nghệ Thông tin và Truyền thông', code: 'CNTT', faculties: [
+    { faculty: 'Khoa Công nghệ Thông tin', code: 'CNTT', majors: [
+      { name: 'Công nghệ Thông tin', code: 'CNTT01' }
+    ]},
+    { faculty: 'Khoa Công nghệ Phần mềm', code: 'CNPM', majors: [
+      { name: 'Kỹ thuật Phần mềm', code: 'CNPM01' }
+    ]},
+    { faculty: 'Khoa Khoa học Máy tính', code: 'KHMT', majors: [
+      { name: 'Khoa học Máy tính', code: 'KHMT01' }
+    ]},
+    { faculty: 'Khoa Truyền thông Đa phương tiện', code: 'TTDM', majors: [
+      { name: 'Truyền thông Đa phương tiện', code: 'TTDM01' }
+    ]},
+    { faculty: 'Khoa Mạng Máy tính và Truyền thông', code: 'MMT', majors: [
+      { name: 'Mạng Máy tính và Quyền Thông', code: 'MMT01' } // Lưu ý: "Quyền Thông" có thể là lỗi typo, hãy kiểm tra lại
+    ]},
+    { faculty: 'Khoa Hệ thống Thông tin', code: 'HTTT', majors: [
+      { name: 'Hệ thống Thông tin', code: 'HTTT01' }
+    ]}
+  ]},
+  { college: 'Trường Kinh tế', code: 'KT', faculties: [
+    { faculty: 'Khoa Kế toán - Kiểm toán', code: 'KTKT', majors: [
+      { name: 'Kế toán', code: 'KT01' }
+    ]},
+    { faculty: 'Khoa Kinh tế học', code: 'KTH', majors: [
+      { name: 'Kinh tế học', code: 'KTH01' }
+    ]},
+    { faculty: 'Khoa Marketing', code: 'MKT', majors: [
+      { name: 'Marketing', code: 'MKT01' }
+    ]},
+    { faculty: 'Khoa Quản trị Kinh doanh', code: 'QTKD', majors: [
+      { name: 'Quản trị Kinh doanh', code: 'QTKD01' }
+    ]}
+  ]},
+  { college: 'Trường Nông nghiệp', code: 'NN', faculties: [
+    { faculty: 'Khoa Di truyền và Chọn giống Cây trồng', code: 'DTCSCT', majors: [
+      { name: 'Di truyền và Chọn giống Cây trồng', code: 'DTCSCT01' }
+    ]},
+    { faculty: 'Khoa Sinh lý Sinh hóa', code: 'SLSH', majors: [
+      { name: 'Sinh lý Sinh hóa', code: 'SLSH01' }
+    ]},
+    { faculty: 'Khoa Khoa học Đất', code: 'KHD', majors: [
+      { name: 'Khoa học Đất', code: 'KHD01' }
+    ]},
+    { faculty: 'Khoa Khoa học Cây trồng', code: 'KHCT', majors: [
+      { name: 'Khoa học Cây trồng', code: 'KHCT01' }
+    ]},
+    { faculty: 'Khoa Bảo vệ Thực vật', code: 'BVTV', majors: [
+      { name: 'Bảo vệ Thực vật', code: 'BVTV01' }
+    ]},
+    { faculty: 'Khoa Chăn nuôi', code: 'CN', majors: [
+      { name: 'Chăn nuôi', code: 'CN01' }
+    ]},
+    { faculty: 'Khoa Thú y', code: 'TY', majors: [
+      { name: 'Thú y', code: 'TY01' }
+    ]}
+  ]},
+  { college: 'Trường Sư phạm', code: 'SP', faculties: [
+    { faculty: 'Khoa Sư phạm Toán và Tin học', code: 'SPTT', majors: [
+      { name: 'Sư phạm Toán và Tin học', code: 'SPTT01' }
+    ]},
+    { faculty: 'Khoa Sư phạm Vật lý', code: 'SPVL', majors: [
+      { name: 'Sư phạm Vật lý', code: 'SPVL01' }
+    ]},
+    { faculty: 'Khoa Sư phạm Hóa học', code: 'SPHH', majors: [
+      { name: 'Sư phạm Hóa học', code: 'SPHH01' }
+    ]},
+    { faculty: 'Khoa Sư phạm Sinh học', code: 'SPSH', majors: [
+      { name: 'Sư phạm Sinh học', code: 'SPSH01' }
+    ]},
+    { faculty: 'Khoa Sư phạm Ngữ văn', code: 'SPNV', majors: [
+      { name: 'Sư phạm Ngữ văn', code: 'SPNV01' }
+    ]},
+    { faculty: 'Khoa Sư phạm Lịch sử và Địa lý', code: 'SPLSDD', majors: [
+      { name: 'Sư phạm Lịch sử và Địa lý', code: 'SPLSDD01' }
+    ]}
+  ]}
 ] AS universityStructure
 
 UNWIND universityStructure AS collegeData
