@@ -907,137 +907,14 @@ const getDocumentType = (contentType: string): string => {
   }
 };
 
+// Simplified download function - direct popup to link
 const handleDocumentDownload = async (document: any) => {
   try {
-    // Check if it's a PDF and user wants to view it
-    if (document.contentType?.includes('pdf')) {
-      // Try to open PDF in a new tab for viewing
-      const pdfUrl = document.url;
-
-      // Create a proper PDF viewer URL that works with Cloudinary
-      const viewerWindow = window.open('', '_blank');
-      if (viewerWindow) {
-        viewerWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <title>${document.originalFileName || 'Document'}</title>
-              <style>
-                body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-                .error { 
-                  padding: 20px; 
-                  text-align: center; 
-                  font-size: 16px;
-                  color: #666;
-                }
-                .retry-btn {
-                  background: #3b82f6;
-                  color: white;
-                  border: none;
-                  padding: 10px 20px;
-                  border-radius: 5px;
-                  cursor: pointer;
-                  margin-top: 10px;
-                }
-                .retry-btn:hover {
-                  background: #2563eb;
-                }
-                iframe {
-                  width: 100%;
-                  height: 100vh;
-                  border: none;
-                }
-                .loading {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100vh;
-                  font-size: 18px;
-                  color: #666;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="loading" id="loading">
-                <div>
-                  <div>Đang tải tài liệu...</div>
-                  <div style="margin-top: 10px; font-size: 14px;">Nếu không tải được, hãy thử tải xuống</div>
-                </div>
-              </div>
-              <div id="content"></div>
-              <script>
-                const pdfUrl = '${pdfUrl}';
-                const fileName = '${document.originalFileName || document.fileName}';
-                
-                function showError() {
-                  document.getElementById('loading').style.display = 'none';
-                  document.getElementById('content').innerHTML = \`
-                    <div class="error">
-                      <h3>Không thể hiển thị tài liệu PDF</h3>
-                      <p>Trình duyệt không thể hiển thị file PDF này. Bạn có thể:</p>
-                      <button class="retry-btn" onclick="downloadFile()">Tải xuống file</button>
-                      <button class="retry-btn" onclick="window.open('\${pdfUrl}', '_self')">Mở trực tiếp</button>
-                    </div>
-                  \`;
-                }
-                
-                function downloadFile() {
-                  const link = document.createElement('a');
-                  link.href = pdfUrl;
-                  link.download = fileName;
-                  link.click();
-                }
-                
-                // Try to load PDF
-                setTimeout(() => {
-                  const iframe = document.createElement('iframe');
-                  iframe.src = pdfUrl;
-                  iframe.onload = () => {
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('content').appendChild(iframe);
-                  };
-                  iframe.onerror = showError;
-                  
-                  // Fallback timeout
-                  setTimeout(() => {
-                    if (document.getElementById('loading').style.display !== 'none') {
-                      showError();
-                    }
-                  }, 10000);
-                }, 1000);
-              </script>
-            </body>
-          </html>
-        `);
-        viewerWindow.document.close();
-      } else {
-        // Popup blocked, fallback to direct download
-        throw new Error('Popup blocked');
-      }
-    } else {
-      // For non-PDF documents, trigger download
-      const link = document.createElement('a');
-      link.href = document.url;
-      link.download = document.originalFileName || document.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    // Direct popup to Cloudinary link
+    window.open(document.url, '_blank');
   } catch (error) {
     console.error('Error opening document:', error);
-    // Fallback: direct download
-    try {
-      const link = document.createElement('a');
-      link.href = document.url;
-      link.download = document.originalFileName || document.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (downloadError) {
-      console.error('Error downloading document:', downloadError);
-      // Last resort: open in new tab
-      window.open(document.url, '_blank');
-    }
+    alert('Không thể mở tài liệu. Vui lòng thử lại sau.');
   }
 };
 
