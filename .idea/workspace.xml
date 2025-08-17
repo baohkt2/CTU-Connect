@@ -4,17 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/recommendation-service/install.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/trainEmbedding.py" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="train ok, load ok">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/generate.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/interface.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/retrain.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/train.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/trainEmbedding.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/Test/trainwithspark.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/utils/richTextUtils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,8 +113,6 @@
     &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
     &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
     &quot;Python.generate.executor&quot;: &quot;Run&quot;,
-    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
-    &quot;Python.load_trained_model (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.load_trained_model.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.train.executor&quot;: &quot;Run&quot;,
@@ -189,7 +184,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.interface">
+  <component name="RunManager" selected="Docker.docker-compose.yml: Compose Deployment">
     <configuration name="generate" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ctu-connect" />
       <option name="ENV_FILES" value="" />
@@ -200,57 +195,11 @@
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service/Test" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/Test/generate.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="interface" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.11 (recommendation-service)" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/interface.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="load_trained_model (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.11 (recommendation-service)" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/load_trained_model.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -274,6 +223,29 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ctu-connect" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service/Test" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/Test/train.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -388,6 +360,19 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="api-gateway" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yml.post-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -404,25 +389,37 @@
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
-      <item itemvalue="Python.interface" />
-      <item itemvalue="Python.load_trained_model (1)" />
+      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+      <item itemvalue="FastAPI.Recommender-service" />
       <item itemvalue="Python.generate" />
       <item itemvalue="Python.load_trained_model" />
+      <item itemvalue="Python.train" />
+      <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      <item itemvalue="Spring Boot.AuthServiceApplication" />
+      <item itemvalue="Spring Boot.ChatServiceApplication" />
+      <item itemvalue="Spring Boot.DemoApplication" />
+      <item itemvalue="Spring Boot.EurekaServerApplication" />
+      <item itemvalue="Spring Boot.MediaServiceApplication" />
+      <item itemvalue="Spring Boot.PostServiceApplication" />
+      <item itemvalue="Spring Boot.PostServiceApplication (1)" />
+      <item itemvalue="Spring Boot.UserServiceApplication" />
+      <item itemvalue="Spring Boot.UserServiceApplication (1)" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.interface" />
-        <item itemvalue="Python.load_trained_model (1)" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
         <item itemvalue="Python.generate" />
         <item itemvalue="Python.load_trained_model" />
+        <item itemvalue="Python.train" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-b3ae9b5d7125-f0eec537fc84-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.23892.439" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
       </set>
     </attachedChunks>
   </component>
@@ -517,8 +514,7 @@
       <workItem from="1755268520545" duration="945000" />
       <workItem from="1755271170834" duration="5649000" />
       <workItem from="1755317550533" duration="4421000" />
-      <workItem from="1755363408561" duration="7145000" />
-      <workItem from="1755389674358" duration="7000" />
+      <workItem from="1755363408561" duration="3449000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -792,15 +788,7 @@
       <option name="project" value="LOCAL" />
       <updated>1755366288474</updated>
     </task>
-    <task id="LOCAL-00035" summary="quilljs ok">
-      <option name="closed" value="true" />
-      <created>1755367414568</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1755367414568</updated>
-    </task>
-    <option name="localTasksCounter" value="36" />
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -830,6 +818,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="init client-frontend and admin-frontend" />
     <MESSAGE value="config friends v0" />
     <MESSAGE value="user-service fix v2" />
     <MESSAGE value="add admin-frontend" />
@@ -854,25 +843,24 @@
     <MESSAGE value="Tích hop Quilljs" />
     <MESSAGE value="fix buttton like" />
     <MESSAGE value="train ok, load ok" />
-    <MESSAGE value="quilljs ok" />
-    <option name="LAST_COMMIT_MESSAGE" value="quilljs ok" />
+    <option name="LAST_COMMIT_MESSAGE" value="train ok, load ok" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/train.py</url>
-          <line>147</line>
+          <line>232</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>329</line>
+          <line>330</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
-          <line>330</line>
+          <line>331</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>

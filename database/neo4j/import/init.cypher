@@ -36,23 +36,17 @@ MERGE (b:Batch {year: toString(batchYear)});
 MERGE (uni:University {name: 'Đại học Cần Thơ', established: 1966})
 
 WITH uni, [
-{ college: 'Trường Công nghệ Thông tin và Truyền thông', code: 'CNTT', faculties: [
-{ faculty: 'Khoa Công nghệ Phần mềm', code: 'CNPM', majors: [
+{ college: 'Khoa Công nghệ Thông tin và Truyền thông', code: 'CNTT', faculties: [
+{ faculty: 'Bộ môn Công nghệ Phần mềm', code: 'CNPM', majors: [
   {name: 'Công nghệ Phần mềm', code: 'CNPM01'},
-  {name: 'Kỹ thuật Phần mềm', code: 'KTPM01'}
+  {name: 'Khoa học Máy tính', code: 'KHMT01'}
 ]},
-{ faculty: 'Khoa Hệ thống Thông tin', code: 'HTTT', majors: [
+{ faculty: 'Bộ môn Hệ thống Thông tin', code: 'HTTT', majors: [
   {name: 'Hệ thống Thông tin', code: 'HTTT01'},
-
+  {name: 'Kinh doanh Kỹ thuật Số', code: 'KDKTS01'}
 ]},
-{ faculty: 'Khoa Mạng máy tính và Truyền Thông', code: 'TTDL', majors: [
-  {name: 'Mạng máy tính và Truyền thông dữ liệu', code: 'MMT01'},
-    {name: 'An toàn Thông tin', code: 'ATT01'}
-
-]},
-{ faculty: 'Khoa Khoa học Máy tính', code: 'KHMT', majors: [
-  {name: 'Khoa học Máy tính', code: 'KHMT01'},
-
+{ faculty: 'Bộ môn Truyền thông Dữ liệu và Mạng máy tính', code: 'TTDL', majors: [
+  {name: 'Mạng máy tính và Truyền thông dữ liệu', code: 'MMT01'}
 ]}
 ]},
 { college: 'Khoa Kinh tế', code: 'KT', faculties: [
