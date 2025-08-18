@@ -346,6 +346,11 @@ export const postService = {
     await api.delete(`/posts/${postId}/comments/${commentId}`);
   },
 
+  // Toggle comment like/unlike
+  async toggleCommentLike(commentId: string, postId: string): Promise<void> {
+    await api.post(`/posts/${postId}/comments/${commentId}/like`);
+  },
+
   // Get comment count for a post
   async getCommentCount(postId: string): Promise<number> {
     const response = await api.get(`/posts/${postId}/comments/count`);

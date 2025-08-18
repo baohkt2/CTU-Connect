@@ -53,7 +53,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       href: '/messages',
       icon: ChatBubbleLeftRightIcon,
       iconSolid: ChatIconSolid,
-      badge: unreadCount
     },
     {
       name: 'Thông báo',
