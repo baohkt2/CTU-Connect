@@ -10,13 +10,27 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { PostMenu } from '@/components/post/PostMenu';
 import { PostEditModal } from '@/components/post/PostEditModal';
 import { EditIndicator } from '@/components/post/EditIndicator';
+import { CommentItem } from '@/components/post/CommentItem';
 import { formatTimeAgo } from '@/utils/localization';
+import { prepareHtmlForDisplay } from '@/utils/richTextUtils';
 import {
   MessageCircle,
   Share,
   Globe,
   Users,
-  Lock, ThumbsUp, Heart, MoreHorizontal, Flag, Trash2, EyeOff
+  Lock,
+  ThumbsUp,
+  Heart,
+  MoreHorizontal,
+  Flag,
+  Trash2,
+  EyeOff,
+  FileText,
+  Download,
+  BookmarkIcon,
+  Send,
+  Image as ImageIcon,
+  Smile
 } from 'lucide-react';
 import Avatar from "@/components/ui/Avatar";
 import {useAuth} from "@/contexts/AuthContext";
@@ -35,7 +49,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   className = ''
 }) => {
   const { user } = useAuth();
-  const [isLiked, setIsLiked] = useState<boolean | null>(null); // null means loading state
+  const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const [isBookmarked, setIsBookmarked] = useState<boolean | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -48,10 +62,16 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [currentReaction, setCurrentReaction] = useState<string | null>(null);
   const [reactionCounts, setReactionCounts] = useState<{[key: string]: number}>({});
   const [commentMenus, setCommentMenus] = useState<{[key: string]: boolean}>({});
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const isOwnPost = user?.id === post.authorId || user?.id === post.author?.id;
+  const shouldTruncate = post.content && post.content.length > 300;
+  const displayContent = shouldTruncate && !isExpanded
+    ? post.content.substring(0, 300) + '...'
+    : post.content;
 
-  // Load trạng thái like, bookmark khi mount - với proper loading state
+  // Load trạng thái like, bookmark khi mount
   useEffect(() => {
     let mounted = true;
 
@@ -66,7 +86,6 @@ export const PostCard: React.FC<PostCardProps> = ({
         }
       } catch (error) {
         console.debug('Không thể tải trạng thái tương tác:', error);
-        // Set default values if API call fails
         if (mounted) {
           setIsLiked(false);
           setIsBookmarked(false);
@@ -78,10 +97,10 @@ export const PostCard: React.FC<PostCardProps> = ({
     return () => { mounted = false; };
   }, [post.id, user?.id]);
 
-  // Show feedback message temporarily
+  // Show feedback message with improved styling
   const showFeedback = (message: string) => {
     setActionFeedback(message);
-    setTimeout(() => setActionFeedback(null), 1500);
+    setTimeout(() => setActionFeedback(null), 3000);
   };
 
   // Toggle phần comment
@@ -93,7 +112,13 @@ export const PostCard: React.FC<PostCardProps> = ({
         setComments(response.content || []);
       } catch (error) {
         console.error('Không thể tải bình luận:', error);
-        showFeedback('Không thể tải bình luận');
+        try {
+          const legacyResponse = await postService.getCommentsLegacy(post.id);
+          setComments(legacyResponse.content || []);
+        } catch (legacyError) {
+          console.error('Cả hai endpoint đều thất bại:', legacyError);
+          showFeedback('Không thể tải bình luận');
+        }
       } finally {
         setIsLoadingComments(false);
       }
@@ -101,21 +126,19 @@ export const PostCard: React.FC<PostCardProps> = ({
     setShowComments(v => !v);
   }, [showComments, comments.length, post.id]);
 
-  // Chức năng tương tác: like, bookmark, share - with optimistic updates
+  // Chức năng tương tác
   const handleInteraction = useCallback(async (type: 'like' | 'bookmark' | 'share') => {
     if (isLoadingInteraction) return;
     setIsLoadingInteraction(true);
 
     try {
       if (type === 'like') {
-        // Optimistic update
         const previousLiked = isLiked;
         const newLiked = !isLiked;
         setIsLiked(newLiked);
 
         try {
           await postService.toggleLike(post.id);
-          // Update post stats
           const newLikes = newLiked ? (post.stats?.likes || 0) + 1 : Math.max((post.stats?.likes || 0) - 1, 0);
           onPostUpdate?.({
             ...post,
@@ -123,12 +146,10 @@ export const PostCard: React.FC<PostCardProps> = ({
           });
           showFeedback(newLiked ? 'Đã thích bài viết' : 'Đã bỏ thích');
         } catch (error) {
-          // Revert optimistic update on error
           setIsLiked(previousLiked);
           throw error;
         }
       } else if (type === 'bookmark') {
-        // Optimistic update for bookmark
         const previousBookmarked = isBookmarked;
         const newBookmarked = !isBookmarked;
         setIsBookmarked(newBookmarked);
@@ -142,7 +163,6 @@ export const PostCard: React.FC<PostCardProps> = ({
           });
           showFeedback(newBookmarked ? 'Đã lưu bài viết' : 'Đã bỏ lưu bài viết');
         } catch (error) {
-          // Revert optimistic update on error
           setIsBookmarked(previousBookmarked);
           throw error;
         }
@@ -176,12 +196,12 @@ export const PostCard: React.FC<PostCardProps> = ({
       setCommentText('');
       onPostUpdate?.({
         ...post,
-        stats: { ...post.stats, comments: post.stats.comments + 1 }
+        stats: { ...post.stats, comments: (post.stats.comments || 0) + 1 }
       });
       showFeedback('Đã thêm bình luận');
     } catch (error) {
       console.error('Không thể tạo bình luận:', error);
-      showFeedback('Không th�� gửi bình luận');
+      showFeedback('Không thể gửi bình luận');
     } finally {
       setIsSubmittingComment(false);
     }
@@ -231,14 +251,16 @@ export const PostCard: React.FC<PostCardProps> = ({
       switch (action) {
         case 'delete':
           if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
-            // TODO: Implement delete comment API call
-            // await postService.deleteComment(commentId);
+            await postService.deleteComment(commentId, post.id);
             setComments(prev => prev.filter(comment => comment.id !== commentId));
+            onPostUpdate?.({
+              ...post,
+              stats: { ...post.stats, comments: Math.max((post.stats.comments || 1) - 1, 0) }
+            });
             showFeedback('Đã xóa bình luận');
           }
           break;
         case 'report':
-          // TODO: Implement report comment functionality
           showFeedback('Đã báo cáo bình luận');
           break;
         case 'hide':
@@ -255,24 +277,19 @@ export const PostCard: React.FC<PostCardProps> = ({
       console.error(`Error ${action} comment:`, error);
       showFeedback(`Không thể ${action === 'delete' ? 'xóa' : action === 'report' ? 'báo cáo' : 'ẩn'} bình luận`);
     }
-  }, []);
+  }, [onPostUpdate, post]);
 
-  // New enhanced handlers for reactions and post actions
+  // Reaction handlers
   const handleReactionClick = useCallback(async (reactionId: string) => {
     if (isLoadingInteraction) return;
     setIsLoadingInteraction(true);
 
     try {
-      // TODO: Implement reaction API call
-      // await postService.addReaction(post.id, reactionId);
       setCurrentReaction(reactionId);
-
-      // Update reaction counts
       setReactionCounts(prev => ({
         ...prev,
         [reactionId]: (prev[reactionId] || 0) + 1
       }));
-
       showFeedback(`Đã ${reactionId === 'LIKE' ? 'thích' : 'phản ứng'} bài viết`);
     } catch (error) {
       console.error('Error adding reaction:', error);
@@ -280,7 +297,7 @@ export const PostCard: React.FC<PostCardProps> = ({
     } finally {
       setIsLoadingInteraction(false);
     }
-  }, [isLoadingInteraction, post.id]);
+  }, [isLoadingInteraction]);
 
   const handleReactionRemove = useCallback(async () => {
     if (isLoadingInteraction || !currentReaction) return;
@@ -336,17 +353,14 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   const handlePostReport = () => {
-    // TODO: Implement report functionality
     showFeedback('Đã báo cáo bài viết');
   };
 
   const handlePostHide = () => {
-    // TODO: Implement hide functionality
     showFeedback('Đã ẩn bài viết');
   };
 
   const handlePostBlock = () => {
-    // TODO: Implement block functionality
     showFeedback(`Đã chặn bài viết từ ${post.author?.fullName || post.author?.name || 'người dùng này'}`);
   };
 
@@ -360,181 +374,197 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <Card className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 mb-4 ${className}`}>
-      {/* Feedback Toast */}
+    <Card className={`
+      bg-white rounded-xl shadow-sm hover:shadow-lg 
+      transition-all duration-300 ease-out
+      border border-gray-100 hover:border-gray-200
+      mb-6 overflow-hidden group
+      transform hover:scale-[1.01]
+      ${className}
+    `}>
+      {/* Enhanced Feedback Toast */}
       {actionFeedback && (
-        <div className="absolute top-3 right-3 z-10 bg-gray-800 text-white px-3 py-1 rounded text-xs animate-fade-in">
-          {actionFeedback}
+        <div className="absolute top-4 right-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+            {actionFeedback}
+          </div>
         </div>
       )}
       
-      {/* Header - Facebook Style */}
-      <div className="p-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {/* Avatar */}
+      {/* Enhanced Header */}
+      <div className="p-4 pb-2">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-3 flex-1">
+            {/* Enhanced Avatar */}
+            <div className="relative">
+              <Avatar
+                id={post.author?.id}
+                src={post.author?.avatarUrl || '/default-avatar.png'}
+                alt={post.author?.fullName || post.author?.username || 'Avatar'}
+                size="md"
+                className="ring-2 ring-gray-100 hover:ring-blue-200 transition-all duration-200"
+              />
+              {/* Online status indicator */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+            </div>
 
-                <Avatar
-                    id={post.author?.id}
-                    src={post.author?.avatarUrl || '/default-avatar.png'}
-                    alt={ post.author?.fullName ||  post.author?.username || 'Avatar'}
-                    size="md"
-                />
-
-            
-            {/* User Info */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer vietnamese-text">
-                  {post.author?.fullName || post.author?.name || post.authorName || 'Người dùng'}
+            {/* Enhanced User Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-semibold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors text-sm">
+                  {post.author?.fullName || post.author?.username || 'Người dùng ẩn danh'}
                 </h3>
-                {post.author?.role && (
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                    post.author.role === 'LECTURER' 
-                      ? 'bg-blue-100 text-blue-700' 
-                      : 'bg-green-100 text-green-700'
-                  }`}>
-                    {post.author.role === 'LECTURER' ? 'GV' : 'SV'}
-                  </span>
+                {post.author?.verified && (
+                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 )}
               </div>
-              
-              <div className="flex items-center space-x-1 text-xs text-gray-500 mt-0.5">
-                <time dateTime={post.createdAt}>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                <time className="hover:text-gray-700 cursor-pointer transition-colors">
                   {formatTimeAgo(post.createdAt)}
                 </time>
                 <span>•</span>
-                {getPrivacyIcon()}
+                <div className="flex items-center gap-1 hover:text-gray-700 cursor-pointer transition-colors">
+                  {getPrivacyIcon()}
+                  <span>{getPrivacyText()}</span>
+                </div>
+                {post.isEdited && (
+                  <>
+                    <span>•</span>
+                    <EditIndicator />
+                  </>
+                )}
               </div>
             </div>
           </div>
-          
-          {/* More Options */}
+
+          {/* Enhanced Post Menu */}
           <PostMenu
             post={post}
-            onEdit={isOwnPost ? handlePostEdit : undefined}
-            onDelete={isOwnPost ? handlePostDelete : undefined}
-            onReport={!isOwnPost ? handlePostReport : undefined}
-            onHide={!isOwnPost ? handlePostHide : undefined}
-            onBlock={!isOwnPost ? handlePostBlock : undefined}
-            onBookmark={() => handleInteraction('bookmark')}
-            onShare={() => handleInteraction('share')}
+            isOwnPost={isOwnPost}
+            onEdit={handlePostEdit}
+            onDelete={handlePostDelete}
+            onReport={handlePostReport}
+            onHide={handlePostHide}
+            onBlock={handlePostBlock}
             onCopyLink={handleCopyLink}
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           />
         </div>
-
-        {/* Edit Indicator */}
-        <EditIndicator
-          isEdited={post.isEdited}
-          className="mt-1 ml-12"
-        />
       </div>
 
-      {/* Content */}
-      <div className="px-3 pb-3">
-        {/* Title */}
-        {post.title && (
-          <h2 className="font-semibold text-gray-900 mb-2 vietnamese-text">
-            {post.title}
-          </h2>
-        )}
-        
-        {/* Text Content */}
-        <div className="text-gray-800 text-sm leading-relaxed vietnamese-text mb-3">
-          {post.content}
-        </div>
-        
-        {/* Tags */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-3">
-            {post.tags.map((tag: string, index: number) => (
-              <span
-                key={index}
-                className="text-blue-600 hover:underline cursor-pointer text-sm"
+      {/* Enhanced Content */}
+      <div className="px-4 pb-3">
+        {post.content && (
+          <div className="prose prose-sm max-w-none">
+            <div
+              className="text-gray-800 leading-relaxed whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{
+                __html: prepareHtmlForDisplay(displayContent)
+              }}
+            />
+            {shouldTruncate && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm mt-2 transition-colors"
               >
-                #{tag}
-              </span>
-            ))}
+                {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+              </button>
+            )}
           </div>
         )}
 
-        {/* Media - Images */}
-        {post.images && post.images.length > 0 && (
-          <div className="mb-3 -mx-3">
-            <div className={`grid gap-0.5 ${
-              post.images.length === 1 ? 'grid-cols-1' :
-              post.images.length === 2 ? 'grid-cols-2' :
-              post.images.length === 3 ? 'grid-cols-2' : 'grid-cols-2'
-            }`}>
-              {post.images.slice(0, 4).map((imageUrl: string, index: number) => (
-                <div
-                  key={index}
-                  className={`relative bg-gray-100 ${
-                    post.images.length === 3 && index === 0 ? 'row-span-2' : ''
-                  }`}
-                >
-                  <img
-                    src={imageUrl}
-                    alt={`Ảnh bài viết ${index + 1}`}
-                    className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity min-h-[200px] max-h-[400px]"
-                    onClick={() => window.open(imageUrl, '_blank')}
-                  />
-                  {post.images.length > 4 && index === 3 && (
-                    <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center cursor-pointer">
-                      <span className="text-white text-xl font-semibold">
-                        +{post.images.length - 4}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Media - Videos */}
-        {post.videos && post.videos.length > 0 && (
-          <div className="mb-3 -mx-3">
-            {post.videos.map((videoUrl: string, index: number) => (
-              <div key={index} className="bg-black">
-                <video
-                  src={videoUrl}
-                  controls
-                  className="w-full h-auto max-h-[500px]"
-                  preload="metadata"
-                >
-                  Trình duyệt của bạn không hỗ trợ video.
-                </video>
+        {/* Enhanced Media Section */}
+        {(post.images?.length > 0 || post.attachments?.length > 0) && (
+          <div className="mt-4 space-y-3">
+            {/* Images Grid */}
+            {post.images?.length > 0 && (
+              <div className={`
+                grid gap-2 rounded-lg overflow-hidden
+                ${post.images.length === 1 ? 'grid-cols-1' : 
+                  post.images.length === 2 ? 'grid-cols-2' :
+                  post.images.length === 3 ? 'grid-cols-2' : 'grid-cols-2'}
+              `}>
+                {post.images.map((image: any, index: number) => (
+                  <div
+                    key={index}
+                    className={`
+                      relative group cursor-pointer overflow-hidden rounded-lg
+                      ${post.images.length === 3 && index === 0 ? 'row-span-2' : ''}
+                      hover:opacity-95 transition-opacity
+                    `}
+                  >
+                    <img
+                      src={image.url || image}
+                      alt={`Hình ảnh ${index + 1}`}
+                      className="w-full h-auto object-cover max-h-96 hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* Attachments */}
+            {post.attachments?.length > 0 && (
+              <div className="space-y-2">
+                {post.attachments.map((attachment: any, index: number) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
+                    <FileText className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {attachment.name || attachment.filename}
+                      </p>
+                      {attachment.size && (
+                        <p className="text-xs text-gray-500">
+                          {(attachment.size / 1024 / 1024).toFixed(1)} MB
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Stats */}
+      {/* Enhanced Stats Bar */}
       {(post.stats?.likes > 0 || post.stats?.comments > 0 || post.stats?.shares > 0) && (
-        <div className="px-3 py-2 border-t border-gray-100">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <div className="flex items-center space-x-1">
+        <div className="px-4 py-2 border-t border-gray-100">
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center gap-4">
               {post.stats?.likes > 0 && (
-                <>
+                <div className="flex items-center gap-1 hover:text-blue-600 cursor-pointer transition-colors">
                   <div className="flex -space-x-1">
-                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                      <ThumbsUp className="w-2.5 h-2.5 text-white fill-current" />
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                      <ThumbsUp className="w-3 h-3 text-white" />
                     </div>
-                    <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                      <Heart className="w-2.5 h-2.5 text-white fill-current" />
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                      <Heart className="w-3 h-3 text-white" />
                     </div>
                   </div>
                   <span>{formatStats(post.stats.likes)}</span>
-                </>
+                </div>
               )}
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-4">
               {post.stats?.comments > 0 && (
                 <button
                   onClick={toggleComments}
-                  className="hover:underline"
+                  className="hover:text-blue-600 transition-colors"
                 >
                   {formatStats(post.stats.comments)} bình luận
                 </button>
@@ -547,221 +577,257 @@ export const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {/* Action Buttons - Facebook Style */}
-      <div className="border-t border-gray-100">
-        <div className="flex">
-          <button
-            onClick={() => handleInteraction('like')}
-            disabled={isLoadingInteraction || isLiked === null}
-            className={`flex-1 flex items-center justify-center py-2 px-3 hover:bg-gray-50 transition-colors ${
-              isLiked ? 'text-blue-600' : 'text-gray-600'
-            } ${isLiked === null ? 'opacity-50' : ''}`}
-          >
-            <ThumbsUp className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-            <span className="text-sm font-medium">
-              {isLiked === null ? 'Đang tải...' : 'Thích'}
-            </span>
-          </button>
+      {/* Enhanced Action Bar */}
+      <div className="px-4 py-3 border-t border-gray-100">
+        <div className="flex items-center justify-around">
+          {/* Like Button with Reaction Picker */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleInteraction('like')}
+              onMouseEnter={() => setShowReactionPicker(true)}
+              onMouseLeave={() => setShowReactionPicker(false)}
+              disabled={isLiked === null || isLoadingInteraction}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
+                ${isLiked 
+                  ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' 
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
+                }
+                ${isLoadingInteraction ? 'opacity-50 cursor-not-allowed' : ''}
+              `}
+            >
+              {isLoadingInteraction ? (
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+              )}
+              <span className="font-medium">{isLiked ? 'Đã thích' : 'Thích'}</span>
+            </Button>
 
-          <button
+            {/* Reaction Picker */}
+            {showReactionPicker && (
+              <div
+                className="absolute bottom-full left-0 mb-2 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-lg animate-in fade-in-50 slide-in-from-bottom-2 duration-200"
+                onMouseEnter={() => setShowReactionPicker(true)}
+                onMouseLeave={() => setShowReactionPicker(false)}
+              >
+                {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji, index) => (
+                  <button
+                    key={index}
+                    className="w-8 h-8 rounded-full hover:scale-125 transition-transform duration-150"
+                    onClick={() => handleReactionClick('LIKE')}
+                  >
+                    <span className="text-lg">{emoji}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Comment Button */}
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={toggleComments}
-            className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-lg transition-all duration-200"
           >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium">Bình luận</span>
-          </button>
+            <MessageCircle className="h-4 w-4" />
+            <span className="font-medium">Bình luận</span>
+          </Button>
 
-          <button
+          {/* Share Button */}
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => handleInteraction('share')}
             disabled={isLoadingInteraction}
-            className="flex-1 flex items-center justify-center py-2 px-3 text-gray-600 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-green-600 rounded-lg transition-all duration-200"
           >
-            <Share className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium">Chia sẻ</span>
-          </button>
+            <Share className="h-4 w-4" />
+            <span className="font-medium">Chia sẻ</span>
+          </Button>
+
+          {/* Bookmark Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleInteraction('bookmark')}
+            disabled={isBookmarked === null || isLoadingInteraction}
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
+              ${isBookmarked 
+                ? 'text-yellow-600 bg-yellow-50 hover:bg-yellow-100' 
+                : 'text-gray-700 hover:bg-gray-100 hover:text-yellow-600'
+              }
+            `}
+          >
+            <BookmarkIcon className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+            <span className="font-medium">{isBookmarked ? 'Đã lưu' : 'Lưu'}</span>
+          </Button>
         </div>
       </div>
 
-      {/* Comments Section */}
+      {/* Enhanced Comments Section */}
       {showComments && (
-        <div className="border-t border-gray-100 bg-gray-50">
-          <div className="p-3">
-            {/* Comment Form */}
-            <form onSubmit={handleSubmitComment} className="mb-3">
-              <div className="flex space-x-2">
-
-                    <Avatar
-                        id={ user?.id}
-                        src={ user?.avatarUrl || '/default-avatar.png'}
-                        alt={ user?.fullName ||  user?.username || 'Avatar'}
-                        size="md"
-                        />
-
-                <div className="flex-1">
+        <div className="border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
+          {/* Comment Input */}
+          <div className="p-4 bg-gray-50">
+            <form onSubmit={handleSubmitComment} className="flex gap-3">
+              <Avatar
+                id={user?.id}
+                src={user?.avatarUrl || '/default-avatar.png'}
+                alt={user?.fullName || user?.username || 'Your avatar'}
+                size="sm"
+                className="flex-shrink-0"
+              />
+              <div className="flex-1">
+                <div className="relative">
                   <Textarea
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Viết bình luận..."
-                    className="min-h-[32px] text-sm bg-gray-300 text-black border-0 rounded-full px-3 py-2 resize-none vietnamese-text"
-                    disabled={isSubmittingComment}
+                    className="min-h-[40px] max-h-32 resize-none border-gray-200 focus:border-blue-400 focus:ring-blue-400 rounded-lg pr-12 text-sm"
+                    rows={1}
                   />
-                  {commentText.trim() && (
-                    <div className="flex justify-end mt-1">
-                      <Button
-                        type="submit"
-                        size="sm"
-                        disabled={isSubmittingComment}
-                        className="text-xs px-3 py-1"
-                      >
-                        {isSubmittingComment ? <LoadingSpinner size="sm" /> : 'Gửi'}
-                      </Button>
-                    </div>
-                  )}
+                  <div className="absolute right-2 bottom-2 flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600"
+                    >
+                      <Smile className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <div className="text-xs text-gray-500">
+                    Nhấn Enter để gửi
+                  </div>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={!commentText.trim() || isSubmittingComment}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 disabled:opacity-50"
+                  >
+                    {isSubmittingComment ? (
+                      <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        <Send className="h-3 w-3 mr-1" />
+                        Gửi
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </form>
+          </div>
 
-            {/* Comments List */}
+          {/* Comments List */}
+          <div className="max-h-96 overflow-y-auto">
             {isLoadingComments ? (
-              <div className="flex justify-center py-4">
+              <div className="flex items-center justify-center py-8">
                 <LoadingSpinner size="sm" />
+                <span className="ml-2 text-sm text-gray-500">Đang tải bình luận...</span>
+              </div>
+            ) : comments.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {comments.map((comment) => (
+                  <CommentItem
+                    key={comment.id}
+                    comment={comment}
+                    isOwnComment={comment.authorId === user?.id}
+                    onDelete={() => handleCommentAction('delete', comment.id)}
+                    onReport={() => handleCommentAction('report', comment.id)}
+                    onHide={() => handleCommentAction('hide', comment.id)}
+                    className="p-4 hover:bg-gray-50 transition-colors"
+                  />
+                ))}
               </div>
             ) : (
-              <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                <div className="space-y-3 pr-2">
-                  {comments.length === 0 ? (
-                    <p className="text-gray-500 text-sm text-center py-8 vietnamese-text">
-                      Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
-                    </p>
-                  ) : (
-                    comments.map((comment) => (
-                      <div key={comment.id} className="flex space-x-3 group">
-                        {/* Comment Author Avatar */}
-
-                          <Avatar
-                            id={comment.author?.id}
-                            src={comment.author?.avatarUrl || '/default-avatar.png'}
-                            alt={comment.author?.fullName || comment.author?.username || 'Avatar'}
-                            size="md"
-                          />
-
-
-                        <div className="flex-1 min-w-0">
-                          <div className="bg-gray-100 rounded-2xl px-4 py-3 relative">
-                            {/* Comment Menu Button */}
-                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="relative">
-                                <button
-                                  onClick={() => toggleCommentMenu(comment.id)}
-                                  className="p-1 hover:bg-gray-200 rounded-full transition-colors"
-                                >
-                                  <MoreHorizontal className="h-3 w-3 text-gray-500" />
-                                </button>
-
-                                {/* Comment Menu Dropdown */}
-                                {commentMenus[comment.id] && (
-                                  <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
-                                    { comment.author?.id != user?.id && (
-                                        <button
-                                            onClick={() => handleCommentAction('report', comment.id)}
-                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                                        >
-                                          <Flag className="h-4 w-4 text-red-500" />
-                                          <span>Báo cáo</span>
-                                        </button>)}
-
-
-                                    {comment.author?.id === user?.id && (
-                                      <button
-                                        onClick={() => handleCommentAction('delete', comment.id)}
-                                        className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                        <span>Xóa</span>
-                                      </button>
-                                    )}
-                                    {comment.author?.id != user?.id && (
-                                        <button
-                                            onClick={() => handleCommentAction('hide', comment.id)}
-                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                                        >
-                                          <EyeOff className="h-4 w-4" />
-                                          <span>Ẩn bình luận</span>
-                                        </button>)}
-
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="font-semibold text-sm text-gray-900 vietnamese-text truncate">
-                                {comment.author?.fullName || comment.author?.name || 'Người dùng ẩn danh'}
-                              </span>
-                              {comment.author?.role && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                                  comment.author.role === 'LECTURER' 
-                                    ? 'bg-blue-100 text-blue-700' 
-                                    : 'bg-green-100 text-green-700'
-                                }`}>
-                                  {comment.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
-                                </span>
-                              )}
-                            </div>
-
-                            <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
-                              {comment.content}
-                            </p>
-                          </div>
-
-                          {/* Comment Actions */}
-                          <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                            <time dateTime={comment.createdAt} className="flex-shrink-0">
-                              {formatTimeAgo(comment.createdAt)}
-                            </time>
-                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
-                              Thích
-                            </button>
-                            <button className="hover:underline font-medium transition-colors hover:text-blue-600">
-                              Trả lời
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {/* Load More Comments Button */}
-                {comments.length > 0 && (
-                  <div className="text-center pt-3 mt-3 border-t border-gray-200">
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
-                      Xem thêm bình luận
-                    </button>
-                  </div>
-                )}
+              <div className="py-8 text-center">
+                <MessageCircle className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">Chưa có bình luận nào</p>
+                <p className="text-xs text-gray-400 mt-1">Hãy là người đầu tiên bình luận!</p>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Action Feedback */}
-      {actionFeedback && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 vietnamese-text">
-          {actionFeedback}
-        </div>
-      )}
-
-      {/* Edit Post Modal */}
+      {/* Enhanced Edit Modal */}
       {showEditModal && (
         <PostEditModal
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
           post={post}
           onSave={handlePostSave}
+          onCancel={() => setShowEditModal(false)}
         />
       )}
     </Card>
+  );
+};
+
+// Helper functions for document handling
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+const getDocumentType = (contentType: string): string => {
+  switch (contentType) {
+    case 'application/pdf':
+      return 'PDF';
+    case 'application/msword':
+      return 'Word Document';
+    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      return 'Word Document';
+    default:
+      return 'Document';
+  }
+};
+
+// Simplified download function - direct popup to link
+const handleDocumentDownload = async (document: any) => {
+  try {
+    // Direct popup to Cloudinary link
+    window.open(document.url, '_blank');
+  } catch (error) {
+    console.error('Error opening document:', error);
+    alert('Không thể mở tài liệu. Vui lòng thử lại sau.');
+  }
+};
+
+// PostDocumentIcon component
+const PostDocumentIcon: React.FC<{ document: any; className?: string }> = ({ document, className }) => {
+  const getIconAndColor = () => {
+    const contentType = document.contentType;
+    if (contentType?.includes('pdf')) {
+      return { icon: <FileText className={className} />, color: 'text-red-600 bg-red-50' };
+    } else if (contentType?.includes('word') || contentType?.includes('document')) {
+      return { icon: <FileText className={className} />, color: 'text-blue-600 bg-blue-50' };
+    }
+    return { icon: <FileText className={className} />, color: 'text-gray-600 bg-gray-50' };
+  };
+
+  const { icon, color } = getIconAndColor();
+
+  return (
+    <div className={`flex items-center justify-center w-10 h-10 rounded-full ${color}`}>
+      {icon}
+    </div>
   );
 };

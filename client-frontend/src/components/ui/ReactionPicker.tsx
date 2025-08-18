@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Heart, ThumbsUp, Laugh, Frown, Angry, Zap } from 'lucide-react';
+import { Heart, ThumbsUp, Laugh, Frown, Angry } from 'lucide-react';
 
 export interface ReactionType {
   id: string;
@@ -38,14 +38,6 @@ export const REACTIONS: ReactionType[] = [
     hoverColor: 'hover:bg-yellow-50'
   },
   {
-    id: 'WOW',
-    name: 'Wow',
-    emoji: '😮',
-    icon: <Zap className="w-6 h-6" />,
-    color: 'text-orange-600',
-    hoverColor: 'hover:bg-orange-50'
-  },
-  {
     id: 'SAD',
     name: 'Buồn',
     emoji: '😢',
@@ -70,10 +62,10 @@ interface ReactionPickerProps {
 }
 
 export const ReactionPicker: React.FC<ReactionPickerProps> = ({
-                                                                onReactionClick,
-                                                                currentReaction,
-                                                                size = 'md'
-                                                              }) => {
+  onReactionClick,
+  currentReaction,
+  size = 'md'
+}) => {
   const sizeClasses = {
     sm: 'p-1',
     md: 'p-2',
@@ -87,24 +79,24 @@ export const ReactionPicker: React.FC<ReactionPickerProps> = ({
   };
 
   return (
-      <div className="bg-white rounded-full shadow-lg border border-gray-200 flex items-center space-x-1 px-2 py-1 animate-fadeIn">
-        {REACTIONS.map((reaction) => (
-            <button
-                key={reaction.id}
-                onClick={() => onReactionClick(reaction.id)}
-                className={`
+    <div className="bg-white rounded-full shadow-lg border border-gray-200 flex items-center space-x-1 px-2 py-1 animate-fadeIn">
+      {REACTIONS.map((reaction) => (
+        <button
+          key={reaction.id}
+          onClick={() => onReactionClick(reaction.id)}
+          className={`
             ${sizeClasses[size]} 
             ${reaction.hoverColor} 
-            rounded-full transition-transform duration-300 ease-in-out transform hover:scale-125 hover:-translate-y-1
+            rounded-full transition-all duration-200 transform hover:scale-110
             ${currentReaction === reaction.id ? 'bg-blue-50 ring-2 ring-blue-300' : ''}
           `}
-                title={reaction.name}
-            >
-          <span className={`${emojiSizes[size]} block animate-popIn`}>
+          title={reaction.name}
+        >
+          <span className={`${emojiSizes[size]} block`}>
             {reaction.emoji}
           </span>
-            </button>
-        ))}
-      </div>
+        </button>
+      ))}
+    </div>
   );
 };
