@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="tải được file">
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/CommentController.java" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Try fix comment">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/Layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/LeftSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/LeftSidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/layout/RightSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/layout/RightSidebar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/ui/ReactionPicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/ui/ReactionPicker.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -500,7 +494,7 @@
       <workItem from="1755433179357" duration="44000" />
       <workItem from="1755434408312" duration="550000" />
       <workItem from="1755455141134" duration="7782000" />
-      <workItem from="1755491751154" duration="6549000" />
+      <workItem from="1755491751154" duration="7763000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -806,7 +800,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755462853150</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Try fix comment">
+      <option name="closed" value="true" />
+      <created>1755499483231</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1755499483231</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -836,7 +838,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="create an admin account ok" />
     <MESSAGE value="addFriend v1" />
     <MESSAGE value="AuthService and UserService OK" />
     <MESSAGE value="Auth Client-Frontend v1" />
@@ -861,7 +862,8 @@
     <MESSAGE value="neo4j" />
     <MESSAGE value="up load được file" />
     <MESSAGE value="tải được file" />
-    <option name="LAST_COMMIT_MESSAGE" value="tải được file" />
+    <MESSAGE value="Try fix comment" />
+    <option name="LAST_COMMIT_MESSAGE" value="Try fix comment" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

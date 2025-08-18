@@ -85,29 +85,33 @@ const RightSidebar: React.FC = () => {
   ];
 
   return (
-    <div className="hidden xl:block w-80 h-screen sticky top-16 overflow-y-auto custom-scrollbar bg-white">
-      <div className="p-4 space-y-6">
+    <div className="hidden xl:block w-64 2xl:w-80 h-screen sticky top-16 overflow-y-auto custom-scrollbar bg-white border-l border-gray-100">
+      <div className="p-3 2xl:p-4 space-y-4 2xl:space-y-6">
 
         {/* Friend Suggestions */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 vietnamese-text">Gợi ý kết bạn</h3>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 2xl:p-4">
+          <div className="flex items-center justify-between mb-3 2xl:mb-4">
+            <h3 className="font-semibold text-gray-900 vietnamese-text text-sm 2xl:text-base">Gợi ý kết bạn</h3>
+            <button className="text-blue-600 hover:text-blue-700 text-xs 2xl:text-sm font-medium">
               Xem tất cả
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 2xl:space-y-3">
             {friendSuggestions.map((friend) => (
-              <div key={friend.id} className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-xl">
+              <div key={friend.id} className="flex items-center space-x-2 2xl:space-x-3">
+                <div className="w-8 h-8 2xl:w-10 2xl:h-10 rounded-full bg-gray-100 flex items-center justify-center text-lg 2xl:text-xl">
                   {friend.avatar}
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900 text-sm vietnamese-text">{friend.name}</p>
-                  <p className="text-xs text-gray-500">{friend.mutualFriends} bạn chung • {friend.faculty}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 vietnamese-text text-xs 2xl:text-sm truncate">
+                    {friend.name}
+                  </p>
+                  <p className="text-xs 2xl:text-xs text-gray-500 truncate">
+                    {friend.mutualFriends} bạn chung • {friend.faculty}
+                  </p>
                 </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors">
-                  Kết bạn
+                <button className="text-blue-600 hover:text-blue-700 text-xs font-medium bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors">
+                  <UserPlusIcon className="h-3 w-3 2xl:h-4 2xl:w-4" />
                 </button>
               </div>
             ))}
@@ -115,56 +119,49 @@ const RightSidebar: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 vietnamese-text flex items-center">
-              <CalendarDaysIcon className="h-5 w-5 mr-2 text-green-600" />
-              Sự kiện sắp tới
-            </h3>
-            <ChevronRightIcon className="h-4 w-4 text-gray-400" />
+        <div className="bg-white rounded-lg border border-gray-200 p-3 2xl:p-4">
+          <div className="flex items-center justify-between mb-3 2xl:mb-4">
+            <h3 className="font-semibold text-gray-900 vietnamese-text text-sm 2xl:text-base">Sự kiện sắp tới</h3>
+            <ChevronRightIcon className="h-4 w-4 2xl:h-5 2xl:w-5 text-gray-400" />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 2xl:space-y-3">
             {upcomingEvents.map((event) => (
-              <div key={event.id} className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm vietnamese-text">{event.title}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {event.date} • {event.time}
-                    </p>
-                    <p className="text-xs text-gray-500">{event.location}</p>
-                  </div>
-                  <button className="text-green-600 hover:text-green-700 text-xs font-medium">
-                    Quan tâm
-                  </button>
+              <div key={event.id} className="flex items-start space-x-2 2xl:space-x-3 p-2 2xl:p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                <div className="w-8 h-8 2xl:w-10 2xl:h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <CalendarDaysIcon className="h-4 w-4 2xl:h-5 2xl:w-5 text-indigo-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 vietnamese-text text-xs 2xl:text-sm truncate">
+                    {event.title}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {event.date} • {event.time}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    📍 {event.location}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Recent Notifications */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 vietnamese-text flex items-center">
-              <MegaphoneIcon className="h-5 w-5 mr-2 text-orange-600" />
-              Thông báo mới
-            </h3>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        {/* Quick Notifications */}
+        <div className="bg-white rounded-lg border border-gray-200 p-3 2xl:p-4">
+          <div className="flex items-center justify-between mb-3 2xl:mb-4">
+            <h3 className="font-semibold text-gray-900 vietnamese-text text-sm 2xl:text-base">Thông báo nhanh</h3>
+            <button className="text-blue-600 hover:text-blue-700 text-xs 2xl:text-sm font-medium">
               Xem tất cả
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {notifications.map((notification) => (
-              <div key={notification.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${
-                  notification.type === 'academic' ? 'bg-blue-500' :
-                  notification.type === 'exam' ? 'bg-red-500' : 'bg-green-500'
-                }`}>
-                  <AcademicCapIcon className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 vietnamese-text">{notification.title}</p>
+              <div key={notification.id} className="flex items-start space-x-2 2xl:space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 vietnamese-text text-xs 2xl:text-sm truncate">
+                    {notification.title}
+                  </p>
                   <p className="text-xs text-gray-500">{notification.time}</p>
                 </div>
               </div>
@@ -172,57 +169,20 @@ const RightSidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Trending Topics */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 vietnamese-text">Xu hướng tại CTU</h3>
-            <ChevronRightIcon className="h-4 w-4 text-gray-400" />
-          </div>
+        {/* Trending Tags */}
+        <div className="bg-white rounded-lg border border-gray-200 p-3 2xl:p-4">
+          <h3 className="font-semibold text-gray-900 vietnamese-text mb-3 2xl:mb-4 text-sm 2xl:text-base">Trending tại CTU</h3>
           <div className="space-y-2">
-            {trending.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
-                <div>
-                  <p className="text-sm font-medium text-blue-600">{item.tag}</p>
-                  <p className="text-xs text-gray-500">{item.posts} bài viết</p>
+            {trending.map((trend, index) => (
+              <div key={trend.tag} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs 2xl:text-sm text-gray-500 font-medium">#{index + 1}</span>
+                  <span className="font-medium text-blue-600 text-xs 2xl:text-sm">{trend.tag}</span>
                 </div>
-                <div className="text-xs text-gray-400">#{index + 1}</div>
+                <span className="text-xs text-gray-500">{trend.posts} bài viết</span>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Birthday Reminders */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 vietnamese-text flex items-center">
-              <GiftIcon className="h-5 w-5 mr-2 text-pink-600" />
-              Sinh nhật hôm nay
-            </h3>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center text-white">
-              🎂
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900 vietnamese-text">Hôm nay là sinh nhật của <strong>Phạm Thị Mai</strong></p>
-              <button className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-1">
-                Gửi lời chúc mừng
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="text-xs text-gray-500 space-y-2 pb-4">
-          <div className="flex flex-wrap gap-2">
-            <a href="#" className="hover:text-gray-700">Quyền riêng tư</a>
-            <span>•</span>
-            <a href="#" className="hover:text-gray-700">Điều khoản</a>
-            <span>•</span>
-            <a href="#" className="hover:text-gray-700">Trợ giúp</a>
-          </div>
-          <p className="vietnamese-text">CTU Connect © 2025</p>
-          <p className="vietnamese-text">Được phát triển bởi sinh viên CTU</p>
         </div>
       </div>
     </div>
