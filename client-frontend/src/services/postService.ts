@@ -292,23 +292,75 @@ export const postService = {
     return response.data;
   },
 
-  // COMMENT METHODS (Missing)
+  // COMMENT METHODS (Enhanced with depth-based reply system)
 
-  // Get comments for a post
+  // Get comments for a post with hierarchical structure
   async getComments(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
     const params = new URLSearchParams({
       page: page.toString(),
       size: size.toString(),
     });
 
+    // Use the enhanced PostController endpoints
     const response = await api.get(`/posts/${postId}/comments?${params.toString()}`);
     console.log("Fetched comments for post:", postId, response.data);
     return response.data;
   },
 
-  // Create a comment
+  // Create a comment or reply with depth management
   async createComment(postId: string, commentData: CreateCommentRequest): Promise<Comment> {
-    const response = await api.post(`/posts/${postId}/comments`, commentData);
+    // Map parentId to parentCommentId to match backend CommentRequest
+    const requestData = {
+      content: commentData.content,
+      parentCommentId: commentData.parentId // Map parentId to parentCommentId
+    };
+
+    const response = await api.post(`/posts/${postId}/comments`, requestData);
+    return response.data;
+  },
+
+  // Get all replies for a specific comment (both nested and flattened)
+  async getCommentReplies(commentId: string, postId: string): Promise<Comment[]> {
+    const response = await api.get(`/posts/${postId}/comments/${commentId}/replies`);
+    return response.data;
+  },
+
+  // Create a simple reply (convenience method)
+  async createReply(parentCommentId: string, postId: string, content: string): Promise<Comment> {
+    const response = await api.post(`/posts/${postId}/comments/${parentCommentId}/reply`, null, {
+      params: {
+        content
+      }
+    });
+    return response.data;
+  },
+
+  // Get a specific comment by ID
+  async getComment(commentId: string, postId: string): Promise<Comment> {
+    const response = await api.get(`/posts/${postId}/comments/${commentId}`);
+    return response.data;
+  },
+
+  // Delete a comment and all its replies
+  async deleteComment(commentId: string, postId: string): Promise<void> {
+    await api.delete(`/posts/${postId}/comments/${commentId}`);
+  },
+
+  // Get comment count for a post
+  async getCommentCount(postId: string): Promise<number> {
+    const response = await api.get(`/posts/${postId}/comments/count`);
+    return response.data.count;
+  },
+
+  // Legacy method - keep for backward compatibility
+  async getCommentsLegacy(postId: string, page = 0, size = 10): Promise<PaginatedResponse<Comment>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+    });
+
+    const response = await api.get(`/posts/${postId}/comments?${params.toString()}`);
+    console.log("Fetched comments for post (legacy):", postId, response.data);
     return response.data;
   },
 

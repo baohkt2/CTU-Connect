@@ -4,23 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="neo4j">
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/MediaDocument.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/24e5b106-f344-46e5-96f1-d6fe92360e79.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/24e5b106-f344-46e5-96f1-d6fe92360e79.xml" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="tải được file">
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/CommentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/messages/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/messages/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CreatePost.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media-service/src/main/java/com/ctuconnect/service/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/media-service/src/main/java/com/ctuconnect/service/MediaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/PostRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/PostResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/PostEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/PostEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/CommentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/entity/CommentEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,7 +195,7 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.media-service: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yml.post-service: Compose Deployment">
     <configuration name="console.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$APPLICATION_CONFIG_DIR$/consoles/db/24e5b106-f344-46e5-96f1-d6fe92360e79/console.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
@@ -217,29 +214,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/data_migration.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="run_migration" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ctu-connect" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/run_migration.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -354,6 +328,19 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="api-gateway" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yml.media-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -382,12 +369,12 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
       <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
       <item itemvalue="FastAPI.Recommender-service" />
       <item itemvalue="Node.js.console.js" />
       <item itemvalue="Python.data_migration" />
-      <item itemvalue="Python.run_migration" />
       <item itemvalue="Spring Boot.ApiGatewayApplication" />
       <item itemvalue="Spring Boot.AuthServiceApplication" />
       <item itemvalue="Spring Boot.ChatServiceApplication" />
@@ -401,11 +388,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
         <item itemvalue="Node.js.console.js" />
         <item itemvalue="Python.data_migration" />
-        <item itemvalue="Python.run_migration" />
       </list>
     </recent_temporary>
   </component>
@@ -512,7 +499,8 @@
       <workItem from="1755389674358" duration="7000" />
       <workItem from="1755433179357" duration="44000" />
       <workItem from="1755434408312" duration="550000" />
-      <workItem from="1755455141134" duration="5079000" />
+      <workItem from="1755455141134" duration="7782000" />
+      <workItem from="1755491751154" duration="6549000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -802,7 +790,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755457156696</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="up load được file">
+      <option name="closed" value="true" />
+      <created>1755460878481</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1755460878481</updated>
+    </task>
+    <task id="LOCAL-00038" summary="tải được file">
+      <option name="closed" value="true" />
+      <created>1755462853150</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1755462853150</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -832,8 +836,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="user-service fix v2" />
-    <MESSAGE value="add admin-frontend" />
     <MESSAGE value="create an admin account ok" />
     <MESSAGE value="addFriend v1" />
     <MESSAGE value="AuthService and UserService OK" />
@@ -857,7 +859,9 @@
     <MESSAGE value="train ok, load ok" />
     <MESSAGE value="quilljs ok" />
     <MESSAGE value="neo4j" />
-    <option name="LAST_COMMIT_MESSAGE" value="neo4j" />
+    <MESSAGE value="up load được file" />
+    <MESSAGE value="tải được file" />
+    <option name="LAST_COMMIT_MESSAGE" value="tải được file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -427,7 +427,7 @@ public class PostController {
     }
 
     /**
-     * Add comment to post - Legacy endpoint
+     * Add comment to post - Enhanced with depth management
      */
     @PostMapping("/{id}/comments")
     @RequireAuth
@@ -442,15 +442,33 @@ public class PostController {
             // Create notification if service is available
             if (notificationService != null) {
                 try {
-                    String authorId = postService.getPostAuthorId(id);
-                    notificationService.createNotification(
-                        authorId,
-                        currentUserId,
-                        "POST_COMMENTED",
-                        "POST",
-                        id,
-                        "User commented on your post"
-                    );
+                    if (request.getParentCommentId() != null) {
+                        // This is a reply - notify parent comment author
+                        CommentResponse parentComment = commentService.getCommentById(request.getParentCommentId());
+                        if (!parentComment.getAuthor().getId().equals(currentUserId)) {
+                            notificationService.createNotification(
+                                parentComment.getAuthor().getId(),
+                                currentUserId,
+                                "COMMENT_REPLIED",
+                                "COMMENT",
+                                request.getParentCommentId(),
+                                "Someone replied to your comment"
+                            );
+                        }
+                    } else {
+                        // This is a root comment - notify post author
+                        String authorId = postService.getPostAuthorId(id);
+                        if (!authorId.equals(currentUserId)) {
+                            notificationService.createNotification(
+                                authorId,
+                                currentUserId,
+                                "POST_COMMENTED",
+                                "POST",
+                                id,
+                                "User commented on your post"
+                            );
+                        }
+                    }
                 } catch (Exception e) {
                     // Log error but don't fail the request
                     System.err.println("Failed to create notification: " + e.getMessage());
@@ -512,17 +530,132 @@ public class PostController {
     }
 
     /**
-     * Get comments for post
+     * Get comments for post with hierarchical structure (Enhanced)
      */
     @GetMapping("/{id}/comments")
     public ResponseEntity<Page<CommentResponse>> getComments(
             @PathVariable String id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<CommentResponse> comments = commentService.getCommentsByPost(id, pageable);
         return ResponseEntity.ok(comments);
+    }
+
+    /**
+     * Get all replies for a specific comment (both nested and flattened)
+     */
+    @GetMapping("/{postId}/comments/{commentId}/replies")
+    public ResponseEntity<List<CommentResponse>> getCommentReplies(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            List<CommentResponse> replies = commentService.getReplies(commentId);
+            return ResponseEntity.ok(replies);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+    /**
+     * Get a specific comment by ID
+     */
+    @GetMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> getCommentById(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            CommentResponse comment = commentService.getCommentById(commentId);
+            return ResponseEntity.ok(comment);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Delete a comment and all its replies
+     */
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    @RequireAuth
+    public ResponseEntity<?> deleteComment(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            commentService.deleteComment(commentId, currentUserId);
+            return ResponseEntity.ok(Map.of("message", "Comment deleted successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Unauthorized", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to delete comment", "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get comment count for a post
+     */
+    @GetMapping("/{postId}/comments/count")
+    public ResponseEntity<Map<String, Long>> getCommentCount(@PathVariable String postId) {
+        try {
+            long count = commentService.getCommentCountByPost(postId);
+            return ResponseEntity.ok(Map.of("count", count));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("count", 0L));
+        }
+    }
+
+    /**
+     * Create a simple reply with just content (convenience endpoint)
+     */
+    @PostMapping("/{postId}/comments/{parentId}/reply")
+    @RequireAuth
+    public ResponseEntity<?> createReply(
+            @PathVariable String postId,
+            @PathVariable String parentId,
+            @RequestParam String content) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            CommentRequest request = new CommentRequest();
+            request.setContent(content);
+            request.setParentCommentId(parentId);
+
+            CommentResponse reply = commentService.createComment(postId, request, currentUserId);
+
+            // Send notification to parent comment author
+            if (notificationService != null) {
+                try {
+                    CommentResponse parentComment = commentService.getCommentById(parentId);
+                    if (!parentComment.getAuthor().getId().equals(currentUserId)) {
+                        notificationService.createNotification(
+                            parentComment.getAuthor().getId(),
+                            currentUserId,
+                            "COMMENT_REPLIED",
+                            "COMMENT",
+                            parentId,
+                            "Someone replied to your comment"
+                        );
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to send reply notification: " + e.getMessage());
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to create reply", "message", e.getMessage()));
+        }
     }
 
     /**

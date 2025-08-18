@@ -40,25 +40,25 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const [replyText, setReplyText] = useState('');
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
-  const [replies, setReplies] = useState<Comment[]>([]);
+  const [replies, setReplies] = useState<Comment[]>(comment.replies || []);
   const [isLoadingReplies, setIsLoadingReplies] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [userReaction, setUserReaction] = useState<string | null>(null);
 
   const isOwnComment = user?.id === comment.author?.id;
-  const hasReplies = comment.stats?.replies > 0;
+  const hasReplies = (comment.replyCount && comment.replyCount > 0) || replies.length > 0;
   const maxDepth = 3; // Limit nesting depth
+  const isFlattened = comment.isFlattened || (comment.depth !== undefined && comment.depth >= maxDepth);
+  const shouldShowReplyButton = (comment.depth === undefined || comment.depth < maxDepth);
 
   const loadReplies = async () => {
-    if (isLoadingReplies || replies.length > 0) return;
+    if (isLoadingReplies || (replies.length > 0 && !comment.replyCount)) return;
 
     setIsLoadingReplies(true);
     try {
-      // TODO: Implement getReplies API
-      // const response = await postService.getCommentReplies(comment.id);
-      // setReplies(response.content);
-      setReplies([]); // Temporary
+      const loadedReplies = await postService.getCommentReplies(comment.id, postId);
+      setReplies(loadedReplies);
     } catch (error) {
       console.error('Error loading replies:', error);
     } finally {
@@ -67,7 +67,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   };
 
   const handleShowReplies = async () => {
-    if (!showReplies && hasReplies) {
+    if (!showReplies && hasReplies && replies.length === 0) {
       await loadReplies();
     }
     setShowReplies(!showReplies);
@@ -85,6 +85,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       };
 
       const newReply = await postService.createComment(postId, replyData);
+
+      // Add reply to local state
       setReplies(prev => [...prev, newReply]);
       setReplyText('');
       setShowReplyForm(false);
@@ -93,6 +95,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       if (onCommentUpdate) {
         onCommentUpdate({
           ...comment,
+          replyCount: (comment.replyCount || 0) + 1,
           stats: {
             ...comment.stats,
             replies: (comment.stats?.replies || 0) + 1
@@ -135,8 +138,43 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     setShowReactionPicker(false);
   };
 
+  const getDisplayContent = () => {
+    if (comment.replyToAuthor && isFlattened) {
+      return (
+        <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
+          <span className="font-medium text-blue-600">@{comment.replyToAuthor}</span>{' '}
+          {comment.content}
+        </p>
+      );
+    }
+    return (
+      <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
+        {comment.content}
+      </p>
+    );
+  };
+
+  const getIndentationClass = () => {
+    if (isFlattened) {
+      // Flattened comments get minimal indentation
+      return 'ml-4 border-l-2 border-orange-200 pl-4';
+    } else if (depth > 0) {
+      // Normal nested comments
+      return `ml-${Math.min(depth * 8, 32)} border-l-2 border-gray-100 pl-4`;
+    }
+    return '';
+  };
+
   return (
-    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-gray-100 pl-4' : ''}`}>
+    <div className={getIndentationClass()}>
+      {/* Flattened comment indicator */}
+      {isFlattened && (
+        <div className="text-xs text-orange-600 mb-2 flex items-center">
+          <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+          <span>Phản hồi được gộp (cấp {comment.depth})</span>
+        </div>
+      )}
+
       <div className="flex space-x-3 group">
         {/* Avatar */}
         <div className="flex-shrink-0">
@@ -156,7 +194,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
         <div className="flex-1 min-w-0">
           {/* Comment Content */}
-          <div className="bg-gray-100 rounded-2xl px-4 py-3 relative">
+          <div className={`rounded-2xl px-4 py-3 relative ${
+            isFlattened ? 'bg-orange-50 border border-orange-200' : 'bg-gray-100'
+          }`}>
             {/* Menu Button */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="relative">
@@ -213,12 +253,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                   {comment.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
                 </span>
               )}
+              {isFlattened && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                  Gộp
+                </span>
+              )}
             </div>
 
             {/* Comment Text */}
-            <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
-              {comment.content}
-            </p>
+            {getDisplayContent()}
           </div>
 
           {/* Comment Actions */}
@@ -248,8 +291,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               )}
             </div>
 
-            {/* Reply Button */}
-            {depth < maxDepth && (
+            {/* Reply Button - Only show if not at max depth */}
+            {shouldShowReplyButton && (
               <button
                 onClick={() => setShowReplyForm(!showReplyForm)}
                 className="hover:underline font-medium transition-colors hover:text-blue-600 flex items-center space-x-1"
@@ -266,13 +309,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                 className="hover:underline font-medium transition-colors hover:text-blue-600 flex items-center space-x-1"
               >
                 {showReplies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                <span>{showReplies ? 'Ẩn' : 'Xem'} {comment.stats?.replies} phản hồi</span>
+                <span>
+                  {showReplies ? 'Ẩn' : 'Xem'} {comment.replyCount || replies.length} phản hồi
+                  {isFlattened && ' (gộp)'}
+                </span>
               </button>
             )}
           </div>
 
           {/* Reply Form */}
-          {showReplyForm && (
+          {showReplyForm && shouldShowReplyButton && (
             <form onSubmit={handleSubmitReply} className="mt-3">
               <div className="flex space-x-2">
                 {user?.avatarUrl ? (
@@ -339,7 +385,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                     postId={postId}
                     onCommentUpdate={onCommentUpdate}
                     onCommentDelete={onCommentDelete}
-                    depth={depth + 1}
+                    depth={reply.depth || (depth + 1)}
                   />
                 ))
               )}

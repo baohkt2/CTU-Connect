@@ -99,11 +99,20 @@ export interface Comment {
   content: string;
   postId: string;
   author: Author;
-  authorName?: string ;
+  authorName?: string;
   authorAvatar?: string;
+  parentCommentId?: string; // For nested replies
+  rootCommentId?: string; // For flattened comments beyond max depth
+  depth?: number; // Comment nesting depth (0 = root comment)
+  replyToAuthor?: string; // Name of author being replied to (for flattened comments)
   stats?: CommentStats;
   createdAt: string;
   updatedAt: string;
+
+  // Additional fields for UI
+  replies?: Comment[]; // Nested replies
+  replyCount?: number; // Total reply count
+  isFlattened?: boolean; // Whether this comment is flattened
 }
 
 export interface Author {

@@ -90,11 +90,19 @@ export const PostCard: React.FC<PostCardProps> = ({
     if (!showComments && comments.length === 0) {
       setIsLoadingComments(true);
       try {
+        // Use the new enhanced comment API endpoint
         const response = await postService.getComments(post.id);
         setComments(response.content || []);
       } catch (error) {
         console.error('Không thể tải bình luận:', error);
-        showFeedback('Không thể tải bình luận');
+        // Fallback to legacy endpoint if new one fails
+        try {
+          const legacyResponse = await postService.getCommentsLegacy(post.id);
+          setComments(legacyResponse.content || []);
+        } catch (legacyError) {
+          console.error('Cả hai endpoint đều thất bại:', legacyError);
+          showFeedback('Không thể tải bình luận');
+        }
       } finally {
         setIsLoadingComments(false);
       }
@@ -232,9 +240,14 @@ export const PostCard: React.FC<PostCardProps> = ({
       switch (action) {
         case 'delete':
           if (window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
-            // TODO: Implement delete comment API call
-            // await postService.deleteComment(commentId);
+            // Use the new enhanced comment delete API with postId
+            await postService.deleteComment(commentId, post.id);
             setComments(prev => prev.filter(comment => comment.id !== commentId));
+            // Update post comment count
+            onPostUpdate?.({
+              ...post,
+              stats: { ...post.stats, comments: Math.max((post.stats.comments || 1) - 1, 0) }
+            });
             showFeedback('Đã xóa bình luận');
           }
           break;
@@ -256,7 +269,7 @@ export const PostCard: React.FC<PostCardProps> = ({
       console.error(`Error ${action} comment:`, error);
       showFeedback(`Không thể ${action === 'delete' ? 'xóa' : action === 'report' ? 'báo cáo' : 'ẩn'} bình luận`);
     }
-  }, []);
+  }, [onPostUpdate, post]);
 
   // New enhanced handlers for reactions and post actions
   const handleReactionClick = useCallback(async (reactionId: string) => {
@@ -938,4 +951,3 @@ const PostDocumentIcon: React.FC<{ document: any; className?: string }> = ({ doc
     </div>
   );
 };
-
