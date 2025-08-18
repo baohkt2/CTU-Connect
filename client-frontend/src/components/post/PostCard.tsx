@@ -11,6 +11,7 @@ import { PostMenu } from '@/components/post/PostMenu';
 import { PostEditModal } from '@/components/post/PostEditModal';
 import { EditIndicator } from '@/components/post/EditIndicator';
 import { CommentItem } from '@/components/post/CommentItem';
+import { CommentManager } from '@/utils/commentManager';
 import { formatTimeAgo } from '@/utils/localization';
 import { prepareHtmlForDisplay } from '@/utils/richTextUtils';
 import {
@@ -413,7 +414,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-semibold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors text-sm">
-                  {post.author?.fullName || post.author?.username || 'Người dùng ẩn danh'}
+                  {post.author?.fullName || post.author?.username || 'Người dùng'}
                 </h3>
                 {post.author?.verified && (
                   <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
@@ -742,29 +743,40 @@ export const PostCard: React.FC<PostCardProps> = ({
                 <span className="ml-2 text-sm text-gray-500">Đang tải bình luận...</span>
               </div>
             ) : comments.length > 0 ? (
-              <div className="divide-y divide-gray-100">
+              <div className="space-y-1">
                 {comments.map((comment) => (
                   <CommentItem
                     key={comment.id}
                     comment={comment}
                     postId={post.id}
-                    isOwnComment={comment.authorId === user?.id}
+                    isOwnComment={comment.authorId === user?.id || comment.author?.id === user?.id}
                     onDelete={() => handleCommentAction('delete', comment.id)}
                     onReport={() => handleCommentAction('report', comment.id)}
                     onHide={() => handleCommentAction('hide', comment.id)}
                     onCommentUpdate={(updatedComment) => {
                       setComments(prev => prev.map(c => c.id === updatedComment.id ? updatedComment : c));
-                      // Update post comment count if needed
-                      if (updatedComment.replyCount !== comment.replyCount) {
-                        const countDiff = (updatedComment.replyCount || 0) - (comment.replyCount || 0);
+                      // Update post comment count if reply count changed
+                      const oldTotalReplies = CommentManager.getTotalRepliesCount(comment);
+                      const newTotalReplies = CommentManager.getTotalRepliesCount(updatedComment);
+                      const countDiff = newTotalReplies - oldTotalReplies;
+
+                      if (countDiff !== 0) {
                         onPostUpdate?.({
                           ...post,
-                          stats: { ...post.stats, comments: (post.stats.comments || 0) + countDiff }
+                          stats: { ...post.stats, comments: Math.max((post.stats.comments || 0) + countDiff, 0) }
                         });
                       }
                     }}
-                    className="hover:bg-gray-50 transition-colors"
+                    onRepliesUpdate={(parentId, replies) => {
+                      setComments(prev => prev.map(c => {
+                        if (c.id === parentId) {
+                          return { ...c, replies, replyCount: replies.length };
+                        }
+                        return c;
+                      }));
+                    }}
                     depth={0}
+                    className="hover:bg-gray-50/50 transition-colors duration-200 rounded-lg"
                   />
                 ))}
               </div>

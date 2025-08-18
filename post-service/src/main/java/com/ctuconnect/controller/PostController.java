@@ -71,13 +71,10 @@ public class PostController {
             
             // Try enhanced service first, fallback to regular service
             PostResponse response;
-            try {
+
                 AuthenticatedUser user = new AuthenticatedUser(currentUserId, null, null);
                 response = postService.createEnhancedPost(request, user);
-            } catch (Exception e) {
-                // Fallback to regular post creation
-                response = postService.createPost(request, null, currentUserId);
-            }
+
             
             // Invalidate caches if newsFeedService is available
             if (newsFeedService != null) {
@@ -190,7 +187,7 @@ public class PostController {
     /**
      * Create post with file upload support
      */
-    @PostMapping("/upload")
+    /*@PostMapping("/upload")
     @RequireAuth
     public ResponseEntity<?> createPostWithFiles(
             @Valid @RequestPart("post") PostRequest request,
@@ -211,7 +208,7 @@ public class PostController {
                     .body(Map.of("error", "Internal server error", "message", "Failed to create post"));
         }
     }
-
+*/
     // ========== COMMON ENDPOINTS ==========
 
     /**
@@ -430,7 +427,7 @@ public class PostController {
     }
 
     /**
-     * Add comment to post - Legacy endpoint
+     * Add comment to post - Enhanced with depth management
      */
     @PostMapping("/{id}/comments")
     @RequireAuth
@@ -445,15 +442,33 @@ public class PostController {
             // Create notification if service is available
             if (notificationService != null) {
                 try {
-                    String authorId = postService.getPostAuthorId(id);
-                    notificationService.createNotification(
-                        authorId,
-                        currentUserId,
-                        "POST_COMMENTED",
-                        "POST",
-                        id,
-                        "User commented on your post"
-                    );
+                    if (request.getParentCommentId() != null) {
+                        // This is a reply - notify parent comment author
+                        CommentResponse parentComment = commentService.getCommentById(request.getParentCommentId());
+                        if (!parentComment.getAuthor().getId().equals(currentUserId)) {
+                            notificationService.createNotification(
+                                parentComment.getAuthor().getId(),
+                                currentUserId,
+                                "COMMENT_REPLIED",
+                                "COMMENT",
+                                request.getParentCommentId(),
+                                "Someone replied to your comment"
+                            );
+                        }
+                    } else {
+                        // This is a root comment - notify post author
+                        String authorId = postService.getPostAuthorId(id);
+                        if (!authorId.equals(currentUserId)) {
+                            notificationService.createNotification(
+                                authorId,
+                                currentUserId,
+                                "POST_COMMENTED",
+                                "POST",
+                                id,
+                                "User commented on your post"
+                            );
+                        }
+                    }
                 } catch (Exception e) {
                     // Log error but don't fail the request
                     System.err.println("Failed to create notification: " + e.getMessage());
@@ -515,37 +530,88 @@ public class PostController {
     }
 
     /**
-     * Get comments for post
+     * Get comments for post with hierarchical structure (Enhanced)
      */
     @GetMapping("/{id}/comments")
     public ResponseEntity<Page<CommentResponse>> getComments(
             @PathVariable String id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<CommentResponse> comments = commentService.getCommentsByPost(id, pageable);
         return ResponseEntity.ok(comments);
     }
 
     /**
-     * Record interaction (LIKE/SHARE/BOOKMARK) - Legacy endpoint
+     * Get all replies for a specific comment (both nested and flattened)
      */
-    @PostMapping("/{id}/interactions")
-    @RequireAuth
-    public ResponseEntity<InteractionResponse> recordInteraction(
-            @PathVariable String id,
-            @Valid @RequestBody InteractionRequest request) {
-        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
+    @GetMapping("/{postId}/comments/{commentId}/replies")
+    public ResponseEntity<List<CommentResponse>> getCommentReplies(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
         try {
-            InteractionResponse interaction = interactionService.createInteraction(id, request, userId);
-            if (interaction == null) {
-                // Interaction was removed (e.g., unlike)
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.status(HttpStatus.CREATED).body(interaction);
+            List<CommentResponse> replies = commentService.getReplies(commentId);
+            return ResponseEntity.ok(replies);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
+    /**
+     * Get a specific comment by ID
+     */
+    @GetMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> getCommentById(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            CommentResponse comment = commentService.getCommentById(commentId);
+            return ResponseEntity.ok(comment);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Delete a comment and all its replies
+     */
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    @RequireAuth
+    public ResponseEntity<?> deleteComment(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            commentService.deleteComment(commentId, currentUserId);
+            return ResponseEntity.ok(Map.of("message", "Comment deleted successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Unauthorized", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to delete comment", "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get comment count for a post
+     */
+    @GetMapping("/{postId}/comments/count")
+    public ResponseEntity<Map<String, Long>> getCommentCount(@PathVariable String postId) {
+        try {
+            long count = commentService.getCommentCountByPost(postId);
+            return ResponseEntity.ok(Map.of("count", count));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("count", 0L));
         }
     }
 
@@ -722,4 +788,33 @@ public class PostController {
                 return "LIKE";
         }
     }
+
+    // ========== COMMENT ENDPOINTS (Proxy to CommentService, used by client-frontend) ==========
+
+    /**
+     * Toggle like for a comment (stub/no-op for now)
+     * Frontend performs optimistic update; backend can be enhanced later.
+     */
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    @RequireAuth
+    public ResponseEntity<?> toggleCommentLike(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            return ResponseEntity.ok(Map.of(
+                    "message", "Comment like toggled",
+                    "postId", postId,
+                    "commentId", commentId,
+                    "userId", userId
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to toggle like", "message", e.getMessage()));
+        }
+    }
 }
+

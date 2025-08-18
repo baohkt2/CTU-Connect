@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Comment, CreateCommentRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { useAuth } from '@/contexts/AuthContext';
+import { CommentManager } from '@/utils/commentManager';
 import Avatar from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
@@ -16,75 +17,90 @@ import {
   Trash2,
   EyeOff,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ThumbsUp,
+  Send,
+  Smile
 } from 'lucide-react';
-import { ReactionPicker } from '@/components/ui/ReactionPicker';
 
 interface CommentItemProps {
   comment: Comment;
-  postId: string;
+  postId?: string;
+  isOwnComment?: boolean;
+  onDelete?: () => void;
+  onReport?: () => void;
+  onHide?: () => void;
   onCommentUpdate?: (comment: Comment) => void;
-  onCommentDelete?: (commentId: string) => void;
+  onRepliesUpdate?: (parentId: string, replies: Comment[]) => void;
   depth?: number;
+  className?: string;
 }
 
 export const CommentItem: React.FC<CommentItemProps> = ({
-                                                          comment,
-                                                          postId,
-                                                          onCommentUpdate,
-                                                          onCommentDelete,
-                                                          depth = 0
-                                                        }) => {
+  comment: initialComment,
+  postId,
+  isOwnComment = false,
+  onDelete,
+  onReport,
+  onHide,
+  onCommentUpdate,
+  onRepliesUpdate,
+  depth = 0,
+  className = ''
+}) => {
   const { user } = useAuth();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Local state management with proper normalization
+  const [comment, setComment] = useState(() => CommentManager.normalizeComment(initialComment));
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
-  const [showReplies, setShowReplies] = useState(false);
-  const [replies, setReplies] = useState<Comment[]>(comment.replies || []);
   const [isLoadingReplies, setIsLoadingReplies] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [showReactionPicker, setShowReactionPicker] = useState(false);
-  const [userReaction, setUserReaction] = useState<string | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
 
-  const menuRef = useRef<HTMLDivElement>(null);
-  const reactionButtonRef = useRef<HTMLButtonElement>(null);
-  const reactionPickerRef = useRef<HTMLDivElement>(null);
+  // Separate state for replies visibility to avoid conflicts
+  const [showReplies, setShowReplies] = useState(false);
 
-  const isOwnComment = user?.id === comment.author?.id;
-  const hasReplies = (comment.replyCount && comment.replyCount > 0) || replies.length > 0;
-  const maxDepth = 3;
-  const isFlattened = comment.isFlattened || (comment.depth !== undefined && comment.depth >= maxDepth);
-  const shouldShowReplyButton = (comment.depth === undefined || comment.depth < maxDepth);
+  // Computed values
+  const canReply = CommentManager.canAddReply(comment);
+  const hasReplies = comment.replyCount > 0 || (comment.replies && comment.replies.length > 0);
+  const indentWidth = Math.min(depth * 20, 60); // Max 60px indent
+  const authorDisplayName = CommentManager.getAuthorDisplayName(comment.author);
+  const authorDisplayAvatar = CommentManager.getAuthorDisplayAvatar(comment.author);
 
-  // Auto-adjust textarea height
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Update local state when prop changes but preserve showReplies state
   useEffect(() => {
-    if (textareaRef.current) {
+    const normalizedComment = CommentManager.normalizeComment(initialComment);
+    setComment(normalizedComment);
+    // Don't reset showReplies here to avoid flickering
+  }, [initialComment]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current && showReplyForm) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, [replyText, showReplyForm]);
 
-  // Handle clicks outside menu to close it
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
+  // Load replies from server
   const loadReplies = async () => {
-    if (isLoadingReplies || (replies.length > 0 && !comment.replyCount)) return;
+    if (!postId || isLoadingReplies || (comment.replies && comment.replies.length > 0)) {
+      return;
+    }
 
     setIsLoadingReplies(true);
     try {
       const loadedReplies = await postService.getCommentReplies(comment.id, postId);
-      setReplies(loadedReplies);
+      const normalizedReplies = loadedReplies.map(CommentManager.normalizeComment);
+
+      const updatedComment = { ...comment, replies: normalizedReplies, showReplies: true };
+      setComment(updatedComment);
+      onCommentUpdate?.(updatedComment);
+      onRepliesUpdate?.(comment.id, normalizedReplies);
     } catch (error) {
       console.error('Error loading replies:', error);
     } finally {
@@ -92,16 +108,44 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
-  const handleShowReplies = async () => {
-    if (!showReplies && hasReplies && replies.length === 0) {
-      await loadReplies();
+  // Toggle replies visibility
+  const handleToggleReplies = async () => {
+    if (!hasReplies) return;
+
+    // Sử dụng state riêng showReplies thay vì comment.showReplies
+    if (showReplies) {
+      setShowReplies(false);
+      return;
     }
-    setShowReplies(!showReplies);
+
+    // Nếu chưa có data thì load
+    if (!comment.replies || comment.replies.length === 0) {
+      setIsLoadingReplies(true);
+      try {
+        const loadedReplies = await postService.getCommentReplies(comment.id, postId!);
+        const normalizedReplies = loadedReplies.map(CommentManager.normalizeComment);
+
+        const updatedComment = { ...comment, replies: normalizedReplies };
+        setComment(updatedComment);
+        setShowReplies(true); // Set state riêng
+
+        onCommentUpdate?.(updatedComment);
+        onRepliesUpdate?.(comment.id, normalizedReplies);
+      } catch (error) {
+        console.error('Error loading replies:', error);
+      } finally {
+        setIsLoadingReplies(false);
+      }
+    } else {
+      // Nếu đã có data thì chỉ cần show
+      setShowReplies(true);
+    }
   };
 
+  // Handle reply submission with proper structure
   const handleSubmitReply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!replyText.trim() || isSubmittingReply) return;
+    if (!replyText.trim() || isSubmittingReply || !postId) return;
 
     setIsSubmittingReply(true);
     try {
@@ -111,21 +155,28 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       };
 
       const newReply = await postService.createComment(postId, replyData);
+      const normalizedReply = CommentManager.normalizeComment({
+        ...newReply,
+        depth: (comment.depth || 0) + 1,
+        replyToAuthor: authorDisplayName
+      });
 
-      setReplies(prev => [...prev, newReply]);
+      // Update local comment state
+      const updatedReplies = [...(comment.replies || []), normalizedReply];
+      const updatedComment = {
+        ...comment,
+        replies: updatedReplies,
+        replyCount: (comment.replyCount || 0) + 1,
+        showReplies: true
+      };
+
+      setComment(updatedComment);
       setReplyText('');
       setShowReplyForm(false);
 
-      if (onCommentUpdate) {
-        onCommentUpdate({
-          ...comment,
-          replyCount: (comment.replyCount || 0) + 1,
-          stats: {
-            ...comment.stats,
-            replies: (comment.stats?.replies || 0) + 1
-          }
-        });
-      }
+      // Notify parent components
+      onCommentUpdate?.(updatedComment);
+      onRepliesUpdate?.(comment.id, updatedReplies);
     } catch (error) {
       console.error('Error creating reply:', error);
     } finally {
@@ -133,284 +184,336 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
-  const handleCommentAction = async (action: 'report' | 'delete' | 'hide') => {
+  // Handle comment like with optimistic updates
+  const handleLike = async () => {
+    if (isLiking || !postId) return;
+
+    setIsLiking(true);
+    const previousLiked = isLiked;
+    const previousCount = comment.likesCount || 0;
+
+    // Optimistic update
+    const newLiked = !isLiked;
+    const newCount = newLiked ? previousCount + 1 : Math.max(previousCount - 1, 0);
+
+    setIsLiked(newLiked);
+    const updatedComment = { ...comment, likesCount: newCount };
+    setComment(updatedComment);
+
     try {
-      switch (action) {
-        case 'delete':
-          if (onCommentDelete) {
-            onCommentDelete(comment.id);
-          }
-          break;
-        case 'report':
-          console.log('Report comment:', comment.id);
-          // TODO: Add actual API call and toast notification
-          break;
-        case 'hide':
-          console.log('Hide comment:', comment.id);
-          // TODO: Implement hide functionality
-          break;
-      }
+      await postService.toggleCommentLike(comment.id, postId);
+      onCommentUpdate?.(updatedComment);
     } catch (error) {
-      console.error('Error handling comment action:', error);
+      // Revert on error
+      setIsLiked(previousLiked);
+      const revertedComment = { ...comment, likesCount: previousCount };
+      setComment(revertedComment);
+      console.error('Error toggling comment like:', error);
+    } finally {
+      setIsLiking(false);
     }
+  };
+
+  // Handle menu actions
+  const handleMenuAction = (action: 'report' | 'delete' | 'hide') => {
     setShowMenu(false);
-  };
-
-  const handleReaction = (reactionType: string) => {
-    setUserReaction(userReaction === reactionType ? null : reactionType);
-    setShowReactionPicker(false);
-    // TODO: Add actual API call to update reaction
-  };
-
-  const getDisplayContent = () => {
-    if (comment.replyToAuthor && isFlattened) {
-      return (
-          <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
-            <span className="font-medium text-blue-600">@{comment.replyToAuthor}</span>{' '}
-            {comment.content}
-          </p>
-      );
+    switch (action) {
+      case 'report':
+        onReport?.();
+        break;
+      case 'delete':
+        onDelete?.();
+        break;
+      case 'hide':
+        onHide?.();
+        break;
     }
-    return (
-        <p className="text-sm text-gray-800 vietnamese-text leading-relaxed break-words">
-          {comment.content}
-        </p>
-    );
   };
 
-  const getIndentationClass = () => {
-    if (isFlattened) {
-      return 'ml-4 border-l-2 border-orange-200 pl-4';
-    } else if (depth > 0) {
-      // Improved indentation with a clear, solid line
-      return `ml-${Math.min(depth * 8, 32)} border-l-4 border-gray-200 pl-4`;
+  // Handle reply form toggle
+  const handleReplyToggle = () => {
+    setShowReplyForm(!showReplyForm);
+    if (!showReplyForm) {
+      setReplyText('');
+      // Focus textarea after it renders
+      setTimeout(() => textareaRef.current?.focus(), 100);
     }
-    return '';
   };
 
   return (
-      <div className={getIndentationClass()}>
-        <div className="flex space-x-3">
-          {/* Avatar */}
-          <div className="flex-shrink-0">
-            {comment.author?.avatarUrl ? (
-                <Avatar
-                    src={comment.author.avatarUrl}
-                    alt={comment.author.fullName || comment.author.name || 'User'}
-                    size="sm"
-                    className="ring-2 ring-white shadow-sm"
-                />
-            ) : (
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm">
-                  {comment.author?.fullName?.charAt(0) || comment.author?.name?.charAt(0) || 'A'}
+    <div
+      className={`relative ${className}`}
+      style={{ paddingLeft: `${indentWidth}px` }}
+    >
+      {/* Connecting line for nested replies */}
+      {depth > 0 && (
+        <div
+          className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-200"
+          style={{ left: `${indentWidth - 12}px` }}
+        />
+      )}
+
+      <div className="flex gap-3 py-3 group">
+        {/* Avatar */}
+        <div className="flex-shrink-0">
+          <Avatar
+            id={comment.author.id}
+            src={authorDisplayAvatar}
+            alt={authorDisplayName}
+            size="sm"
+            className="ring-2 ring-gray-100 hover:ring-blue-200 transition-all duration-200"
+          />
+        </div>
+
+        {/* Comment content */}
+        <div className="flex-1 min-w-0">
+          {/* Comment bubble */}
+          <div className="bg-gray-100 hover:bg-gray-50 rounded-2xl px-4 py-3 inline-block max-w-full transition-colors duration-200">
+            {/* Author name with verification badge */}
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-sm text-gray-900 hover:text-blue-600 cursor-pointer transition-colors">
+                {authorDisplayName}
+              </span>
+              {comment.author.verified && (
+                <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                  <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
                 </div>
-            )}
+              )}
+            </div>
+
+            {/* Comment text with reply mention */}
+            <div className="text-sm text-gray-800 leading-relaxed break-words whitespace-pre-wrap">
+              {comment.replyToAuthor && comment.isFlattened && (
+                <span className="text-blue-600 font-medium mr-1 hover:text-blue-700 cursor-pointer">
+                  @{comment.replyToAuthor}
+                </span>
+              )}
+              {comment.content}
+            </div>
           </div>
 
-          <div className="flex-1 min-w-0">
-            {/* Comment Content */}
-            <div className="rounded-2xl px-4 py-3 relative bg-gray-100">
-              {/* Menu Button */}
-              <div className="absolute top-2 right-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity" ref={menuRef}>
-                <div className="relative">
-                  <button
-                      onClick={() => setShowMenu(!showMenu)}
-                      className="p-1 hover:bg-gray-200 rounded-full transition-colors"
-                  >
-                    <MoreHorizontal className="h-4 w-4 text-gray-500" />
-                  </button>
+          {/* Comment actions */}
+          <div className="flex items-center gap-4 mt-1.5 ml-2">
+            {/* Timestamp */}
+            <span className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer transition-colors">
+              {formatTimeAgo(comment.createdAt)}
+            </span>
 
-                  {showMenu && (
-                      <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
-                        <button
-                            onClick={() => handleCommentAction('report')}
-                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <Flag className="h-4 w-4 text-red-500" />
-                          <span>Báo cáo</span>
-                        </button>
+            {/* Like button */}
+            <button
+              onClick={handleLike}
+              disabled={isLiking}
+              className={`flex items-center gap-1 text-xs font-medium transition-all duration-200 ${
+                isLiked 
+                  ? 'text-blue-600 hover:text-blue-700' 
+                  : 'text-gray-500 hover:text-blue-600'
+              } disabled:opacity-50`}
+            >
+              <ThumbsUp className={`h-3 w-3 transition-all duration-200 ${
+                isLiked ? 'fill-current scale-110' : 'hover:scale-110'
+              }`} />
+              {comment.likesCount > 0 && (
+                <span className="font-medium">{comment.likesCount}</span>
+              )}
+              <span>{isLiked ? 'Đã thích' : 'Thích'}</span>
+            </button>
 
-                        {isOwnComment && (
-                            <button
-                                onClick={() => handleCommentAction('delete')}
-                                className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span>Xóa</span>
-                            </button>
-                        )}
+            {/* Reply button */}
+            {canReply && (
+              <button
+                onClick={handleReplyToggle}
+                className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-blue-600 transition-colors duration-200"
+              >
+                <Reply className="h-3 w-3" />
+                Trả lời
+              </button>
+            )}
 
-                        <button
-                            onClick={() => handleCommentAction('hide')}
-                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <EyeOff className="h-4 w-4" />
-                          <span>Ẩn bình luận</span>
-                        </button>
-                      </div>
+            {/* Menu button */}
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-1 rounded-full hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-all duration-200 opacity-0 group-hover:opacity-100"
+              >
+                <MoreHorizontal className="h-3 w-3" />
+              </button>
+
+              {/* Dropdown menu */}
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[120px]">
+                  {isOwnComment ? (
+                    <button
+                      onClick={() => handleMenuAction('delete')}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Xóa
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleMenuAction('report')}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <Flag className="h-3 w-3" />
+                        Báo cáo
+                      </button>
+                      <button
+                        onClick={() => handleMenuAction('hide')}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <EyeOff className="h-3 w-3" />
+                        Ẩn
+                      </button>
+                    </>
                   )}
                 </div>
-              </div>
-
-              {/* Author Info */}
-              <div className="flex items-center space-x-2 mb-1">
-              <span className="font-semibold text-sm text-gray-900 vietnamese-text truncate">
-                {comment.author?.fullName || comment.author?.name || 'Người dùng ẩn danh'}
-              </span>
-                {comment.author?.role && (
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                        comment.author.role === 'LECTURER'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-green-100 text-green-700'
-                    }`}>
-                  {comment.author.role === 'LECTURER' ? 'Giảng viên' : 'Sinh viên'}
-                </span>
-                )}
-
-              </div>
-
-              {/* Comment Text */}
-              {getDisplayContent()}
+              )}
             </div>
+          </div>
 
-            {/* Comment Actions */}
-            <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-              <time dateTime={comment.createdAt} className="flex-shrink-0">
-                {formatTimeAgo(comment.createdAt)}
-              </time>
-
-              {/* Reaction Button */}
-              <div className="relative">
-                <button
-                    ref={reactionButtonRef}
-                    onMouseEnter={() => setShowReactionPicker(true)}
-                    onMouseLeave={() => setShowReactionPicker(false)}
-                    className={`hover:underline font-medium transition-colors ${
-                        userReaction ? 'text-blue-600' : 'hover:text-blue-600'
-                    }`}
-                >
-                  {userReaction ? `${userReaction} Đã thích` : 'Thích'}
-                </button>
-
-                {showReactionPicker && (
-                    <div
-                        ref={reactionPickerRef}
-                        className="absolute bottom-full left-0 mb-2 z-50"
-                        onMouseEnter={() => setShowReactionPicker(true)}
-                        onMouseLeave={() => setShowReactionPicker(false)}
-                    >
-                      <ReactionPicker
-                          onReactionClick={handleReaction}
-                          currentReaction={userReaction}
-                      />
+          {/* Reply form */}
+          {showReplyForm && canReply && (
+            <div className="mt-3 ml-2 animate-in slide-in-from-top-2 duration-200">
+              <form onSubmit={handleSubmitReply} className="flex gap-3">
+                <Avatar
+                  id={user?.id}
+                  src={user?.avatarUrl || '/default-avatar.png'}
+                  alt={user?.fullName || user?.username || 'Your avatar'}
+                  size="sm"
+                  className="flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <Textarea
+                    ref={textareaRef}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder={`Trả lời ${authorDisplayName}...`}
+                    className="min-h-[40px] max-h-32 text-sm bg-white border border-gray-200 focus:border-blue-400 focus:ring-blue-400 rounded-lg px-3 py-2 resize-none transition-all duration-200"
+                    disabled={isSubmittingReply}
+                    rows={1}
+                  />
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all duration-200"
+                      >
+                        <Smile className="h-4 w-4" />
+                      </button>
                     </div>
-                )}
-              </div>
-
-              {/* Reply Button - Only show if not at max depth */}
-              {shouldShowReplyButton && (
-                  <button
-                      onClick={() => setShowReplyForm(!showReplyForm)}
-                      className="hover:underline font-medium transition-colors hover:text-blue-600 flex items-center space-x-1"
-                  >
-                    <Reply className="h-3 w-3" />
-                    <span>Trả lời</span>
-                  </button>
-              )}
-
-              {/* Show Replies Button */}
-              {hasReplies && (
-                  <button
-                      onClick={handleShowReplies}
-                      className="hover:underline font-medium transition-colors hover:text-blue-600 flex items-center space-x-1"
-                  >
-                    {showReplies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                    <span>
-                  {showReplies ? 'Ẩn' : 'Xem'} {comment.replyCount || replies.length} phản hồi
-                      {isFlattened && ' (gộp)'}
-                </span>
-                  </button>
-              )}
-            </div>
-
-            {/* Reply Form */}
-            {showReplyForm && shouldShowReplyButton && (
-                <form onSubmit={handleSubmitReply} className="mt-3">
-                  <div className="flex space-x-2">
-                    {user?.avatarUrl ? (
-                        <Avatar
-                            src={user.avatarUrl}
-                            alt={user.fullName || user.username || 'Your avatar'}
-                            size="sm"
-                            className="ring-2 ring-white shadow-sm flex-shrink-0"
-                        />
-                    ) : (
-                        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                          {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'A'}
-                        </div>
-                    )}
-
-                    <div className="flex-1">
-                      <Textarea
-                          ref={textareaRef}
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          placeholder={`Trả lời ${comment.author?.fullName || comment.author?.name || 'bình luận này'}...`}
-                          className="min-h-[40px] text-sm bg-white border border-gray-200 rounded-lg px-3 py-2 resize-none vietnamese-text"
-                          disabled={isSubmittingReply}
-                      />
-
-                      <div className="flex justify-end space-x-2 mt-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setShowReplyForm(false);
-                              setReplyText('');
-                            }}
-                            className="text-xs px-3 py-1"
-                        >
-                          Hủy
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="sm"
-                            disabled={!replyText.trim() || isSubmittingReply}
-                            className="text-xs px-3 py-1"
-                        >
-                          {isSubmittingReply ? <LoadingSpinner size="sm" /> : 'Gửi'}
-                        </Button>
-                      </div>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleReplyToggle}
+                        className="text-xs px-3 py-1 h-7"
+                      >
+                        Hủy
+                      </Button>
+                      <Button
+                        type="submit"
+                        size="sm"
+                        disabled={!replyText.trim() || isSubmittingReply}
+                        className="text-xs px-3 py-1 h-7 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {isSubmittingReply ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <>
+                            <Send className="h-3 w-3 mr-1" />
+                            Gửi
+                          </>
+                        )}
+                      </Button>
                     </div>
                   </div>
-                </form>
-            )}
-
-            {/* Replies */}
-            {showReplies && (
-                <div className="mt-4 space-y-3">
-                  {isLoadingReplies ? (
-                      <div className="flex items-center justify-center py-2 text-gray-500">
-                        <LoadingSpinner size="sm" className="mr-2" />
-                        <span className="text-sm">Đang tải phản hồi...</span>
-                      </div>
-                  ) : (
-                      replies.map((reply) => (
-                          <CommentItem
-                              key={reply.id}
-                              comment={reply}
-                              postId={postId}
-                              onCommentUpdate={onCommentUpdate}
-                              onCommentDelete={onCommentDelete}
-                              depth={reply.depth || (depth + 1)}
-                          />
-                      ))
-                  )}
                 </div>
-            )}
-          </div>
+              </form>
+            </div>
+          )}
+
+          {/* Replies toggle */}
+          {hasReplies && (
+            <div className="mt-2 ml-2">
+              <button
+                onClick={handleToggleReplies}
+                disabled={isLoadingReplies}
+                className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200 disabled:opacity-50"
+              >
+                {isLoadingReplies ? (
+                  <LoadingSpinner size="sm" />
+                ) : comment.showReplies ? (
+                  <ChevronUp className="h-3 w-3" />
+                ) : (
+                  <ChevronDown className="h-3 w-3" />
+                )}
+                <span>
+                  {comment.showReplies
+                    ? 'Ẩn phản hồi'
+                    : `Xem ${comment.replyCount} phản hồi`
+                  }
+                </span>
+              </button>
+            </div>
+          )}
+
+          {/* Nested replies with improved structure */}
+          {showReplies && comment.replies && comment.replies.length > 0 && (
+            <div className="mt-2 space-y-1 animate-in slide-in-from-top-2 duration-300">
+              {comment.replies.map((reply) => (
+                <CommentItem
+                  key={reply.id}
+                  comment={reply}
+                  postId={postId}
+                  isOwnComment={user?.id === reply.author.id}
+                  onDelete={() => {
+                    const updatedReplies = comment.replies!.filter(r => r.id !== reply.id);
+                    const updatedComment = {
+                      ...comment,
+                      replies: updatedReplies,
+                      replyCount: Math.max((comment.replyCount || 1) - 1, 0)
+                    };
+                    setComment(updatedComment);
+                    onCommentUpdate?.(updatedComment);
+                    onRepliesUpdate?.(comment.id, updatedReplies);
+                  }}
+                  onReport={() => console.log('Report reply:', reply.id)}
+                  onHide={() => {
+                    const updatedReplies = comment.replies!.filter(r => r.id !== reply.id);
+                    const updatedComment = { ...comment, replies: updatedReplies };
+                    setComment(updatedComment);
+                    onCommentUpdate?.(updatedComment);
+                  }}
+                  onCommentUpdate={(updatedReply) => {
+                    const updatedReplies = comment.replies!.map(r =>
+                      r.id === updatedReply.id ? updatedReply : r
+                    );
+                    const updatedComment = { ...comment, replies: updatedReplies };
+                    setComment(updatedComment);
+                    onCommentUpdate?.(updatedComment);
+                    onRepliesUpdate?.(comment.id, updatedReplies);
+                  }}
+                  onRepliesUpdate={onRepliesUpdate}
+                  depth={depth + 1}
+                  className="border-l-2 border-gray-100 hover:border-blue-200 transition-colors duration-200"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Click outside to close menu */}
+      {showMenu && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setShowMenu(false)}
+        />
+      )}
+    </div>
   );
 };
