@@ -616,70 +616,6 @@ public class PostController {
     }
 
     /**
-     * Create a simple reply with just content (convenience endpoint)
-     */
-    @PostMapping("/{postId}/comments/{parentId}/reply")
-    @RequireAuth
-    public ResponseEntity<?> createReply(
-            @PathVariable String postId,
-            @PathVariable String parentId,
-            @RequestParam String content) {
-        try {
-            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
-            CommentRequest request = new CommentRequest();
-            request.setContent(content);
-            request.setParentCommentId(parentId);
-
-            CommentResponse reply = commentService.createComment(postId, request, currentUserId);
-
-            // Send notification to parent comment author
-            if (notificationService != null) {
-                try {
-                    CommentResponse parentComment = commentService.getCommentById(parentId);
-                    if (!parentComment.getAuthor().getId().equals(currentUserId)) {
-                        notificationService.createNotification(
-                            parentComment.getAuthor().getId(),
-                            currentUserId,
-                            "COMMENT_REPLIED",
-                            "COMMENT",
-                            parentId,
-                            "Someone replied to your comment"
-                        );
-                    }
-                } catch (Exception e) {
-                    System.err.println("Failed to send reply notification: " + e.getMessage());
-                }
-            }
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(reply);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Failed to create reply", "message", e.getMessage()));
-        }
-    }
-
-    /**
-     * Record interaction (LIKE/SHARE/BOOKMARK) - Legacy endpoint
-     */
-    @PostMapping("/{id}/interactions")
-    @RequireAuth
-    public ResponseEntity<InteractionResponse> recordInteraction(
-            @PathVariable String id,
-            @Valid @RequestBody InteractionRequest request) {
-        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
-        try {
-            InteractionResponse interaction = interactionService.createInteraction(id, request, userId);
-            if (interaction == null) {
-                // Interaction was removed (e.g., unlike)
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.status(HttpStatus.CREATED).body(interaction);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
      * Toggle like on a post
      */
     @PostMapping("/{postId}/like")
@@ -852,4 +788,33 @@ public class PostController {
                 return "LIKE";
         }
     }
+
+    // ========== COMMENT ENDPOINTS (Proxy to CommentService, used by client-frontend) ==========
+
+    /**
+     * Toggle like for a comment (stub/no-op for now)
+     * Frontend performs optimistic update; backend can be enhanced later.
+     */
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    @RequireAuth
+    public ResponseEntity<?> toggleCommentLike(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        try {
+            String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
+            return ResponseEntity.ok(Map.of(
+                    "message", "Comment like toggled",
+                    "postId", postId,
+                    "commentId", commentId,
+                    "userId", userId
+            ));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to toggle like", "message", e.getMessage()));
+        }
+    }
 }
+

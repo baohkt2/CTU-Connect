@@ -14,6 +14,8 @@ import com.ctuconnect.repository.CommentRepository;
 import com.ctuconnect.repository.PostRepository;
 
 import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.stream.Collectors;
 
 
@@ -226,11 +228,19 @@ public class CommentService {
                 throw new RuntimeException("Only the author can delete this comment");
             }
 
-            // Delete all replies (both nested and flattened)
-            commentRepository.deleteAllRepliesUnderComment(id);
+            // Collect all descendant reply IDs (recursive via BFS)
+            List<String> descendantIds = collectDescendantIds(id);
 
-            // Update post comment count (count all deleted comments)
-            long deletedCount = commentRepository.countTotalReplies(id) + 1; // +1 for the comment itself
+            // If deleting a root comment, also include flattened replies under this root
+            if (comment.isRootComment()) {
+                List<CommentEntity> flattened = commentRepository.findFlattenedReplies(id, CommentEntity.MAX_DEPTH);
+                for (CommentEntity f : flattened) {
+                    descendantIds.add(f.getId());
+                }
+            }
+
+            // Update post comment count (all replies + the comment itself)
+            long deletedCount = descendantIds.size() + 1L;
             Optional<PostEntity> postOpt = postRepository.findById(comment.getPostId());
             if (postOpt.isPresent()) {
                 PostEntity post = postOpt.get();
@@ -239,7 +249,10 @@ public class CommentService {
                 postRepository.save(post);
             }
 
-            // Delete the comment itself
+            // Delete replies first, then the comment
+            if (!descendantIds.isEmpty()) {
+                commentRepository.deleteAllById(descendantIds);
+            }
             commentRepository.deleteById(id);
 
             // Publish event
@@ -247,6 +260,23 @@ public class CommentService {
         } else {
             throw new RuntimeException("Comment not found with id: " + id);
         }
+    }
+
+    // Helper: recursively collect all descendant reply IDs under a comment (excluding flattened replies)
+    private List<String> collectDescendantIds(String rootId) {
+        List<String> result = new ArrayList<>();
+        Deque<String> stack = new ArrayDeque<>();
+        stack.push(rootId);
+
+        while (!stack.isEmpty()) {
+            String currentId = stack.pop();
+            List<CommentEntity> children = commentRepository.findByParentCommentId(currentId);
+            for (CommentEntity child : children) {
+                result.add(child.getId());
+                stack.push(child.getId());
+            }
+        }
+        return result;
     }
 
     public long getCommentCountByPost(String postId) {
