@@ -397,7 +397,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({
                 </button>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                Ảnh/Video: JPG, PNG, GIF, MP4, AVI | Tài liệu: PDF, DOC, DOCX. Tối đa 50MB mỗi file, 5 file.
+                Ảnh/Video: JPG, PNG, GIF, MP4, AVI | Tài liệu: PDF, DOC, DOCX, ZIP, RAR
               </p>
             </div>
           </div>

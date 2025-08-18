@@ -525,9 +525,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               <div className="space-y-2">
                 {post.documents.map((document: any, index: number) => (
                   <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
-                    <PostDocumentIcon document={document}>
-
-                    </PostDocumentIcon>
+                    <PostDocumentIcon document={document} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">
                         {document.originalFileName || document.fileName}
@@ -540,17 +538,37 @@ export const PostCard: React.FC<PostCardProps> = ({
                             }
                           </p>
                       )}
-
                     </div>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => window.open(document.url, '_blank')}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
 
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* View Button - CHỈ cho PDF */}
+                      {document.contentType?.includes('pdf') && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(document.url, '_blank')}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          title="Xem PDF trực tuyến"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </Button>
+                      )}
+
+                      {/* Download Button - CHO TẤT CẢ file */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDocumentDownload(document)}
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                        title={document.contentType?.includes('pdf') ? 'Tải xuống PDF' : 'Tải xuống file'}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -842,14 +860,37 @@ const getDocumentType = (contentType: string): string => {
   }
 };
 
-// Simplified download function - direct popup to link
+// Enhanced download function with proper file download support
 const handleDocumentDownload = async (document: any) => {
   try {
-    // Direct popup to Cloudinary link
-    window.open(document.url, '_blank');
+    // Create a temporary anchor element for download
+    const link = document.createElement('a');
+    link.style.display = 'none';
+
+    // Set the download URL and filename
+    link.href = document.url;
+    link.download = document.originalFileName || document.fileName || 'download';
+
+    // Add to DOM temporarily
+    document.body.appendChild(link);
+
+    // Trigger the download
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+
+    console.log('Download initiated for:', document.originalFileName || document.fileName);
   } catch (error) {
-    console.error('Error opening document:', error);
-    alert('Không thể mở tài liệu. Vui lòng thử lại sau.');
+    console.error('Error downloading document:', error);
+
+    // Fallback: Open in new tab if direct download fails
+    try {
+      window.open(document.url, '_blank');
+    } catch (fallbackError) {
+      console.error('Fallback also failed:', fallbackError);
+      alert('Không thể tải xuống tài liệu. Vui lòng thử lại sau.');
+    }
   }
 };
 
