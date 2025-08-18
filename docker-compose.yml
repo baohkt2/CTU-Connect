@@ -32,7 +32,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     networks:
       - ctuconnect-network
     healthcheck:
@@ -208,6 +208,114 @@ services:
         - action: rebuild
           path: .
 
+  # MongoDB for Post Service
+  post_db:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=post_db
+    volumes:
+      - post-data:/data/db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
+  # MongoDB for Recommendation Service
+  recommendation_db:
+    image: mongo:7.0
+    container_name: recommendation_db
+    ports:
+      - "27019:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=recommendation_db
+    volumes:
+      - recommendation-data:/data/db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
+  # Recommendation Service
+  recommendation-service:
+    build:
+      context: ./recommendation-service
+      dockerfile: Dockerfile
+    container_name: recommendation-service
+    ports:
+      - "8086:8086"
+    environment:
+      # Service config
+      - RECOMMENDATION_SERVICE_NAME=recommendation-service
+      - RECOMMENDATION_SERVICE_PORT=8086
+
+      # Eureka config
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_REGISTER_ENABLED=true
+      - EUREKA_INSTANCE_HOSTNAME=recommendation-service
+
+      # Kafka config
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TOPIC_INTERACTIONS=user-interactions
+      - KAFKA_GROUP_ID=recommendation-consumer
+
+      # MongoDB config
+      - MONGO_URI=mongodb://recommendation_db:27017
+      - MONGO_DB=recommendation_db
+
+      # Redis config
+      - REDIS_URL=redis://redis:6379/0
+
+      # Other services
+      - USER_SERVICE_NAME=user-service
+      - POST_SERVICE_NAME=post-service
+      - API_GATEWAY_URL=http://api-gateway:8090
+    volumes:
+      # Volume để lưu thư viện Python - không bị xóa khi rebuild
+      - recommendation-venv:/opt/venv
+      # Volume để lưu data và cache
+      - recommendation-app-data:/app/data
+      - recommendation-cache:/app/cache
+    networks:
+      - ctuconnect-network
+    depends_on:
+      - eureka-server
+      - kafka
+      - redis
+      - recommendation_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    develop:
+      watch:
+        - action: rebuild
+          path: ./recommendation-service
+          ignore:
+            - __pycache__/
+            - "*.pyc"
+            - .venv/
+            - data/
+            - cache/
+
   # Neo4j Graph Database for User Service
   neo4j:
     image: neo4j:5.13.0
@@ -347,167 +455,9 @@ services:
         - action: rebuild # Hoặc 'sync' nếu bạn muốn bind mount
           path: . # Giám sát toàn bộ thư mục context của Dockerfile
 
-  # MongoDB for Post Service
-  post_db:
-    image: mongo:7.0
-    container_name: mongodb
-    ports:
-      - "27018:27017"
-    environment:
-      - MONGO_INITDB_DATABASE=post_db
-    volumes:
-      - post-data:/data/db
-    networks:
-      - ctuconnect-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    develop:
-      watch:
-        - action: rebuild
-          path: .
-
-  # Recommendation Service Redis
-  recommendation-redis:
-    image: redis:7-alpine
-    container_name: recommendation-redis
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - recommendation_redis_data:/data
-    networks:
-      - ctuconnect-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # MLflow for ML experiment tracking
-  mlflow-server:
-    image: python:3.11-slim
-    container_name: mlflow-server
-    ports:
-      - "5000:5000"
-    environment:
-      - MLFLOW_BACKEND_STORE_URI=postgresql://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
-    command: >
-      bash -c "
-        pip install mlflow psycopg2-binary &&
-        mlflow server 
-          --backend-store-uri postgresql://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
-          --default-artifact-root ./mlruns
-          --host 0.0.0.0
-          --port 5000
-      "
-    depends_on:
-      auth_db:
-        condition: service_healthy
-    networks:
-      - ctuconnect-network
-    volumes:
-      - mlflow_data:/mlruns
-
-  # Recommendation Service
-  recommendation-service:
-    build:
-      context: ./recommendation-service
-    container_name: recommendation-service
-    ports:
-      - "8080:8000"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD}@auth_db:5432/auth_db
-      - REDIS_URL=redis://recommendation-redis:6379
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SECRET_KEY=${RECOMMENDATION_SECRET_KEY:-recommendation-secret-key}
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
-      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
-      - DEBUG=false
-      - API_GATEWAY_URL=http://api-gateway:8090
-    depends_on:
-      auth_db:
-        condition: service_healthy
-      recommendation-redis:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-    networks:
-      - ctuconnect-network
-    volumes:
-      - ./recommendation-service/models:/app/models
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
-
-  # Chat Service
-  chat-service:
-    build:
-      context: ./chat-service
-    container_name: chat-service
-    ports:
-      - "8086:8086"
-    depends_on:
-      chat_db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATA_MONGODB_HOST=chat_db
-      - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_DATABASE=chat_db
-      - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_DATA_REDIS_PORT=6379
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - WEBSOCKET_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
-    networks:
-      - ctuconnect-network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    develop:
-      watch:
-        - action: rebuild
-          path: .
-
-  # MongoDB for Chat Service
-  chat_db:
-    image: mongo:7.0
-    container_name: chat_mongodb
-    ports:
-      - "27019:27017"
-    environment:
-      - MONGO_INITDB_DATABASE=chat_db
-    volumes:
-      - chat_data:/data/db
-    networks:
-      - ctuconnect-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    develop:
-      watch:
-        - action: rebuild
-          path: .
+networks:
+  ctuconnect-network:
+    driver: bridge
 
 volumes:
   auth_db_data:
@@ -516,10 +466,7 @@ volumes:
   kafka-data:
   media_data:
   post-data:
-  recommendation_redis_data:
-  mlflow_data:
-  chat_data:
-
-networks:
-  ctuconnect-network:
-    driver: bridge
+  recommendation-data:
+  recommendation-venv:
+  recommendation-app-data:
+  recommendation-cache:
