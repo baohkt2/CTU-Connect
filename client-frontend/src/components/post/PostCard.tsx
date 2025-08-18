@@ -747,11 +747,24 @@ export const PostCard: React.FC<PostCardProps> = ({
                   <CommentItem
                     key={comment.id}
                     comment={comment}
+                    postId={post.id}
                     isOwnComment={comment.authorId === user?.id}
                     onDelete={() => handleCommentAction('delete', comment.id)}
                     onReport={() => handleCommentAction('report', comment.id)}
                     onHide={() => handleCommentAction('hide', comment.id)}
-                    className="p-4 hover:bg-gray-50 transition-colors"
+                    onCommentUpdate={(updatedComment) => {
+                      setComments(prev => prev.map(c => c.id === updatedComment.id ? updatedComment : c));
+                      // Update post comment count if needed
+                      if (updatedComment.replyCount !== comment.replyCount) {
+                        const countDiff = (updatedComment.replyCount || 0) - (comment.replyCount || 0);
+                        onPostUpdate?.({
+                          ...post,
+                          stats: { ...post.stats, comments: (post.stats.comments || 0) + countDiff }
+                        });
+                      }
+                    }}
+                    className="hover:bg-gray-50 transition-colors"
+                    depth={0}
                   />
                 ))}
               </div>
