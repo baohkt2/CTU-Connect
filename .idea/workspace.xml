@@ -4,16 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Try fix ui comment v1">
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/utils/commentManager.ts" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Cmt temp">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/CommentItem.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/services/postService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/CommentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/InteractionService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -496,7 +493,7 @@
       <workItem from="1755433179357" duration="44000" />
       <workItem from="1755434408312" duration="550000" />
       <workItem from="1755455141134" duration="7782000" />
-      <workItem from="1755491751154" duration="17929000" />
+      <workItem from="1755491751154" duration="23472000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -826,7 +823,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755505770527</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Cmt temp">
+      <option name="closed" value="true" />
+      <created>1755511933442</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1755511933442</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -856,7 +861,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Auth Client-Frontend v1" />
     <MESSAGE value="Auth Client-Frontend fixing" />
     <MESSAGE value="Pre-build Media-service" />
     <MESSAGE value="Media service OK" />
@@ -881,7 +885,8 @@
     <MESSAGE value="Try fix comment" />
     <MESSAGE value="Try fix ui comment" />
     <MESSAGE value="Try fix ui comment v1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Try fix ui comment v1" />
+    <MESSAGE value="Cmt temp" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cmt temp" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -900,6 +905,12 @@
           <url>file://$PROJECT_DIR$/recommendation-service/Test/load_trained_model.py</url>
           <line>330</line>
           <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/client-frontend/src/components/post/PostCard.tsx</url>
+          <line>522</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -683,6 +683,27 @@ public class PostController {
         }
     }
 
+    @PostMapping("/{postId}/share")
+    @RequireAuth
+    public ResponseEntity<?> toggleShare(@PathVariable String postId) {
+        try {
+            String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
+
+            InteractionRequest request = new InteractionRequest();
+            request.setReaction(InteractionEntity.InteractionType.SHARE);
+            // Don't set reactionType for bookmark - it's not a reaction
+
+            InteractionResponse response = interactionService.createInteraction(postId, request, currentUserId);
+            return ResponseEntity.ok(response);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Failed to toggle bookmark", "message", e.getMessage()));
+        }
+    }
+
     /**
      * Check if user has liked a post
      */

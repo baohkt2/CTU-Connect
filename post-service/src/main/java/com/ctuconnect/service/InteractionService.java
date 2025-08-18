@@ -75,6 +75,10 @@ public class InteractionService {
 
             if (existingInteraction.isPresent()) {
                 // Toggle off the exact interaction
+                if (request.getReaction() == InteractionEntity.InteractionType.SHARE) {
+                    // Special case for share - we don't toggle off shares
+                    return new InteractionResponse(false, "Share interaction cannot be toggled off");
+                }
                 interactionRepository.delete(existingInteraction.get());
                 updatePostStatsOnRemove(post, request.getReaction());
                 postRepository.save(post);

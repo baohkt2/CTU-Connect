@@ -144,7 +144,21 @@ export const postService = {
 
   // Create interaction (like, share, bookmark)
   async createInteraction(postId: string, interactionData: CreateInteractionRequest): Promise<Interaction | null> {
-    const response = await api.post(`/posts/${postId}/interactions`, interactionData);
+    const response = await api.post(`/posts/${postId}/like`, interactionData);
+    console.log("Created interaction:", response.data);
+    return response.data;
+  },
+
+  // Create interaction (like, share, bookmark)
+  async createInteractionShare(postId: string, interactionData: CreateInteractionRequest): Promise<Interaction | null> {
+    const response = await api.post(`/posts/${postId}/share`, interactionData);
+    console.log("Created interaction:", response.data);
+    return response.data;
+  },
+
+  // Create interaction (like, share, bookmark)
+  async createInteractionBookmark(postId: string, interactionData: CreateInteractionRequest): Promise<Interaction | null> {
+    const response = await api.post(`/posts/${postId}/bookmark`, interactionData);
     console.log("Created interaction:", response.data);
     return response.data;
   },
@@ -159,14 +173,14 @@ export const postService = {
 
   // Share post
   async sharePost(postId: string): Promise<Interaction | null> {
-    return this.createInteraction(postId, {
+    return this.createInteractionShare(postId, {
       type: InteractionType.SHARE
     });
   },
 
   // Bookmark post
   async toggleBookmark(postId: string): Promise<Interaction | null> {
-    return this.createInteraction(postId, {
+    return this.createInteractionBookmark(postId, {
       type: InteractionType.BOOKMARK,
       reactionType: ReactionType.BOOKMARK
     });

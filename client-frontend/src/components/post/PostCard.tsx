@@ -436,7 +436,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 {post.isEdited && (
                   <>
                     <span>•</span>
-                    <EditIndicator />
+                    <EditIndicator isEdited={false} />
                   </>
                 )}
               </div>
@@ -460,6 +460,15 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       {/* Enhanced Content */}
       <div className="px-4 pb-3">
+        {/* Post Title - Hiển thị tiêu đề nếu có */}
+        {post.title && (
+          <div className="mb-3 pb-2 border-b border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 leading-tight hover:text-blue-600 cursor-pointer transition-colors">
+              {post.title}
+            </h2>
+          </div>
+        )}
+
         {post.content && (
           <div className="prose prose-sm max-w-none">
             <div
@@ -480,7 +489,7 @@ export const PostCard: React.FC<PostCardProps> = ({
         )}
 
         {/* Enhanced Media Section */}
-        {(post.images?.length > 0 || post.attachments?.length > 0) && (
+        {(post.images?.length > 0 || post.documents?.length > 0) && (
           <div className="mt-4 space-y-3">
             {/* Images Grid */}
             {post.images?.length > 0 && (
@@ -511,29 +520,37 @@ export const PostCard: React.FC<PostCardProps> = ({
               </div>
             )}
 
-            {/* Attachments */}
-            {post.attachments?.length > 0 && (
+            {/* documents */}
+            {post.documents?.length > 0 && (
               <div className="space-y-2">
-                {post.attachments.map((attachment: any, index: number) => (
+                {post.documents.map((document: any, index: number) => (
                   <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
-                    <FileText className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    <PostDocumentIcon document={document}>
+
+                    </PostDocumentIcon>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {attachment.name || attachment.filename}
+                        {document.originalFileName || document.fileName}
                       </p>
-                      {attachment.size && (
-                        <p className="text-xs text-gray-500">
-                          {(attachment.size / 1024 / 1024).toFixed(1)} MB
-                        </p>
+                      {document.fileSize && (
+                          <p className="text-xs text-gray-500">
+                            {document.fileSize > 1024 * 1024 ?
+                                `${(document.fileSize / 1024 / 1024).toFixed(1)} MB` :
+                                `${(document.fileSize / 1024).toFixed(1)} KB`
+                            }
+                          </p>
                       )}
+
                     </div>
                     <Button
-                      variant="ghost"
+                      variant="primary"
                       size="sm"
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => window.open(document.url, '_blank')}
                     >
                       <Download className="h-4 w-4" />
                     </Button>
+
                   </div>
                 ))}
               </div>
