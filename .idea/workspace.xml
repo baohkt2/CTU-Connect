@@ -4,40 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="connect db">
-      <change afterPath="$PROJECT_DIR$/CTU_CONNECT_FRONTEND_SEARCH_GUIDE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CTU_CONNECT_SEARCH_FEATURE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/HeaderSearch.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/RelatedPosts.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/SearchBar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/SearchResults.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/TrendingSearches.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useSearch.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/searchService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/RecommendationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/SearchController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/SearchRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/SearchResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/SearchSuggestionResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostInteractionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/RecommendationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/SearchService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/app/interface.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/app/train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recommendation-service/generateDataset.py" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="test with google colab">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/search/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/search/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NewsFeedService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NewsFeedService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recom_temp/TrainFull.py" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/TrainFull.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recom_temp/simple_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/simple_migration.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -929,7 +897,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755530096716</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="test with google colab">
+      <option name="closed" value="true" />
+      <created>1756116761988</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1756116761988</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -959,7 +935,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update profile v1.0" />
     <MESSAGE value="Update profile v1.1" />
     <MESSAGE value="Update profile v1.2" />
     <MESSAGE value="Update profile v1.3" />
@@ -984,7 +959,8 @@
     <MESSAGE value="before update show words" />
     <MESSAGE value="Ready recom" />
     <MESSAGE value="connect db" />
-    <option name="LAST_COMMIT_MESSAGE" value="connect db" />
+    <MESSAGE value="test with google colab" />
+    <option name="LAST_COMMIT_MESSAGE" value="test with google colab" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
