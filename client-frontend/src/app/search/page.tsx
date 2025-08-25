@@ -1,180 +1,210 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useUserHooks } from '@/hooks/useUserHooks';
-import Layout from '@/components/layout/Layout';
-import Avatar from '@/components/ui/Avatar';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
-import { debounce } from '@/utils/helpers';
-import { MagnifyingGlassIcon, UserPlusIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import SearchBar from '@/components/search/SearchBar';
+import SearchResults from '@/components/search/SearchResults';
+import TrendingSearches from '@/components/search/TrendingSearches';
+import { SearchResponse, PostResponse } from '@/services/searchService';
 
-export default function SearchPage() {
-  const { user, loading } = useAuth();
+const SearchPage: React.FC = () => {
   const router = useRouter();
-  const { useSearchUsers, useFollowUser } = useUserHooks();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const searchParams = useSearchParams();
+  const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const { data: usersData, isLoading: searchLoading } = useSearchUsers(debouncedQuery);
-  const followUserMutation = useFollowUser();
+  // Get initial query from URL params
+  const initialQuery = searchParams.get('q') || '';
+  const initialCategory = searchParams.get('category') || '';
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+  const handleSearchResults = useCallback((results: SearchResponse) => {
+    setSearchResults(results);
+    setCurrentPage(results.currentPage);
+
+    // Update URL with search parameters
+    const params = new URLSearchParams();
+    if (results.searchQuery) {
+      params.set('q', results.searchQuery);
     }
-  }, [user, loading, router]);
-
-  // Debounce search query
-  useEffect(() => {
-    const debouncedSearch = debounce((query: string) => {
-      setDebouncedQuery(query);
-    }, 300);
-
-    debouncedSearch(searchQuery);
-  }, [searchQuery]);
-
-  const handleFollow = async (userId: string) => {
-    try {
-      await followUserMutation.mutateAsync(userId);
-    } catch (error) {
-      console.error('Error following user:', error);
+    if (results.filtersApplied?.category) {
+      params.set('category', results.filtersApplied.category);
     }
-  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+    const newUrl = `/search${params.toString() ? `?${params.toString()}` : ''}`;
+    router.push(newUrl, { scroll: false });
+  }, [router]);
 
-  if (!user) {
-    return null;
-  }
+  const handleSearchLoading = useCallback((loading: boolean) => {
+    setIsLoading(loading);
+  }, []);
+
+  const handleLoadMore = useCallback(async () => {
+    if (!searchResults || isLoading) return;
+
+    // This would typically call the search service again with the next page
+    // For now, we'll just show a loading state
+    setIsLoading(true);
+
+    // Simulate loading delay
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, [searchResults, isLoading]);
+
+  const handlePostClick = useCallback((post: PostResponse) => {
+    router.push(`/posts/${post.id}`);
+  }, [router]);
+
+  const handleTrendingClick = useCallback((term: string) => {
+    // Trigger a new search with the trending term
+    // This would be handled by the SearchBar component
+    const params = new URLSearchParams();
+    params.set('q', term);
+    router.push(`/search?${params.toString()}`);
+  }, [router]);
 
   return (
-    <Layout>
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Search Header */}
-        <Card>
-          <div className="flex items-center space-x-3">
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm người dùng..."
-              className="border-none focus:ring-0 p-0"
-            />
-          </div>
-        </Card>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tìm kiếm bài viết</h1>
+          <p className="text-gray-600">
+            Khám phá và tìm kiếm nội dung trong cộng đồng CTU Connect
+          </p>
+        </div>
 
-        {/* Search Results */}
-        {searchQuery && (
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Kết quả tìm kiếm cho &quot;{searchQuery}&quot;
-            </h2>
+        {/* Search Bar */}
+        <div className="mb-8">
+          <SearchBar
+            onSearchResults={handleSearchResults}
+            onSearchLoading={handleSearchLoading}
+            placeholder="Tìm kiếm bài viết, tác giả, thẻ..."
+            showAdvancedFilters={true}
+            className="max-w-4xl mx-auto"
+          />
+        </div>
 
-            {searchLoading ? (
-              <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-                      <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-                        <div className="h-3 bg-gray-300 rounded w-1/4"></div>
-                      </div>
-                      <div className="w-20 h-8 bg-gray-300 rounded"></div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : usersData?.content && usersData.content.length > 0 ? (
-              <div className="space-y-4">
-                {usersData.content.map((searchUser) => (
-                  <Card key={searchUser.id} hover>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Avatar
-                            id={searchUser.id}
-                          src={searchUser.avatarUrl || '/default-avatar.png'}
-                          alt={searchUser.fullName}
-                          size="md"
-                          online={searchUser.isOnline}
-                        />
-                        <div>
-                          <Link
-                            href={`/profile/${searchUser.id}`}
-                            className="font-semibold text-gray-900 hover:text-blue-600"
-                          >
-                            {searchUser.fullName}
-                          </Link>
-                          <p className="text-sm text-gray-500">
-                            @{searchUser.username}
-                          </p>
-                          {searchUser.faculty && (
-                            <p className="text-xs text-gray-400">
-                              {searchUser.faculty.name}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {searchUser.id !== user.id && (
-                        <Button
-                          onClick={() => handleFollow(searchUser.id)}
-                          loading={followUserMutation.isPending}
-                          size="sm"
-                          className="flex items-center space-x-2"
-                        >
-                          <UserPlusIcon className="w-4 h-4" />
-                          <span>Theo dõi</span>
-                        </Button>
-                      )}
-                    </div>
-                  </Card>
-                ))}
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {searchResults ? (
+              <SearchResults
+                searchResults={searchResults}
+                loading={isLoading}
+                onLoadMore={handleLoadMore}
+                onPostClick={handlePostClick}
+              />
             ) : (
-              <Card className="text-center py-8">
-                <div className="text-gray-500">
-                  <MagnifyingGlassIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>Không tìm thấy người dùng nào</p>
-                  <p className="text-sm mt-1">
-                    Hãy thử tìm kiếm với từ khóa khác
-                  </p>
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
                 </div>
-              </Card>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">
+                  Tìm kiếm nội dung mà bạn quan tâm
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  Sử dụng thanh tìm kiếm phía trên để khám phá bài viết, tác giả và chủ đề
+                </p>
+
+                {/* Search Examples */}
+                <div className="text-left max-w-md mx-auto">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Gợi ý tìm kiếm:</h4>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => handleTrendingClick('lập trình')}
+                      className="block w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-colors"
+                    >
+                      🔍 "lập trình" - Tìm bài viết về lập trình
+                    </button>
+                    <button
+                      onClick={() => handleTrendingClick('sinh viên')}
+                      className="block w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-colors"
+                    >
+                      👥 "sinh viên" - Tìm nội dung về sinh viên
+                    </button>
+                    <button
+                      onClick={() => handleTrendingClick('học tập')}
+                      className="block w-full text-left px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-colors"
+                    >
+                      📚 "học tập" - Tìm tài liệu học tập
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-        )}
 
-        {/* Popular Users or Recent Searches */}
-        {!searchQuery && (
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Gợi ý kết bạn
-            </h2>
-            <Card className="text-center py-8">
-              <div className="text-gray-500">
-                <MagnifyingGlassIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                <p>Tìm kiếm bạn bè và kết nối</p>
-                <p className="text-sm mt-1">
-                  Nhập tên hoặc username để tìm kiếm người dùng
-                </p>
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="space-y-6">
+              {/* Trending Searches */}
+              <TrendingSearches
+                onTrendingClick={handleTrendingClick}
+              />
+
+              {/* Search Tips */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Mẹo tìm kiếm
+                </h3>
+                <div className="space-y-3 text-sm text-gray-600">
+                  <div className="flex items-start space-x-2">
+                    <span className="text-blue-600 font-medium">•</span>
+                    lodash     <span>Sử dụng dấu ngoặc kép để tìm cụm từ chính xác: "machine learning"</span>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="text-blue-600 font-medium">•</span>
+                    <span>Sử dụng thẻ để lọc theo chủ đề: #javascript #programming</span>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="text-blue-600 font-medium">•</span>
+                    <span>Sử dụng bộ lọc nâng cao để thu hẹp kết quả</span>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="text-blue-600 font-medium">•</span>
+                    <span>Tìm kiếm theo tên tác giả để xem tất cả bài viết của họ</span>
+                  </div>
+                </div>
               </div>
-            </Card>
+
+              {/* Quick Categories */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Danh mục phổ biến
+                </h3>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { name: 'Học tập', value: 'academic', icon: '📚' },
+                    { name: 'Công nghệ', value: 'technology', icon: '💻' },
+                    { name: 'Thể thao', value: 'sports', icon: '⚽' },
+                    { name: 'Văn hóa', value: 'culture', icon: '🎨' },
+                    { name: 'Xã hội', value: 'social', icon: '👥' }
+                  ].map((category) => (
+                    <button
+                      key={category.value}
+                      onClick={() => {
+                        const params = new URLSearchParams();
+                        params.set('category', category.value);
+                        router.push(`/search?${params.toString()}`);
+                      }}
+                      className="flex items-center space-x-2 px-3 py-2 text-sm text-left bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors"
+                    >
+                      <span>{category.icon}</span>
+                      <span>{category.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
-    </Layout>
+    </div>
   );
-}
+};
+
+export default SearchPage;

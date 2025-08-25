@@ -1,5 +1,3 @@
-
-!pip install pyspark faiss-cpu torch transformers schedule pandas numpy tqdm scikit-learn fastapi uvicorn pyngrok pyarrow nest_asyncio
 import os
 import sys
 from google.colab import drive

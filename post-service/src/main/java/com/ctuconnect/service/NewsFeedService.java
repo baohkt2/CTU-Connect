@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -216,7 +217,8 @@ public class NewsFeedService {
     public List<PostResponse> generateUserTimeline(String userId, String viewerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        List<PostEntity> userPosts = postRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
+        Page<PostEntity> userPostsPage = postRepository.findByAuthorIdOrderByCreatedAtDesc(userId, pageable);
+        List<PostEntity> userPosts = userPostsPage.getContent();
 
         // Filter based on privacy settings and viewer permissions
         Set<String> viewerFriends = new HashSet<>(userServiceClient.getFriendIds(viewerId));

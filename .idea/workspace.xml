@@ -4,21 +4,40 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="Ready recom">
-      <change afterPath="$PROJECT_DIR$/manage-recommendation.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recom_temp/TrainFull.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recom_temp/generateFULL.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recom_temp/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recom_temp/simple_migration.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/recom_temp/start.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_recommendation_eureka.py" afterDir="false" />
+    <list default="true" id="45c2871e-0a67-4aea-8968-e03f2e8fc23f" name="Changes" comment="connect db">
+      <change afterPath="$PROJECT_DIR$/CTU_CONNECT_FRONTEND_SEARCH_GUIDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CTU_CONNECT_SEARCH_FEATURE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/HeaderSearch.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/RelatedPosts.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/SearchBar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/SearchResults.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/TrendingSearches.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/components/search/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/hooks/useSearch.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client-frontend/src/services/searchService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/RecommendationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/SearchController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/request/SearchRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/SearchResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/dto/response/SearchSuggestionResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/PostInteractionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/RecommendationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/SearchService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/recommendation-service/app/interface.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/recommendation-service/app/train.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/recommendation-service/generateDataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/ctuconnect/config/RouteConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client-frontend/src/app/search/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client-frontend/src/app/search/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/debug.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" beforeDir="false" afterPath="$PROJECT_DIR$/database/neo4j/logs/neo4j.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/recommendation-service/.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/install.txt" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/install.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recommendation-service/run_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/run_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NewsFeedService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post-service/src/main/java/com/ctuconnect/service/NewsFeedService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recom_temp/TrainFull.py" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/TrainFull.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recom_temp/simple_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/recom_temp/simple_migration.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,90 +115,92 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.JwtKeyGeneratorUtility.executor": "Run",
-    "Docker.docker-compose.yml.adminer: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.api-gateway: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.auth-service: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.auth_db: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.eureka-server: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.kafka: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.media-service: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.media_db: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.neo4j: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.post-service: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.recommendation-service: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.recommendation_db: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.redis: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml.user-service: Compose Deployment.executor": "Run",
-    "Docker.docker-compose.yml: Compose Deployment.executor": "Run",
-    "Docker.eureka-server/Dockerfile build.executor": "Run",
-    "Downloaded.Files.Path.Enabled": "false",
-    "JUnit.AuthControllerTest.executor": "Run",
-    "JUnit.AuthServiceTest.executor": "Run",
-    "JUnit.EmailServiceTest.executor": "Run",
-    "JUnit.JwtTokenProviderTest.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Node.js.console.js.executor": "Run",
-    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "Database connection parameters found",
-    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
-    "Python.data_migration.executor": "Run",
-    "Python.generate.executor": "Run",
-    "Python.interface.executor": "Run",
-    "Python.load_trained_model (1).executor": "Run",
-    "Python.load_trained_model.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.run_migration.executor": "Run",
-    "Python.train.executor": "Run",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "SHELLCHECK.PATH": "C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
-    "Spring Boot.AuthServiceApplication.executor": "Run",
-    "Spring Boot.EurekaServerApplication.executor": "Run",
-    "com.intellij.ide.FileNotInSourceRootChecker.no.check": "true",
-    "git-widget-placeholder": "demo",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/LVTN/ctu-connect/recom_temp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
-    "settings.editor.splitter.proportion": "0.28134558",
-    "ts.external.directory.path": "D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.JwtKeyGeneratorUtility.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.adminer: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.api-gateway: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.auth-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.auth_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.eureka-server: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.kafka: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.media-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.media_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.neo4j: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.post-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.post_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.postgres-auth: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.recommendation-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.recommendation_db: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.redis: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml.user-service: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.eureka-server/Dockerfile build.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EmailServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.JwtTokenProviderTest.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Node.js.console.js.executor&quot;: &quot;Run&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
+    &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
+    &quot;Python.data_migration.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generate.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
+    &quot;Python.load_trained_model (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.load_trained_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_migration.executor&quot;: &quot;Run&quot;,
+    &quot;Python.simple_migration.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train.executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\ASUS\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
+    &quot;Spring Boot.AuthServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ide.FileNotInSourceRootChecker.no.check&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;demo&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/LVTN/ctu-connect/recom_temp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
+    &quot;settings.editor.splitter.proportion&quot;: &quot;0.28134558&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\LVTN\\ctu-connect\\client-frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql",
-      "mongo"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;,
+      &quot;mongo&quot;
     ],
-    "RunConfigurationTargetLRU": [
-      "eaa90a37-8385-4cd3-af6e-aee505cea9ef"
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;eaa90a37-8385-4cd3-af6e-aee505cea9ef&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -189,11 +210,11 @@
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\vn\ctu\edu\postservice" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\LVTN\ctu-connect" />
       <recent name="D:\LVTN\ctu-connect\recom_temp" />
+      <recent name="D:\LVTN\ctu-connect\recommendation-service" />
       <recent name="D:\LVTN\ctu-connect\Recommender-service" />
       <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice" />
-      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect\postservice\entity" />
-      <recent name="D:\LVTN\ctu-connect\post-service\src\main\java\com\ctuconnect" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.ctuconnect.config" />
@@ -202,8 +223,8 @@
       <recent name="com.ctuconnect.UserMapper" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.recommendation-service: Compose Deployment">
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Docker.docker-compose.yml.api-gateway: Compose Deployment">
+    <configuration name="generate" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="ctu-connect" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -212,13 +233,35 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.11 (recommendation-service)" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service/app" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/recommendation-service/app/main.py" />
+      <option name="SCRIPT_NAME" value="D:\LVTN\ctu-connect\recom_temp\generate.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="simple_migration" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="ctu-connect" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/recommendation-service" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:\LVTN\ctu-connect\recom_temp\simple_migration.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -333,12 +376,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.kafka: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.api-gateway: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="kafka" />
+              <option value="api-gateway" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -346,12 +389,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.recommendation-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.auth-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="recommendation-service" />
+              <option value="auth-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -359,12 +402,12 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.recommendation_db: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.media-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="recommendation_db" />
+              <option value="media-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -372,12 +415,25 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.redis: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+    <configuration name="docker-compose.yml.post-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
           <option name="services">
             <list>
-              <option value="redis" />
+              <option value="post-service" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.user-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="user-service" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
@@ -387,19 +443,21 @@
     </configuration>
     <list>
       <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.recommendation-service: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.recommendation_db: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.kafka: Compose Deployment" />
-      <item itemvalue="Docker.docker-compose.yml.redis: Compose Deployment" />
-      <item itemvalue="Python.main" />
+      <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+      <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
+      <item itemvalue="Python.generate" />
+      <item itemvalue="Python.simple_migration" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.recommendation-service: Compose Deployment" />
-        <item itemvalue="Python.main" />
-        <item itemvalue="Docker.docker-compose.yml.recommendation_db: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.redis: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.kafka: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.api-gateway: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.post-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.media-service: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.auth-service: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -507,6 +565,9 @@
       <workItem from="1755434408312" duration="550000" />
       <workItem from="1755455141134" duration="7782000" />
       <workItem from="1755491751154" duration="29120000" />
+      <workItem from="1755556173444" duration="1445000" />
+      <workItem from="1755558538157" duration="1542000" />
+      <workItem from="1755563952015" duration="4705000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -860,7 +921,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755519212342</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="connect db">
+      <option name="closed" value="true" />
+      <created>1755530096716</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1755530096716</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -890,7 +959,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Media service OK" />
     <MESSAGE value="Update profile v1.0" />
     <MESSAGE value="Update profile v1.1" />
     <MESSAGE value="Update profile v1.2" />
@@ -915,7 +983,8 @@
     <MESSAGE value="Cmt temp" />
     <MESSAGE value="before update show words" />
     <MESSAGE value="Ready recom" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ready recom" />
+    <MESSAGE value="connect db" />
+    <option name="LAST_COMMIT_MESSAGE" value="connect db" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
