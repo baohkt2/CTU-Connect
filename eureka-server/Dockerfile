@@ -9,7 +9,7 @@ RUN mvn clean package -DskipTests
 # Runtime stage
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-RUN apt-get update && apt-get install -y wget curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update ; apt-get install -y wget curl ; rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/target/eureka-server-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8761
 ENTRYPOINT ["java", "-jar", "app.jar"]

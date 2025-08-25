@@ -14,6 +14,8 @@ public class FriendsDTO {
     private String userId;
     private List<String> friendIds;
     private List<UserDTO> friends;
+    private List<UserDTO> sentRequests;
+    private List<UserDTO> receivedRequests;
     private List<UserDTO> mutualFriends;
     private List<UserDTO> friendSuggestions;
     private int mutualFriendsCount;

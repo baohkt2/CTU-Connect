@@ -17,6 +17,36 @@ public class UserEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    public void publishUserCreatedEvent(String userId, String email, String username, String role) {
+        try {
+            Map<String, Object> event = new HashMap<>();
+            event.put("userId", userId);
+            event.put("email", email);
+            event.put("username", username);
+            event.put("role", role);
+
+            kafkaTemplate.send("user-created", userId, event);
+            log.info("Published user created event for user: {}", userId);
+
+        } catch (Exception e) {
+            log.error("Failed to publish user created event for user: {}", userId, e);
+        }
+    }
+
+    public void publishUserDeletedEvent(String userId, String email) {
+        try {
+            Map<String, Object> event = new HashMap<>();
+            event.put("userId", userId);
+            event.put("email", email);
+
+            kafkaTemplate.send("user-deleted", userId, event);
+            log.info("Published user deleted event for user: {}", userId);
+
+        } catch (Exception e) {
+            log.error("Failed to publish user deleted event for user: {}", userId, e);
+        }
+    }
+
     public void publishUserProfileUpdatedEvent(String userId, String email, String username,
                                              String firstName, String lastName, String bio, String profilePicture) {
         try {
