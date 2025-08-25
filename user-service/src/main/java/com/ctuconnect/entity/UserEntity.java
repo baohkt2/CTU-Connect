@@ -1,14 +1,22 @@
 package com.ctuconnect.entity;
 
-import com.ctuconnect.enums.Role;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
 @Node("User")
 @Data
 @Builder
@@ -16,21 +24,37 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserEntity {
     @Id
-    private String id;
-    private String email;
-    private String username;
-    private String fullName;
-    private Boolean isActive;
-    private Role role;
-    private String bio;
-    private Boolean isProfileCompleted = false;
-    private String avatarUrl;
-    private String backgroundUrl;
-    private String studentId;
-    private String staffCode;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String id; // UUID string from auth-service
 
+    @Email(message = "Email format is invalid")
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    private String username;
+
+    @Size(max = 20, message = "Student ID must not exceed 20 characters")
+    private String studentId;
+
+    @Size(max = 100, message = "Full name must not exceed 100 characters")
+    private String fullName;
+
+    @Size(max = 20, message = "Role must not exceed 20 characters")
+    private String role;
+
+    @Size(max = 500, message = "Bio must not exceed 500 characters")
+    private String bio;
+
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Builder.Default
+    private LocalDateTime  createdAt = LocalDateTime.now();
+
+    @Builder.Default
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    // Relationships
     @Relationship(type = "ENROLLED_IN", direction = Relationship.Direction.OUTGOING)
     private MajorEntity major;
 
@@ -40,106 +64,162 @@ public class UserEntity {
     @Relationship(type = "HAS_GENDER", direction = Relationship.Direction.OUTGOING)
     private GenderEntity gender;
 
-    @Relationship(type = "FRIEND_WITH", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "IS_FRIENDS_WITH") // Removed direction = Relationship.Direction.OUTGOING
+    @Builder.Default
     private Set<UserEntity> friends = new HashSet<>();
 
-    @Relationship(type = "BELONGS_TO", direction = Relationship.Direction.OUTGOING)
-    private CollegeEntity college;
+    @Relationship(type = "SENT_FRIEND_REQUEST_TO", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private Set<UserEntity> sentFriendRequests = new HashSet<>();
 
-    @Relationship(type = "WORKS_IN", direction = Relationship.Direction.OUTGOING)
-    private FacultyEntity faculty;
+    @Relationship(type = "SENT_FRIEND_REQUEST_TO", direction = Relationship.Direction.INCOMING)
+    @Builder.Default
+    private Set<UserEntity> receivedFriendRequests = new HashSet<>();
 
-    @Relationship(type = "HAS_DEGREE", direction = Relationship.Direction.OUTGOING)
-    private DegreeEntity degree;
-
-    @Relationship(type = "HAS_POSITION", direction = Relationship.Direction.OUTGOING)
-    private PositionEntity position;
-
-    @Relationship(type = "HAS_ACADEMIC", direction = Relationship.Direction.OUTGOING)
-    private AcademicEntity academic;
-
-    // Factory method
-    public static UserEntity fromAuthService(String authUserId, String email, String username, String roleString) {
-        Role resolvedRole;
-        try {
-            resolvedRole = Role.fromString(roleString);
-        } catch (IllegalArgumentException e) {
-            resolvedRole = Role.USER;
-        }
+    // Factory method for creating from auth service
+    public static UserEntity fromAuthService(String authUserId, String email, String username, String role) {
         return UserEntity.builder()
                 .id(authUserId)
                 .email(email)
-                .username(username)
-                .role(resolvedRole)
+                .username(username != null ? username : "")
+                .role(role)
                 .isActive(true)
-                .isProfileCompleted(false)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
 
-    // Utility methods
-    public String getFacultyId() { return faculty != null ? faculty.getId() : null; }
-    public String getFacultyName() { return faculty != null ? faculty.getName() : null; }
-    public String getMajorId() { return major != null ? major.getId() : null; }
-    public String getMajorName() { return major != null ? major.getName() : null; }
-    public String getCollegeId() { return college != null ? college.getId() : null; }
-    public String getCollegeName() { return college != null ? college.getName() : null; }
-    public String getBatchId() { return batch != null ? batch.getId() : null; }
-    public String getBatchYear() { return batch != null ? String.valueOf(batch.getYear()) : null; }
-    public String getGenderId() { return gender != null ? gender.getId() : null; }
-    public String getGenderName() { return gender != null ? gender.getName() : null; }
-    public String getDegreeId() { return degree != null ? degree.getId() : null; }
-    public String getPositionId() { return position != null ? position.getId() : null; }
-    public String getAcademicId() { return academic != null ? academic.getId() : null; }
-    public Set<String> getFriendIds() {
-        return friends == null ? new HashSet<>() : friends.stream().map(UserEntity::getId).collect(java.util.stream.Collectors.toSet());
-    }
-
-    // Role checks (giữ 1 bộ)
-    public boolean isStudent() {
-        return Role.STUDENT.equals(this.role);
-    }
-    public boolean isFaculty() {
-        return Role.LECTURER.equals(this.role);
-    }
-    public boolean isAdmin() {
-        return Role.ADMIN.equals(this.role);
-    }
-
-    // Tên code thêm nếu cần
-    public String getMajorCode() {
-        return major != null ? major.getCode() : null;
-    }
-    public String getGenderCode() {
-        return gender != null ? gender.getCode() : null;
-    }
-    public String getFacultyCode() {
-        return faculty != null ? faculty.getCode() : null;
-    }
-    public String getCollegeCode() {
-        return college != null ? college.getCode() : null;
-    }
-    public String getDegreeName() {
-        return degree != null ? degree.getName() : null;
-    }
-    public String getDegreeCode() {
-        return degree != null ? degree.getCode() : null;
-    }
-    public String getPositionName() {
-        return position != null ? position.getName() : null;
-    }
-    public String getPositionCode() {
-        return position != null ? position.getCode() : null;
-    }
-    public String getAcademicName() {
-        return academic != null ? academic.getName() : null;
-    }
-    public String getAcademicCode() {
-        return academic != null ? academic.getCode() : null;
-    }
-
-    public void updateTimestamp() {
+    // Business logic methods
+    public void updateProfile(String fullName, String bio, String studentId) {
+        this.fullName = fullName;
+        this.bio = bio;
+        this.studentId = studentId;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void deactivate() {
+        this.isActive = false;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void activate() {
+        this.isActive = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public boolean canSendFriendRequest(UserEntity target) {
+        return !this.equals(target) &&
+               !friends.contains(target) &&
+               !sentFriendRequests.contains(target) &&
+               !receivedFriendRequests.contains(target);
+    }
+
+    public void sendFriendRequest(UserEntity target) {
+        if (canSendFriendRequest(target)) {
+            sentFriendRequests.add(target);
+            target.receivedFriendRequests.add(this);
+        }
+    }
+
+    public void acceptFriendRequest(UserEntity requester) {
+        if (receivedFriendRequests.contains(requester)) {
+            receivedFriendRequests.remove(requester);
+            requester.sentFriendRequests.remove(this);
+
+            friends.add(requester);
+            requester.friends.add(this);
+        }
+    }
+
+    public void rejectFriendRequest(UserEntity requester) {
+        if (receivedFriendRequests.contains(requester)) {
+            receivedFriendRequests.remove(requester);
+            requester.sentFriendRequests.remove(this);
+        }
+    }
+
+    public void removeFriend(UserEntity friend) {
+        if (friends.contains(friend)) {
+            friends.remove(friend);
+            friend.friends.remove(this);
+        }
+    }
+
+    // Safe getter methods
+    public Boolean getIsActive() {
+        return isActive != null ? isActive : true;
+    }
+
+    public boolean isActive() {
+        return getIsActive();
+    }
+
+    public String getUsername() {
+        return username != null ? username : "";
+    }
+
+    public String getBio() {
+        return bio != null ? bio : "";
+    }
+
+    public String getFullName() {
+        return fullName != null ? fullName : "";
+    }
+
+    public String getStudentId() {
+        return studentId != null ? studentId : "";
+    }
+
+    public String getRole() {
+        return role != null ? role : "USER";
+    }
+
+    public Set<UserEntity> getFriends() {
+        return friends != null ? friends : new HashSet<>();
+    }
+
+    public Set<UserEntity> getSentFriendRequests() {
+        return sentFriendRequests != null ? sentFriendRequests : new HashSet<>();
+    }
+
+    public Set<UserEntity> getReceivedFriendRequests() {
+        return receivedFriendRequests != null ? receivedFriendRequests : new HashSet<>();
+    }
+
+    // Utility methods
+    public boolean hasSameMajor(UserEntity other) {
+        return this.major != null && other.major != null &&
+               this.major.getName().equals(other.major.getName());
+    }
+
+    public boolean hasSameFaculty(UserEntity other) {
+        return this.major != null && other.major != null &&
+               this.major.getFaculty() != null && other.major.getFaculty() != null &&
+               this.major.getFaculty().getName().equals(other.major.getFaculty().getName());
+    }
+
+    public boolean hasSameCollege(UserEntity other) {
+        return this.major != null && other.major != null &&
+               this.major.getFaculty() != null && other.major.getFaculty() != null &&
+               this.major.getFaculty().getCollege() != null && other.major.getFaculty().getCollege() != null &&
+               this.major.getFaculty().getCollege().getName().equals(other.major.getFaculty().getCollege().getName());
+    }
+
+    public boolean hasSameBatch(UserEntity other) {
+        return this.batch != null && other.batch != null &&
+               this.batch.getYear().equals(other.batch.getYear());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

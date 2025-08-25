@@ -2,14 +2,27 @@ package com.ctuconnect.repository;
 
 import com.ctuconnect.entity.GenderEntity;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.neo4j.repository.query.Query;
 
+import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface GenderRepository extends Neo4jRepository<GenderEntity, String> {
 
-    Optional<GenderEntity> findByCode(String code);
-
     Optional<GenderEntity> findByName(String name);
+
+    boolean existsByName(String name);
+
+    @Query("""
+        MATCH (g:Gender)
+        OPTIONAL MATCH (g)<-[:HAS_GENDER]-(u:User)
+        RETURN g, count(u) as userCount
+        ORDER BY g.name ASC
+        """)
+    List<GenderWithUserCount> findAllWithUserCounts();
+
+    interface GenderWithUserCount {
+        GenderEntity getGender();
+        Long getUserCount();
+    }
 }
