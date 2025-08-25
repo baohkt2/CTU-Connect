@@ -30,7 +30,7 @@ POSTGRES_CONFIG = {
     "port": int(os.getenv("POSTGRES_PORT", "5432")),
     "database": os.getenv("POSTGRES_DB", "auth_db"),
     "user": os.getenv("POSTGRES_USER", "postgres"),
-    "password": os.getenv("POSTGRES_PASSWORD", "postgres")
+    "password": os.getenv("POSTGRES_PASSWORD", "password123")
 }
 
 def load_csv_data():
