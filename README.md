@@ -1,5 +1,5 @@
 # CTU Connect (Can Tho University Connect)
-**Note: This project is currently under development, and some features or services may not be fully implemented.**
+<span style="color: red; font-weight: bold;">Note: This project is currently under development, and some features or services may not be fully implemented.</span>
 
 A comprehensive social networking platform built with microservices architecture, designed to connect students, faculty, and staff at Can Tho University.
 
