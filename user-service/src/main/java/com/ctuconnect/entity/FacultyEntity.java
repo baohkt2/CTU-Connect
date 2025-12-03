@@ -20,11 +20,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FacultyEntity {
-    @Id
+  
     @NotBlank(message = "Faculty name is required")
     @Size(max = 100, message = "Faculty name must not exceed 100 characters")
     private String name;
 
+    @Id
     @Size(max = 10, message = "Faculty code must not exceed 10 characters")
     private String code;
 

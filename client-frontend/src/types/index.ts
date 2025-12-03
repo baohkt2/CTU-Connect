@@ -311,3 +311,8 @@ export interface HierarchicalCategories {
   batches?: BatchInfo[];
   genders: GenderInfo[];
 }
+
+// Re-export types from shared
+export * from '@/shared/types/user';
+export * from '@/shared/types/chat';
+export * from '@/shared/types/common';

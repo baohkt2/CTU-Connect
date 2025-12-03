@@ -7,11 +7,10 @@ export const useMediaHooks = () => {
   // Upload single file
   const useUploadFile = () => {
     return useMutation({
-      mutationFn: ({ file, uploadedBy, description }: { 
+      mutationFn: ({ file, description }: { 
         file: File; 
-        uploadedBy: string; 
         description?: string 
-      }) => mediaService.uploadFile(file, uploadedBy, description),
+      }) => mediaService.uploadFile(file, description),
       onError: (error) => {
         console.error('Error uploading file:', error);
       },
@@ -21,11 +20,10 @@ export const useMediaHooks = () => {
   // Upload multiple files
   const useUploadMultipleFiles = () => {
     return useMutation({
-      mutationFn: ({ files, uploadedBy, description }: { 
+      mutationFn: ({ files, description }: { 
         files: File[]; 
-        uploadedBy: string; 
         description?: string 
-      }) => mediaService.uploadMultipleFiles(files, uploadedBy, description),
+      }) => mediaService.uploadFiles(files, description),
       onError: (error) => {
         console.error('Error uploading multiple files:', error);
       },

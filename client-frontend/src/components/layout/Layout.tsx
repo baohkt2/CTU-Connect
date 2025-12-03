@@ -40,31 +40,36 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: 'Trang chủ',
       href: '/',
       icon: HomeIcon,
-      iconSolid: HomeIconSolid
+      iconSolid: HomeIconSolid,
+      badge: undefined
     },
     {
       name: 'Tìm kiếm',
       href: '/search',
       icon: MagnifyingGlassIcon,
-      iconSolid: SearchIconSolid
+      iconSolid: SearchIconSolid,
+      badge: undefined
     },
     {
       name: 'Tin nhắn',
       href: '/messages',
       icon: ChatBubbleLeftRightIcon,
       iconSolid: ChatIconSolid,
+      badge: unreadCount
     },
     {
       name: 'Thông báo',
       href: '/notifications',
       icon: BellIcon,
-      iconSolid: BellIconSolid
+      iconSolid: BellIconSolid,
+      badge: undefined
     },
     {
       name: 'Hồ sơ',
       href: `/profile/me`,
       icon: UserIcon,
-      iconSolid: UserIconSolid
+      iconSolid: UserIconSolid,
+      badge: undefined
     },
   ];
 

@@ -52,6 +52,14 @@ export const sanitizeHtml = (html: string): string => {
 };
 
 /**
+ * Prepare HTML for safe display in the UI
+ * Alias for sanitizeHtml for backwards compatibility
+ */
+export const prepareHtmlForDisplay = (html: string): string => {
+  return sanitizeHtml(html);
+};
+
+/**
  * Convert HTML to plain text for API submission
  */
 export const htmlToText = (html: string): string => {

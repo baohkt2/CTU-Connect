@@ -25,6 +25,18 @@ export interface ChatMessage extends BaseEntity {
   attachments?: MessageAttachment[];
   isEdited: boolean;
   editedAt?: string;
+  reactions: MessageReaction[];
+  replyToMessage?: {
+    senderName: string;
+    content: string;
+  };
+}
+
+// Message reaction
+export interface MessageReaction {
+  userId: string;
+  emoji: string;
+  createdAt: string;
 }
 
 // Chat room types

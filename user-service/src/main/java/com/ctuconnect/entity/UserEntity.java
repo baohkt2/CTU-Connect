@@ -222,4 +222,41 @@ public class UserEntity {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    // Helper methods for accessing nested properties
+    public String getAvatarUrl() {
+        // Default avatar implementation - can be enhanced to store actual avatar URL
+        return null;
+    }
+
+    public String getFacultyId() {
+        return major != null && major.getFaculty() != null ? major.getFaculty().getCode() : null;
+    }
+
+    public String getFacultyName() {
+        return major != null && major.getFaculty() != null ? major.getFaculty().getName() : null;
+    }
+
+    public String getMajorId() {
+        return major != null ? major.getName() : null;
+    }
+
+    public String getMajorName() {
+        return major != null ? major.getName() : null;
+    }
+
+    public String getBatchId() {
+        return batch != null ? batch.getYear() : null;
+    }
+
+    public Integer getBatchYear() {
+        if (batch != null && batch.getYear() != null) {
+            try {
+                return Integer.parseInt(batch.getYear());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
 }

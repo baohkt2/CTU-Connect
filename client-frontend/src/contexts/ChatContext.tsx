@@ -32,6 +32,10 @@ export interface ChatContextType extends ChatState {
   // Message management
   sendMessage: (conversationId: string, content: string, type?: string) => void;
   loadMessages: (conversationId: string, page?: number) => Promise<void>;
+  
+  // Reaction management
+  addReaction: (messageId: string, emoji: string) => Promise<void>;
+  removeReaction: (messageId: string) => Promise<void>;
 
   // Typing indicators
   startTyping: (conversationId: string) => void;
@@ -261,6 +265,25 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
   }, [state.isConnected]);
 
+  // Reaction management
+  const addReaction = useCallback(async (messageId: string, emoji: string) => {
+    try {
+      // Implement reaction logic here (call API)
+      console.log('Adding reaction:', messageId, emoji);
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+    }
+  }, []);
+
+  const removeReaction = useCallback(async (messageId: string) => {
+    try {
+      // Implement remove reaction logic here (call API)
+      console.log('Removing reaction:', messageId);
+    } catch (error) {
+      console.error('Error removing reaction:', error);
+    }
+  }, []);
+
   // Utilities
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
@@ -314,6 +337,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     loadConversations,
     sendMessage,
     loadMessages,
+    addReaction,
+    removeReaction,
     startTyping,
     stopTyping,
     clearError,

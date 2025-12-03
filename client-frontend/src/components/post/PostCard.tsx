@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CreateCommentRequest, UpdatePostRequest } from '@/types';
 import { postService } from '@/services/postService';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import Card from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { PostMenu } from '@/components/post/PostMenu';
@@ -13,7 +13,7 @@ import { EditIndicator } from '@/components/post/EditIndicator';
 import { CommentItem } from '@/components/post/CommentItem';
 import { CommentManager } from '@/utils/commentManager';
 import { formatTimeAgo } from '@/utils/localization';
-import { prepareHtmlForDisplay } from '@/utils/richTextUtils';
+import { sanitizeHtml, prepareHtmlForDisplay } from '@/utils/richTextUtils';
 import {
   MessageCircle,
   Share,

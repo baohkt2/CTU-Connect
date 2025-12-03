@@ -24,7 +24,7 @@ public class MajorService {
     }
 
     public List<MajorDTO> getMajorsByFaculty(String facultyName) {
-        return majorRepository.findByName(facultyName).stream()
+        return majorRepository.findByFacultyName(facultyName).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -40,8 +40,7 @@ public class MajorService {
                     MajorEntity major = MajorEntity.builder()
                             .name(majorDTO.getName())
                             .code(majorDTO.getCode())
-                            .faculty(majorDTO.getFacultyName())
-                            .facultyEntity(faculty)
+                            .faculty(faculty)
                             .build();
                     MajorEntity savedMajor = majorRepository.save(major);
                     return convertToDTO(savedMajor);
@@ -54,8 +53,7 @@ public class MajorService {
                     facultyRepository.findById(majorDTO.getFacultyName())
                             .map(faculty -> {
                                 existingMajor.setCode(majorDTO.getCode());
-                                existingMajor.setFaculty(majorDTO.getFacultyName());
-                                existingMajor.setFacultyEntity(faculty);
+                                existingMajor.setFaculty(faculty);
                                 MajorEntity savedMajor = majorRepository.save(existingMajor);
                                 return convertToDTO(savedMajor);
                             })
@@ -71,15 +69,20 @@ public class MajorService {
     }
 
     private MajorDTO convertToDTO(MajorEntity major) {
+        String facultyName = null;
         String collegeName = null;
-        if (major.getFacultyEntity() != null && major.getFacultyEntity().getCollege() != null) {
-            collegeName = major.getFacultyEntity().getCollege();
+        
+        if (major.getFaculty() != null) {
+            facultyName = major.getFaculty().getName();
+            if (major.getFaculty().getCollege() != null) {
+                collegeName = major.getFaculty().getCollege().getName();
+            }
         }
 
         return MajorDTO.builder()
                 .name(major.getName())
                 .code(major.getCode())
-                .facultyName(major.getFaculty())
+                .facultyName(facultyName)
                 .collegeName(collegeName)
                 .build();
     }

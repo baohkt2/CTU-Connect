@@ -34,7 +34,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   const isOwnMessage = false; // TODO: Compare with current user ID
 
   const handleReaction = async (emoji: string) => {
-    const existingReaction = message.reactions.find(r => r.userId === 'currentUserId' && r.emoji === emoji);
+    const existingReaction = message.reactions?.find((r: { userId: string; emoji: string }) => r.userId === 'currentUserId' && r.emoji === emoji);
 
     if (existingReaction) {
       await removeReaction(message.id);
@@ -58,25 +58,25 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   const popularEmojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
   const renderReactions = () => {
-    if (message.reactions.length === 0) return null;
+    if (!message.reactions || message.reactions.length === 0) return null;
 
     // Group reactions by emoji
-    const reactionGroups = message.reactions.reduce((groups, reaction) => {
+    const reactionGroups = message.reactions.reduce((groups: Record<string, typeof message.reactions>, reaction: { emoji: string; userId: string }) => {
       if (!groups[reaction.emoji]) {
         groups[reaction.emoji] = [];
       }
       groups[reaction.emoji].push(reaction);
       return groups;
-    }, {} as Record<string, typeof message.reactions>);
+    }, {});
 
     return (
       <div className="flex flex-wrap gap-1 mt-1">
-        {Object.entries(reactionGroups).map(([emoji, reactions]) => (
+        {Object.entries(reactionGroups).map(([emoji, reactions]: [string, any]) => (
           <button
             key={emoji}
             onClick={() => handleReaction(emoji)}
             className={`inline-flex items-center px-2 py-1 rounded-full text-xs border ${
-              reactions.some(r => r.userId === 'currentUserId')
+              (reactions as any[]).some((r: { userId: string }) => r.userId === 'currentUserId')
                 ? 'bg-blue-100 border-blue-300 text-blue-700'
                 : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
             }`}

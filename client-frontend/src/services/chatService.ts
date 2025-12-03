@@ -1,6 +1,9 @@
 import api from '@/lib/api';
 import { ChatMessage, ChatRoom, ApiResponse, PaginatedResponse } from '@/types';
 
+// Export Message type for backwards compatibility
+export type Message = ChatMessage;
+
 export const chatService = {
   async getChatRooms(page = 0, size = 10): Promise<PaginatedResponse<ChatRoom>> {
     const response = await api.get(`/chat/rooms?page=${page}&size=${size}`);

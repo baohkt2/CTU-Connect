@@ -29,6 +29,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Auto scroll to bottom when new messages arrive
@@ -84,7 +85,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({
 
   // Get other participants (excluding current user)
   const otherParticipants = conversation.participants.filter(p => p.id !== currentUserId);
-  const conversationName = conversation.name || otherParticipants.map(p => p.name).join(', ');
+  const conversationName = conversation.name || otherParticipants.map(p => p.fullName || p.username).join(', ');
 
   // Get typing users for this conversation
   const currentTypingUsers = typingUsers[conversation.id] || new Set();
@@ -112,7 +113,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({
                 return (
                   <span key={participant.id} className="text-sm text-gray-500 flex items-center">
                     <span className={`w-2 h-2 rounded-full mr-1 ${isOnline ? 'bg-green-400' : 'bg-gray-300'}`} />
-                    {participant.name}
+                    {participant.fullName || participant.username}
                   </span>
                 );
               })}
@@ -154,7 +155,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({
                   {showAvatar && !isOwn && (
                     <div className="flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full mr-3 flex items-center justify-center">
                       <span className="text-xs font-medium text-gray-600">
-                        {message.sender.name?.charAt(0).toUpperCase()}
+                        {(message.sender.fullName || message.sender.username)?.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
@@ -176,7 +177,7 @@ const MessageArea: React.FC<MessageAreaProps> = ({
                       }`}
                     >
                       {!isOwn && showAvatar && (
-                        <div className="text-xs font-medium mb-1">{message.sender.name}</div>
+                        <div className="text-xs font-medium mb-1">{message.sender.fullName || message.sender.username}</div>
                       )}
                       <p className="text-sm whitespace-pre-wrap">{message.content}</p>
 

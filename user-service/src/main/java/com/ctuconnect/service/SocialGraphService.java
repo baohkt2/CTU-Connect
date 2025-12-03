@@ -6,6 +6,7 @@ import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class SocialGraphService {
 
     private final UserRepository userRepository;
+    @SuppressWarnings("unused")
     private final Neo4jTemplate neo4jTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -124,8 +126,9 @@ public class SocialGraphService {
 
         try {
             // Get users from same faculty
-            if (user.getFacultyId() != null) {
-                List<UserEntity> sameFacultyUsers = userRepository.findUsersByFacultyId(user.getFacultyId());
+            String facultyId = user.getFacultyId();
+            if (facultyId != null) {
+                List<UserEntity> sameFacultyUsers = userRepository.findUsersByFacultyId(facultyId);
                 suggestions.addAll(sameFacultyUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)
@@ -142,8 +145,9 @@ public class SocialGraphService {
             }
 
             // Get users from same major
-            if (user.getMajorId() != null) {
-                List<UserEntity> sameMajorUsers = userRepository.findUsersByMajorId(user.getMajorId());
+            String majorId = user.getMajorId();
+            if (majorId != null) {
+                List<UserEntity> sameMajorUsers = userRepository.findUsersByMajorId(majorId);
                 suggestions.addAll(sameMajorUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)
@@ -170,14 +174,16 @@ public class SocialGraphService {
      */
     private List<FriendSuggestionDTO> getFriendsOfFriendsSuggestions(UserEntity user, int limit) {
         try {
-            // Get friends of the current user
-            List<UserEntity> friends = userRepository.findFriends(user.getId());
+            // Get friends of the current user - returns Page<UserSearchProjection>
+            Page<UserRepository.UserSearchProjection> friendsPage = userRepository.findFriends(user.getId(), org.springframework.data.domain.Pageable.unpaged());
             List<FriendSuggestionDTO> suggestions = new ArrayList<>();
 
-            for (UserEntity friend : friends) {
-                List<UserEntity> friendsOfFriend = userRepository.findFriends(friend.getId());
+            for (UserRepository.UserSearchProjection friendProj : friendsPage.getContent()) {
+                UserEntity friend = friendProj.getUser();
+                Page<UserRepository.UserSearchProjection> friendsOfFriendPage = userRepository.findFriends(friend.getId(), org.springframework.data.domain.Pageable.unpaged());
 
-                for (UserEntity suggestion : friendsOfFriend) {
+                for (UserRepository.UserSearchProjection suggestionProj : friendsOfFriendPage.getContent()) {
+                    UserEntity suggestion = suggestionProj.getUser();
                     if (!suggestion.getId().equals(user.getId()) &&
                         !userRepository.areFriends(user.getId(), suggestion.getId())) {
 
@@ -274,19 +280,28 @@ public class SocialGraphService {
     private String buildAcademicReason(UserEntity user, UserEntity suggestion) {
         List<String> connections = new ArrayList<>();
 
-        if (Objects.equals(user.getBatchId(), suggestion.getBatchId())) {
+        String userBatchId = user.getBatchId();
+        String suggestionBatchId = suggestion.getBatchId();
+        if (userBatchId != null && userBatchId.equals(suggestionBatchId)) {
             connections.add("same batch");
         }
-        if (Objects.equals(user.getMajorId(), suggestion.getMajorId())) {
+
+        String userMajorId = user.getMajorId();
+        String suggestionMajorId = suggestion.getMajorId();
+        if (userMajorId != null && userMajorId.equals(suggestionMajorId)) {
             connections.add("same major");
         }
-        if (Objects.equals(user.getFacultyId(), suggestion.getFacultyId())) {
+
+        String userFacultyId = user.getFacultyId();
+        String suggestionFacultyId = suggestion.getFacultyId();
+        if (userFacultyId != null && userFacultyId.equals(suggestionFacultyId)) {
             connections.add("same faculty");
         }
 
         return "You share " + String.join(", ", connections);
     }
 
+    @SuppressWarnings("unchecked")
     private List<FriendSuggestionDTO> getCachedSuggestions(String cacheKey) {
         try {
             return (List<FriendSuggestionDTO>) redisTemplate.opsForValue().get(cacheKey);

@@ -319,6 +319,61 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
                                                 @Param("currentUserId") String currentUserId,
                                                 Pageable pageable);
 
+    // Friend suggestion query based on mutual friends
+    @Query("""
+        MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)-[:IS_FRIENDS_WITH]-(suggestion:User)
+        WHERE suggestion.isActive = true 
+        AND suggestion.id <> $userId
+        AND NOT (u)-[:IS_FRIENDS_WITH]-(suggestion)
+        AND NOT (u)-[:SENT_FRIEND_REQUEST_TO]->(suggestion)
+        AND NOT (suggestion)-[:SENT_FRIEND_REQUEST_TO]->(u)
+        RETURN DISTINCT suggestion
+        ORDER BY suggestion.fullName ASC
+        LIMIT 50
+        """)
+    List<UserEntity> findFriendSuggestions(@Param("userId") String userId);
+
+    // Check if two users are friends
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[:IS_FRIENDS_WITH]-(u2:User {id: $userId2})
+        RETURN count(*) > 0
+        """)
+    boolean areFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    // Find mutual friends between two users
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[:IS_FRIENDS_WITH]-(mutual:User)-[:IS_FRIENDS_WITH]-(u2:User {id: $userId2})
+        WHERE mutual.isActive = true
+        RETURN DISTINCT mutual
+        ORDER BY mutual.fullName ASC
+        """)
+    List<UserEntity> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    // Check if there's a pending friend request between two users
+    @Query("""
+        MATCH (u1:User {id: $userId1})-[:SENT_FRIEND_REQUEST_TO]->(u2:User {id: $userId2})
+        RETURN count(*) > 0
+        """)
+    boolean hasPendingFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
+
+    // Find users by faculty ID (name)
+    @Query("""
+        MATCH (u:User)-[:ENROLLED_IN]->(m:Major)-[:HAS_MAJOR]-(f:Faculty {name: $facultyId})
+        WHERE u.isActive = true
+        RETURN DISTINCT u
+        ORDER BY u.fullName ASC
+        """)
+    List<UserEntity> findUsersByFacultyId(@Param("facultyId") String facultyId);
+
+    // Find users by major ID (name)
+    @Query("""
+        MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $majorId})
+        WHERE u.isActive = true
+        RETURN DISTINCT u
+        ORDER BY u.fullName ASC
+        """)
+    List<UserEntity> findUsersByMajorId(@Param("majorId") String majorId);
+
     // Interface for projections
     interface UserProfileProjection {
         UserEntity getUser();

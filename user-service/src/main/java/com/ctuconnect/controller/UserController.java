@@ -168,28 +168,7 @@ public class UserController {
     }
 
     // User Search and Discovery
-
-    @Operation(summary = "Search users",
-               description = "Search for users by name, email, username, or student ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Search completed successfully")
-    })
-    @GetMapping("/search")
-    public ResponseEntity<Page<UserSearchDTO>> searchUsers(
-            @Parameter(description = "Search term")
-            @RequestParam @NotBlank String q,
-            @Parameter(description = "Current user ID for relationship context")
-            @RequestParam(required = false) String currentUserId,
-            @Parameter(description = "Page number (0-based)")
-            @RequestParam(defaultValue = "0") @Min(0) int page,
-            @Parameter(description = "Page size")
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-
-        log.info("GET /users/search - Searching users with term: {}", q);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<UserSearchDTO> searchResults = userService.searchUsers(q, currentUserId, pageable);
-        return ResponseEntity.ok(searchResults);
-    }
+    // Note: /search endpoint is handled by EnhancedUserController with authentication
 
     @Operation(summary = "Find users by college",
                description = "Find all users belonging to a specific college")

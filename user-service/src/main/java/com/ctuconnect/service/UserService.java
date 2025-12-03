@@ -134,7 +134,7 @@ public class UserService {
         }
 
         if (updateDTO.getBatchYear() != null) {
-            var batch = batchRepository.findByYear(updateDTO.getBatchYear())
+            var batch = batchRepository.findByYear(String.valueOf(updateDTO.getBatchYear()))
                 .orElseThrow(() -> new UserNotFoundException("Batch not found: " + updateDTO.getBatchYear()));
             user.setBatch(batch);
         }
@@ -471,7 +471,7 @@ public class UserService {
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
         
         if (user.getMajor() != null && user.getMajor().getFaculty() != null) {
-            return user.getMajor().getFaculty().getId();
+            return user.getMajor().getFaculty().getCode();
         }
         return null;
     }
@@ -483,7 +483,7 @@ public class UserService {
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
         
         if (user.getMajor() != null) {
-            return user.getMajor().getId();
+            return user.getMajor().getName();
         }
         return null;
     }

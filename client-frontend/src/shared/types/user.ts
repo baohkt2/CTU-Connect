@@ -49,6 +49,43 @@ export interface UserProfile extends User {
 }
 
 // ============================
+// Lecturer-specific types
+// ============================
+export interface LecturerPosition {
+  id: string;
+  name: string;
+}
+
+export interface LecturerFaculty {
+  id: string;
+  name: string;
+}
+
+export interface LecturerCollege {
+  id: string;
+  name: string;
+}
+
+export interface LecturerDegree {
+  id: string;
+  name: string;
+}
+
+export interface LecturerAcademic {
+  id: string;
+  name: string;
+}
+
+export interface LecturerProfile extends User {
+  staffCode?: string;
+  position?: LecturerPosition;
+  faculty?: LecturerFaculty;
+  college?: LecturerCollege;
+  degree?: LecturerDegree;
+  academic?: LecturerAcademic;
+}
+
+// ============================
 // Create / Update DTOs
 // ============================
 export interface CreateUserRequest {

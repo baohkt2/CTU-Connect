@@ -41,8 +41,7 @@ public class FacultyService {
                     FacultyEntity faculty = FacultyEntity.builder()
                             .name(facultyDTO.getName())
                             .code(facultyDTO.getCode())
-                            .college(facultyDTO.getCollegeName())
-                            .collegeEntity(college)
+                            .college(college)
                             .build();
                     FacultyEntity savedFaculty = facultyRepository.save(faculty);
                     return convertToDTO(savedFaculty);
@@ -55,8 +54,7 @@ public class FacultyService {
                     collegeRepository.findById(facultyDTO.getCollegeName())
                             .map(college -> {
                                 existingFaculty.setCode(facultyDTO.getCode());
-                                existingFaculty.setCollege(facultyDTO.getCollegeName());
-                                existingFaculty.setCollegeEntity(college);
+                                existingFaculty.setCollege(college);
                                 FacultyEntity savedFaculty = facultyRepository.save(existingFaculty);
                                 return convertToDTO(savedFaculty);
                             })
@@ -72,10 +70,15 @@ public class FacultyService {
     }
 
     private FacultyDTO convertToDTO(FacultyEntity faculty) {
+        String collegeName = null;
+        if (faculty.getCollege() != null) {
+            collegeName = faculty.getCollege().getName();
+        }
+        
         FacultyDTO dto = FacultyDTO.builder()
                 .name(faculty.getName())
                 .code(faculty.getCode())
-                .collegeName(faculty.getCollege())
+                .collegeName(collegeName)
                 .build();
 
         // Add majors if available

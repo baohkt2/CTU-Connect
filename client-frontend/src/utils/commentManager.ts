@@ -24,7 +24,7 @@ export class CommentManager {
       likesCount: rawComment.likesCount || rawComment.stats?.likes || 0,
       createdAt: rawComment.createdAt,
       updatedAt: rawComment.updatedAt,
-      replies: rawComment.replies ? rawComment.replies.map(reply => CommentManager.normalizeComment(reply)) : [],
+      replies: rawComment.replies ? rawComment.replies.map((reply: any) => CommentManager.normalizeComment(reply)) : [],
       replyCount: rawComment.replyCount || rawComment.stats?.replies || 0,
       isFlattened: rawComment.isFlattened || false,
       hasMoreReplies: false,

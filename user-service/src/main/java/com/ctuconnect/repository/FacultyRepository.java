@@ -33,4 +33,22 @@ public interface FacultyRepository extends Neo4jRepository<FacultyEntity, String
         ORDER BY f.name ASC
         """)
     List<FacultyEntity> findAllWithRelations();
+
+    // Alias for findAllWithRelations
+    default List<FacultyEntity> findAllWithCollegeAndMajors() {
+        return findAllWithRelations();
+    }
+
+    // Alias for findByCollegeName
+    default List<FacultyEntity> findByCollege(String collegeName) {
+        return findByCollegeName(collegeName);
+    }
+
+    @Query("""
+        MATCH (f:Faculty {name: $name})
+        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
+        OPTIONAL MATCH (f)-[:HAS_MAJOR]->(m:Major)
+        RETURN f, c, collect(m) as majors
+        """)
+    Optional<FacultyEntity> findByNameWithCollegeAndMajors(@Param("name") String name);
 }
