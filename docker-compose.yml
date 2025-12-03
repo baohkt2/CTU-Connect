@@ -1,0 +1,472 @@
+services:
+  # Service Discovery
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "${EUREKA_PORT}:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 1
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "${API_GATEWAY_PORT}:8090"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/actuator/health" ]
+      interval: 30s # Có thể tăng lên 45s hoặc 60s
+      timeout: 20s  # Tăng lên 20s (lớn hơn 13.617s)
+      retries: 5    # Tăng số lần thử lại để linh hoạt hơn
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  # Authentication Service
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "${AUTH_SERVICE_PORT}:8080"
+    depends_on:
+      auth_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth_db:5432/auth_db
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=${REDIS_PORT}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    restart: on-failure
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  # User Service
+
+  user-service:
+      build:
+        context: ./user-service
+      container_name: user-service
+      ports:
+        - "${USER_SERVICE_PORT}:8081"
+      depends_on:
+        neo4j:
+            condition: service_healthy
+        auth_db:
+            condition: service_healthy
+        redis:
+            condition: service_healthy
+        eureka-server:
+            condition: service_healthy
+        kafka:
+            condition: service_healthy
+      environment:
+        - SPRING_PROFILES_ACTIVE=docker
+        - SPRING_DATA_NEO4J_URI=bolt://neo4j:7687
+        - SPRING_DATA_NEO4J_USERNAME=neo4j
+        - SPRING_DATA_NEO4J_PASSWORD=password
+        - SPRING_DATA_REDIS_HOST=redis
+        - SPRING_DATA_REDIS_PORT=6379
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      networks:
+        - ctuconnect-network
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
+      develop: # Phần mới
+        watch:
+            - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+              path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+
+  # Media Service
+  media-service:
+    build:
+      context: ./media-service
+    container_name: media-service
+    ports:
+      - "${MEDIA_SERVICE_PORT}:8084"
+    depends_on:
+      media_db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://media_db:5432/media_db
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8084/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    develop:
+      watch:
+        - action: sync
+          path: .
+
+  # Post Service
+  post-service:
+    build:
+      context: ./post-service
+    container_name: post-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      post_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+#      media-service:
+#        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_HOST=post_db
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=post_db
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MEDIA_SERVICE_URL=http://media-service:8084
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    develop:
+      watch:
+        - action: sync
+          path: .
+
+  # MongoDB for Post Service
+  post_db:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=post_db
+    volumes:
+      - post-data:/data/db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    develop:
+      watch:
+        - action: sync
+          path: .
+
+  # # MongoDB for Recommendation Service
+  # recommendation_db:
+  #   image: mongo:7.0
+  #   container_name: recommendation_db
+  #   ports:
+  #     - "27019:27017"
+  #   environment:
+  #     - MONGO_INITDB_DATABASE=recommendation_db
+  #   volumes:
+  #     - recommendation-data:/data/db
+  #   networks:
+  #     - ctuconnect-network
+  #   healthcheck:
+  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
+  #   develop:
+  #     watch:
+  #       - action: rebuild
+  #         path: .
+
+  # # Recommendation Service
+  # recommendation-service:
+  #   build:
+  #     context: ./recommendation-service
+  #     dockerfile: Dockerfile
+  #   container_name: recommendation-service
+  #   ports:
+  #     - "8086:8086"
+  #   environment:
+  #     # Service config
+  #     - RECOMMENDATION_SERVICE_NAME=recommendation-service
+  #     - RECOMMENDATION_SERVICE_PORT=8086
+
+  #     # Eureka config
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+  #     - EUREKA_REGISTER_ENABLED=true
+  #     - EUREKA_INSTANCE_HOSTNAME=recommendation-service
+
+  #     # Kafka config
+  #     - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+  #     - KAFKA_TOPIC_INTERACTIONS=user-interactions
+  #     - KAFKA_GROUP_ID=recommendation-consumer
+
+  #     # MongoDB config
+  #     - MONGO_URI=mongodb://recommendation_db:27017
+  #     - MONGO_DB=recommendation_db
+
+  #     # Redis config
+  #     - REDIS_URL=redis://redis:6379/0
+
+  #     # Other services
+  #     - USER_SERVICE_NAME=user-service
+  #     - POST_SERVICE_NAME=post-service
+  #     - API_GATEWAY_URL=http://api-gateway:8090
+  #   volumes:
+  #     # Volume để lưu thư viện Python - không bị xóa khi rebuild
+  #     - recommendation-venv:/opt/venv
+  #     # Volume để lưu data và cache
+  #     - recommendation-app-data:/app/data
+  #     - recommendation-cache:/app/cache
+  #   networks:
+  #     - ctuconnect-network
+  #   depends_on:
+  #     - eureka-server
+  #     - kafka
+  #     - redis
+  #     - recommendation_db
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     start_period: 60s
+  #     retries: 3
+  #   develop:
+  #     watch:
+  #       - action: rebuild
+  #         path: ./recommendation-service
+  #         ignore:
+  #           - __pycache__/
+  #           - "*.pyc"
+  #           - .venv/
+  #           - data/
+  #           - cache/
+
+  # Neo4j Graph Database for User Service
+  neo4j:
+    image: neo4j:5.13.0
+    container_name: neo4j-graph-db
+    hostname: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - ./database/neo4j/conf/neo4j.conf:/conf/neo4j.conf
+      - ./database/neo4j/logs:/logs
+      - ./database/neo4j/plugins:/plugins
+      - ./database/neo4j/import:/import
+      - ./database/neo4j/init.sh:/docker-entrypoint-initdb.d/init.sh
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+      - NEO4J_server_config_strict__validation_enabled=false
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+
+  # Kafka for Event Streaming (No ZooKeeper needed)
+  kafka:
+    image: bitnami/kafka:3.4
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      # Topic settings
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_NUM_PARTITIONS=3
+      - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=1
+      # Performance settings
+      - KAFKA_CFG_LOG_RETENTION_HOURS=168
+      - KAFKA_CFG_LOG_SEGMENT_BYTES=1073741824
+      - KAFKA_CFG_LOG_RETENTION_CHECK_INTERVAL_MS=300000
+    networks:
+      - ctuconnect-network
+    volumes:
+      - kafka-data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  # Auth Database
+  auth_db:
+    image: postgres:15-alpine
+    container_name: postgres_auth_db
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+      - ./database/auth_db:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:${AUTH_DB_PORT}"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=auth_db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  media_db:
+    image: postgres:15-alpine
+    container_name: media_db
+    environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=media_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - media_data:/var/lib/postgresql/data
+    networks:
+      - ctuconnect-network
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d media_db"]
+        interval: 10s
+        timeout: 5s
+        retries: 1
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ctuconnect-network
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+    develop: # Phần mới
+      watch:
+        - action: sync # Hoặc 'sync' nếu bạn muốn bind mount
+          path: . # Giám sát toàn bộ thư mục context của Dockerfile
+
+networks:
+  ctuconnect-network:
+    driver: bridge
+
+volumes:
+  auth_db_data:
+  redis-data:
+  neo4j-data:
+  kafka-data:
+  media_data:
+  post-data:
+  # recommendation-data:
+  # recommendation-venv:
+  # recommendation-app-data:
+  # recommendation-cache:
