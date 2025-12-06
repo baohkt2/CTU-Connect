@@ -73,6 +73,55 @@ public class EnhancedUserController {
         return ResponseEntity.ok(updatedProfile);
     }
 
+    // ==================== PROFILE COMPLETION CHECK ====================
+    
+    /**
+     * Check if current user's profile is complete
+     * Frontend expects: GET /api/users/checkMyInfo
+     * Returns true if profile has all required fields filled
+     */
+    @GetMapping("/checkMyInfo")
+    @RequireAuth
+    public ResponseEntity<Boolean> checkProfileCompletion() {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /checkMyInfo - Checking profile completion for user: {}", currentUser.getEmail());
+        
+        try {
+            UserProfileDTO profile = userService.getUserProfile(currentUser.getId());
+            
+            // Admin users don't need to complete profile
+            if ("ADMIN".equals(profile.getRole())) {
+                log.info("User {} is ADMIN, profile completion not required", currentUser.getEmail());
+                return ResponseEntity.ok(true);
+            }
+            
+            // For students: check required fields
+            boolean isComplete = profile.getFullName() != null && !profile.getFullName().trim().isEmpty()
+                    && profile.getStudentId() != null && !profile.getStudentId().trim().isEmpty()
+                    && profile.getMajor() != null && !profile.getMajor().trim().isEmpty()
+                    && profile.getBatch() != null && !profile.getBatch().trim().isEmpty()
+                    && profile.getGender() != null && !profile.getGender().trim().isEmpty();
+            
+            log.info("Profile completion check for user {}: {}", currentUser.getEmail(), isComplete);
+            log.info("Profile details - fullName: {}, studentId: {}, major: {}, batch: {}, gender: {}", 
+                    profile.getFullName() != null, 
+                    profile.getStudentId() != null, 
+                    profile.getMajor() != null,
+                    profile.getBatch() != null,
+                    profile.getGender() != null);
+            
+            return ResponseEntity.ok(isComplete);
+        } catch (Exception e) {
+            log.error("Error checking profile completion for user {}: {}", currentUser.getEmail(), e.getMessage());
+            // If there's an error, assume profile is not complete to be safe
+            return ResponseEntity.ok(false);
+        }
+    }
+
     // ==================== FRIEND SUGGESTIONS ====================
     
     /**

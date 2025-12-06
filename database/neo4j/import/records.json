@@ -1,0 +1,771 @@
+﻿[
+  {
+    "n": {
+      "identity": 1,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "createdAt": "2025-12-06T16:43:25.855351300",
+        "role": "STUDENT",
+        "id": "4b139c1a-0838-4478-afb9-e314617fd860",
+        "isActive": true,
+        "email": "testuser2118@student.ctu.edu.vn",
+        "username": "testuser3995",
+        "updatedAt": "2025-12-06T16:43:25.855351300"
+      },
+      "elementId": "1"
+    }
+  },
+  {
+    "n": {
+      "identity": 9,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "b123",
+        "createdAt": "2025-12-06T16:50:11.222477900",
+        "role": "STUDENT",
+        "fullName": "bao",
+        "bio": "",
+        "id": "31ba8a23-8a4e-4b24-99c2-0d768e617e71",
+        "isActive": true,
+        "email": "baob2110069@student.ctu.edu.vn",
+        "username": "b2110069",
+        "updatedAt": "2025-12-07T00:35:21.531407900"
+      },
+      "elementId": "9"
+    }
+  },
+  {
+    "n": {
+      "identity": 10,
+      "labels": [
+        "Position"
+      ],
+      "properties": {
+        "code": "LECTURER",
+        "name": "Giảng viên"
+      },
+      "elementId": "10"
+    }
+  },
+  {
+    "n": {
+      "identity": 11,
+      "labels": [
+        "Position"
+      ],
+      "properties": {
+        "code": "SNR_LECTURER",
+        "name": "Giảng viên chính"
+      },
+      "elementId": "11"
+    }
+  },
+  {
+    "n": {
+      "identity": 12,
+      "labels": [
+        "Position"
+      ],
+      "properties": {
+        "code": "HEAD_OF_DEPT",
+        "name": "Trưởng bộ môn"
+      },
+      "elementId": "12"
+    }
+  },
+  {
+    "n": {
+      "identity": 13,
+      "labels": [
+        "Position"
+      ],
+      "properties": {
+        "code": "RESEARCHER",
+        "name": "Nghiên cứu viên"
+      },
+      "elementId": "13"
+    }
+  },
+  {
+    "n": {
+      "identity": 14,
+      "labels": [
+        "Academic"
+      ],
+      "properties": {
+        "code": "PROF",
+        "name": "Giáo sư"
+      },
+      "elementId": "14"
+    }
+  },
+  {
+    "n": {
+      "identity": 15,
+      "labels": [
+        "Academic"
+      ],
+      "properties": {
+        "code": "ASSOC_PROF",
+        "name": "Phó Giáo sư"
+      },
+      "elementId": "15"
+    }
+  },
+  {
+    "n": {
+      "identity": 16,
+      "labels": [
+        "Academic"
+      ],
+      "properties": {
+        "code": "DR",
+        "name": "Tiến sĩ"
+      },
+      "elementId": "16"
+    }
+  },
+  {
+    "n": {
+      "identity": 17,
+      "labels": [
+        "Academic"
+      ],
+      "properties": {
+        "code": "MASTER",
+        "name": "Thạc sĩ"
+      },
+      "elementId": "17"
+    }
+  },
+  {
+    "n": {
+      "identity": 18,
+      "labels": [
+        "Degree"
+      ],
+      "properties": {
+        "code": "BACHELOR",
+        "name": "Cử nhân/Kỹ sư"
+      },
+      "elementId": "18"
+    }
+  },
+  {
+    "n": {
+      "identity": 19,
+      "labels": [
+        "Degree"
+      ],
+      "properties": {
+        "code": "MASTER",
+        "name": "Thạc sĩ"
+      },
+      "elementId": "19"
+    }
+  },
+  {
+    "n": {
+      "identity": 20,
+      "labels": [
+        "Degree"
+      ],
+      "properties": {
+        "code": "PHD",
+        "name": "Tiến sĩ"
+      },
+      "elementId": "20"
+    }
+  },
+  {
+    "n": {
+      "identity": 30,
+      "labels": [
+        "University"
+      ],
+      "properties": {
+        "established": 1966,
+        "code": "CTU",
+        "name": "Đại học Cần Thơ"
+      },
+      "elementId": "30"
+    }
+  },
+  {
+    "n": {
+      "identity": 31,
+      "labels": [
+        "College"
+      ],
+      "properties": {
+        "code": "FIT",
+        "name": "Khoa Công nghệ Thông tin và Truyền thông"
+      },
+      "elementId": "31"
+    }
+  },
+  {
+    "n": {
+      "identity": 32,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "SE",
+        "college_code": "FIT",
+        "name": "Bộ môn Công nghệ Phần mềm"
+      },
+      "elementId": "32"
+    }
+  },
+  {
+    "n": {
+      "identity": 33,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "CNPM",
+        "name": "Công nghệ Phần mềm",
+        "faculty_code": "SE"
+      },
+      "elementId": "33"
+    }
+  },
+  {
+    "n": {
+      "identity": 34,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "IS",
+        "college_code": "FIT",
+        "name": "Bộ môn Hệ thống Thông tin"
+      },
+      "elementId": "34"
+    }
+  },
+  {
+    "n": {
+      "identity": 45,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "KHMT",
+        "name": "Khoa học Máy tính",
+        "faculty_code": "SE"
+      },
+      "elementId": "45"
+    }
+  },
+  {
+    "n": {
+      "identity": 46,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "HTTT",
+        "name": "Hệ thống Thông tin",
+        "faculty_code": "IS"
+      },
+      "elementId": "46"
+    }
+  },
+  {
+    "n": {
+      "identity": 47,
+      "labels": [
+        "College"
+      ],
+      "properties": {
+        "code": "ECO",
+        "name": "Khoa Kinh tế"
+      },
+      "elementId": "47"
+    }
+  },
+  {
+    "n": {
+      "identity": 48,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "DCMN",
+        "college_code": "FIT",
+        "name": "Bộ môn Truyền thông Dữ liệu và Mạng máy tính"
+      },
+      "elementId": "48"
+    }
+  },
+  {
+    "n": {
+      "identity": 49,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "KDST",
+        "name": "Kinh doanh Kỹ thuật Số",
+        "faculty_code": "IS"
+      },
+      "elementId": "49"
+    }
+  },
+  {
+    "n": {
+      "identity": 50,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "E_ECO",
+        "college_code": "ECO",
+        "name": "Bộ môn Kinh tế học"
+      },
+      "elementId": "50"
+    }
+  },
+  {
+    "n": {
+      "identity": 51,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "MMDL",
+        "name": "Mạng máy tính và Truyền thông dữ liệu",
+        "faculty_code": "DCMN"
+      },
+      "elementId": "51"
+    }
+  },
+  {
+    "n": {
+      "identity": 52,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "B_MNG",
+        "college_code": "ECO",
+        "name": "Bộ môn Quản trị Kinh doanh"
+      },
+      "elementId": "52"
+    }
+  },
+  {
+    "n": {
+      "identity": 53,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "KTH",
+        "name": "Kinh tế học",
+        "faculty_code": "E_ECO"
+      },
+      "elementId": "53"
+    }
+  },
+  {
+    "n": {
+      "identity": 54,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "MKT",
+        "name": "Marketing",
+        "faculty_code": "B_MNG"
+      },
+      "elementId": "54"
+    }
+  },
+  {
+    "n": {
+      "identity": 55,
+      "labels": [
+        "College"
+      ],
+      "properties": {
+        "code": "ENG",
+        "name": "Khoa Kỹ thuật"
+      },
+      "elementId": "55"
+    }
+  },
+  {
+    "n": {
+      "identity": 56,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "F_BNK",
+        "college_code": "ECO",
+        "name": "Bộ môn Tài chính Ngân hàng"
+      },
+      "elementId": "56"
+    }
+  },
+  {
+    "n": {
+      "identity": 57,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "QTB",
+        "name": "Quản trị Kinh doanh",
+        "faculty_code": "B_MNG"
+      },
+      "elementId": "57"
+    }
+  },
+  {
+    "n": {
+      "identity": 58,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "B_CON",
+        "college_code": "ENG",
+        "name": "Bộ môn Kỹ thuật Xây dựng"
+      },
+      "elementId": "58"
+    }
+  },
+  {
+    "n": {
+      "identity": 59,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "TCNH",
+        "name": "Tài chính - Ngân hàng",
+        "faculty_code": "F_BNK"
+      },
+      "elementId": "59"
+    }
+  },
+  {
+    "n": {
+      "identity": 60,
+      "labels": [
+        "Faculty"
+      ],
+      "properties": {
+        "code": "M_ENG",
+        "college_code": "ENG",
+        "name": "Bộ môn Kỹ thuật Cơ khí"
+      },
+      "elementId": "60"
+    }
+  },
+  {
+    "n": {
+      "identity": 61,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "KTXD",
+        "name": "Kỹ thuật Xây dựng",
+        "faculty_code": "B_CON"
+      },
+      "elementId": "61"
+    }
+  },
+  {
+    "n": {
+      "identity": 62,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "KTCK",
+        "name": "Kỹ thuật Cơ khí",
+        "faculty_code": "M_ENG"
+      },
+      "elementId": "62"
+    }
+  },
+  {
+    "n": {
+      "identity": 63,
+      "labels": [
+        "Major"
+      ],
+      "properties": {
+        "code": "RBAI",
+        "name": "Robot và Trí tuệ nhân tạo",
+        "faculty_code": "M_ENG"
+      },
+      "elementId": "63"
+    }
+  },
+  {
+    "n": {
+      "identity": 64,
+      "labels": [
+        "Batch"
+      ],
+      "properties": {
+        "year": "K47"
+      },
+      "elementId": "64"
+    }
+  },
+  {
+    "n": {
+      "identity": 65,
+      "labels": [
+        "Batch"
+      ],
+      "properties": {
+        "year": "K48"
+      },
+      "elementId": "65"
+    }
+  },
+  {
+    "n": {
+      "identity": 66,
+      "labels": [
+        "Batch"
+      ],
+      "properties": {
+        "year": "K49"
+      },
+      "elementId": "66"
+    }
+  },
+  {
+    "n": {
+      "identity": 67,
+      "labels": [
+        "Batch"
+      ],
+      "properties": {
+        "year": "K50"
+      },
+      "elementId": "67"
+    }
+  },
+  {
+    "n": {
+      "identity": 68,
+      "labels": [
+        "Batch"
+      ],
+      "properties": {
+        "year": "K51"
+      },
+      "elementId": "68"
+    }
+  },
+  {
+    "n": {
+      "identity": 69,
+      "labels": [
+        "Gender"
+      ],
+      "properties": {
+        "code": "M",
+        "name": "Nam"
+      },
+      "elementId": "69"
+    }
+  },
+  {
+    "n": {
+      "identity": 70,
+      "labels": [
+        "Gender"
+      ],
+      "properties": {
+        "code": "F",
+        "name": "Nữ"
+      },
+      "elementId": "70"
+    }
+  },
+  {
+    "n": {
+      "identity": 71,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2106001",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Nguyễn Văn A",
+        "bio": "Sinh viên đam mê phát triển web",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "isActive": true,
+        "email": "nguyenvana@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "nguyenvana"
+      },
+      "elementId": "71"
+    }
+  },
+  {
+    "n": {
+      "identity": 72,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2106002",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Trần Thị B",
+        "bio": "Kỹ sư phần mềm tập trung vào front-end",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+        "isActive": true,
+        "email": "tranthib@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "tranthib"
+      },
+      "elementId": "72"
+    }
+  },
+  {
+    "n": {
+      "identity": 73,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2106003",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Lê Minh C",
+        "bio": "Người đam mê AI và học máy",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+        "isActive": true,
+        "email": "leminhc@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "leminhc"
+      },
+      "elementId": "73"
+    }
+  },
+  {
+    "n": {
+      "identity": 74,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2206001",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "bio": "Nhà khoa học dữ liệu",
+        "fullName": "Phạm Thị D",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa9",
+        "isActive": true,
+        "email": "phamthid@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "phamthid"
+      },
+      "elementId": "74"
+    }
+  },
+  {
+    "n": {
+      "identity": 75,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2206002",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Nguyễn Văn E",
+        "bio": "Sinh viên kinh doanh tập trung vào marketing",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afaa",
+        "isActive": true,
+        "email": "nguyenvane@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "nguyenvane"
+      },
+      "elementId": "75"
+    }
+  },
+  {
+    "n": {
+      "identity": 76,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2306001",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Trần Thị F",
+        "bio": "Sinh viên tài chính quan tâm đến đầu tư",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afab",
+        "isActive": true,
+        "email": "tranthif@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "tranthif"
+      },
+      "elementId": "76"
+    }
+  },
+  {
+    "n": {
+      "identity": 77,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2406001",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Lê Văn G",
+        "bio": "Sinh viên kỹ thuật xây dựng",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afac",
+        "isActive": true,
+        "email": "levang@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "levang"
+      },
+      "elementId": "77"
+    }
+  },
+  {
+    "n": {
+      "identity": 78,
+      "labels": [
+        "User"
+      ],
+      "properties": {
+        "studentId": "B2506001",
+        "createdAt": "2025-12-04T10:57:28.342000000Z",
+        "role": "STUDENT",
+        "fullName": "Phạm Thị H",
+        "bio": "Kỹ sư cơ khí chuyên về robot",
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afad",
+        "isActive": true,
+        "email": "phamthih@ctu.edu.vn",
+        "updatedAt": "2025-12-04T10:57:28.342000000Z",
+        "username": "phamthih"
+      },
+      "elementId": "78"
+    }
+  }
+]

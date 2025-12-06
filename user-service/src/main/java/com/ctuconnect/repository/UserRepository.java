@@ -23,18 +23,11 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
 
     List<UserEntity> findByIsActiveTrue();
 
-    // Simple user profile query - just get the user entity with relationships loaded
+    // Simple user profile query - fetch user with all direct relationships
+    // Spring Data Neo4j will automatically map the relationships when returning just the node
     @Query("""
         MATCH (u:User {id: $userId})
-        OPTIONAL MATCH (u)-[:ENROLLED_IN]->(m:Major)
-        OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
-        OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-        WITH u, m, b, g
-        OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-        WITH u, m, b, g, f
-        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-        RETURN u, m, f, c, b, g
-        LIMIT 1
+        RETURN u
         """)
     Optional<UserEntity> findUserWithRelationships(@Param("userId") String userId);
 

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/lib/api';
 import {ApiResponse, LecturerProfileUpdateRequest, PaginatedResponse, StudentProfileUpdateRequest, User} from '@/types';
-import {categoryService} from './categoryService';
+
 
 export const userService = {
   async getProfile(userId: string): Promise<User> {

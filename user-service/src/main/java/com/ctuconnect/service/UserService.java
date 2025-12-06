@@ -59,8 +59,15 @@ public class UserService {
     public UserProfileDTO getUserProfile(@NotBlank String userId) {
         log.info("Fetching user profile for userId: {}", userId);
 
-        var user = userRepository.findUserWithRelationships(userId)
+        // Use standard findById which loads relationships automatically
+        var user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        
+        // Log the relationship status for debugging
+        log.info("User relationships loaded - major: {}, batch: {}, gender: {}", 
+                user.getMajor() != null ? user.getMajor().getName() : "null", 
+                user.getBatch() != null ? user.getBatch().getYear() : "null", 
+                user.getGender() != null ? user.getGender().getName() : "null");
 
         return userMapper.toUserProfileDTO(user);
     }
