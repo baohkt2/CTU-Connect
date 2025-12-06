@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/lib/api';
 import { LoginRequest, RegisterRequest, AuthResponse, ApiResponse, User } from '@/types';
 
@@ -59,10 +60,11 @@ export const authService = {
   },
 
   async getWebSocketToken(): Promise<{ token: string }> {
-    const response = await api.get('/auth/websocket-token', {
-      withCredentials: true,
-    });
-    return response.data;
+    // const response = await api.get('/auth/websocket-token', {
+    //   withCredentials: true,
+    // });
+    // return response.data;
+    return { token: '' }; // Placeholder until backend is implemented
   },
 
   /**

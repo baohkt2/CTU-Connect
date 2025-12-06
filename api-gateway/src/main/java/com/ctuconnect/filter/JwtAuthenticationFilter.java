@@ -82,6 +82,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             if (accessTokenCookie != null) {
                 accessToken = accessTokenCookie.getValue();
                 System.out.println("JwtAuthenticationFilter: Access token extracted from cookie.");
+                System.out.println("JwtAuthenticationFilter: DEBUG - Access token value: " + accessToken);
             }
             if (refreshTokenCookie != null && path.equals("/api/auth/refresh-token")) {
                 refreshToken = refreshTokenCookie.getValue();
@@ -122,6 +123,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 String userEmail = claims.getSubject(); // Subject contains email
                 String userRole = claims.get("role", String.class);
 
+                System.out.println("JwtAuthenticationFilter: DEBUG - Extracted userEmail from claims: " + userEmail);
+                System.out.println("JwtAuthenticationFilter: DEBUG - Extracted userId from claims: " + userId);
+                System.out.println("JwtAuthenticationFilter: DEBUG - Extracted userRole from claims: " + userRole);
+
                 // Fallback to subject if userId claim is not present (backward compatibility)
                 if (userId == null || userId.trim().isEmpty()) {
                     userId = userEmail;
@@ -137,6 +142,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                         .header("X-Auth-User-Role", userRole != null ? userRole : "USER")
                         .build();
 
+                System.out.println("JwtAuthenticationFilter: DEBUG - Headers set - X-User-Id: " + userId + ", X-User-Email: " + userEmail + ", X-User-Role: " + userRole);
                 System.out.println("JwtAuthenticationFilter: Token validated for user: " + userId + ", role: " + userRole + ", email: " + userEmail);
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
             } catch (ExpiredJwtException e) {

@@ -41,17 +41,19 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       console.log('DEBUG: 401 Unauthorized received for:', originalRequest.url);
 
+      // IMPORTANT: Don't intercept logout requests - let them fail naturally
+      if (originalRequest.url?.includes('/auth/logout')) {
+        console.log('DEBUG: Logout request failed, ignoring');
+        return Promise.reject(error);
+      }
+
       // Nếu đây là request refresh-token thất bại, logout user
       if (originalRequest.url?.includes('/auth/refresh-token')) {
         console.log('DEBUG: Refresh token failed, redirecting to login');
-        // Clear any auth state and redirect
+        // Clear any auth state and redirect WITHOUT calling logout API
         if (typeof window !== 'undefined') {
-          // Trigger logout through auth service to clear cookies
-          try {
-            await api.post('/auth/logout', {}, { withCredentials: true });
-          } catch (logoutError) {
-            console.error('DEBUG: Logout error:', logoutError);
-          }
+          localStorage.removeItem('user');
+          sessionStorage.clear();
           // Redirect to login
           window.location.href = '/login';
         }
@@ -74,13 +76,10 @@ api.interceptors.response.use(
           return api(originalRequest);
         } catch (refreshError) {
           console.log('DEBUG: Token refresh failed, redirecting to login');
-          // Refresh thất bại, logout và redirect
+          // Refresh thất bại, clear local data and redirect WITHOUT calling logout API
           if (typeof window !== 'undefined') {
-            try {
-              await api.post('/auth/logout', {}, { withCredentials: true });
-            } catch (logoutError) {
-              console.error('DEBUG: Logout error:', logoutError);
-            }
+            localStorage.removeItem('user');
+            sessionStorage.clear();
             window.location.href = '/login';
           }
           return Promise.reject(refreshError);

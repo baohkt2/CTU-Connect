@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public class UserEntity {
     private Boolean isActive = true;
 
     @Builder.Default
-    private LocalDateTime  createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();

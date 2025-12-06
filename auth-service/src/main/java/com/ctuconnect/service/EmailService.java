@@ -1,6 +1,5 @@
 package com.ctuconnect.service;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
-
+    
     @Value("${spring.mail.username}")
     private String fromEmail;
 
@@ -33,6 +32,13 @@ public class EmailService {
     @Async
     public void sendVerificationEmail(String toEmail, String token) {
         try {
+            log.info("========== EMAIL SENDING DEBUG ==========");
+            log.info("Attempting to send email to: {}", toEmail);
+            log.info("From email configured as: {}", fromEmail);
+            log.info("SMTP host: smtp.gmail.com");
+            log.info("SMTP port: 587");
+            log.info("==========================================");
+            
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -108,10 +114,16 @@ public class EmailService {
 
             helper.setText(htmlContent, true);
             mailSender.send(message);
-            log.info("Verification email sent to: {}", toEmail);
-        } catch (MessagingException e) {
-            log.error("Failed to send verification email to {}: {}", toEmail, e.getMessage());
-            throw new RuntimeException("Failed to send verification email", e);
+            log.info("Verification email sent successfully to: {}", toEmail);
+        } catch (Exception e) {
+            // Log the FULL error with stack trace for debugging
+            log.error("Failed to send verification email to {}. User registration will continue.", toEmail);
+            log.error("Full error details: ", e);
+            // Also log the specific exception type
+            log.error("Exception type: {}", e.getClass().getName());
+            if (e.getCause() != null) {
+                log.error("Root cause: {} - {}", e.getCause().getClass().getName(), e.getCause().getMessage());
+            }
         }
     }
 
@@ -186,9 +198,11 @@ public class EmailService {
 
             helper.setText(htmlContent, true);
             mailSender.send(message);
-            log.info("Password reset email sent to: {}", toEmail);
-        } catch (MessagingException e) {
+            log.info("Password reset email sent successfully to: {}", toEmail);
+        } catch (Exception e) {
+            // Log the error but don't throw exception
             log.error("Failed to send password reset email to {}: {}", toEmail, e.getMessage());
+            log.debug("Email error details: ", e);
         }
     }
 

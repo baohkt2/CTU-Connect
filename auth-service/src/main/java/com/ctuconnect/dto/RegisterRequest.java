@@ -33,7 +33,6 @@ public class RegisterRequest {
 
     private String role = "USER"; // Default role is USER
 
-    // reCAPTCHA token
-    @NotBlank(message = "reCAPTCHA token là bắt buộc")
+    // reCAPTCHA token (optional for now)
     private String recaptchaToken;
 }

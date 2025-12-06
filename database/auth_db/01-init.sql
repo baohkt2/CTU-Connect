@@ -1,71 +1,154 @@
--- auth_db schema (this runs automatically in auth_db due to POSTGRES_DB setting)
+// -----------------------------------------------------------------
+// 0. CLEAN SLATE (Optional: Use with caution to reset the database)
+// -----------------------------------------------------------------
+MATCH (n) DETACH DELETE n;
 
--- ---
--- Drop existing tables and types to recreate them safely (if running this script multiple times)
--- ---
-DROP TABLE IF EXISTS email_verification CASCADE;
-DROP TABLE IF EXISTS refresh_tokens CASCADE;
-DROP TABLE IF EXISTS password_reset_tokens CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
--- DROP EXTENSION IF EXISTS "uuid-ossp"; -- Uncomment this if you need to recreate the extension for testing purposes
+// =================================================================
+// 1. CONSTRAINTS & INDEXES
+// =================================================================
+CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (uni:University) REQUIRE uni.name IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (c:College) REQUIRE c.name IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (f:Faculty) REQUIRE f.name IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (m:Major) REQUIRE m.name IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (b:Batch) REQUIRE b.year IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (g:Gender) REQUIRE g.name IS UNIQUE;
 
--- ---
--- Create Extension for UUID (if not already enabled and using PostgreSQL < 13)
--- ---
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; -- Uncomment and run this if your PostgreSQL version is below 13
--- and you use uuid_generate_v4() instead of gen_random_uuid()
+// =================================================================
+// 2. CREATE HIERARCHICAL UNIVERSITY STRUCTURE
+// =================================================================
+MERGE (uni:University {name: 'Đại học Cần Thơ', established: 1966})
 
--- ---
--- Create table for users
--- ---
-CREATE TABLE IF NOT EXISTS users (
-                                     id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Sử dụng UUID và tự động sinh
-                                     email VARCHAR(50) NOT NULL UNIQUE,
-                                     username VARCHAR(25) NOT NULL UNIQUE,
-                                     password VARCHAR(255) NOT NULL,
-                                     role VARCHAR(20) NOT NULL DEFAULT 'USER',
-                                     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                     is_active BOOLEAN NOT NULL DEFAULT TRUE
-);
+WITH uni, [
+{ college: 'Khoa Công nghệ Thông tin và Truyền thông', faculties: [
+{ faculty: 'Bộ môn Công nghệ Phần mềm', majors: ['Công nghệ Phần mềm', 'Khoa học Máy tính'] },
+{ faculty: 'Bộ môn Hệ thống Thông tin', majors: ['Hệ thống Thông tin', 'Kinh doanh Kỹ thuật Số'] },
+{ faculty: 'Bộ môn Truyền thông Dữ liệu và Mạng máy tính', majors: ['Mạng máy tính và Truyền thông dữ liệu'] }
+]},
+{ college: 'Khoa Kinh tế', faculties: [
+{ faculty: 'Bộ môn Kinh tế học', majors: ['Kinh tế học'] },
+{ faculty: 'Bộ môn Quản trị Kinh doanh', majors: ['Marketing', 'Quản trị Kinh doanh'] },
+{ faculty: 'Bộ môn Tài chính Ngân hàng', majors: ['Tài chính - Ngân hàng'] }
+]},
+{ college: 'Khoa Kỹ thuật', faculties: [
+{ faculty: 'Bộ môn Kỹ thuật Xây dựng', majors: ['Kỹ thuật Xây dựng'] },
+{ faculty: 'Bộ môn Kỹ thuật Cơ khí', majors: ['Kỹ thuật Cơ khí', 'Robot và Trí tuệ nhân tạo'] }
+]},
+{ college: 'Khoa Nông nghiệp', faculties: [] },
+{ college: 'Khoa Y Dược', faculties: [] },
+{ college: 'Khoa Sư phạm', faculties: [] },
+{ college: 'Khoa Khoa học Tự nhiên', faculties: [] },
+{ college: 'Khoa Khoa học Xã hội và Nhân văn', faculties: [] },
+{ college: 'Khoa Luật', faculties: [] }
+] AS universityStructure
 
--- ---
--- Create table for email verification
--- ---
-CREATE TABLE IF NOT EXISTS email_verification (
-                                                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                                  token VARCHAR(255) NOT NULL UNIQUE,
-                                                  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Đã đổi sang UUID
-                                                  expiry_date BIGINT NOT NULL, -- Keep as BIGINT for Unix epoch milliseconds
-                                                  is_verified BOOLEAN NOT NULL DEFAULT FALSE,
-                                                  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+UNWIND universityStructure AS collegeData
+MERGE (c:College {name: collegeData.college})
+MERGE (uni)-[:HAS_COLLEGE]->(c)
 
--- ---
--- Create table for refresh tokens
--- ---
-CREATE TABLE IF NOT EXISTS refresh_tokens (
-                                              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                              token VARCHAR(255) NOT NULL UNIQUE,
-                                              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Đã đổi sang UUID
-                                              expiry_date TIMESTAMP NOT NULL,
-                                              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+WITH collegeData, c
+WHERE size(collegeData.faculties) > 0
+UNWIND collegeData.faculties AS facultyData
+MERGE (f:Faculty {name: facultyData.faculty, college: collegeData.college})
+MERGE (c)-[:HAS_FACULTY]->(f)
 
--- ---
--- Create table for password reset tokens
--- ---
-CREATE TABLE IF NOT EXISTS password_reset_tokens (
-                                                     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                                     token VARCHAR(255) NOT NULL UNIQUE,
-                                                     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Đã đổi sang UUID
-                                                     expiry_date TIMESTAMP NOT NULL,
-                                                     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+WITH facultyData, f
+UNWIND facultyData.majors AS majorName
+MERGE (m:Major {name: majorName, faculty: facultyData.faculty})
+MERGE (f)-[:HAS_MAJOR]->(m);
 
--- ---
--- Create indexes for faster token lookups
--- ---
-CREATE INDEX IF NOT EXISTS idx_email_verification_token ON email_verification(token);
-CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token ON refresh_tokens(token);
-CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
+// =================================================================
+// 3. CREATE BATCH (COURSE YEAR) NODES
+// =================================================================
+WITH [2021, 2022, 2023, 2024, 2025] AS batches
+MATCH (uni:University {name: 'Đại học Cần Thơ'})
+UNWIND batches AS batchYear
+MERGE (b:Batch {year: toInteger(batchYear)})
+MERGE (uni)-[:HAS_BATCH]->(b);
+
+// =================================================================
+// 4. CREATE GENDER NODES
+// =================================================================
+MERGE (g1:Gender {name: 'Nam'})
+MERGE (g2:Gender {name: 'Nữ'});
+
+// =================================================================
+// 5. CREATE SAMPLE USERS (UUID FIXED) - WITH ALL REQUIRED FIELDS
+// =================================================================
+WITH [
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', email: 'nguyenvana@ctu.edu.vn', studentId: 'B2106001', batch: 2021, fullName: 'Nguyễn Văn A', gender: 'Nam', bio: 'Sinh viên đam mê phát triển web', major: 'Công nghệ Phần mềm'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afa7', email: 'tranthib@ctu.edu.vn', studentId: 'B2106002', batch: 2021, fullName: 'Trần Thị B', gender: 'Nữ', bio: 'Kỹ sư phần mềm tập trung vào front-end', major: 'Công nghệ Phần mềm'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afa8', email: 'leminhc@ctu.edu.vn', studentId: 'B2106003', batch: 2021, fullName: 'Lê Minh C', gender: 'Nam', bio: 'Người đam mê AI và học máy', major: 'Khoa học Máy tính'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afa9', email: 'phamthid@ctu.edu.vn', studentId: 'B2206001', batch: 2022, fullName: 'Phạm Thị D', gender: 'Nữ', bio: 'Nhà khoa học dữ liệu', major: 'Hệ thống Thông tin'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afaa', email: 'nguyenvane@ctu.edu.vn', studentId: 'B2206002', batch: 2022, fullName: 'Nguyễn Văn E', gender: 'Nam', bio: 'Sinh viên kinh doanh tập trung vào marketing', major: 'Marketing'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afab', email: 'tranthif@ctu.edu.vn', studentId: 'B2306001', batch: 2023, fullName: 'Trần Thị F', gender: 'Nữ', bio: 'Sinh viên tài chính quan tâm đến đầu tư', major: 'Tài chính - Ngân hàng'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afac', email: 'levang@ctu.edu.vn', studentId: 'B2406001', batch: 2024, fullName: 'Lê Văn G', gender: 'Nam', bio: 'Sinh viên kỹ thuật xây dựng', major: 'Kỹ thuật Xây dựng'},
+{id: '3fa85f64-5717-4562-b3fc-2c963f66afad', email: 'phamthih@ctu.edu.vn', studentId: 'B2506001', batch: 2025, fullName: 'Phạm Thị H', gender: 'Nữ', bio: 'Kỹ sư cơ khí chuyên về robot', major: 'Robot và Trí tuệ nhân tạo'}
+] AS usersData
+UNWIND usersData AS data
+MERGE (u:User {id: data.id})
+ON CREATE SET
+u.email = data.email,
+u.studentId = data.studentId,
+u.fullName = data.fullName,
+u.role = 'STUDENT',
+u.bio = data.bio,
+u.username = split(data.email, '@')[0],
+u.isActive = true,
+u.createdAt = datetime(),
+u.updatedAt = datetime()
+ON MATCH SET
+u.fullName = data.fullName,
+u.bio = data.bio,
+u.username = COALESCE(u.username, split(data.email, '@')[0]),
+u.isActive = COALESCE(u.isActive, true),
+u.updatedAt = datetime()
+
+WITH u, data
+MATCH (b:Batch {year: toInteger(data.batch)})
+MATCH (m:Major {name: data.major})
+MATCH (g:Gender {name: data.gender})
+MERGE (u)-[:IN_BATCH]->(b)
+MERGE (u)-[:ENROLLED_IN]->(m)
+MERGE (u)-[:HAS_GENDER]->(g);
+
+// =================================================================
+// 6. UPDATE EXISTING USERS WITH MISSING FIELDS (MIGRATION)
+// =================================================================
+MATCH (u:User)
+WHERE u.username IS NULL OR u.isActive IS NULL
+SET u.username = COALESCE(u.username, split(u.email, '@')[0]),
+    u.isActive = COALESCE(u.isActive, true),
+    u.updatedAt = datetime();
+
+// =================================================================
+// 7. FRIEND RELATIONS
+// =================================================================
+WITH [
+['3fa85f64-5717-4562-b3fc-2c963f66afa6', '3fa85f64-5717-4562-b3fc-2c963f66afa7'],
+['3fa85f64-5717-4562-b3fc-2c963f66afa6', '3fa85f64-5717-4562-b3fc-2c963f66afa8'],
+['3fa85f64-5717-4562-b3fc-2c963f66afa7', '3fa85f64-5717-4562-b3fc-2c963f66afa9'],
+['3fa85f64-5717-4562-b3fc-2c963f66afa8', '3fa85f64-5717-4562-b3fc-2c963f66afaa']
+] AS friendships
+UNWIND friendships AS pair
+MATCH (u1:User {id: pair[0]})
+MATCH (u2:User {id: pair[1]})
+MERGE (u1)-[:IS_FRIENDS_WITH {since: datetime()}]-(u2);
+
+// =================================================================
+// 8. PENDING FRIEND REQUESTS
+// =================================================================
+WITH [
+{sender: '3fa85f64-5717-4562-b3fc-2c963f66afab', receiver: '3fa85f64-5717-4562-b3fc-2c963f66afac'},
+{sender: '3fa85f64-5717-4562-b3fc-2c963f66afac', receiver: '3fa85f64-5717-4562-b3fc-2c963f66afa6'}
+] AS requests
+UNWIND requests AS request
+MATCH (sender:User {id: request.sender})
+MATCH (receiver:User {id: request.receiver})
+MERGE (sender)-[:SENT_FRIEND_REQUEST_TO {requestedAt: datetime()}]->(receiver);
+
+// =================================================================
+// 9. DONE
+// =================================================================
+RETURN '✅ Neo4j initialized with fixed UUID users, structure, and relationships.' AS status;

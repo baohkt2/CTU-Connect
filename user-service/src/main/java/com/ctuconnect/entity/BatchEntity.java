@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class BatchEntity {
     @Id
-    @NotNull(message = "Batch year is required")
+    @NotNull(message = "Batch is required")
     private String year;
 
     private String description;

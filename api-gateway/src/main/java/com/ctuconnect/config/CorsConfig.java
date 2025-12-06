@@ -16,7 +16,7 @@ public class CorsConfig {
         // Allow specific origins
         configuration.addAllowedOrigin("http://localhost:3000"); // Client frontend
         configuration.addAllowedOrigin("http://localhost:3001"); // Admin frontend
-        configuration.addAllowedOrigin("http://localhost:8080"); // API Gateway
+        configuration.addAllowedOrigin("http://localhost:8090"); // API Gateway
 
         // Allow all headers
         configuration.addAllowedHeader("*");

@@ -45,23 +45,33 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(
+    public ResponseEntity<?> refreshToken(
             @CookieValue(name = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response) {
 
-        if (refreshToken == null || refreshToken.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(java.util.Map.of(
+                    "success", false,
+                    "message", "Refresh token is missing. Please login again."
+                ));
         }
 
-        AuthResponse authResponse = authService.refreshToken(refreshToken);
+        try {
+            AuthResponse authResponse = authService.refreshToken(refreshToken);
 
-        clearAllTokenCookies(response);
-        setTokenCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
+            clearAllTokenCookies(response);
+            setTokenCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
 
-        authResponse.setAccessToken(null);
-        authResponse.setRefreshToken(null);
-
-        return ResponseEntity.ok(authResponse);
+            return ResponseEntity.ok(authResponse);
+        } catch (RuntimeException e) {
+            clearAllTokenCookies(response);
+            return ResponseEntity.badRequest()
+                .body(java.util.Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+                ));
+        }
     }
 
 
@@ -108,8 +118,30 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<AuthResponse> getCurrentUser(@CookieValue(value = "accessToken", required = false) String accessToken) {
+    public ResponseEntity<AuthResponse> getCurrentUser(
+            @CookieValue(value = "accessToken", required = false) String accessToken,
+            @RequestHeader(value = "X-User-Email", required = false) String userEmail,
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
+        
+        System.out.println("AuthController /me: DEBUG - accessToken from cookie: " + accessToken);
+        System.out.println("AuthController /me: DEBUG - X-User-Email header: " + userEmail);
+        System.out.println("AuthController /me: DEBUG - X-User-Id header: " + userId);
+        
+        // Prioritize headers from API Gateway (when request comes through gateway)
+        if (userEmail != null && !userEmail.trim().isEmpty()) {
+            System.out.println("AuthController /me: Using email from header: " + userEmail);
+            try {
+                AuthResponse authResponse = authService.getCurrentUserByEmail(userEmail);
+                return ResponseEntity.ok(authResponse);
+            } catch (Exception e) {
+                System.err.println("AuthController /me: Error getting user by email: " + e.getMessage());
+                return ResponseEntity.status(401).build();
+            }
+        }
+        
+        // Fallback to cookie-based authentication (direct calls)
         if (accessToken == null || accessToken.trim().isEmpty()) {
+            System.err.println("AuthController /me: No authentication credentials found");
             return ResponseEntity.status(401).build();
         }
 
@@ -117,6 +149,7 @@ public class AuthController {
             AuthResponse authResponse = authService.getCurrentUser(accessToken);
             return ResponseEntity.ok(authResponse);
         } catch (Exception e) {
+            System.err.println("AuthController /me: Error with token: " + e.getMessage());
             return ResponseEntity.status(401).build();
         }
     }

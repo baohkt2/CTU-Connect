@@ -5,6 +5,9 @@ import com.ctuconnect.dto.AuthorDTO;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.repository.UserRepository;
 import com.ctuconnect.security.SecurityContextHolder;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class UserSyncService {
 
     @Autowired
@@ -146,13 +150,27 @@ public class UserSyncService {
         dto.setCreatedAt(userEntity.getCreatedAt());
         dto.setUpdatedAt(userEntity.getUpdatedAt());
 
-        var profile = userRepository.findUserProfileById(userEntity.getId()).orElse(null);
-        if (profile != null) {
-            dto.setCollege(profile.getCollege());
-            dto.setFaculty(profile.getFaculty());
-            dto.setMajor(profile.getMajor());
-            dto.setBatch(profile.getBatch());
-            dto.setGender(profile.getGender());
+        // Try to get profile with relationships, but don't fail if it doesn't exist
+        try {
+            var userWithRels = userRepository.findUserWithRelationships(userEntity.getId()).orElse(userEntity);
+            if (userWithRels.getMajor() != null) {
+                dto.setMajor(userWithRels.getMajor().getName());
+                if (userWithRels.getMajor().getFaculty() != null) {
+                    dto.setFaculty(userWithRels.getMajor().getFaculty().getName());
+                    if (userWithRels.getMajor().getFaculty().getCollege() != null) {
+                        dto.setCollege(userWithRels.getMajor().getFaculty().getCollege().getName());
+                    }
+                }
+            }
+            if (userWithRels.getBatch() != null) {
+                dto.setBatch(userWithRels.getBatch().getYear());
+            }
+            if (userWithRels.getGender() != null) {
+                dto.setGender(userWithRels.getGender().getName());
+            }
+        } catch (Exception e) {
+            // Profile not available yet - this is OK for new users
+            log.debug("Profile not available for user {}: {}", userEntity.getId(), e.getMessage());
         }
 
         return dto;

@@ -28,7 +28,6 @@ public class LoginRequest {
             message = "Mật khẩu phải chứa ít nhất: 1 chữ số, 1 chữ thường, 1 chữ hoa, 1 ký tự đặc biệt và không có khoảng trắng")
     private String password;
 
-    // reCAPTCHA token
-    @NotBlank(message = "reCAPTCHA token là bắt buộc")
+    // reCAPTCHA token (optional for now)
     private String recaptchaToken;
 }

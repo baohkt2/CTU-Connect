@@ -50,4 +50,9 @@ public interface AuthService {
      * Get current user information from access token
      */
     AuthResponse getCurrentUser(String accessToken);
+
+    /**
+     * Get current user information by email (for gateway-validated requests)
+     */
+    AuthResponse getCurrentUserByEmail(String email);
 }

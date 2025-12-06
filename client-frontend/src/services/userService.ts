@@ -61,7 +61,27 @@ export const userService = {
   },
 
   async updateMyProfile(userData: StudentProfileUpdateRequest | LecturerProfileUpdateRequest): Promise<User> {
-    const response = await api.put('/users/me/profile', userData);
+    // Transform frontend data to backend format
+    const backendData: any = {
+      fullName: userData.fullName,
+      bio: userData.bio,
+    };
+    
+    // For students
+    if ('studentId' in userData) {
+      backendData.studentId = userData.studentId;
+      backendData.majorCode = userData.majorCode;
+      backendData.batchYear = userData.batchYear;
+      backendData.genderName = userData.genderCode; // Frontend uses genderCode but backend expects genderName
+    }
+    
+    // For lecturers (if needed in future)
+    if ('staffCode' in userData) {
+      // Add lecturer specific fields if needed
+    }
+    
+    console.log('Sending update profile request:', backendData);
+    const response = await api.put('/users/me/profile', backendData);
     return response.data;
   },
 

@@ -148,6 +148,37 @@ MATCH (sender:User {id: request.sender})
 MATCH (receiver:User {id: request.receiver})
 MERGE (sender)-[:SENT_FRIEND_REQUEST_TO {requestedAt: datetime()}]->(receiver);
 
+// 8. CREATE POSITION, ACADEMIC, DEGREE NODES (MỚI)
+// =================================================================
+// --- POSITION (Chức danh/Chức vụ) ---
+WITH [
+    { code: 'LECTURER', name: 'Giảng viên' },
+    { code: 'SNR_LECTURER', name: 'Giảng viên chính' },
+    { code: 'HEAD_OF_DEPT', name: 'Trưởng bộ môn' },
+    { code: 'RESEARCHER', name: 'Nghiên cứu viên' }
+] AS positions
+UNWIND positions AS data
+MERGE (p:Position {code: data.code, name: data.name});
+
+// --- ACADEMIC (Học hàm) ---
+WITH [
+    { code: 'PROF', name: 'Giáo sư' },
+    { code: 'ASSOC_PROF', name: 'Phó Giáo sư' },
+    { code: 'DR', name: 'Tiến sĩ' },
+    { code: 'MASTER', name: 'Thạc sĩ' }
+] AS academics
+UNWIND academics AS data
+MERGE (a:Academic {code: data.code, name: data.name});
+
+// --- DEGREE (Văn bằng/Bằng cấp) ---
+WITH [
+    { code: 'BACHELOR', name: 'Cử nhân/Kỹ sư' },
+    { code: 'MASTER', name: 'Thạc sĩ' },
+    { code: 'PHD', name: 'Tiến sĩ' }
+] AS degrees
+UNWIND degrees AS data
+MERGE (d:Degree {code: data.code, name: data.name});
+
 // =================================================================
 // 9. DONE
 // =================================================================

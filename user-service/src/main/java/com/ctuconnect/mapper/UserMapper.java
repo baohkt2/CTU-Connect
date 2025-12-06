@@ -14,19 +14,17 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     public UserProfileDTO toUserProfileDTO(UserRepository.UserProfileProjection projection) {
-        UserEntity user = projection.getUser();
-
         return UserProfileDTO.builder()
-            .id(user.getId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .studentId(user.getStudentId())
-            .fullName(user.getFullName())
-            .bio(user.getBio())
-            .role(user.getRole())
-            .isActive(user.getIsActive())
-            .createdAt(user.getCreatedAt())
-            .updatedAt(user.getUpdatedAt())
+            .id(projection.getUserId())
+            .email(projection.getEmail())
+            .username(projection.getUsername())
+            .studentId(projection.getStudentId())
+            .fullName(projection.getFullName())
+            .bio(projection.getBio())
+            .role(projection.getRole())
+            .isActive(projection.getIsActive())
+            .createdAt(projection.getCreatedAt())
+            .updatedAt(projection.getUpdatedAt())
             .college(projection.getCollege())
             .faculty(projection.getFaculty())
             .major(projection.getMajor())

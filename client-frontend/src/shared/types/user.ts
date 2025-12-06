@@ -108,25 +108,10 @@ export interface UpdateUserRequest {
 export interface UpdateProfileRequest {
   fullName?: string;
   bio?: string;
-  facultyId?: string;
-  majorId?: string;
-  batchId?: string;
-  collegeId?: string;
-  genderId?: string;
-  phoneNumber?: string;
-  dateOfBirth?: string;
-  address?: string;
-  interests?: string[];
-  socialLinks?: {
-    facebook?: string;
-    twitter?: string;
-    linkedin?: string;
-    instagram?: string;
-  };
-  privacySettings?: {
-    profileVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
-    contactInfoVisibility: 'PUBLIC' | 'FRIENDS' | 'PRIVATE';
-  };
+  studentId?: string;
+  majorCode?: string;  // Changed from majorId to majorCode  
+  batchYear?: string;  // Changed from batchId to batchYear
+  genderName?: string; // Changed from genderId to genderName
 }
 
 // ============================

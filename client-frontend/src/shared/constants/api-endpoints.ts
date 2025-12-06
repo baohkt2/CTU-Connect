@@ -19,9 +19,9 @@ export const API_ENDPOINTS = {
   // User management endpoints
   USERS: {
     BASE: '/api/users',
-    PROFILE: '/api/users/profile',
+    PROFILE: '/api/users/me/profile',
     BY_ID: '/api/users/:id',
-    UPDATE_PROFILE: '/api/users/profile',
+    UPDATE_PROFILE: '/api/users/me/profile',
     SEARCH: '/api/users/search',
     FRIENDS: '/api/users/:id/friends',
     FRIEND_SUGGESTIONS: '/api/users/friend-suggestions',

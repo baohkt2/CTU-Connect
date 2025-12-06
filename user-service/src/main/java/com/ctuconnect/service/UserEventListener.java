@@ -1,5 +1,6 @@
 package com.ctuconnect.service;
 
+import com.ctuconnect.event.UserUpdatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -8,7 +9,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -20,13 +20,12 @@ public class UserEventListener {
     private final UserSyncService userSyncService;
 
     @KafkaListener(topics = "user-registration", groupId = "user-service-group")
-    @Transactional
     public void handleUserCreatedEvent(@Payload Map<String, Object> event,
                                        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                        @Header(KafkaHeaders.OFFSET) long offset,
                                        Acknowledgment acknowledgment) {
         try {
-            log.info("Received user-created event from topic '{}': {}", topic, event);
+            log.info("Received user-created event from topic '{}' at offset {}: {}", topic, offset, event);
 
             String userId = String.valueOf(event.get("userId"));
             String email = String.valueOf(event.get("email"));
@@ -38,21 +37,21 @@ public class UserEventListener {
             log.info("User created successfully in user-db: {}", userId);
             acknowledgment.acknowledge();
         } catch (Exception e) {
-            log.error("Failed to process user-created event: {}", e.getMessage(), e);
+            log.error("Failed to process user-created event at offset {}: {}", offset, e.getMessage(), e);
+            // Don't acknowledge - message will be retried
         }
     }
 
     @KafkaListener(topics = "user-updated", groupId = "user-service-group")
-    @Transactional
-    public void handleUserUpdatedEvent(@Payload Map<String, Object> event,
+    public void handleUserUpdatedEvent(@Payload UserUpdatedEvent event,
                                        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                        Acknowledgment acknowledgment) {
         try {
             log.info("Received user-updated event from topic '{}': {}", topic, event);
 
-            String userId = String.valueOf(event.get("userId"));
-            String email = String.valueOf(event.get("email"));
-            String role = String.valueOf(event.get("role"));
+            String userId = event.getUserId();
+            String email = event.getEmail();
+            String role = event.getRole();
 
             userSyncService.updateUserFromAuth(userId, email, role);
 
@@ -60,11 +59,11 @@ public class UserEventListener {
             acknowledgment.acknowledge();
         } catch (Exception e) {
             log.error("Failed to process user-updated event: {}", e.getMessage(), e);
+            // Don't acknowledge - message will be retried
         }
     }
 
     @KafkaListener(topics = "user-deleted", groupId = "user-service-group")
-    @Transactional
     public void handleUserDeletedEvent(@Payload Map<String, Object> event,
                                        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                        Acknowledgment acknowledgment) {
@@ -78,6 +77,7 @@ public class UserEventListener {
             acknowledgment.acknowledge();
         } catch (Exception e) {
             log.error("Failed to process user-deleted event: {}", e.getMessage(), e);
+            // Don't acknowledge - message will be retried
         }
     }
 }

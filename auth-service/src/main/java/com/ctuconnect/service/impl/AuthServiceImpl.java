@@ -177,7 +177,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse refreshToken(String refreshToken) {
         // Validate refresh token
-        RefreshTokenEntity token = refreshTokenRepository.findByToken(refreshToken)
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            throw new RuntimeException("Refresh token is required");
+        }
+        
+        RefreshTokenEntity token = refreshTokenRepository.findByToken(refreshToken.trim())
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
 
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
@@ -390,6 +394,26 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             throw new RuntimeException("Invalid access token: " + e.getMessage());
         }
+    }
+
+    @Override
+    public AuthResponse getCurrentUserByEmail(String email) {
+        // Normalize email to lowercase
+        String normalizedEmail = email.toLowerCase().trim();
+
+        // Find user by email
+        UserEntity user = userRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check if user is active
+        if (!user.isActive()) {
+            throw new RuntimeException("User account is inactive");
+        }
+
+        return AuthResponse.builder()
+                .user(UserMapper.toDto(user))
+                .tokenType("Bearer")
+                .build();
     }
 
     /**

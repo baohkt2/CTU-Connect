@@ -1,6 +1,6 @@
 package com.ctuconnect.dto;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
+
 public class BatchInfo {
     private String id;
     private String year;

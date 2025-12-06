@@ -23,7 +23,7 @@ public class UserUpdateDTO {
     @Size(max = 20, message = "Student ID must not exceed 20 characters")
     private String studentId;
 
-    private String majorName;
-    private Integer batchYear;
+    private String majorCode;  // Changed from majorName to majorCode
+    private String batchYear;
     private String genderName;
 }

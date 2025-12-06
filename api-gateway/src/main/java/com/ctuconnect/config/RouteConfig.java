@@ -18,9 +18,10 @@ public class RouteConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                // Auth Service Routes - Public endpoints that don't require JWT validation
+                // Auth Service Routes - Apply JWT filter (will skip public endpoints internally)
                 .route("auth-service-route", r -> r
                         .path("/api/auth/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://auth-service"))
 
                 // User Service Routes - Protected endpoints that require JWT validation

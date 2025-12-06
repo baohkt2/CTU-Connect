@@ -23,30 +23,20 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
 
     List<UserEntity> findByIsActiveTrue();
 
-    // Comprehensive user profile query with all related information
+    // Simple user profile query - just get the user entity with relationships loaded
     @Query("""
         MATCH (u:User {id: $userId})
         OPTIONAL MATCH (u)-[:ENROLLED_IN]->(m:Major)
-        OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-        OPTIONAL MATCH (c)-[:HAS_COLLEGE]-(uni:University)
         OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
         OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-        OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-        OPTIONAL MATCH (u)-[:SENT_FRIEND_REQUEST_TO]->(sentReq:User)
-        OPTIONAL MATCH (requester:User)-[:SENT_FRIEND_REQUEST_TO]->(u)
-        
-        RETURN u as user,
-               c.name as college,
-               f.name as faculty,
-               m.name as major,
-               b.year as batch,
-               g.name as gender,
-               count(DISTINCT friend) as friendsCount,
-               count(DISTINCT sentReq) as sentRequestsCount,
-               count(DISTINCT requester) as receivedRequestsCount
+        WITH u, m, b, g
+        OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
+        WITH u, m, b, g, f
+        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
+        RETURN u, m, f, c, b, g
+        LIMIT 1
         """)
-    Optional<UserProfileProjection> findUserProfileById(@Param("userId") String userId);
+    Optional<UserEntity> findUserWithRelationships(@Param("userId") String userId);
 
     // Enhanced user search with relationship context
     @Query(value = """
@@ -374,9 +364,50 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
     List<UserEntity> findUsersByMajorId(@Param("majorId") String majorId);
 
+    // Update relationship methods - properly handle Neo4j relationship updates
+    
+    @Query("""
+        MATCH (u:User {id: $userId})
+        OPTIONAL MATCH (u)-[r:ENROLLED_IN]->(:Major)
+        DELETE r
+        WITH u
+        MATCH (m:Major {code: $majorCode})
+        MERGE (u)-[:ENROLLED_IN]->(m)
+        """)
+    void updateUserMajor(@Param("userId") String userId, @Param("majorCode") String majorCode);
+    
+    @Query("""
+        MATCH (u:User {id: $userId})
+        OPTIONAL MATCH (u)-[r:IN_BATCH]->(:Batch)
+        DELETE r
+        WITH u
+        MATCH (b:Batch {year: $batchYear})
+        MERGE (u)-[:IN_BATCH]->(b)
+        """)
+    void updateUserBatch(@Param("userId") String userId, @Param("batchYear") String batchYear);
+    
+    @Query("""
+        MATCH (u:User {id: $userId})
+        OPTIONAL MATCH (u)-[r:HAS_GENDER]->(:Gender)
+        DELETE r
+        WITH u
+        MATCH (g:Gender {name: $genderName})
+        MERGE (u)-[:HAS_GENDER]->(g)
+        """)
+    void updateUserGender(@Param("userId") String userId, @Param("genderName") String genderName);
+
     // Interface for projections
     interface UserProfileProjection {
-        UserEntity getUser();
+        String getUserId();
+        String getEmail();
+        String getUsername();
+        String getStudentId();
+        String getFullName();
+        String getBio();
+        String getRole();
+        Boolean getIsActive();
+        java.time.LocalDateTime getCreatedAt();
+        java.time.LocalDateTime getUpdatedAt();
         String getCollege();
         String getFaculty();
         String getMajor();

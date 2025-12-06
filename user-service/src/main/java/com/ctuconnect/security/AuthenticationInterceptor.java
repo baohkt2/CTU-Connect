@@ -28,7 +28,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String email = request.getHeader(USER_EMAIL_HEADER);
         String role = request.getHeader(USER_ROLE_HEADER);
 
-        logger.debug("Authentication headers - UserId: {}, Email: {}, Role: {}", userId, email, role);
+        logger.info("AuthenticationInterceptor - Path: {}, UserId: {}, Email: {}, Role: {}", 
+                    request.getRequestURI(), userId, email, role);
 
         // If user information is present, create authenticated user context
         if (userId != null && !userId.trim().isEmpty()) {
@@ -44,9 +45,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
             AuthenticatedUser authenticatedUser = new AuthenticatedUser(userId.trim(), email.trim(), role.trim());
             SecurityContextHolder.setAuthenticatedUser(authenticatedUser);
-            logger.debug("Set authenticated user in SecurityContext: {}", userId);
+            logger.info("Set authenticated user in SecurityContext: userId={}, email={}, role={}", 
+                        userId, email, role);
         } else {
-            logger.warn("Missing or empty X-User-Id header. User authentication context not set.");
+            logger.warn("Missing or empty X-User-Id header. User authentication context not set. Path: {}", 
+                        request.getRequestURI());
         }
 
         return true;

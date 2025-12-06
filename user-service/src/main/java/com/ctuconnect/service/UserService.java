@@ -59,10 +59,10 @@ public class UserService {
     public UserProfileDTO getUserProfile(@NotBlank String userId) {
         log.info("Fetching user profile for userId: {}", userId);
 
-        var profileProjection = userRepository.findUserProfileById(userId)
+        var user = userRepository.findUserWithRelationships(userId)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
-        return userMapper.toUserProfileDTO(profileProjection);
+        return userMapper.toUserProfileDTO(user);
     }
 
     @Transactional(readOnly = true)
@@ -126,33 +126,46 @@ public class UserService {
             user.setStudentId(updateDTO.getStudentId());
         }
 
-        // Update academic information
-        if (updateDTO.getMajorName() != null) {
-            var major = majorRepository.findByName(updateDTO.getMajorName())
-                .orElseThrow(() -> new UserNotFoundException("Major not found: " + updateDTO.getMajorName()));
-            user.setMajor(major);
-        }
-
-        if (updateDTO.getBatchYear() != null) {
-            var batch = batchRepository.findByYear(String.valueOf(updateDTO.getBatchYear()))
-                .orElseThrow(() -> new UserNotFoundException("Batch not found: " + updateDTO.getBatchYear()));
-            user.setBatch(batch);
-        }
-
-        if (updateDTO.getGenderName() != null) {
-            var gender = genderRepository.findByName(updateDTO.getGenderName())
-                .orElseThrow(() -> new UserNotFoundException("Gender not found: " + updateDTO.getGenderName()));
-            user.setGender(gender);
-        }
-
         user.setUpdatedAt(LocalDateTime.now());
-        var savedUser = userRepository.save(user);
+        userRepository.save(user);
+
+        // Update academic information using custom queries that properly handle relationships
+        if (updateDTO.getMajorCode() != null && !updateDTO.getMajorCode().isEmpty()) {
+            // Verify major exists
+            majorRepository.findByCode(updateDTO.getMajorCode())
+                .orElseThrow(() -> new UserNotFoundException("Major not found with code: " + updateDTO.getMajorCode()));
+            // Update relationship
+            userRepository.updateUserMajor(userId, updateDTO.getMajorCode());
+            log.info("Updated major relationship for userId: {} to majorCode: {}", userId, updateDTO.getMajorCode());
+        }
+
+        if (updateDTO.getBatchYear() != null && !updateDTO.getBatchYear().isEmpty()) {
+            // Verify batch exists
+            batchRepository.findByYear(updateDTO.getBatchYear())
+                .orElseThrow(() -> new UserNotFoundException("Batch not found: " + updateDTO.getBatchYear()));
+            // Update relationship
+            userRepository.updateUserBatch(userId, updateDTO.getBatchYear());
+            log.info("Updated batch relationship for userId: {} to batchYear: {}", userId, updateDTO.getBatchYear());
+        }
+
+        if (updateDTO.getGenderName() != null && !updateDTO.getGenderName().isEmpty()) {
+            // Verify gender exists
+            genderRepository.findByName(updateDTO.getGenderName())
+                .orElseThrow(() -> new UserNotFoundException("Gender not found: " + updateDTO.getGenderName()));
+            // Update relationship
+            userRepository.updateUserGender(userId, updateDTO.getGenderName());
+            log.info("Updated gender relationship for userId: {} to genderName: {}", userId, updateDTO.getGenderName());
+        }
+
+        // Fetch updated user with relationships
+        var updatedUser = userRepository.findUserWithRelationships(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
         // Publish user updated event
-        publishUserUpdatedEvent(savedUser);
+        publishUserUpdatedEvent(updatedUser);
 
         log.info("User profile updated successfully for userId: {}", userId);
-        return getUserProfile(userId);
+        return userMapper.toUserProfileDTO(updatedUser);
     }
 
     public void deactivateUser(@NotBlank String userId) {

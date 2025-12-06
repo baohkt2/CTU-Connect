@@ -20,11 +20,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MajorEntity {
-    @Id
+   
     @NotBlank(message = "Major name is required")
     @Size(max = 100, message = "Major name must not exceed 100 characters")
     private String name;
-
+    
+    @Id
     @Size(max = 10, message = "Major code must not exceed 10 characters")
     private String code;
 
