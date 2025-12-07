@@ -6,11 +6,13 @@ import com.ctuconnect.dto.FriendRequestDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class UserMapper {
 
     public UserProfileDTO toUserProfileDTO(UserRepository.UserProfileProjection projection) {
@@ -84,6 +86,9 @@ public class UserMapper {
     }
 
     public UserProfileDTO toUserProfileDTO(UserEntity user) {
+        log.debug("Mapping UserEntity to UserProfileDTO - avatarUrl: {}, backgroundUrl: {}", 
+                user.getAvatarUrl(), user.getBackgroundUrl());
+        
         return UserProfileDTO.builder()
             .id(user.getId())
             .email(user.getEmail())
@@ -95,6 +100,8 @@ public class UserMapper {
             .isActive(user.getIsActive())
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())
+            .avatarUrl(user.getAvatarUrl())
+            .backgroundUrl(user.getBackgroundUrl())
             .college(user.getMajor() != null && user.getMajor().getFaculty() != null &&
                     user.getMajor().getFaculty().getCollege() != null ?
                     user.getMajor().getFaculty().getCollege().getName() : null)
@@ -103,6 +110,14 @@ public class UserMapper {
             .major(user.getMajor() != null ? user.getMajor().getName() : null)
             .batch(user.getBatch() != null ? user.getBatch().getYear() : null)
             .gender(user.getGender() != null ? user.getGender().getName() : null)
+            .collegeCode(user.getMajor() != null && user.getMajor().getFaculty() != null &&
+                    user.getMajor().getFaculty().getCollege() != null ?
+                    user.getMajor().getFaculty().getCollege().getCode() : null)
+            .facultyCode(user.getMajor() != null && user.getMajor().getFaculty() != null ?
+                    user.getMajor().getFaculty().getCode() : null)
+            .majorCode(user.getMajor() != null ? user.getMajor().getCode() : null)
+            .batchCode(user.getBatch() != null ? user.getBatch().getYear() : null)
+            .genderCode(user.getGender() != null ? user.getGender().getCode() : null)
             .friendsCount((long) user.getFriends().size())
             .sentRequestsCount((long) user.getSentFriendRequests().size())
             .receivedRequestsCount((long) user.getReceivedFriendRequests().size())

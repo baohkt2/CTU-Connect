@@ -66,6 +66,8 @@ export const userService = {
     const backendData: any = {
       fullName: userData.fullName,
       bio: userData.bio,
+      avatarUrl: userData.avatarUrl,
+      backgroundUrl: userData.backgroundUrl,
     };
     
     // For students
@@ -73,7 +75,7 @@ export const userService = {
       backendData.studentId = userData.studentId;
       backendData.majorCode = userData.majorCode;
       backendData.batchYear = userData.batchYear;
-      backendData.genderName = userData.genderCode; // Frontend uses genderCode but backend expects genderName
+      backendData.genderName = userData.genderCode; // Map genderCode (e.g., "M") to genderName field
     }
     
     // For lecturers (if needed in future)

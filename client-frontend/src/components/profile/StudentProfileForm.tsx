@@ -63,9 +63,22 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
                     batches: hierarchicalData.batches || []
                 });
 
-                const collegeCode = user.college?.code || '';
-                const facultyCode = user.faculty?.code || '';
-                const majorCode = user.major?.code || '';
+                const collegeCode = user.collegeCode || '';
+                const facultyCode = user.facultyCode || '';
+                const majorCode = user.majorCode || '';
+
+                console.log('User data for auto-select:', {
+                    college: user.college,
+                    collegeCode: user.collegeCode,
+                    faculty: user.faculty, 
+                    facultyCode: user.facultyCode,
+                    major: user.major,
+                    majorCode: user.majorCode,
+                    batch: user.batch,
+                    batchCode: user.batchCode,
+                    gender: user.gender,
+                    genderCode: user.genderCode
+                });
 
                 setSelectedCollege(collegeCode);
                 setSelectedFaculty(facultyCode);
@@ -104,8 +117,8 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
                         bio: user.bio || '',
                         studentId: user.studentId || '',
                         majorCode: majorCode,
-                        batchYear: user.batch?.year || '',
-                        genderCode: user.gender?.code || '',
+                        batchYear: user.batch || '',
+                        genderCode: user.genderCode || '',
                         avatarUrl: user.avatarUrl || '',
                         backgroundUrl: user.backgroundUrl || '',
                         collegeCode: collegeCode,

@@ -63,13 +63,19 @@ public class UserService {
         var user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
         
-        // Log the relationship status for debugging
+        // Log the relationship status and image URLs for debugging
         log.info("User relationships loaded - major: {}, batch: {}, gender: {}", 
                 user.getMajor() != null ? user.getMajor().getName() : "null", 
                 user.getBatch() != null ? user.getBatch().getYear() : "null", 
                 user.getGender() != null ? user.getGender().getName() : "null");
+        log.info("User image URLs - avatarUrl: {}, backgroundUrl: {}", 
+                user.getAvatarUrl(), user.getBackgroundUrl());
 
-        return userMapper.toUserProfileDTO(user);
+        UserProfileDTO dto = userMapper.toUserProfileDTO(user);
+        log.info("UserProfileDTO created - avatarUrl: {}, backgroundUrl: {}", 
+                dto.getAvatarUrl(), dto.getBackgroundUrl());
+        
+        return dto;
     }
 
     @Transactional(readOnly = true)
@@ -133,8 +139,20 @@ public class UserService {
             user.setStudentId(updateDTO.getStudentId());
         }
 
+        // Update avatar and background images
+        if (updateDTO.getAvatarUrl() != null) {
+            user.setAvatarUrl(updateDTO.getAvatarUrl());
+            log.info("Updated avatar URL for userId: {}", userId);
+        }
+
+        if (updateDTO.getBackgroundUrl() != null) {
+            user.setBackgroundUrl(updateDTO.getBackgroundUrl());
+            log.info("Updated background URL for userId: {}", userId);
+        }
+
         user.setUpdatedAt(LocalDateTime.now());
-        userRepository.save(user);
+        // Save immediately to persist image URLs
+        user = userRepository.save(user);
 
         // Update academic information using custom queries that properly handle relationships
         if (updateDTO.getMajorCode() != null && !updateDTO.getMajorCode().isEmpty()) {
@@ -156,12 +174,13 @@ public class UserService {
         }
 
         if (updateDTO.getGenderName() != null && !updateDTO.getGenderName().isEmpty()) {
-            // Verify gender exists
-            genderRepository.findByName(updateDTO.getGenderName())
+            // Try to find gender by code first, then by name
+            var gender = genderRepository.findByCode(updateDTO.getGenderName())
+                .or(() -> genderRepository.findByName(updateDTO.getGenderName()))
                 .orElseThrow(() -> new UserNotFoundException("Gender not found: " + updateDTO.getGenderName()));
-            // Update relationship
-            userRepository.updateUserGender(userId, updateDTO.getGenderName());
-            log.info("Updated gender relationship for userId: {} to genderName: {}", userId, updateDTO.getGenderName());
+            // Update relationship using gender name
+            userRepository.updateUserGender(userId, gender.getName());
+            log.info("Updated gender relationship for userId: {} to genderName: {}", userId, gender.getName());
         }
 
         // Fetch updated user with relationships

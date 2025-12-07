@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface GenderRepository extends Neo4jRepository<GenderEntity, String> {
 
     Optional<GenderEntity> findByName(String name);
+    
+    Optional<GenderEntity> findByCode(String code);
 
     boolean existsByName(String name);
 

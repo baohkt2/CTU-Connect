@@ -19,14 +19,19 @@ export interface User {
   avatarUrl?: string | null;
   backgroundUrl?: string | null;
 
-  // Working fields
-  college?: CollegeInfo;
-  faculty?: FacultyInfo;
-
-  // Student specific fields
-  major?: MajorInfo;
-  batch?: BatchInfo;
-  gender?: GenderInfo;
+  // Working fields - names for display
+  college?: string;
+  faculty?: string;
+  major?: string;
+  batch?: string;
+  gender?: string;
+  
+  // Working fields - codes for forms
+  collegeCode?: string;
+  facultyCode?: string;
+  majorCode?: string;
+  batchCode?: string;
+  genderCode?: string;
 
   // Faculty specific fields
   staffCode?: string;

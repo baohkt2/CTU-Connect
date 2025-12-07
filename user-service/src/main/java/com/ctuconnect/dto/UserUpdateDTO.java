@@ -26,4 +26,8 @@ public class UserUpdateDTO {
     private String majorCode;  // Changed from majorName to majorCode
     private String batchYear;
     private String genderName;
+    
+    // Avatar and cover image URLs
+    private String avatarUrl;
+    private String backgroundUrl;
 }

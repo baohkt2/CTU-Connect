@@ -116,6 +116,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
 
   const handleEditProfile = () => {
     // TODO: Implement profile editing
+    window.location.href = '/profile/update';
     console.log('Edit profile');
   };
 

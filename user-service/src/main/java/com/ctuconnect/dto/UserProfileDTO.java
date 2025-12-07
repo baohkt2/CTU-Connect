@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-
 import java.time.LocalDateTime;
 
 @Data
@@ -42,12 +41,23 @@ public class UserProfileDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // Profile images
+    private String avatarUrl;
+    private String backgroundUrl;
+
     // Academic information
     private String college;
     private String faculty;
     private String major;
     private String batch;
     private String gender;
+    
+    // Academic codes for frontend auto-selection
+    private String collegeCode;
+    private String facultyCode;
+    private String majorCode;
+    private String batchCode;
+    private String genderCode;
 
     // Social information
     private Long friendsCount;

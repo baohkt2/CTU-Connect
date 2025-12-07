@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -43,6 +44,15 @@ public class UserEntity {
 
     @Size(max = 500, message = "Bio must not exceed 500 characters")
     private String bio;
+
+    // Profile images
+    @Property("avatarUrl")
+    @Size(max = 500, message = "Avatar URL must not exceed 500 characters")
+    private String avatarUrl;
+
+    @Property("backgroundUrl")
+    @Size(max = 500, message = "Background URL must not exceed 500 characters")
+    private String backgroundUrl;
 
     @Builder.Default
     private Boolean isActive = true;

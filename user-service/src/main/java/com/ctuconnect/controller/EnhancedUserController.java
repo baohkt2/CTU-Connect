@@ -43,6 +43,8 @@ public class EnhancedUserController {
         
         log.info("GET /profile - Getting profile for user: {}", currentUser.getEmail());
         UserProfileDTO profile = userService.getUserProfile(currentUser.getId());
+        log.info("GET /profile - Returning profile with avatarUrl: {}, backgroundUrl: {}", 
+                profile.getAvatarUrl(), profile.getBackgroundUrl());
         return ResponseEntity.ok(profile);
     }
     
@@ -52,7 +54,16 @@ public class EnhancedUserController {
     @GetMapping("/me/profile")
     @RequireAuth
     public ResponseEntity<UserProfileDTO> getMyProfile() {
-        return getCurrentUserProfile();
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+        
+        log.info("GET /me/profile - Getting profile for user: {}", currentUser.getEmail());
+        UserProfileDTO profile = userService.getUserProfile(currentUser.getId());
+        log.info("GET /me/profile - Returning profile with avatarUrl: {}, backgroundUrl: {}", 
+                profile.getAvatarUrl(), profile.getBackgroundUrl());
+        return ResponseEntity.ok(profile);
     }
     
     /**
