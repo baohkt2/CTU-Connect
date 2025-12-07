@@ -171,6 +171,14 @@ export const postService = {
     });
   },
 
+  // React to post with specific reaction type
+  async reactToPost(postId: string, reactionId: string): Promise<Interaction | null> {
+    return this.createInteraction(postId, {
+      type: InteractionType.REACTION,
+      reactionType: reactionId as ReactionType
+    });
+  },
+
   // Share post
   async sharePost(postId: string): Promise<Interaction | null> {
     return this.createInteractionShare(postId, {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -22,12 +23,9 @@ export const ReactionButton: React.FC<ReactionButtonProps> = ({
                                                                 disabled = false,
                                                                 size = 'md',
                                                                 showPicker = true
-                                                              }) => {
+                                                               }) => {
   const [showReactionPicker, setShowReactionPicker] = useState(false);
-  const [isLongPress, setIsLongPress] = useState(false);
   const [countAnim, setCountAnim] = useState(false);
-
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -60,36 +58,26 @@ export const ReactionButton: React.FC<ReactionButtonProps> = ({
     }
   }, [totalReactions]);
 
-  const handleMouseDown = () => {
+  // Hover to show picker
+  const handleMouseEnter = () => {
     if (!showPicker) return;
-
-    timeoutRef.current = setTimeout(() => {
-      setIsLongPress(true);
-      setShowReactionPicker(true);
-    }, 500); // 500ms cho long press
-  };
-
-  const handleMouseUp = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    if (!isLongPress) {
-      if (currentReaction) {
-        onReactionRemove();
-      } else {
-        onReactionClick('LIKE');
-      }
-    }
-
-    setIsLongPress(false);
+    setShowReactionPicker(true);
   };
 
   const handleMouseLeave = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    // Delay hiding picker to allow moving mouse to it
+    setTimeout(() => {
+      setShowReactionPicker(false);
+    }, 200);
+  };
+
+  // Click handler for button
+  const handleButtonClick = () => {
+    if (currentReaction) {
+      onReactionRemove();
+    } else {
+      onReactionClick('LIKE');
     }
-    setIsLongPress(false);
   };
 
   const handleReactionSelect = (reactionId: string) => {
@@ -112,11 +100,9 @@ export const ReactionButton: React.FC<ReactionButtonProps> = ({
   return (
       <div className="relative" ref={pickerRef}>
         <button
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
+            onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            onTouchStart={handleMouseDown}
-            onTouchEnd={handleMouseUp}
+            onClick={handleButtonClick}
             disabled={disabled}
             className={`
           flex items-center space-x-2 rounded-lg font-medium transition-all duration-200
@@ -149,7 +135,11 @@ export const ReactionButton: React.FC<ReactionButtonProps> = ({
 
         {/* Picker với animation xuất hiện */}
         {showPicker && showReactionPicker && (
-            <div className="absolute bottom-full left-0 mb-2 z-50 animate-fadeScaleIn">
+            <div 
+              className="absolute bottom-full left-0 mb-2 z-50 animate-fadeScaleIn"
+              onMouseEnter={() => setShowReactionPicker(true)}
+              onMouseLeave={() => setShowReactionPicker(false)}
+            >
               <ReactionPicker
                   onReactionClick={handleReactionSelect}
                   currentReaction={currentReaction}

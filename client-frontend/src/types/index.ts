@@ -155,16 +155,16 @@ export enum InteractionType {
   LIKE = 'LIKE',
   SHARE = 'SHARE',
   BOOKMARK = 'BOOKMARK',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  REACTION = 'REACTION'
 }
 
 export enum ReactionType {
   LIKE = 'LIKE',
-  LOVE = 'LOVE',
-  HAHA = 'HAHA',
-  WOW = 'WOW',
-  SAD = 'SAD',
-  ANGRY = 'ANGRY',
+  INSIGHTFUL = 'INSIGHTFUL',
+  RELEVANT = 'RELEVANT',
+  USEFUL_SOURCE = 'USEFUL_SOURCE',
+  QUESTION = 'QUESTION',
   BOOKMARK = 'BOOKMARK'
 }
 

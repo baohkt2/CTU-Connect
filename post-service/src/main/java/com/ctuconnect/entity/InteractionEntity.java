@@ -116,14 +116,13 @@ public class InteractionEntity {
         COMMENT  // Add missing COMMENT enum
     }
 
-    // Separate enum for reaction types - add BOOKMARK
+    // Separate enum for reaction types
     public enum ReactionType {
-        LIKE,
-        LOVE,
-        HAHA,
-        WOW,
-        SAD,
-        ANGRY,
-        BOOKMARK  // Add missing BOOKMARK enum value
+        LIKE,           // 👍 Thích
+        INSIGHTFUL,     // 💡 Sáng Suốt
+        RELEVANT,       // ✔️ Phù Hợp
+        USEFUL_SOURCE,  // 📚 Nguồn Hữu Ích
+        QUESTION,       // ❓ Cần Thảo Luận
+        BOOKMARK        // For backward compatibility
     }
 }

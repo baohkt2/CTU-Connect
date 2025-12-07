@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -14,6 +15,7 @@ import { CommentItem } from '@/components/post/CommentItem';
 import { CommentManager } from '@/utils/commentManager';
 import { formatTimeAgo } from '@/utils/localization';
 import { sanitizeHtml, prepareHtmlForDisplay } from '@/utils/richTextUtils';
+import { REACTIONS } from '@/components/ui/ReactionPicker';
 import {
   MessageCircle,
   Share,
@@ -286,19 +288,42 @@ export const PostCard: React.FC<PostCardProps> = ({
     setIsLoadingInteraction(true);
 
     try {
+      // Call API to save reaction
+      await postService.reactToPost(post.id, reactionId);
+      
+      // Update local state
       setCurrentReaction(reactionId);
+      setIsLiked(true); // Mark as reacted
+      setShowReactionPicker(false); // Close picker after selection
+      
+      // Update reaction counts
       setReactionCounts(prev => ({
         ...prev,
         [reactionId]: (prev[reactionId] || 0) + 1
       }));
-      showFeedback(`Đã ${reactionId === 'LIKE' ? 'thích' : 'phản ứng'} bài viết`);
+      
+      // Update post stats
+      onPostUpdate?.({
+        ...post,
+        stats: { 
+          ...post.stats, 
+          likes: (post.stats?.likes || 0) + 1,
+          reactions: {
+            ...post.stats?.reactions,
+            [reactionId]: ((post.stats?.reactions?.[reactionId] || 0) + 1)
+          }
+        }
+      });
+      
+      const reactionName = REACTIONS.find(r => r.id === reactionId)?.name || 'phản ứng';
+      showFeedback(`Đã ${reactionName.toLowerCase()}`);
     } catch (error) {
       console.error('Error adding reaction:', error);
       showFeedback('Không thể thêm phản ứng');
     } finally {
       setIsLoadingInteraction(false);
     }
-  }, [isLoadingInteraction]);
+  }, [isLoadingInteraction, post, onPostUpdate]);
 
   const handleReactionRemove = useCallback(async () => {
     if (isLoadingInteraction || !currentReaction) return;
@@ -582,17 +607,19 @@ export const PostCard: React.FC<PostCardProps> = ({
       <div className="px-4 py-3 border-t border-gray-100">
         <div className="flex items-center justify-around">
           {/* Like Button with Reaction Picker */}
-          <div className="relative">
+          <div 
+            className="relative"
+            onMouseEnter={() => setShowReactionPicker(true)}
+            onMouseLeave={() => setShowReactionPicker(false)}
+          >
             <Button
               variant="ghost"
               size="sm"
               onClick={() => handleInteraction('like')}
-              onMouseEnter={() => setShowReactionPicker(true)}
-              onMouseLeave={() => setShowReactionPicker(false)}
               disabled={isLiked === null || isLoadingInteraction}
               className={`
                 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
-                ${isLiked 
+                ${isLiked || currentReaction
                   ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' 
                   : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
                 }
@@ -601,26 +628,40 @@ export const PostCard: React.FC<PostCardProps> = ({
             >
               {isLoadingInteraction ? (
                 <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              ) : currentReaction ? (
+                // Show selected reaction
+                <>
+                  <span className="text-lg">{REACTIONS.find(r => r.id === currentReaction)?.emoji || '👍'}</span>
+                  <span className="font-medium">{REACTIONS.find(r => r.id === currentReaction)?.name || 'Đã thích'}</span>
+                </>
+              ) : isLiked ? (
+                // Show thumbs up if liked
+                <>
+                  <ThumbsUp className="h-4 w-4 fill-current" />
+                  <span className="font-medium">Đã thích</span>
+                </>
               ) : (
-                <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+                // Default state
+                <>
+                  <ThumbsUp className="h-4 w-4" />
+                  <span className="font-medium">Thích</span>
+                </>
               )}
-              <span className="font-medium">{isLiked ? 'Đã thích' : 'Thích'}</span>
             </Button>
 
             {/* Reaction Picker */}
             {showReactionPicker && (
               <div
-                className="absolute bottom-full left-0 mb-2 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-lg animate-in fade-in-50 slide-in-from-bottom-2 duration-200"
-                onMouseEnter={() => setShowReactionPicker(true)}
-                onMouseLeave={() => setShowReactionPicker(false)}
+                className="absolute bottom-full left-0 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-lg animate-in fade-in-50 slide-in-from-bottom-2 duration-200 z-50"
               >
-                {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji, index) => (
+                {REACTIONS.map((reaction) => (
                   <button
-                    key={index}
+                    key={reaction.id}
                     className="w-8 h-8 rounded-full hover:scale-125 transition-transform duration-150"
-                    onClick={() => handleReactionClick('LIKE')}
+                    onClick={() => handleReactionClick(reaction.id)}
+                    title={reaction.name}
                   >
-                    <span className="text-lg">{emoji}</span>
+                    <span className="text-lg">{reaction.emoji}</span>
                   </button>
                 ))}
               </div>

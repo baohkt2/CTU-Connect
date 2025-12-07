@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Heart, ThumbsUp, Laugh, Frown, Angry } from 'lucide-react';
+import { ThumbsUp, Lightbulb, CheckCircle, BookOpen, HelpCircle } from 'lucide-react';
 
 export interface ReactionType {
   id: string;
@@ -22,36 +22,36 @@ export const REACTIONS: ReactionType[] = [
     hoverColor: 'hover:bg-blue-50'
   },
   {
-    id: 'LOVE',
-    name: 'Yêu thích',
-    emoji: '❤️',
-    icon: <Heart className="w-6 h-6" />,
-    color: 'text-red-600',
-    hoverColor: 'hover:bg-red-50'
-  },
-  {
-    id: 'HAHA',
-    name: 'Haha',
-    emoji: '😂',
-    icon: <Laugh className="w-6 h-6" />,
+    id: 'INSIGHTFUL',
+    name: 'Sáng Suốt',
+    emoji: '💡',
+    icon: <Lightbulb className="w-6 h-6" />,
     color: 'text-yellow-600',
     hoverColor: 'hover:bg-yellow-50'
   },
   {
-    id: 'SAD',
-    name: 'Buồn',
-    emoji: '😢',
-    icon: <Frown className="w-6 h-6" />,
-    color: 'text-yellow-700',
-    hoverColor: 'hover:bg-yellow-50'
+    id: 'RELEVANT',
+    name: 'Phù Hợp',
+    emoji: '✔️',
+    icon: <CheckCircle className="w-6 h-6" />,
+    color: 'text-green-600',
+    hoverColor: 'hover:bg-green-50'
   },
   {
-    id: 'ANGRY',
-    name: 'Phẫn nộ',
-    emoji: '😠',
-    icon: <Angry className="w-6 h-6" />,
-    color: 'text-red-700',
-    hoverColor: 'hover:bg-red-50'
+    id: 'USEFUL_SOURCE',
+    name: 'Nguồn Hữu Ích',
+    emoji: '📚',
+    icon: <BookOpen className="w-6 h-6" />,
+    color: 'text-purple-600',
+    hoverColor: 'hover:bg-purple-50'
+  },
+  {
+    id: 'QUESTION',
+    name: 'Cần Thảo Luận',
+    emoji: '❓',
+    icon: <HelpCircle className="w-6 h-6" />,
+    color: 'text-orange-600',
+    hoverColor: 'hover:bg-orange-50'
   }
 ];
 

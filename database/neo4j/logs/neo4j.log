@@ -3481,3 +3481,7 @@ Caused by: org.neo4j.internal.kernel.api.exceptions.ProcedureException: Unable t
 2025-12-06 09:38:57.181+0000 INFO  name: system
 2025-12-06 09:38:57.184+0000 INFO  creationDate: 2025-12-02T18:30:56.811Z
 2025-12-06 09:38:57.185+0000 INFO  Started.
+2025-12-06 17:54:30.261+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.Statement.ExecutionFailed]: The following unsupported clauses were used: MATCH. 
+The system database supports a restricted set of Cypher clauses. The supported clause structure for procedure calls is: CALL, YIELD, RETURN. YIELD and RETURN clauses are optional. The order of the clauses is fixed and each can only occur once., reference 7a52e36b-e7db-4ea2-81fa-21435ff253ea.
+2025-12-06 17:54:56.306+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.Statement.ExecutionFailed]: The following unsupported clauses were used: MATCH. 
+The system database supports a restricted set of Cypher clauses. The supported clause structure for procedure calls is: CALL, YIELD, RETURN. YIELD and RETURN clauses are optional. The order of the clauses is fixed and each can only occur once., reference 38fe710e-6fd2-45f2-82ca-d93e85ba654a.
