@@ -1,0 +1,108 @@
+# Docker Compose for Development
+# Run only databases, service runs in IDE
+version: '3.8'
+
+services:
+  # PostgreSQL with pgvector for embeddings
+  postgres-recommend:
+    image: ankane/pgvector:latest
+    container_name: postgres-recommend-dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: recommendation_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-recommend-data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - recommend-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Neo4j for graph database
+  neo4j-recommend:
+    image: neo4j:5.13.0
+    container_name: neo4j-recommend-dev
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_memory_heap_max__size: 2G
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    volumes:
+      - neo4j-recommend-data:/data
+      - neo4j-recommend-logs:/logs
+    networks:
+      - recommend-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p password 'RETURN 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching
+  redis-recommend:
+    image: redis:7-alpine
+    container_name: redis-recommend-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-recommend-data:/data
+    networks:
+      - recommend-dev-network
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Kafka (optional - if you want to test Kafka integration)
+  # Uncomment if needed
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.5.0
+  #   container_name: zookeeper-recommend-dev
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #   ports:
+  #     - "2181:2181"
+  #   networks:
+  #     - recommend-dev-network
+
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.5.0
+  #   container_name: kafka-recommend-dev
+  #   depends_on:
+  #     - zookeeper
+  #   ports:
+  #     - "9092:9092"
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   networks:
+  #     - recommend-dev-network
+
+volumes:
+  postgres-recommend-data:
+    name: postgres-recommend-dev-data
+  neo4j-recommend-data:
+    name: neo4j-recommend-dev-data
+  neo4j-recommend-logs:
+    name: neo4j-recommend-dev-logs
+  redis-recommend-data:
+    name: redis-recommend-dev-data
+
+networks:
+  recommend-dev-network:
+    name: recommend-dev-network
+    driver: bridge

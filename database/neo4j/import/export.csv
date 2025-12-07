@@ -1,53 +1,159 @@
-﻿n
-"(:User {createdAt: ""2025-12-06T16:43:25.855351300"",role: ""STUDENT"",id: ""4b139c1a-0838-4478-afb9-e314617fd860"",isActive: true,email: ""testuser2118@student.ctu.edu.vn"",username: ""testuser3995"",updatedAt: ""2025-12-06T16:43:25.855351300""})"
-"(:User {studentId: ""b123"",createdAt: ""2025-12-06T16:50:11.222477900"",role: ""STUDENT"",fullName: ""bao"",bio: """",id: ""31ba8a23-8a4e-4b24-99c2-0d768e617e71"",isActive: true,email: ""baob2110069@student.ctu.edu.vn"",username: ""b2110069"",updatedAt: ""2025-12-07T00:35:21.531407900""})"
-"(:Position {code: ""LECTURER"",name: ""Giảng viên""})"
-"(:Position {code: ""SNR_LECTURER"",name: ""Giảng viên chính""})"
-"(:Position {code: ""HEAD_OF_DEPT"",name: ""Trưởng bộ môn""})"
-"(:Position {code: ""RESEARCHER"",name: ""Nghiên cứu viên""})"
-"(:Academic {code: ""PROF"",name: ""Giáo sư""})"
-"(:Academic {code: ""ASSOC_PROF"",name: ""Phó Giáo sư""})"
-"(:Academic {code: ""DR"",name: ""Tiến sĩ""})"
-"(:Academic {code: ""MASTER"",name: ""Thạc sĩ""})"
-"(:Degree {code: ""BACHELOR"",name: ""Cử nhân/Kỹ sư""})"
-"(:Degree {code: ""MASTER"",name: ""Thạc sĩ""})"
-"(:Degree {code: ""PHD"",name: ""Tiến sĩ""})"
-"(:University {established: 1966,code: ""CTU"",name: ""Đại học Cần Thơ""})"
-"(:College {code: ""FIT"",name: ""Khoa Công nghệ Thông tin và Truyền thông""})"
-"(:Faculty {code: ""SE"",college_code: ""FIT"",name: ""Bộ môn Công nghệ Phần mềm""})"
-"(:Major {code: ""CNPM"",name: ""Công nghệ Phần mềm"",faculty_code: ""SE""})"
-"(:Faculty {code: ""IS"",college_code: ""FIT"",name: ""Bộ môn Hệ thống Thông tin""})"
-"(:Major {code: ""KHMT"",name: ""Khoa học Máy tính"",faculty_code: ""SE""})"
-"(:Major {code: ""HTTT"",name: ""Hệ thống Thông tin"",faculty_code: ""IS""})"
-"(:College {code: ""ECO"",name: ""Khoa Kinh tế""})"
-"(:Faculty {code: ""DCMN"",college_code: ""FIT"",name: ""Bộ môn Truyền thông Dữ liệu và Mạng máy tính""})"
-"(:Major {code: ""KDST"",name: ""Kinh doanh Kỹ thuật Số"",faculty_code: ""IS""})"
-"(:Faculty {code: ""E_ECO"",college_code: ""ECO"",name: ""Bộ môn Kinh tế học""})"
-"(:Major {code: ""MMDL"",name: ""Mạng máy tính và Truyền thông dữ liệu"",faculty_code: ""DCMN""})"
-"(:Faculty {code: ""B_MNG"",college_code: ""ECO"",name: ""Bộ môn Quản trị Kinh doanh""})"
-"(:Major {code: ""KTH"",name: ""Kinh tế học"",faculty_code: ""E_ECO""})"
-"(:Major {code: ""MKT"",name: ""Marketing"",faculty_code: ""B_MNG""})"
-"(:College {code: ""ENG"",name: ""Khoa Kỹ thuật""})"
-"(:Faculty {code: ""F_BNK"",college_code: ""ECO"",name: ""Bộ môn Tài chính Ngân hàng""})"
-"(:Major {code: ""QTB"",name: ""Quản trị Kinh doanh"",faculty_code: ""B_MNG""})"
-"(:Faculty {code: ""B_CON"",college_code: ""ENG"",name: ""Bộ môn Kỹ thuật Xây dựng""})"
-"(:Major {code: ""TCNH"",name: ""Tài chính - Ngân hàng"",faculty_code: ""F_BNK""})"
-"(:Faculty {code: ""M_ENG"",college_code: ""ENG"",name: ""Bộ môn Kỹ thuật Cơ khí""})"
-"(:Major {code: ""KTXD"",name: ""Kỹ thuật Xây dựng"",faculty_code: ""B_CON""})"
-"(:Major {code: ""KTCK"",name: ""Kỹ thuật Cơ khí"",faculty_code: ""M_ENG""})"
-"(:Major {code: ""RBAI"",name: ""Robot và Trí tuệ nhân tạo"",faculty_code: ""M_ENG""})"
-"(:Batch {year: ""K47""})"
-"(:Batch {year: ""K48""})"
-"(:Batch {year: ""K49""})"
-"(:Batch {year: ""K50""})"
-"(:Batch {year: ""K51""})"
-"(:Gender {code: ""M"",name: ""Nam""})"
-"(:Gender {code: ""F"",name: ""Nữ""})"
-"(:User {studentId: ""B2106001"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Nguyễn Văn A"",bio: ""Sinh viên đam mê phát triển web"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afa6"",isActive: true,email: ""nguyenvana@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""nguyenvana""})"
-"(:User {studentId: ""B2106002"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Trần Thị B"",bio: ""Kỹ sư phần mềm tập trung vào front-end"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afa7"",isActive: true,email: ""tranthib@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""tranthib""})"
-"(:User {studentId: ""B2106003"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Lê Minh C"",bio: ""Người đam mê AI và học máy"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afa8"",isActive: true,email: ""leminhc@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""leminhc""})"
-"(:User {studentId: ""B2206001"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",bio: ""Nhà khoa học dữ liệu"",fullName: ""Phạm Thị D"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afa9"",isActive: true,email: ""phamthid@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""phamthid""})"
-"(:User {studentId: ""B2206002"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Nguyễn Văn E"",bio: ""Sinh viên kinh doanh tập trung vào marketing"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afaa"",isActive: true,email: ""nguyenvane@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""nguyenvane""})"
-"(:User {studentId: ""B2306001"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Trần Thị F"",bio: ""Sinh viên tài chính quan tâm đến đầu tư"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afab"",isActive: true,email: ""tranthif@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""tranthif""})"
-"(:User {studentId: ""B2406001"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Lê Văn G"",bio: ""Sinh viên kỹ thuật xây dựng"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afac"",isActive: true,email: ""levang@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""levang""})"
-"(:User {studentId: ""B2506001"",createdAt: ""2025-12-04T10:57:28.342000000Z"",role: ""STUDENT"",fullName: ""Phạm Thị H"",bio: ""Kỹ sư cơ khí chuyên về robot"",id: ""3fa85f64-5717-4562-b3fc-2c963f66afad"",isActive: true,email: ""phamthih@ctu.edu.vn"",updatedAt: ""2025-12-04T10:57:28.342000000Z"",username: ""phamthih""})"
+﻿text,label
+"Hướng dẫn cài đặt Docker Compose và triển khai ứng dụng Spring Boot trên môi trường Linux",1
+"Phân tích sự khác biệt giữa thuật toán Dijkstra và Bellman-Ford trong đồ thị có trọng số",1
+"Giải thích cơ chế hoạt động của mạng neural LSTM trong xử lý ngôn ngữ tự nhiên",1
+"Chứng minh bất đẳng thức Cauchy–Schwarz và ứng dụng trong hình học giải tích",1
+"Phân tích mối quan hệ giữa tăng trưởng GDP và lạm phát tại Việt Nam giai đoạn 2010–2020",1
+"Trình bày nguyên lý bảo toàn năng lượng trong vật lý và ví dụ minh họa",1
+"Đánh giá hiệu quả của phương pháp học theo dự án (Project-based learning) trong giáo dục đại học",1
+"Nghiên cứu ảnh hưởng của ánh sáng lên tốc độ quang hợp của thực vật",1
+"Phân tích thuật toán sắp xếp Merge Sort và độ phức tạp thời gian của nó",1
+"Trình bày kiến trúc của mô hình Transformer và ưu điểm so với RNN truyền thống",1
+"Mô phỏng chuyển động rơi tự do trong môi trường không có ma sát",1
+"Viết báo cáo thí nghiệm đo lực căng dây bằng cảm biến lực",1
+"Phân tích các yếu tố ảnh hưởng đến hành vi mua sắm trực tuyến của sinh viên",1
+"Trình bày cấu trúc hệ gen của vi khuẩn E.coli và quá trình nhân đôi DNA",1
+"Phân tích sự biến đổi của nhiệt độ Trái Đất trong 100 năm qua dựa trên số liệu NOAA",1
+"Nghiên cứu tác động của mạng xã hội đến hiệu quả học tập của sinh viên đại học",1
+"Giải thích định lý nhị thức Newton và ứng dụng trong tổ hợp",1
+"Trình bày thuật toán BFS và DFS và ứng dụng trong xử lý dữ liệu lớn",1
+"Phân tích mô hình chiết khấu dòng tiền (DCF) trong định giá doanh nghiệp",1
+"Giải thích sự khác biệt giữa UDP và TCP trong giao thức mạng",1
+"Phân tích hiệu quả của phương pháp học máy trong phân loại ảnh y tế",1
+"Giới thiệu hệ mặt trời và quỹ đạo các hành tinh theo mô hình Kepler",1
+"Trình bày khái niệm về entropy trong lý thuyết thông tin và ứng dụng",1
+"Phân tích cấu trúc cây đỏ-đen và ứng dụng trong lập trình hệ thống",1
+"Viết báo cáo về tính chất hóa học của kim loại kiềm và kiềm thổ",1
+"Giải thích mô hình tuyến tính ARIMA và ứng dụng trong dự báo thời gian",1
+"Nghiên cứu chỉ số phát triển con người (HDI) và sự khác biệt giữa các vùng miền",1
+"Phân tích thuật toán tối ưu Adam và sự hội tụ trong mạng học sâu",1
+"Giải thích cấu tạo của tế bào nhân thực và vai trò của từng bào quan",1
+"Nghiên cứu tác động của biến đổi khí hậu đến sản xuất nông nghiệp tại Đồng bằng SCL",1
+"Trình bày chu trình Krebs và vai trò trong hô hấp tế bào",1
+"Giải thích nguyên lý hoạt động của laser bán dẫn",1
+"Phân tích mô hình 7P trong marketing dịch vụ",1
+"Nghiên cứu hành vi người tiêu dùng dựa trên dữ liệu khảo sát",1
+"Phân tích số phức trong mặt phẳng và ứng dụng trong kỹ thuật điện",1
+"Trình bày kiến trúc lưu trữ của hệ quản trị cơ sở dữ liệu PostgreSQL",1
+"Phân tích phép biến đổi Fourier và ứng dụng trong xử lý tín hiệu",1
+"Giải thích mô hình hồi quy logistic và ứng dụng trong phân loại",1
+"Trình bày lịch sử hình thành ngôn ngữ lập trình Java và các phiên bản chính",1
+"Đánh giá mức độ ô nhiễm không khí tại thành phố Cần Thơ dựa trên chỉ số AQI",1
+"Phân tích thuật toán backtracking trong bài toán N-Queens",1
+"Giải thích cách hoạt động của blockchain và cơ chế đồng thuận PoS",1
+"Phân tích quá trình trao đổi chất ở động vật có xương sống",1
+"Trình bày quy trình nghiên cứu khoa học và các bước thực hiện đề tài",1
+"Phân tích sự khác biệt giữa mạng LAN, MAN và WAN",1
+"Giải thích nguyên lý cảm ứng điện từ theo Faraday",1
+"Phân tích mô hình chi phí trong quản trị doanh nghiệp",1
+"Giải thích kỹ thuật regularization trong học sâu",1
+"Giới thiệu kiến trúc client-server và ưu nhược điểm",1
+"Trình bày quy trình xử lý nước thải sinh hoạt",1
+"Phân tích thuật toán nén Huffman và ứng dụng",1
+"Giải thích mô hình Markov ẩn HMM và ứng dụng trong nhận dạng tiếng nói",1
+"Đánh giá hiệu suất của năng lượng mặt trời tại khu vực ĐBSCL",1
+"Phân tích kiến trúc microservices và ưu điểm trong hệ thống lớn",1
+"Giải thích mô hình phân cụm K-means và cách chọn số cụm tối ưu",1
+"Phân tích hệ số tương quan Pearson và Spearman",1
+"Trình bày cấu trúc cây AVL và ứng dụng",1
+"Giải thích sự tiến hóa của loài người theo thuyết Darwin",1
+"Trình bày các giai đoạn của chu trình sống của thực vật",1
+"Phân tích lợi ích của trí tuệ nhân tạo trong giáo dục hiện đại",1
+"Giải thích cơ chế hoạt động của hệ thống GPS",1
+"Phân tích mô hình kiến trúc 3 lớp trong ứng dụng web",1
+"Trình bày phương pháp tính tích phân bằng quy tắc Simpson",1
+"Nghiên cứu ảnh hưởng của tiếng ồn đến sự tập trung của con người",1
+"Phân tích quá trình hình thành mưa trong khí tượng học",1
+"Chứng minh định luật bảo toàn động lượng",1
+"Phân tích cơ chế khóa đồng thời trong cơ sở dữ liệu",1
+"Giải thích sự hình thành sóng điện từ",1
+"Đánh giá vai trò của STEM trong giáo dục phổ thông",1
+"Phân tích phương pháp PCR trong sinh học phân tử",1
+"Giải thích quy luật di truyền Mendel",1
+"Phân tích đặc tính cơ học của vật liệu composite",1
+"Trình bày mô hình OSI và chức năng từng tầng",1
+"Giải thích thuật toán PageRank",1
+
+"Trời hôm nay đẹp quá, ai đi cà phê không?",0
+"Chán quá, deadline dí mà chẳng muốn làm gì cả",0
+"Mọi người biết quán lẩu nào ngon ở Cần Thơ không giới thiệu mình với",0
+"Cuối tuần đi chơi không, stress quá rồi",0
+"Hôm nay ăn gì ta, đói quá mọi người ơi",0
+"Tui mới mua con laptop mới, xịn cực kỳ luôn",0
+"Nhạc này hay ghê, nghe hoài không chán",0
+"Trời mưa rồi, nhớ mang áo mưa nha mọi người",0
+"Tui đang tìm bạn đi tập gym chung",0
+"Nhớ người yêu cũ quá trời",0
+"Game này cuốn thật sự, chơi tới sáng luôn",0
+"Mới đi Đà Lạt về, đẹp muốn xỉu",0
+"Thiệt tình chán chẳng buồn nói",0
+"Không ngủ được, ai thức hong nói chuyện cho vui",0
+"Nhìn đống bài tập mà muốn xỉu",0
+"Đi xem phim mới ra không mọi người",0
+"Chúc cả nhà ngủ ngon nhaaaa",0
+"Mới ăn no quá trời nhưng vẫn thèm trà sữa",0
+"Stress vì deadline với bài tập nhóm",0
+"Bạn nào bán balo chất giới thiệu mình với",0
+"Trời nóng quá, muốn đi biển chơi",0
+"Hôm nay tui dọn phòng tới mệt xỉu",0
+"Buồn ngủ nhưng vẫn phải làm bài tập",0
+"Đi phượt không mọi người?",0
+"Nhìn lịch thi mà muốn khóc",0
+"Tức ghê, đang tải phim mà mạng lag quá trời",0
+"Hôm nay có ai đi học không?",0
+"Tui sắp hết tiền rồi huhuhu",0
+"Nhà hàng mới mở nhìn ngon ghê",0
+"Thèm ăn pizza quá mọi người ơi",0
+"Đang làm assignment mà lười quá",0
+"Xin tài liệu môn học với mọi người",0
+"Đang tìm chỗ sửa điện thoại",0
+"Nay lạnh ghê, nhớ mặc áo ấm",0
+"Nhớ nhà quá, muốn về quê",0
+"Đi siêu thị mua đồ mà đông quá trời",0
+"Trời ơi máy tính lại bị đơ rồi",0
+"Cuối tuần này đi chơi xa nè",0
+"Trời mưa buồn quá",0
+"Muốn đổi điện thoại mới quá",0
+"Ăn buffe ngon cực kỳ luôn",0
+"Chụp tấm hình mới xinh ghê",0
+"Thèm trà tắc quá trời",0
+"Không biết tối ăn gì nữa",0
+"Hôm nay mệt quá chỉ muốn ngủ",0
+"Đi xem pháo hoa không mọi người",0
+"Trời ơi con mèo nhà tui dễ thương quá",0
+"Muốn đi du lịch Nhật Bản ghê",0
+"Chán học online thật sự",0
+"Đang nằm mà chẳng muốn dậy",0
+"Thích cảm giác nằm nghe nhạc ghê",0
+"Trúng gió rồi, mệt muốn xỉu",0
+"Tui muốn đi chụp hình sống ảo",0
+"Thèm uống cà phê muối quá",0
+"Muốn mua keyboard mới",0
+"Đi ăn sinh nhật bạn nè",0
+"Hôm nay ra đường kẹt xe quá trời",0
+"Nhà tui mới nuôi thêm con chó",0
+"Thèm ngủ quá trời",0
+"Đi coi đá banh không mọi người",0
+"Mệt ghê, muốn nghỉ học luôn",0
+"Không hiểu sao nay buồn buồn",0
+"Đi xem áo quần Tết không?",0
+"Hôm nay tui ăn mì gói",0
+"Muốn uống trà đào",0
+"Đang viết bài luận mà lười quá",0
+"Trời hôm nay âm u ghê",0
+"Đi chụp hình hoàng hôn không?",0
+"Thích ăn bánh tráng trộn ghê",0
+"Không biết nên cắt tóc kiểu gì",0
+"Đi chơi lễ không mọi người",0
+"Buồn ngủ xỉu luôn",0
+"Đang đợi lương về",0
+"Chẳng muốn nói chuyện với ai",0
+"Nay trời lạnh quá",0
+"Đang tìm chỗ bán đồ decor phòng",0
+"Thèm ăn bún đậu mắm tôm",0
+"Đi học mà buồn ngủ ghê",0
+"Đang coi TikTok cả buổi luôn",0
+"Muốn mua sách mới nhưng hết tiền",0
+"Chán làm bài tập lắm rồi",0
+"Đi ăn chè không mọi người",0
+"Trời đẹp quá muốn đi chơi xa",0

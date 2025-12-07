@@ -1,0 +1,148 @@
+# Development Profile Configuration
+# Used when running service in IDE with databases in Docker
+
+spring:
+  application:
+    name: recommendation-service
+
+  # PostgreSQL Configuration (Docker)
+  datasource:
+    url: jdbc:postgresql://localhost:5435/recommendation_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update  # Auto-create tables in dev
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+
+  # Neo4j Configuration (Docker)
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: password
+    pool:
+      max-connection-pool-size: 10
+
+  # Redis Configuration (Docker)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+  # Kafka Configuration (if using Docker Kafka)
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: recommendation-service-dev
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# Server Configuration
+server:
+  port: 8095
+  error:
+    include-message: always
+    include-stacktrace: on_param
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Eureka Configuration (Optional - disable if not using)
+eureka:
+  client:
+    enabled: false  # Disable Eureka in dev mode
+    # enabled: true  # Enable if you have Eureka running
+    # service-url:
+    #   defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+# Recommendation Service Configuration
+recommendation:
+  # Algorithm weights
+  weights:
+    content-similarity: 0.35
+    graph-relation: 0.30
+    academic: 0.25
+    popularity: 0.10
+
+  # Graph relationship weights
+  graph-weights:
+    friend: 1.0
+    same-major: 0.8
+    same-faculty: 0.6
+    same-batch: 0.5
+
+  # Cache TTLs (in seconds)
+  cache:
+    embedding-ttl: 3600      # 1 hour
+    recommendation-ttl: 1800  # 30 minutes
+    user-ttl: 600            # 10 minutes
+
+  # Batch job schedules
+  batch:
+    embedding-rebuild-cron: "0 */5 * * * *"  # Every 5 minutes
+    cache-cleanup-cron: "0 0 * * * *"         # Every hour
+
+  # External services
+  nlp:
+    phobert-service-url: http://localhost:8096
+    timeout: 30000
+    retry-attempts: 3
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    vn.ctu.edu.recommend: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.neo4j.driver: INFO
+    org.springframework.data.neo4j: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/recommendation-service-dev.log
+    max-size: 10MB
+    max-history: 7
+
+# Development-specific settings
+debug: false

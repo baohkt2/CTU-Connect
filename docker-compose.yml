@@ -196,6 +196,61 @@ services:
       interval: 10s
       timeout: 5s
       retries: 1
+  recommend_db:
+    image: ankane/pgvector:latest
+    container_name: recommend_db
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=recommendation_db
+    volumes:
+      - recommend_db_data:/var/lib/postgresql/data
+      - ./recommendation-service-java/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d recommendation_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Add Recommendation Service
+  recommendation-service:
+    build: ./recommendation-service-java
+    container_name: recommendation-service
+    ports:
+      - "8095:8095"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - POSTGRES_HOST=recommend_db
+      - POSTGRES_PORT=5432
+      - NEO4J_HOST=neo4j
+      - NEO4J_PORT=7687
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka/
+      - PHOBERT_SERVICE_URL=http://phobert-nlp:8096
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      recommend_db:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8095/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 
 networks:
@@ -209,3 +264,4 @@ volumes:
   kafka-data:
   media_data:
   post-data:
+  recommend_db_data:
