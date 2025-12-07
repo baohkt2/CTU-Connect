@@ -38,6 +38,7 @@ public class RecommendationResponse {
         private String postId;
         private String authorId;
         private String content;
+        private Double score;
         private Float finalScore;
         private Float contentSimilarity;
         private Float graphRelationScore;
@@ -46,6 +47,17 @@ public class RecommendationResponse {
         private String academicCategory;
         private Integer rank;
         private RecommendationExplanation explanation;
+        private LocalDateTime createdAt;
+        
+        // Helper methods for backward compatibility
+        public Double getScore() {
+            return score != null ? score : (finalScore != null ? finalScore.doubleValue() : 0.0);
+        }
+        
+        public void setScore(Double score) {
+            this.score = score;
+            this.finalScore = score != null ? score.floatValue() : null;
+        }
     }
 
     @Data

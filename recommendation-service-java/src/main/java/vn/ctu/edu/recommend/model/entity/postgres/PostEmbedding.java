@@ -90,6 +90,15 @@ public class PostEmbedding {
     @Column(name = "major", length = 100)
     private String major;
 
+    @Column(name = "author_major", length = 100)
+    private String authorMajor;
+
+    @Column(name = "author_faculty", length = 100)
+    private String authorFaculty;
+
+    @Column(name = "media_description", columnDefinition = "TEXT")
+    private String mediaDescription;
+
     @Column(name = "tags", columnDefinition = "TEXT[]")
     private String[] tags;
 

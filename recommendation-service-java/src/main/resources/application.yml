@@ -141,7 +141,7 @@ recommendation:
     same-batch: 0.5
     posted: 0.3
 
-  # NLP Service Configuration
+  # NLP Service Configuration (Legacy - for backward compatibility)
   nlp:
     phobert-service-url: ${PHOBERT_SERVICE_URL:http://localhost:8096}
     embedding-endpoint: /api/nlp/embed
@@ -149,11 +149,21 @@ recommendation:
     timeout: 10000
     vector-dimension: 768
 
+  # Python Model Service Configuration (New Hybrid Architecture)
+  python-service:
+    url: ${PYTHON_MODEL_SERVICE_URL:http://localhost:8097}
+    predict-endpoint: /api/model/predict
+    timeout: 10000
+    enabled: true
+    fallback-to-legacy: true
+
   # Caching Configuration
   cache:
     embedding-ttl: 3600          # 1 hour in seconds
-    recommendation-ttl: 1800     # 30 minutes in seconds
+    recommendation-ttl: 120      # 2 minutes in seconds (faster updates)
     user-profile-ttl: 600        # 10 minutes in seconds
+    min-ttl: 30                  # Minimum 30 seconds
+    max-ttl: 120                 # Maximum 120 seconds
 
   # Recommendation Configuration
   default-recommendation-count: 20

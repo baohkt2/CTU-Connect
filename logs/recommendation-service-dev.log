@@ -941,3 +941,846 @@ Caused by: org.postgresql.util.PSQLException: ERROR: operator class "vector_cosi
 2025-12-07 16:40:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Found 0 posts needing embedding update
 2025-12-07 16:40:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Completed embedding rebuild
 2025-12-07 16:40:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Completed scheduled embedding rebuild task
+2025-12-07 17:50:44 [main] INFO  v.c.e.r.RecommendationServiceApplication - Starting RecommendationServiceApplication using Java 19.0.1 with PID 2300 (D:\LVTN\CTU-Connect-demo\recommendation-service-java\target\classes started by ASUS in D:\LVTN\CTU-Connect-demo)
+2025-12-07 17:50:44 [main] DEBUG v.c.e.r.RecommendationServiceApplication - Running with Spring Boot v3.3.4, Spring v6.1.13
+2025-12-07 17:50:44 [main] INFO  v.c.e.r.RecommendationServiceApplication - The following 1 profile is active: "dev"
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 216 ms. Found 3 JPA repository interfaces.
+2025-12-07 17:50:45 [main] DEBUG o.s.d.n.r.config.StartupLogger - Bootstrapping imperative Neo4j repositories based on SDN v7.3.4 with Spring Data Commons v3.3.4 and Neo4j Driver v5.23.0.
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2025-12-07 17:50:45 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 11 ms. Found 2 Neo4j repository interfaces.
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 17:50:46 [main] DEBUG o.s.d.n.r.config.StartupLogger - Bootstrapping reactive Neo4j repositories based on SDN v7.3.4 with Spring Data Commons v3.3.4 and Neo4j Driver v5.23.0.
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.RecommendationCacheRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 41 ms. Found 0 Neo4j repository interfaces.
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.neo4j.PostGraphRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.neo4j.UserGraphRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.RecommendationCacheRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-07 17:50:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2025-12-07 17:50:47 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=1cdb50b0-b014-340e-b2eb-e7950d023256
+2025-12-07 17:50:47 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2025-12-07 17:50:47 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-07 17:50:47 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2025-12-07 17:50:47 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-07 17:50:47 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'reactorDeferringLoadBalancerExchangeFilterFunction' of type [org.springframework.cloud.client.loadbalancer.reactive.DeferringLoadBalancerExchangeFilterFunction] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-07 17:50:48 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8095 (http)
+2025-12-07 17:50:48 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-07 17:50:48 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2025-12-07 17:50:48 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-07 17:50:48 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4514 ms
+2025-12-07 17:50:49 [main] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-12-07 17:50:49 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-07 17:50:49 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-12-07 17:50:49 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-07 17:50:49 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-07 17:50:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-07 17:50:49 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@57abe94d
+2025-12-07 17:50:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-07 17:50:50 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-07 17:50:50 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-07 17:50:51 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       add column author_faculty varchar(100)
+2025-12-07 17:50:51 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       add column author_major varchar(100)
+2025-12-07 17:50:51 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       alter column content set data type TEXT
+2025-12-07 17:50:51 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       alter column embedding_vector set data type TEXT
+2025-12-07 17:50:51 [main] WARN  o.h.t.s.i.ExceptionHandlerLoggedImpl - GenerationTarget encountered exception accepting command : Error executing DDL "
+    alter table if exists post_embeddings 
+       alter column embedding_vector set data type TEXT" via JDBC [ERROR: operator class "vector_cosine_ops" does not accept data type text]
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "
+    alter table if exists post_embeddings 
+       alter column embedding_vector set data type TEXT" via JDBC [ERROR: operator class "vector_cosine_ops" does not accept data type text]
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:94)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:583)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:523)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.migrateTable(AbstractSchemaMigrator.java:341)
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:84)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:240)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:119)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:280)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:144)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:141)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:322)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:457)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1506)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at vn.ctu.edu.recommend.RecommendationServiceApplication.main(RecommendationServiceApplication.java:41)
+Caused by: org.postgresql.util.PSQLException: ERROR: operator class "vector_cosine_ops" does not accept data type text
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2733)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2420)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:372)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:517)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:434)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:356)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:341)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:317)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:312)
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:80)
+	... 37 common frames omitted
+2025-12-07 17:50:51 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       add column media_description TEXT
+2025-12-07 17:50:51 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-07 17:50:51 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-07 17:50:52 [main] INFO  o.n.driver.internal.DriverFactory - Direct driver instance 1583215961 created for server address localhost:7687
+2025-12-07 17:50:54 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-07 17:50:54 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 13 mappings in 'requestMappingHandlerMapping'
+2025-12-07 17:50:54 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-12-07 17:50:54 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-12-07 17:50:55 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-12-07 17:50:55 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2025-12-07 17:50:55 [main] INFO  o.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2025-12-07 17:50:55 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2025-12-07 17:50:55 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2025-12-07 17:50:55 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2025-12-07 17:50:55 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2025-12-07 17:50:55 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2025-12-07 17:50:55 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@2347ca7a
+2025-12-07 17:50:56 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2025-12-07 17:50:56 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-12-07 17:50:56 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 4 endpoints beneath base path '/actuator'
+2025-12-07 17:50:56 [main] INFO  o.a.k.c.admin.AdminClientConfig - AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = recommendation-service-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-12-07 17:50:56 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-07 17:50:56 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-07 17:50:56 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765104656767
+2025-12-07 17:50:57 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.utils.AppInfoParser - App info kafka.admin.client for recommendation-service-admin-0 unregistered
+2025-12-07 17:50:57 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-07 17:50:57 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-07 17:50:57 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-07 17:50:57 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8095 (http) with context path '/'
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages]' were supplied but are not used yet.
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765104657556
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Subscribed to topic(s): post_updated
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-2
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages]' were supplied but are not used yet.
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765104657578
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Subscribed to topic(s): user_action
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-3
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages]' were supplied but are not used yet.
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765104657594
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Subscribed to topic(s): post_created
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Cluster ID: MjHUwNXiRQmpPzRqQq9HjQ
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Cluster ID: MjHUwNXiRQmpPzRqQq9HjQ
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-4
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Cluster ID: MjHUwNXiRQmpPzRqQq9HjQ
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages]' were supplied but are not used yet.
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-07 17:50:57 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765104657610
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-07 17:50:57 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Subscribed to topic(s): post_deleted
+2025-12-07 17:50:57 [main] INFO  o.s.s.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2025-12-07 17:50:57 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Cluster ID: MjHUwNXiRQmpPzRqQq9HjQ
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [main] INFO  v.c.e.r.RecommendationServiceApplication - Started RecommendationServiceApplication in 14.386 seconds (process running for 15.482)
+2025-12-07 17:50:57 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Starting scheduled cache cleanup task
+2025-12-07 17:50:57 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Completed scheduled cache cleanup task
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-4-4fd6fab6-557c-4158-b8d7-8a73c815ca9b
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-3-30fafa7e-f16b-4f30-8e2d-d6f5e7317748
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-2-a56c9c1a-68d5-4eaf-9b3a-1c34667a6569
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-1-6b5dd02e-fc1e-45ed-8605-6d7d0d4e3724
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] (Re-)joining group
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@2fce34e4
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@73145db2
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-12-07 17:50:58 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-recommendation-service-group-1-6b5dd02e-fc1e-45ed-8605-6d7d0d4e3724', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-recommendation-service-group-2-a56c9c1a-68d5-4eaf-9b3a-1c34667a6569', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-recommendation-service-group-4-4fd6fab6-557c-4158-b8d7-8a73c815ca9b', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-recommendation-service-group-3-30fafa7e-f16b-4f30-8e2d-d6f5e7317748', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Finished assignment for group at generation 1: {consumer-recommendation-service-group-1-6b5dd02e-fc1e-45ed-8605-6d7d0d4e3724=Assignment(partitions=[post_updated-0, post_updated-1, post_updated-2]), consumer-recommendation-service-group-3-30fafa7e-f16b-4f30-8e2d-d6f5e7317748=Assignment(partitions=[post_created-0, post_created-1, post_created-2]), consumer-recommendation-service-group-4-4fd6fab6-557c-4158-b8d7-8a73c815ca9b=Assignment(partitions=[post_deleted-0, post_deleted-1, post_deleted-2]), consumer-recommendation-service-group-2-a56c9c1a-68d5-4eaf-9b3a-1c34667a6569=Assignment(partitions=[user_action-0, user_action-1, user_action-2])}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-recommendation-service-group-3-30fafa7e-f16b-4f30-8e2d-d6f5e7317748', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-recommendation-service-group-1-6b5dd02e-fc1e-45ed-8605-6d7d0d4e3724', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-recommendation-service-group-2-a56c9c1a-68d5-4eaf-9b3a-1c34667a6569', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_updated-0, post_updated-1, post_updated-2])
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_created-0, post_created-1, post_created-2])
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[user_action-0, user_action-1, user_action-2])
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Adding newly assigned partitions: post_updated-0, post_updated-1, post_updated-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Adding newly assigned partitions: post_created-0, post_created-1, post_created-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Adding newly assigned partitions: user_action-0, user_action-1, user_action-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-recommendation-service-group-4-4fd6fab6-557c-4158-b8d7-8a73c815ca9b', protocol='range'}
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_deleted-0, post_deleted-1, post_deleted-2])
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Adding newly assigned partitions: post_deleted-0, post_deleted-1, post_deleted-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Found no committed offset for partition user_action-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Found no committed offset for partition post_updated-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Found no committed offset for partition post_created-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Found no committed offset for partition post_updated-1
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Found no committed offset for partition post_deleted-0
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Found no committed offset for partition user_action-1
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Found no committed offset for partition post_created-1
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Found no committed offset for partition user_action-0
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Found no committed offset for partition post_updated-0
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Found no committed offset for partition post_deleted-1
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Found no committed offset for partition post_created-0
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Found no committed offset for partition post_deleted-2
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Resetting offset for partition post_deleted-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Resetting offset for partition post_created-2 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Resetting offset for partition post_updated-2 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Resetting offset for partition user_action-2 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Resetting offset for partition post_deleted-1 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Resetting offset for partition post_created-1 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Resetting offset for partition post_updated-1 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Resetting offset for partition user_action-1 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Resetting offset for partition post_deleted-2 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Resetting offset for partition post_created-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Resetting offset for partition post_updated-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.SubscriptionState - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Resetting offset for partition user_action-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}.
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [user_action-0, user_action-1, user_action-2]
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_updated-0, post_updated-1, post_updated-2]
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_deleted-0, post_deleted-1, post_deleted-2]
+2025-12-07 17:51:03 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_created-0, post_created-1, post_created-2]
+2025-12-07 17:55:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Starting scheduled embedding rebuild task
+2025-12-07 17:55:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Starting embedding rebuild process
+2025-12-07 17:55:00 [scheduling-1] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.embeddingUpdatedAt IS NULL 
+        OR pe.embeddingUpdatedAt < :threshold */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.embedding_updated_at is null 
+            or pe1_0.embedding_updated_at<?
+2025-12-07 17:55:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Found 0 posts needing embedding update
+2025-12-07 17:55:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Completed embedding rebuild
+2025-12-07 17:55:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Completed scheduled embedding rebuild task
+2025-12-07 17:59:57 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-07 17:59:57 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-07 17:59:57 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-07 17:59:57 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-07 18:00:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Starting scheduled embedding rebuild task
+2025-12-07 18:00:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Starting embedding rebuild process
+2025-12-07 18:00:00 [scheduling-1] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.embeddingUpdatedAt IS NULL 
+        OR pe.embeddingUpdatedAt < :threshold */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.embedding_updated_at is null 
+            or pe1_0.embedding_updated_at<?
+2025-12-07 18:00:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Found 0 posts needing embedding update
+2025-12-07 18:00:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Completed embedding rebuild
+2025-12-07 18:00:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Completed scheduled embedding rebuild task
+2025-12-07 18:05:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Starting scheduled embedding rebuild task
+2025-12-07 18:05:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Starting embedding rebuild process
+2025-12-07 18:05:00 [scheduling-1] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.embeddingUpdatedAt IS NULL 
+        OR pe.embeddingUpdatedAt < :threshold */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.embedding_updated_at is null 
+            or pe1_0.embedding_updated_at<?
+2025-12-07 18:05:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Found 0 posts needing embedding update
+2025-12-07 18:05:00 [scheduling-1] INFO  v.c.e.r.s.i.RecommendationServiceImpl - Completed embedding rebuild
+2025-12-07 18:05:00 [scheduling-1] INFO  v.c.e.r.s.RecommendationScheduler - Completed scheduled embedding rebuild task

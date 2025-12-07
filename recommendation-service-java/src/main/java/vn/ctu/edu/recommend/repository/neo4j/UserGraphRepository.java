@@ -151,4 +151,21 @@ public interface UserGraphRepository extends Neo4jRepository<UserNode, String> {
         LIMIT $limit
         """)
     List<Map<String, Object>> findPopularPostsInNetwork(@Param("userId") String userId, @Param("limit") int limit);
+
+    /**
+     * Find all friend IDs for a user
+     */
+    @Query("""
+        MATCH (u:User {userId: $userId})-[:FRIEND]-(friend:User)
+        RETURN collect(DISTINCT friend.userId) AS friendIds
+        """)
+    List<String> findFriendIdsList(@Param("userId") String userId);
+
+    /**
+     * Find all friend IDs for a user as a Set
+     */
+    default java.util.Set<String> findFriendIds(String userId) {
+        List<String> friendList = findFriendIdsList(userId);
+        return friendList != null ? new java.util.HashSet<>(friendList) : java.util.Collections.emptySet();
+    }
 }
