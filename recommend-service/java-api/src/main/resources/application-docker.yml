@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://recommend-postgres:5432/recommend_db
+    username: recommend_user
+    password: recommend_pass
+  
+  neo4j:
+    uri: bolt://neo4j:7687
+    authentication:
+      username: neo4j
+      password: password
+  
+  data:
+    redis:
+      host: recommend-redis
+      port: 6379
+      password: recommend_redis_pass
+
+  kafka:
+    bootstrap-servers: kafka:29092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    hostname: recommendation-service
+    prefer-ip-address: true
+
+server:
+  port: 8095
+
+# JWT Configuration (must match auth-service)
+jwt:
+  secret: XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=
+  expiration: 86400000
+
+recommendation:
+  nlp:
+    phobert-service-url: http://phobert-nlp:8096
+  python-service:
+    url: http://recommend-python:8000

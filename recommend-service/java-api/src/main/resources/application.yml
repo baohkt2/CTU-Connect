@@ -1,0 +1,202 @@
+spring:
+  application:
+    name: recommendation-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+    
+  # PostgreSQL Configuration
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5435}/recommend_db
+    username: ${POSTGRES_USER:recommend_user}
+    password: ${POSTGRES_PASSWORD:recommend_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # Neo4j Configuration
+  neo4j:
+    uri: bolt://${NEO4J_HOST:localhost}:${NEO4J_PORT:7687}
+    authentication:
+      username: ${NEO4J_USER:neo4j}
+      password: ${NEO4J_PASSWORD:password}
+    pool:
+      max-connection-pool-size: 50
+      connection-acquisition-timeout: 30s
+
+  # Redis Configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6380}
+      password: ${REDIS_PASSWORD:recommend_redis_pass}
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: recommendation-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+  instance:
+    hostname: ${HOSTNAME:localhost}
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    metadata-map:
+      version: 1.0.0
+      description: "CTU Connect Advanced Recommendation Service"
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8095}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    min-response-size: 1024
+
+# JWT Configuration (must match auth-service)
+jwt:
+  secret: ${JWT_SECRET:XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always  
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    vn.ctu.edu.recommend: DEBUG
+    org.springframework.data.neo4j: DEBUG
+    org.springframework.kafka: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Application Specific Configuration
+recommendation:
+  # Ranking Algorithm Weights (α, β, γ, δ)
+  weights:
+    content-similarity: 0.35      # α - Content vector similarity
+    graph-relation: 0.30          # β - Social graph relationships
+    academic-score: 0.25          # γ - Academic content score
+    popularity-score: 0.10        # δ - Post engagement metrics
+
+  # Graph Relationship Weights
+  graph-weights:
+    friend: 1.0
+    same-major: 0.8
+    same-faculty: 0.6
+    same-batch: 0.5
+    posted: 0.3
+
+  # NLP Service Configuration (Legacy - for backward compatibility)
+  nlp:
+    phobert-service-url: ${PHOBERT_SERVICE_URL:http://localhost:8096}
+    embedding-endpoint: /api/nlp/embed
+    classifier-endpoint: /api/nlp/classify
+    timeout: 10000
+    vector-dimension: 768
+
+  # Python Model Service Configuration (New Hybrid Architecture)
+  python-service:
+    url: ${PYTHON_MODEL_SERVICE_URL:http://localhost:8097}
+    predict-endpoint: /api/model/predict
+    timeout: 10000
+    enabled: true
+    fallback-to-legacy: true
+
+  # Caching Configuration
+  cache:
+    embedding-ttl: 3600          # 1 hour in seconds
+    recommendation-ttl: 120      # 2 minutes in seconds (faster updates)
+    user-profile-ttl: 600        # 10 minutes in seconds
+    min-ttl: 30                  # Minimum 30 seconds
+    max-ttl: 120                 # Maximum 120 seconds
+
+  # Recommendation Configuration
+  default-recommendation-count: 20
+  max-recommendation-count: 100
+  min-recommendation-count: 5
+  
+  # Batch Processing
+  batch:
+    embedding-batch-size: 100
+    ranking-batch-size: 500
+    rebuild-cron: "0 */5 * * * *"  # Every 5 minutes
+
+  # Academic Classification Thresholds
+  academic:
+    min-confidence: 0.6
+    categories:
+      - research
+      - scholarship
+      - qa
+      - announcement
+      - event
+
+# Feign Client Configuration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: basic

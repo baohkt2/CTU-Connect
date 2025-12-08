@@ -1,0 +1,99 @@
+
+services:
+  # PostgreSQL Database for Recommendation Service
+  recommend-postgres:
+    image: postgres:15-alpine
+    container_name: ctu-recommend-postgres
+    environment:
+      POSTGRES_DB: recommend_db
+      POSTGRES_USER: recommend_user
+      POSTGRES_PASSWORD: recommend_pass
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - recommend-postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - ctu-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recommend_user -d recommend_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis Cache for Recommendation Service
+  recommend-redis:
+    image: redis:7-alpine
+    container_name: ctu-recommend-redis
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes --requirepass recommend_redis_pass
+    volumes:
+      - recommend-redis-data:/data
+    networks:
+      - ctu-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Python Inference Service (Development Mode with Volume Mount)
+  recommend-python:
+    image: python:3.10-slim
+    container_name: ctu-recommend-python
+    working_dir: /app
+    command: >
+      bash -c "
+      apt-get update && apt-get install -y curl &&
+      pip install --no-cache-dir -r requirements.txt &&
+      uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+      "
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/model/academic_posts_model
+      - LOG_LEVEL=INFO
+      - WORKERS=1
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://recommend_user:recommend_pass@recommend-postgres:5432/recommend_db
+      - REDIS_URL=redis://:recommend_redis_pass@recommend-redis:6379/0
+    volumes:
+      # Mount entire python-model directory for live code reload
+      - ../python-model:/app:cached
+      # Exclude __pycache__ and other build artifacts
+      - /app/__pycache__
+      - /app/.pytest_cache
+      - /app/venv
+    networks:
+      - ctu-network
+    depends_on:
+      recommend-postgres:
+        condition: service_healthy
+      recommend-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+networks:
+  ctu-network:
+    name: ctu-connect-testing-network
+    driver: bridge
+
+volumes:
+  recommend-postgres-data:
+    driver: local
+    name: ctu-recommend-postgres-data
+  recommend-redis-data:
+    driver: local
+    name: ctu-recommend-redis-data
