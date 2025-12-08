@@ -892,3 +892,5 @@
 2025-12-08 19:29:21,901 - watchfiles.main - INFO - 1 change detected
 2025-12-08 19:29:22,304 - watchfiles.main - INFO - 1 change detected
 2025-12-08 19:29:22,757 - app - INFO - Shutting down Python ML Recommendation Service...
+2025-12-08 22:39:01,665 - inference - INFO - Using device: cpu
+2025-12-08 22:39:03,773 - inference - INFO - PhoBERT model loaded successfully

@@ -57,8 +57,28 @@ public class RouteConfig {
                         .uri("lb://chat-service"))
 
                 // Recommendation Service Routes - AI-powered personalized recommendations
-                .route("recommendation-service-route", r -> r
-                        .path("/api/recommendations/**", "/api/feed/**")
+                // Route 1: /api/recommend/** (e.g., /api/recommend/posts, /api/recommend/feedback)
+                .route("recommendation-api-route", r -> r
+                        .path("/api/recommend/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://recommendation-service"))
+
+                // Route 2: /api/recommendation/** (e.g., /api/recommendation/feed, /api/recommendation/interaction)
+                .route("recommendation-feed-route", r -> r
+                        .path("/api/recommendation/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://recommendation-service"))
+
+                // Legacy route for /api/recommendations/** (post-service endpoints)
+                // Keep this for backward compatibility if post-service has recommendation endpoints
+                .route("post-recommendations-route", r -> r
+                        .path("/api/recommendations/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://post-service"))
+
+                // Feed route - can be handled by either service
+                .route("feed-route", r -> r
+                        .path("/api/feed/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://recommendation-service"))
                 .build();

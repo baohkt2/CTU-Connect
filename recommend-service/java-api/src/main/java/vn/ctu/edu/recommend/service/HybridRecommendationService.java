@@ -470,4 +470,12 @@ public class HybridRecommendationService {
             .processingTimeMs(System.currentTimeMillis() - startTime)
             .build();
     }
+
+    /**
+     * Invalidate user cache
+     */
+    public void invalidateUserCache(String userId) {
+        log.info("Invalidating cache for user: {}", userId);
+        redisCacheService.invalidateRecommendations(userId);
+    }
 }

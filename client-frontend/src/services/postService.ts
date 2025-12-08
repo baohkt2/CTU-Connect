@@ -397,4 +397,91 @@ export const postService = {
     return response.data;
   },
 
+  // ============================================
+  // RECOMMENDATION SERVICE INTEGRATION
+  // ============================================
+
+  /**
+   * Get personalized post recommendations from AI recommendation service
+   * Uses: recommend-service /api/recommend/posts
+   */
+  async getRecommendedPosts(userId: string, page = 0, size = 20): Promise<Post[]> {
+    try {
+      const response = await api.get('/recommend/posts', {
+        params: { userId, page, size, includeExplanations: false }
+      });
+      console.log('Fetched AI recommendations:', response.data);
+      return response.data.recommendations || [];
+    } catch (error) {
+      console.error('Error fetching AI recommendations:', error);
+      // Fallback to trending posts
+      return this.getTopViewedPosts();
+    }
+  },
+
+  /**
+   * Get personalized feed combining multiple recommendation strategies
+   * Uses: recommend-service /api/recommendation/feed
+   */
+  async getPersonalizedFeed(userId: string, page = 0, size = 20): Promise<Post[]> {
+    try {
+      const response = await api.get('/recommendation/feed', {
+        params: { userId, page, size }
+      });
+      console.log('Fetched personalized feed:', response.data);
+      return response.data.recommendations || [];
+    } catch (error) {
+      console.error('Error fetching personalized feed:', error);
+      // Fallback to regular posts
+      const postsResponse = await this.getPosts(page, size);
+      return postsResponse.content;
+    }
+  },
+
+  /**
+   * Record user interaction for recommendation training
+   * Uses: recommend-service /api/recommendation/interaction
+   */
+  async recordRecommendationInteraction(
+    userId: string,
+    postId: string,
+    type: 'VIEW' | 'LIKE' | 'COMMENT' | 'SHARE',
+    viewDuration?: number
+  ): Promise<void> {
+    try {
+      await api.post('/recommendation/interaction', {
+        userId,
+        postId,
+        type,
+        viewDuration,
+        context: { timestamp: new Date().toISOString() }
+      });
+      console.log('Recorded recommendation interaction:', { userId, postId, type });
+    } catch (error) {
+      console.warn('Failed to record recommendation interaction:', error);
+      // Don't throw - this is non-critical
+    }
+  },
+
+  /**
+   * Send feedback to improve recommendations
+   * Uses: recommend-service /api/recommend/feedback
+   */
+  async sendRecommendationFeedback(
+    userId: string,
+    postId: string,
+    feedbackType: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL'
+  ): Promise<void> {
+    try {
+      await api.post('/recommend/feedback', {
+        userId,
+        postId,
+        feedbackType
+      });
+      console.log('Sent recommendation feedback:', { userId, postId, feedbackType });
+    } catch (error) {
+      console.warn('Failed to send recommendation feedback:', error);
+    }
+  },
+
 };

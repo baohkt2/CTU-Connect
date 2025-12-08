@@ -1,151 +1,206 @@
 package vn.ctu.edu.recommend.controller;
 
-import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.ctu.edu.recommend.model.dto.FeedbackRequest;
-import vn.ctu.edu.recommend.model.dto.RecommendationRequest;
 import vn.ctu.edu.recommend.model.dto.RecommendationResponse;
-import vn.ctu.edu.recommend.service.RecommendationService;
+import vn.ctu.edu.recommend.model.enums.FeedbackType;
+import vn.ctu.edu.recommend.service.HybridRecommendationService;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * REST controller for recommendation endpoints
+ * Unified REST Controller for Recommendation Service
+ * Following ARCHITECTURE.md - Java as Orchestrator
+ * 
+ * Main endpoints:
+ * - GET /api/recommendations/feed - Get personalized feed
+ * - POST /api/recommendations/interaction - Record user interaction
+ * - POST /api/recommendations/refresh - Refresh user cache
+ * - GET /api/recommendations/health - Health check
  */
 @RestController
-@RequestMapping("/api/recommend")
-@Slf4j
+@RequestMapping("/api/recommendations")
 @RequiredArgsConstructor
+@Slf4j
 public class RecommendationController {
 
-    private final RecommendationService recommendationService;
+    private final HybridRecommendationService recommendationService;
 
     /**
-     * GET /api/recommend/posts?userId={id}&page=0&size=20
-     * Get personalized post recommendations
+     * GET /api/recommendations/feed
+     * Main endpoint - Get personalized feed for user
+     * Uses hybrid architecture: Java orchestration + Python ML model
+     * 
+     * @param userId User ID
+     * @param page Page number (default 0)
+     * @param size Number of items per page (default 20)
+     * @return Personalized feed recommendations
      */
-    @GetMapping("/posts")
-    public ResponseEntity<RecommendationResponse> getRecommendedPosts(
+    @GetMapping("/feed")
+    public ResponseEntity<RecommendationResponse> getFeed(
             @RequestParam String userId,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "20") Integer size,
-            @RequestParam(required = false) Boolean includeExplanations) {
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer size) {
         
-        log.info("GET /api/recommend/posts - userId: {}, page: {}, size: {}", userId, page, size);
-
-        RecommendationRequest request = RecommendationRequest.builder()
-            .userId(userId)
-            .page(page)
-            .size(size)
-            .includeExplanations(includeExplanations != null ? includeExplanations : false)
-            .build();
-
-        RecommendationResponse response = recommendationService.getRecommendations(request);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * POST /api/recommend/posts
-     * Get recommendations with advanced options
-     */
-    @PostMapping("/posts")
-    public ResponseEntity<RecommendationResponse> getRecommendations(
-            @Valid @RequestBody RecommendationRequest request) {
+        log.info("========================================");
+        log.info("📥 API REQUEST: GET /api/recommendations/feed");
+        log.info("   User ID: {}", userId);
+        log.info("   Page: {}, Size: {}", page, size);
+        log.info("========================================");
         
-        log.info("POST /api/recommend/posts - userId: {}", request.getUserId());
-
-        RecommendationResponse response = recommendationService.getRecommendations(request);
-        return ResponseEntity.ok(response);
+        try {
+            log.debug("🔄 Calling hybrid recommendation service for feed generation");
+            RecommendationResponse response = recommendationService.getFeed(userId, page, size);
+            
+            log.info("========================================");
+            log.info("📤 API RESPONSE: GET /api/recommendations/feed");
+            log.info("   Total Items: {}", response.getRecommendations() != null ? response.getRecommendations().size() : 0);
+            log.info("   User ID: {}", response.getUserId());
+            log.info("========================================");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("========================================");
+            log.error("❌ ERROR: GET /api/recommendations/feed failed");
+            log.error("   User ID: {}", userId);
+            log.error("   Error: {}", e.getMessage(), e);
+            log.error("========================================");
+            throw e;
+        }
     }
 
     /**
-     * POST /api/recommend/feedback
-     * Record user feedback
+     * POST /api/recommendations/interaction
+     * Record user interaction with a post
+     * Sends event to Kafka for Python training pipeline
+     * 
+     * @param request Interaction details
      */
-    @PostMapping("/feedback")
-    public ResponseEntity<Map<String, Object>> recordFeedback(
-            @Valid @RequestBody FeedbackRequest request) {
+    @PostMapping("/interaction")
+    public ResponseEntity<Map<String, String>> recordInteraction(@RequestBody InteractionRequest request) {
         
-        log.info("POST /api/recommend/feedback - userId: {}, postId: {}, type: {}", 
-            request.getUserId(), request.getPostId(), request.getFeedbackType());
-
-        recommendationService.recordFeedback(request);
-
-        return ResponseEntity.ok(Map.of(
-            "success", true,
-            "message", "Feedback recorded successfully",
-            "timestamp", LocalDateTime.now()
-        ));
+        log.info("========================================");
+        log.info("📥 API REQUEST: POST /api/recommendations/interaction");
+        log.info("   User ID: {}", request.getUserId());
+        log.info("   Post ID: {}", request.getPostId());
+        log.info("   Type: {}", request.getType());
+        log.info("   View Duration: {}", request.getViewDuration());
+        log.info("========================================");
+        
+        try {
+            FeedbackType feedbackType = FeedbackType.valueOf(request.getType().toUpperCase());
+            
+            log.debug("🔄 Recording interaction in hybrid service");
+            recommendationService.recordInteraction(
+                request.getUserId(), 
+                request.getPostId(), 
+                feedbackType,
+                request.getViewDuration(),
+                request.getContext()
+            );
+            
+            log.info("✅ Interaction recorded successfully");
+            
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Interaction recorded"
+            ));
+        } catch (Exception e) {
+            log.error("❌ ERROR recording interaction: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "status", "error",
+                "message", "Failed to record interaction: " + e.getMessage()
+            ));
+        }
     }
 
     /**
-     * POST /api/recommend/embedding/rebuild
-     * Trigger embedding rebuild (admin endpoint)
+     * POST /api/recommendations/refresh
+     * Invalidate user's recommendation cache
+     * Useful when user profile changes or for testing
      */
-    @PostMapping("/embedding/rebuild")
-    public ResponseEntity<Map<String, Object>> rebuildEmbeddings() {
-        log.info("POST /api/recommend/embedding/rebuild - Triggered by admin");
-
-        recommendationService.rebuildEmbeddings();
-
-        return ResponseEntity.ok(Map.of(
-            "success", true,
-            "message", "Embedding rebuild started",
-            "timestamp", LocalDateTime.now()
-        ));
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refreshCache(@RequestParam String userId) {
+        log.info("🔄 Refreshing cache for user: {}", userId);
+        
+        try {
+            recommendationService.invalidateUserCache(userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Cache refreshed for user: " + userId
+            ));
+        } catch (Exception e) {
+            log.error("❌ ERROR refreshing cache: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "status", "error",
+                "message", "Failed to refresh cache: " + e.getMessage()
+            ));
+        }
     }
 
     /**
-     * POST /api/recommend/rank/rebuild
-     * Trigger recommendation cache rebuild (admin endpoint)
-     */
-    @PostMapping("/rank/rebuild")
-    public ResponseEntity<Map<String, Object>> rebuildRankings() {
-        log.info("POST /api/recommend/rank/rebuild - Triggered by admin");
-
-        recommendationService.rebuildRecommendationCache();
-
-        return ResponseEntity.ok(Map.of(
-            "success", true,
-            "message", "Recommendation cache rebuilt",
-            "timestamp", LocalDateTime.now()
-        ));
-    }
-
-    /**
-     * DELETE /api/recommend/cache/{userId}
-     * Invalidate cache for specific user
+     * DELETE /api/recommendations/cache/{userId}
+     * Invalidate cache for specific user (alternative endpoint)
      */
     @DeleteMapping("/cache/{userId}")
-    public ResponseEntity<Map<String, Object>> invalidateUserCache(
-            @PathVariable String userId) {
+    public ResponseEntity<Map<String, Object>> invalidateCache(@PathVariable String userId) {
+        log.info("🗑️  Invalidating cache for user: {}", userId);
         
-        log.info("DELETE /api/recommend/cache/{} - Invalidating cache", userId);
-
-        recommendationService.invalidateUserCache(userId);
-
-        return ResponseEntity.ok(Map.of(
-            "success", true,
-            "message", "Cache invalidated for user: " + userId,
-            "timestamp", LocalDateTime.now()
-        ));
+        try {
+            recommendationService.invalidateUserCache(userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Cache invalidated for user: " + userId,
+                "timestamp", LocalDateTime.now()
+            ));
+        } catch (Exception e) {
+            log.error("❌ ERROR invalidating cache: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
-     * GET /api/recommend/health
-     * Health check endpoint
+     * GET /api/recommendations/health
+     * Health check endpoint for recommendation service
      */
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> health() {
         return ResponseEntity.ok(Map.of(
             "status", "UP",
-            "service", "recommendation-service",
+            "service", "recommendation-service-java",
             "timestamp", LocalDateTime.now()
         ));
+    }
+
+    /**
+     * GET /api/recommendations/health/python
+     * Health check endpoint for Python model service
+     */
+    @GetMapping("/health/python")
+    public ResponseEntity<Map<String, Object>> checkPythonServiceHealth() {
+        // TODO: Implement actual health check via PythonModelServiceClient
+        return ResponseEntity.ok(Map.of(
+            "status", "checking",
+            "message", "Python model service health check",
+            "timestamp", LocalDateTime.now()
+        ));
+    }
+
+    /**
+     * DTO for interaction request
+     */
+    @Data
+    public static class InteractionRequest {
+        private String userId;
+        private String postId;
+        private String type;  // VIEW, LIKE, COMMENT, SHARE, SAVE, etc.
+        private Double viewDuration;
+        private Map<String, Object> context;
     }
 }

@@ -48,6 +48,17 @@ export const API_ENDPOINTS = {
     ANALYTICS: '/api/posts/:id/analytics'
   },
 
+  // Recommendation Service endpoints (AI-powered)
+  RECOMMENDATIONS: {
+    BASE: '/api/recommend',
+    POSTS: '/api/recommend/posts',
+    FEED: '/api/recommendation/feed',
+    FEEDBACK: '/api/recommend/feedback',
+    INTERACTION: '/api/recommendation/interaction',
+    CACHE_INVALIDATE: '/api/recommend/cache/:userId',
+    HEALTH: '/api/recommend/health'
+  },
+
   // Chat endpoints
   CHAT: {
     BASE: '/api/chats',

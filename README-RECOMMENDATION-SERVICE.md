@@ -4,6 +4,36 @@
 
 Đã hoàn thành cài đặt và tích hợp **Recommendation Service** - hệ thống gợi ý cá nhân hóa sử dụng AI cho CTU Connect.
 
+## 🆕 Latest Updates (Dec 8, 2024)
+
+### ✅ Fixed Eureka Registration for Dev Mode
+- **Problem:** Recommend-service không đăng ký được với Eureka khi chạy local (dev mode)
+- **Solution:** Fixed `application-dev.yml`: Changed `eureka.client.enabled=false` → `enabled=true`
+- **Status:** ✅ Recommendation service now registers with Eureka in dev mode
+
+### ✅ Enhanced API Debugging
+- Added comprehensive logging with visual markers (📥, 📤, ✅, ❌)
+- Track API requests, parameters, and responses in detail
+- Easy monitoring of recommendation flow
+
+### ✅ Complete Client-Frontend Integration
+- Added `getRecommendedPosts()` method to postService
+- Added `getPersonalizedFeed()` for hybrid recommendations
+- Added interaction tracking: `recordRecommendationInteraction()`
+- Added feedback system: `sendRecommendationFeedback()`
+
+### ✅ Updated API Gateway Routing
+- `/api/recommend/**` → recommendation-service (AI-powered)
+- `/api/recommendation/**` → recommendation-service (Feed & interaction)
+- `/api/recommendations/**` → post-service (Legacy simple recommendations)
+
+### 📚 New Documentation
+- **API-FLOW-DOCUMENTATION.md** - Complete API flow guide
+- **CHANGES-SUMMARY.md** - Detailed changes summary
+- **QUICK-START.md** - Quick start guide
+- **README-INTEGRATION.md** - Integration overview
+- **test-recommendation-api.ps1** - Automated test script
+
 ## ✅ Đã hoàn thành
 
 ### 1. Service Communication (Feign Clients)

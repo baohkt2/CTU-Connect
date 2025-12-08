@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     PORT: int = int(os.getenv("PORT", "8097"))
+    PYTHONIOENCODING: str = os.getenv("PYTHONIOENCODING", "utf-8")
     
     # Model paths
     MODEL_PATH: str = os.getenv("MODEL_PATH", "vinai/phobert-base")
