@@ -200,3 +200,7 @@ feign:
         connectTimeout: 5000
         readTimeout: 10000
         loggerLevel: basic
+  circuitbreaker:
+    enabled: true
+    alphanumeric-ids:
+      enabled: true

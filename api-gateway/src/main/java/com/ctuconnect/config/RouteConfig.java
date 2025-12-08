@@ -55,6 +55,12 @@ public class RouteConfig {
                         .path("/ws/chat/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://chat-service"))
+
+                // Recommendation Service Routes - AI-powered personalized recommendations
+                .route("recommendation-service-route", r -> r
+                        .path("/api/recommendations/**", "/api/feed/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://recommendation-service"))
                 .build();
     }
 }

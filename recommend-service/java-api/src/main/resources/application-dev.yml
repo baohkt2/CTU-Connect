@@ -84,16 +84,20 @@ management:
       export:
         enabled: true
 
-# Eureka Configuration (Optional - disable if not using)
+# Eureka Configuration
 eureka:
   client:
-    enabled: false  # Disable Eureka in dev mode
-    # enabled: true  # Enable if you have Eureka running
-    # service-url:
-    #   defaultZone: http://localhost:8761/eureka/
+    enabled: true  # Enable Eureka in dev mode
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${random.value}
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
 
 # JWT Configuration (must match auth-service)
 jwt:
