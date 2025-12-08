@@ -1,0 +1,2 @@
+2025-12-09 00:20:23,090 - inference - INFO - Using device: cpu
+2025-12-09 00:20:25,823 - inference - INFO - PhoBERT model loaded successfully

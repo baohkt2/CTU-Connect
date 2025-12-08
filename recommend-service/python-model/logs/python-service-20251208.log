@@ -894,3 +894,9 @@
 2025-12-08 19:29:22,757 - app - INFO - Shutting down Python ML Recommendation Service...
 2025-12-08 22:39:01,665 - inference - INFO - Using device: cpu
 2025-12-08 22:39:03,773 - inference - INFO - PhoBERT model loaded successfully
+2025-12-08 22:39:45,981 - inference - INFO - Using device: cpu
+2025-12-08 22:39:47,537 - inference - INFO - PhoBERT model loaded successfully
+2025-12-08 23:09:32,312 - inference - INFO - Using device: cpu
+2025-12-08 23:09:34,052 - inference - INFO - PhoBERT model loaded successfully
+2025-12-08 23:16:11,097 - inference - INFO - Using device: cpu
+2025-12-08 23:16:17,875 - inference - INFO - PhoBERT model loaded successfully

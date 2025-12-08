@@ -28,7 +28,7 @@ public class PostEventConsumer {
     private final AcademicClassifier academicClassifier;
     private final RedisCacheService redisCacheService;
 
-    @KafkaListener(topics = "post_created", groupId = "recommendation-service-group")
+    @KafkaListener(topics = "post_created", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
     public void handlePostCreated(PostEvent event) {
         log.info("Received post_created event: {}", event.getPostId());
 
@@ -76,7 +76,7 @@ public class PostEventConsumer {
         }
     }
 
-    @KafkaListener(topics = "post_updated", groupId = "recommendation-service-group")
+    @KafkaListener(topics = "post_updated", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
     public void handlePostUpdated(PostEvent event) {
         log.info("Received post_updated event: {}", event.getPostId());
 
@@ -120,7 +120,7 @@ public class PostEventConsumer {
         }
     }
 
-    @KafkaListener(topics = "post_deleted", groupId = "recommendation-service-group")
+    @KafkaListener(topics = "post_deleted", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
     public void handlePostDeleted(PostEvent event) {
         log.info("Received post_deleted event: {}", event.getPostId());
 
