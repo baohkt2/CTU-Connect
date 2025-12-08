@@ -12,9 +12,11 @@ import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Service for generating text embeddings using PhoBERT
+ * Service for generating text embeddings using Python AI service
  */
 @Service
 @Slf4j
@@ -24,13 +26,10 @@ public class EmbeddingService {
     private final WebClient.Builder webClientBuilder;
     private final RedisCacheService redisCacheService;
 
-    @Value("${recommendation.nlp.phobert-service-url}")
-    private String phoBertServiceUrl;
+    @Value("${recommendation.python-service.url:http://localhost:8000}")
+    private String pythonServiceUrl;
 
-    @Value("${recommendation.nlp.embedding-endpoint}")
-    private String embeddingEndpoint;
-
-    @Value("${recommendation.nlp.timeout}")
+    @Value("${recommendation.python-service.timeout:10000}")
     private long timeout;
 
     @Value("${recommendation.cache.embedding-ttl}")
@@ -38,7 +37,7 @@ public class EmbeddingService {
 
     /**
      * Generate embedding for a single text
-     * Checks cache first, then calls NLP service if not cached
+     * Checks cache first, then calls Python AI service if not cached
      */
     public float[] generateEmbedding(String text, String postId) {
         // Check cache first
@@ -51,64 +50,71 @@ public class EmbeddingService {
         }
 
         try {
-            // Call NLP service
-            EmbeddingRequest request = EmbeddingRequest.builder()
-                .text(text)
-                .model("phobert")
-                .normalize(true)
-                .build();
+            // Prepare request for Python service
+            Map<String, Object> request = new HashMap<>();
+            request.put("post_id", postId != null ? postId : "");
+            request.put("content", text);
+            request.put("title", "");
 
-            WebClient webClient = webClientBuilder.baseUrl(phoBertServiceUrl).build();
+            WebClient webClient = webClientBuilder.baseUrl(pythonServiceUrl).build();
             
-            EmbeddingResponse response = webClient.post()
-                .uri(embeddingEndpoint)
+            log.info("Calling Python service at: {}/embed/post", pythonServiceUrl);
+            
+            // Call Python AI service
+            Map<String, Object> response = webClient.post()
+                .uri("/embed/post")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(EmbeddingResponse.class)
+                .bodyToMono(Map.class)
                 .timeout(Duration.ofMillis(timeout))
                 .onErrorResume(e -> {
-                    log.error("Failed to generate embedding: {}", e.getMessage());
-                    return Mono.just(createFallbackEmbedding());
+                    log.error("Failed to generate embedding from Python service: {}", e.getMessage(), e);
+                    return Mono.empty();
                 })
                 .block();
 
-            if (response != null && response.getEmbedding() != null) {
-                float[] embedding = response.getEmbedding();
+            if (response != null && response.containsKey("embedding")) {
+                Object embeddingObj = response.get("embedding");
+                float[] embedding = null;
                 
-                // Cache the embedding
-                if (postId != null) {
-                    redisCacheService.cacheEmbedding(
-                        postId, 
-                        embedding, 
-                        Duration.ofSeconds(embeddingTtl)
-                    );
+                if (embeddingObj instanceof java.util.List) {
+                    java.util.List<?> list = (java.util.List<?>) embeddingObj;
+                    embedding = new float[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        Object val = list.get(i);
+                        if (val instanceof Number) {
+                            embedding[i] = ((Number) val).floatValue();
+                        }
+                    }
+                } else if (embeddingObj instanceof float[]) {
+                    embedding = (float[]) embeddingObj;
                 }
                 
-                log.debug("Generated embedding for text (length: {})", text.length());
-                return embedding;
+                if (embedding != null && embedding.length > 0) {
+                    // Cache the embedding
+                    if (postId != null) {
+                        redisCacheService.cacheEmbedding(
+                            postId, 
+                            embedding, 
+                            Duration.ofSeconds(embeddingTtl)
+                        );
+                    }
+                    
+                    log.info("Successfully generated embedding for post: {} (dimension: {})", postId, embedding.length);
+                    return embedding;
+                }
             }
 
-            log.warn("Received null embedding response, using fallback");
-            return createFallbackEmbedding().getEmbedding();
+            log.error("Received null or invalid embedding response from Python service");
+            throw new RuntimeException("Invalid embedding response");
 
         } catch (Exception e) {
-            log.error("Error generating embedding: {}", e.getMessage(), e);
-            return createFallbackEmbedding().getEmbedding();
+            log.error("Error generating embedding for post {}: {}", postId, e.getMessage(), e);
+            throw new RuntimeException("Failed to generate embedding: " + e.getMessage(), e);
         }
     }
 
-    /**
-     * Create a fallback embedding (zero vector) when service is unavailable
-     */
-    private EmbeddingResponse createFallbackEmbedding() {
-        float[] zeroVector = new float[768]; // PhoBERT dimension
-        Arrays.fill(zeroVector, 0.0f);
-        return EmbeddingResponse.builder()
-            .embedding(zeroVector)
-            .dimensions(768)
-            .model("fallback")
-            .build();
-    }
+
 
     /**
      * Calculate cosine similarity between two embeddings

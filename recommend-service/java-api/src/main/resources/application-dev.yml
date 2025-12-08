@@ -41,7 +41,7 @@ spring:
   # Redis Configuration (Docker - recommend-redis on port 6380)
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1
       port: 6380
       password: recommend_redis_pass
       timeout: 3000ms
