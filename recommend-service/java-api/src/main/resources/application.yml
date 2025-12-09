@@ -149,17 +149,9 @@ recommendation:
     same-batch: 0.5
     posted: 0.3
 
-  # NLP Service Configuration (Legacy - for backward compatibility)
-  nlp:
-    phobert-service-url: ${PHOBERT_SERVICE_URL:http://localhost:8096}
-    embedding-endpoint: /api/nlp/embed
-    classifier-endpoint: /api/nlp/classify
-    timeout: 10000
-    vector-dimension: 768
-
   # Python Model Service Configuration (New Hybrid Architecture)
   python-service:
-    url: ${PYTHON_MODEL_SERVICE_URL:http://localhost:8097}
+    url: ${PYTHON_MODEL_SERVICE_URL:http://localhost:8000}
     predict-endpoint: /api/model/predict
     timeout: 10000
     enabled: true

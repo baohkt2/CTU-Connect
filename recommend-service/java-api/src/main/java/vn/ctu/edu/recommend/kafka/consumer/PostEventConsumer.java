@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import vn.ctu.edu.recommend.kafka.event.PostEvent;
-import vn.ctu.edu.recommend.model.dto.ClassificationResponse;
 import vn.ctu.edu.recommend.model.entity.postgres.PostEmbedding;
-import vn.ctu.edu.recommend.nlp.AcademicClassifier;
 import vn.ctu.edu.recommend.nlp.EmbeddingService;
 import vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository;
 import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 
 /**
  * Kafka consumer for post events
- * Automatically generates embeddings and classifications for new/updated posts
+ * Automatically generates embeddings for new/updated posts
  */
 @Component
 @Slf4j
@@ -25,7 +23,6 @@ public class PostEventConsumer {
 
     private final PostEmbeddingRepository postEmbeddingRepository;
     private final EmbeddingService embeddingService;
-    private final AcademicClassifier academicClassifier;
     private final RedisCacheService redisCacheService;
 
     @KafkaListener(topics = "post_created", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
@@ -53,11 +50,11 @@ public class PostEventConsumer {
             // Generate embedding
             float[] embedding = embeddingService.generateEmbedding(content, postId);
 
-            // Classify content
-            ClassificationResponse classification = academicClassifier.classify(content);
+            // Simple category detection (Python model will provide better classification)
+            String category = detectSimpleCategory(content);
+            float academicScore = calculateBasicAcademicScore(content);
             
-            log.info("📊 Classification result: category={}, confidence={}", 
-                classification.getCategory(), classification.getConfidence());
+            log.info("📊 Basic classification: category={}, score={}", category, academicScore);
 
             // Extract tags from event
             String[] tags = extractTags(event);
@@ -67,8 +64,8 @@ public class PostEventConsumer {
                 .postId(postId)
                 .authorId(authorId)
                 .content(content)
-                .academicScore(classification.getConfidence())
-                .academicCategory(classification.getCategory())
+                .academicScore(academicScore)
+                .academicCategory(category)
                 .popularityScore(0.0f)
                 .contentSimilarityScore(0.0f)
                 .graphRelationScore(0.0f)
@@ -91,6 +88,51 @@ public class PostEventConsumer {
         } catch (Exception e) {
             log.error("❌ Error processing post_created event: {}", e.getMessage(), e);
         }
+    }
+    
+    /**
+     * Simple category detection based on keywords
+     * Python model will provide better ML-based classification
+     */
+    private String detectSimpleCategory(String content) {
+        if (content == null || content.isEmpty()) {
+            return "GENERAL";
+        }
+        
+        String lower = content.toLowerCase();
+        
+        // Quick keyword matching
+        if (lower.contains("học bổng") || lower.contains("scholarship")) return "SCHOLARSHIP";
+        if (lower.contains("sự kiện") || lower.contains("event")) return "EVENT";
+        if (lower.contains("nghiên cứu") || lower.contains("research")) return "RESEARCH";
+        if (lower.contains("thông báo") || lower.contains("announcement")) return "ANNOUNCEMENT";
+        if (lower.contains("hỏi") || lower.contains("câu hỏi") || lower.contains("question")) return "QA";
+        if (lower.contains("khóa học") || lower.contains("course")) return "COURSE";
+        
+        return "GENERAL";
+    }
+    
+    /**
+     * Calculate basic academic score based on content characteristics
+     */
+    private float calculateBasicAcademicScore(String content) {
+        if (content == null || content.isEmpty()) {
+            return 0.3f;
+        }
+        
+        float score = 0.3f; // Base score
+        
+        // Academic keywords boost
+        String lower = content.toLowerCase();
+        if (lower.matches(".*(nghiên cứu|research|học thuật|academic).*")) score += 0.2f;
+        if (lower.matches(".*(phương pháp|method|phân tích|analysis).*")) score += 0.15f;
+        if (lower.matches(".*(kết quả|result|dữ liệu|data).*")) score += 0.1f;
+        
+        // Length indicates more structured content
+        if (content.length() > 200) score += 0.1f;
+        if (content.length() > 500) score += 0.1f;
+        
+        return Math.min(1.0f, score);
     }
     
     /**
@@ -133,13 +175,13 @@ public class PostEventConsumer {
                 float[] embedding = embeddingService.generateEmbedding(
                     event.getContent(), event.getPostId());
                 
-                ClassificationResponse classification = 
-                    academicClassifier.classify(event.getContent());
+                String category = detectSimpleCategory(event.getContent());
+                float academicScore = calculateBasicAcademicScore(event.getContent());
 
                 postEmbedding.setContent(event.getContent());
                 postEmbedding.setEmbeddingVectorFromArray(embedding);
-                postEmbedding.setAcademicScore(classification.getConfidence());
-                postEmbedding.setAcademicCategory(classification.getCategory());
+                postEmbedding.setAcademicScore(academicScore);
+                postEmbedding.setAcademicCategory(category);
                 postEmbedding.setEmbeddingUpdatedAt(LocalDateTime.now());
                 postEmbedding.setTags(event.getTags());
 

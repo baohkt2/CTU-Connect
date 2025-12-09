@@ -60,6 +60,40 @@ public class RecommendationController {
             log.info("📤 API RESPONSE: GET /api/recommendations/feed");
             log.info("   Total Items: {}", response.getRecommendations() != null ? response.getRecommendations().size() : 0);
             log.info("   User ID: {}", response.getUserId());
+            
+            // 🔍 DEBUG: Log detailed post list with scores
+            if (response.getRecommendations() != null && !response.getRecommendations().isEmpty()) {
+                log.info("📋 RECOMMENDED POSTS LIST:");
+                log.info("   Format: [Rank] PostID -> Score");
+                log.info("   ----------------------------------------");
+                
+                for (int i = 0; i < response.getRecommendations().size(); i++) {
+                    var post = response.getRecommendations().get(i);
+                    Double score = post.getScore();
+                    
+                    log.info("   [{}] {} -> score: {}", 
+                        String.format("%2d", i + 1),
+                        post.getPostId(),
+                        String.format("%.4f", score != null ? score : 0.0)
+                    );
+                }
+                
+                log.info("   ----------------------------------------");
+                log.info("📊 SCORE STATISTICS:");
+                
+                var scores = response.getRecommendations().stream()
+                    .map(p -> p.getScore() != null ? p.getScore() : 0.0)
+                    .collect(java.util.stream.Collectors.toList());
+                
+                double maxScore = scores.stream().max(Double::compare).orElse(0.0);
+                double minScore = scores.stream().min(Double::compare).orElse(0.0);
+                double avgScore = scores.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+                
+                log.info("   Max Score: {}", String.format("%.4f", maxScore));
+                log.info("   Min Score: {}", String.format("%.4f", minScore));
+                log.info("   Avg Score: {}", String.format("%.4f", avgScore));
+            }
+            
             log.info("========================================");
             
             return ResponseEntity.ok(response);

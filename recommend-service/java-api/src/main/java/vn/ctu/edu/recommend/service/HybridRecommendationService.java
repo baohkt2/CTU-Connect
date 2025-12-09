@@ -100,35 +100,105 @@ public class HybridRecommendationService {
             List<RecommendationResponse.RecommendedPost> finalRecommendations;
 
             // Step 5: Call Python model service for ML-based ranking
+            log.info("🔍 Python service enabled: {}", pythonServiceEnabled);
+            
             if (pythonServiceEnabled) {
+                log.info("🤖 Calling Python model service...");
+                
                 PythonModelRequest modelRequest = PythonModelRequest.builder()
                     .userAcademic(userProfile)
                     .userHistory(userHistory)
                     .candidatePosts(candidatePosts)
                     .topK(requestSize * 2)
                     .build();
+                
+                log.debug("📋 Request: {} candidate posts, {} user history", 
+                    candidatePosts.size(), userHistory.size());
 
-                PythonModelResponse modelResponse = pythonModelService.predictRanking(modelRequest);
+                PythonModelResponse modelResponse = null;
+                try {
+                    modelResponse = pythonModelService.predictRanking(modelRequest);
+                } catch (Exception e) {
+                    log.error("❌ Error calling Python model: {}", e.getMessage(), e);
+                }
                 
                 if (modelResponse != null && !modelResponse.getRankedPosts().isEmpty()) {
-                    log.debug("Python model returned {} ranked posts", modelResponse.getRankedPosts().size());
+                    log.info("🤖 Python model returned {} ranked posts", modelResponse.getRankedPosts().size());
+                    
+                    // 🔍 DEBUG: Log Python model rankings
+                    log.info("📊 PYTHON MODEL RANKINGS (Top 5):");
+                    modelResponse.getRankedPosts().stream()
+                        .limit(5)
+                        .forEach(ranked -> {
+                            log.info("   • PostID: {} | ML Score: {} | Category: {}", 
+                                ranked.getPostId(),
+                                String.format("%.4f", ranked.getScore()),
+                                ranked.getCategory() != null ? ranked.getCategory() : "N/A"
+                            );
+                        });
+                    
                     finalRecommendations = convertPythonResponse(modelResponse, candidatePosts);
                 } else {
-                    log.warn("Python model service unavailable, using fallback ranking");
+                    log.warn("⚠️  Python model service unavailable, using fallback ranking");
                     finalRecommendations = fallbackRanking(candidatePosts, requestSize);
                 }
             } else {
-                log.debug("Python service disabled, using fallback ranking");
+                log.info("ℹ️  Python service disabled, using fallback ranking");
                 finalRecommendations = fallbackRanking(candidatePosts, requestSize);
+            }
+            
+            // 🔍 DEBUG: Log recommendations after Python/Fallback
+            log.info("📦 AFTER PYTHON/FALLBACK (before business rules):");
+            log.info("   Total: {} posts", finalRecommendations.size());
+            if (!finalRecommendations.isEmpty()) {
+                finalRecommendations.stream()
+                    .limit(3)
+                    .forEach(post -> {
+                        log.info("   • PostID: {} | Score: {}", 
+                            post.getPostId(),
+                            String.format("%.4f", post.getScore() != null ? post.getScore() : 0.0)
+                        );
+                    });
             }
 
             // Step 6: Apply business rules (block list, friend priority, major priority)
             finalRecommendations = applyBusinessRules(userId, finalRecommendations, userProfile);
+            
+            // 🔍 DEBUG: Log recommendations after business rules
+            log.info("⚖️  AFTER BUSINESS RULES:");
+            log.info("   Total: {} posts", finalRecommendations.size());
+            if (!finalRecommendations.isEmpty()) {
+                finalRecommendations.stream()
+                    .limit(3)
+                    .forEach(post -> {
+                        log.info("   • PostID: {} | Adjusted Score: {}", 
+                            post.getPostId(),
+                            String.format("%.4f", post.getScore() != null ? post.getScore() : 0.0)
+                        );
+                    });
+            }
 
             // Step 7: Limit to requested size
             finalRecommendations = finalRecommendations.stream()
                 .limit(requestSize)
                 .collect(Collectors.toList());
+            
+            // 🔍 DEBUG: Log final recommendations before caching
+            log.info("🎯 FINAL RECOMMENDATIONS (before caching):");
+            log.info("   Total: {} posts", finalRecommendations.size());
+            
+            if (!finalRecommendations.isEmpty()) {
+                log.info("   Top 5 Posts:");
+                finalRecommendations.stream()
+                    .limit(5)
+                    .forEach(post -> {
+                        log.info("   • PostID: {} | Score: {} | Category: {}", 
+                            post.getPostId(),
+                            String.format("%.4f", post.getScore() != null ? post.getScore() : 0.0),
+                            post.getAcademicCategory() != null ? post.getAcademicCategory() : "N/A"
+                        );
+                    });
+            }
 
             // Step 8: Cache results (30-120s TTL)
             long cacheTtl = calculateCacheTtl(finalRecommendations.size());
@@ -270,21 +340,43 @@ public class HybridRecommendationService {
     private List<RecommendationResponse.RecommendedPost> fallbackRanking(
             List<CandidatePost> candidatePosts, int limit) {
         
+        log.info("🔄 Using fallback ranking for {} candidate posts", candidatePosts.size());
+        
         // Simple popularity-based ranking as fallback
+        // Calculate normalized popularity score
         return candidatePosts.stream()
             .sorted((p1, p2) -> {
-                int score1 = (p1.getLikeCount() * 2) + p1.getCommentCount() + (p1.getShareCount() * 3);
-                int score2 = (p2.getLikeCount() * 2) + p2.getCommentCount() + (p2.getShareCount() * 3);
+                int score1 = (p1.getLikeCount() * 2) + p1.getCommentCount() + (p1.getShareCount() * 3) + p1.getViewCount();
+                int score2 = (p2.getLikeCount() * 2) + p2.getCommentCount() + (p2.getShareCount() * 3) + p2.getViewCount();
                 return Integer.compare(score2, score1);
             })
             .limit(limit * 2)
-            .map(post -> RecommendationResponse.RecommendedPost.builder()
-                .postId(post.getPostId())
-                .authorId(post.getAuthorId())
-                .content(post.getContent())
-                .score(0.0)
-                .createdAt(post.getCreatedAt())
-                .build())
+            .map(post -> {
+                // Calculate popularity score (0.0 - 1.0)
+                int engagementScore = (post.getLikeCount() * 2) + 
+                                     post.getCommentCount() + 
+                                     (post.getShareCount() * 3) + 
+                                     post.getViewCount();
+                
+                // Normalize to 0.0-1.0 range (assuming max engagement ~1000)
+                double normalizedScore = Math.min(1.0, engagementScore / 1000.0);
+                
+                // Add base score to prevent 0
+                double finalScore = 0.3 + (normalizedScore * 0.7); // Range: 0.3 - 1.0
+                
+                log.debug("Fallback score for post {}: engagement={}, normalized={}, final={}", 
+                    post.getPostId(), engagementScore, normalizedScore, finalScore);
+                
+                return RecommendationResponse.RecommendedPost.builder()
+                    .postId(post.getPostId())
+                    .authorId(post.getAuthorId())
+                    .content(post.getContent())
+                    .score(finalScore)
+                    .popularityScore((float)normalizedScore)
+                    .academicCategory(null)
+                    .createdAt(post.getCreatedAt())
+                    .build();
+            })
             .collect(Collectors.toList());
     }
 
