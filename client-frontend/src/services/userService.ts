@@ -113,9 +113,34 @@ export const userService = {
     return response.data;
   },
 
-  // Get friend suggestions
+  // Get friend suggestions (old endpoint - deprecated)
   async getFriendSuggestions(): Promise<PaginatedResponse<User>> {
     const response = await api.get('/users/me/friend-suggestions');
+    return response.data;
+  },
+
+  // Get friend suggestions with filters (NEW - enhanced version)
+  async searchFriendSuggestions(params?: {
+    query?: string;
+    college?: string;
+    faculty?: string;
+    batch?: string;
+    limit?: number;
+  }): Promise<User[]> {
+    const queryParams = new URLSearchParams();
+    if (params?.query) queryParams.append('query', params.query);
+    if (params?.college) queryParams.append('college', params.college);
+    if (params?.faculty) queryParams.append('faculty', params.faculty);
+    if (params?.batch) queryParams.append('batch', params.batch);
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    
+    const response = await api.get(`/users/friend-suggestions/search?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  // Search user by email
+  async searchUserByEmail(email: string): Promise<User> {
+    const response = await api.get(`/users/search/email?email=${encodeURIComponent(email)}`);
     return response.data;
   },
 
@@ -147,6 +172,24 @@ export const userService = {
   async removeFriend(friendId: string): Promise<ApiResponse<string>> {
     const response = await api.delete(`/users/me/friends/${friendId}`);
     return response.data;
+  },
+
+  // Get friendship status with another user
+  async getFriendshipStatus(targetUserId: string): Promise<{ status: 'none' | 'friends' | 'sent' | 'received' | 'self' }> {
+    const response = await api.get(`/users/${targetUserId}/friendship-status`);
+    return response.data;
+  },
+
+  // Get mutual friends with another user
+  async getMutualFriendsWithUser(targetUserId: string, page = 0, size = 20): Promise<PaginatedResponse<User>> {
+    const response = await api.get(`/users/${targetUserId}/mutual-friends?page=${page}&size=${size}`);
+    return response.data;
+  },
+
+  // Get mutual friends count
+  async getMutualFriendsCount(targetUserId: string): Promise<number> {
+    const response = await api.get(`/users/${targetUserId}/mutual-friends-count`);
+    return response.data.count;
   }
 
 };

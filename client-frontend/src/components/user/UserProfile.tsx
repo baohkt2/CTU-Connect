@@ -24,6 +24,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+  const [friendRequestSent, setFriendRequestSent] = useState(false);
+  const [friendRequestReceived, setFriendRequestReceived] = useState(false);
   const [activeTab, setActiveTab] = useState<'posts' | 'about' | 'photos' | 'videos'>('posts');
   const [stats, setStats] = useState({
     posts: 0,
@@ -106,6 +109,43 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
       }
     } catch (err) {
       console.error('Error updating follow status:', err);
+    }
+  };
+
+  const handleAddFriend = async () => {
+    try {
+      await userService.sendFriendRequest(userId);
+      setFriendRequestSent(true);
+    } catch (err) {
+      console.error('Error sending friend request:', err);
+    }
+  };
+
+  const handleAcceptFriend = async () => {
+    try {
+      await userService.acceptFriendRequest(userId);
+      setFriendRequestReceived(false);
+      setIsFriend(true);
+    } catch (err) {
+      console.error('Error accepting friend request:', err);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    try {
+      await userService.rejectFriendRequest(userId);
+      setFriendRequestSent(false);
+    } catch (err) {
+      console.error('Error canceling friend request:', err);
+    }
+  };
+
+  const handleUnfriend = async () => {
+    try {
+      await userService.removeFriend(userId);
+      setIsFriend(false);
+    } catch (err) {
+      console.error('Error removing friend:', err);
     }
   };
 

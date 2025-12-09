@@ -57,8 +57,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             String path = request.getURI().getPath();
             System.out.println("JwtAuthenticationFilter: Processing request path: " + path);
 
+            // Check if this is an open API endpoint FIRST before any token processing
             if (isOpenApiEndpoint(request)) {
-                System.out.println("JwtAuthenticationFilter: Path is open API endpoint, skipping authentication.");
+                System.out.println("JwtAuthenticationFilter: Path '" + path + "' is open API endpoint, skipping authentication.");
                 return chain.filter(exchange);
             }
 

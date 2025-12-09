@@ -31,7 +31,7 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh-token",
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/auth/refresh-token",
                                "/api/auth/forgot-password", "/api/auth/reset-password", 
                                "/api/auth/verify-email", "/api/auth/resend-verification", "/api/auth/me").permitAll()
                 .requestMatchers("/actuator/**").permitAll()

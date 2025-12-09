@@ -1,20 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '@/types';
-import { Camera, MapPin, Calendar, Briefcase, GraduationCap, Edit3, UserPlus, MessageCircle, MoreHorizontal } from 'lucide-react';
+import { Camera, MapPin, Calendar, Briefcase, GraduationCap, Edit3, UserPlus, MessageCircle, MoreHorizontal, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { FriendButton, FriendshipStatus } from '@/components/ui/FriendButton';
 import { formatTimeAgo } from '@/utils/localization';
+import { userService } from '@/services/userService';
 
 interface ProfileHeaderProps {
   user: User;
   isOwnProfile: boolean;
   isFollowing?: boolean;
+  isFriend?: boolean;
+  friendRequestSent?: boolean;
+  friendRequestReceived?: boolean;
   onFollow?: () => void;
   onMessage?: () => void;
   onEditProfile?: () => void;
   onEditCover?: () => void;
   onEditAvatar?: () => void;
+  onAddFriend?: () => void;
+  onAcceptFriend?: () => void;
+  onCancelRequest?: () => void;
+  onUnfriend?: () => void;
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -28,6 +37,39 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onEditAvatar
 }) => {
   const [showFullBio, setShowFullBio] = useState(false);
+  const [friendshipStatus, setFriendshipStatus] = useState<FriendshipStatus>('none');
+  const [mutualFriendsCount, setMutualFriendsCount] = useState<number>(0);
+  const [loadingFriendData, setLoadingFriendData] = useState(false);
+
+  useEffect(() => {
+    if (!isOwnProfile && user.id) {
+      loadFriendshipData();
+    }
+  }, [user.id, isOwnProfile]);
+
+  const loadFriendshipData = async () => {
+    if (!user.id) return;
+    
+    try {
+      setLoadingFriendData(true);
+      
+      // Load friendship status
+      const statusResponse = await userService.getFriendshipStatus(user.id);
+      setFriendshipStatus(statusResponse.status);
+      
+      // Load mutual friends count
+      const count = await userService.getMutualFriendsCount(user.id);
+      setMutualFriendsCount(count);
+    } catch (error) {
+      console.error('Error loading friendship data:', error);
+    } finally {
+      setLoadingFriendData(false);
+    }
+  };
+
+  const handleFriendStatusChange = (newStatus: FriendshipStatus) => {
+    setFriendshipStatus(newStatus);
+  };
 
   const getRoleDisplay = (role: string) => {
     switch (role) {
@@ -149,6 +191,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     <span>Tham gia {formatTimeAgo(user.createdAt)}</span>
                   </div>
                 )}
+
+                {/* Mutual Friends */}
+                {!isOwnProfile && mutualFriendsCount > 0 && (
+                  <div className="flex items-center space-x-1 text-blue-600">
+                    <Users className="h-4 w-4" />
+                    <span>{mutualFriendsCount} bạn chung</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -168,14 +218,15 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </>
             ) : (
               <>
-                <Button
-                  onClick={onFollow}
-                  variant={isFollowing ? "outline" : "primary"}
-                  className="flex items-center space-x-2"
-                >
-                  <UserPlus className="h-4 w-4" />
-                  <span>{isFollowing ? 'Đang theo dõi' : 'Theo dõi'}</span>
-                </Button>
+                {/* Friend Button */}
+                {user.id && (
+                  <FriendButton
+                    targetUserId={user.id}
+                    initialStatus={friendshipStatus}
+                    onStatusChange={handleFriendStatusChange}
+                    size="md"
+                  />
+                )}
                 
                 <Button
                   onClick={onMessage}

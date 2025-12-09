@@ -15,14 +15,16 @@ import {
   MagnifyingGlassIcon,
   BellIcon,
   Cog6ToothIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
   UserIcon as UserIconSolid,
   ChatBubbleLeftRightIcon as ChatIconSolid,
   MagnifyingGlassIcon as SearchIconSolid,
-  BellIcon as BellIconSolid
+  BellIcon as BellIconSolid,
+  UserGroupIcon as UserGroupIconSolid
 } from '@heroicons/react/24/solid';
 
 interface LayoutProps {
@@ -41,6 +43,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       href: '/',
       icon: HomeIcon,
       iconSolid: HomeIconSolid,
+      badge: undefined
+    },
+    {
+      name: 'Bạn bè',
+      href: '/friends',
+      icon: UserGroupIcon,
+      iconSolid: UserGroupIconSolid,
       badge: undefined
     },
     {
