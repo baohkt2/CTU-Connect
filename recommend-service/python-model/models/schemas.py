@@ -32,13 +32,29 @@ class CandidatePost(BaseModel):
     content: str
     hashtags: List[str] = Field(default_factory=list)
     mediaDescription: Optional[str] = None
+    authorId: Optional[str] = None
     authorMajor: Optional[str] = None
     authorFaculty: Optional[str] = None
     authorBatch: Optional[str] = None
     createdAt: Optional[str] = None
-    likesCount: int = 0
-    commentsCount: int = 0
-    sharesCount: int = 0
+    # Support both naming conventions
+    likeCount: int = 0
+    likesCount: Optional[int] = None
+    commentCount: int = 0
+    commentsCount: Optional[int] = None
+    shareCount: int = 0
+    sharesCount: Optional[int] = None
+    viewCount: int = 0
+    
+    def model_post_init(self, __context):
+        """Normalize field names after initialization"""
+        # Use whichever is provided
+        if self.likesCount is not None:
+            self.likeCount = self.likesCount
+        if self.commentsCount is not None:
+            self.commentCount = self.commentsCount
+        if self.sharesCount is not None:
+            self.shareCount = self.sharesCount
 
 
 class PredictionRequest(BaseModel):

@@ -65,6 +65,18 @@ public class PostEmbedding {
      */
     @Column(name = "popularity_score", nullable = false)
     private Float popularityScore = 0.0f;
+    
+    /**
+     * Content similarity score (for recommendations)
+     */
+    @Column(name = "content_similarity_score")
+    private Float contentSimilarityScore = 0.0f;
+    
+    /**
+     * Graph relation score (social connections)
+     */
+    @Column(name = "graph_relation_score")
+    private Float graphRelationScore = 0.0f;
 
     /**
      * Engagement metrics
