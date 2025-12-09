@@ -2,3 +2,11 @@
 2025-12-09 00:20:25,823 - inference - INFO - PhoBERT model loaded successfully
 2025-12-09 00:35:50,481 - inference - INFO - Using device: cpu
 2025-12-09 00:35:52,519 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 08:49:50,929 - inference - INFO - Using device: cpu
+2025-12-09 08:49:55,392 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 10:23:52,275 - inference - INFO - Using device: cpu
+2025-12-09 10:23:54,902 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 10:23:59,422 - inference - INFO - Using device: cpu
+2025-12-09 10:24:01,529 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 10:29:59,826 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-09 10:29:59,826 - services.prediction_service - INFO - Loading ML models...

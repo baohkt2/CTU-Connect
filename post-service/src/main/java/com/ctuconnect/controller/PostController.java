@@ -4,6 +4,7 @@ import com.ctuconnect.client.UserServiceClient;
 import com.ctuconnect.dto.AuthorInfo;
 import com.ctuconnect.entity.InteractionEntity;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posts")
+@Slf4j
 public class PostController {
 
     @Autowired
@@ -57,6 +59,9 @@ public class PostController {
     private UserSyncService userSyncService;
     @Autowired
     private UserServiceClient userServiceClient;
+
+    @Autowired(required = false)
+    private com.ctuconnect.client.RecommendationServiceClient recommendationServiceClient;
 
     // ========== ENHANCED ENDPOINTS (Primary) ==========
 
@@ -101,7 +106,12 @@ public class PostController {
     }
 
     /**
-     * Facebook-like personalized news feed
+     * Facebook-like personalized news feed with AI recommendations
+     * Flow:
+     * 1. Call recommendation-service to get recommended post IDs with scores
+     * 2. Fetch full post details from database
+     * 3. Enrich posts with recommendation scores
+     * 4. Return ordered list to client
      */
     @GetMapping("/feed")
     @RequireAuth
@@ -109,20 +119,109 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
+        long startTime = System.currentTimeMillis();
+        
         try {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
             
+            log.info("========================================");
+            log.info("📥 GET /api/posts/feed - User: {}, Page: {}, Size: {}", currentUserId, page, size);
+            log.info("========================================");
+            
+            // Step 1: Try to get recommendations from recommendation-service
+            if (recommendationServiceClient != null) {
+                try {
+                    log.debug("🔄 Calling recommendation-service for user: {}", currentUserId);
+                    
+                    com.ctuconnect.dto.response.RecommendationFeedResponse recommendationResponse = 
+                        recommendationServiceClient.getRecommendationFeed(currentUserId, page, size);
+                    
+                    log.info("📤 Received {} recommendations from recommendation-service", 
+                        recommendationResponse.getRecommendations() != null ? 
+                        recommendationResponse.getRecommendations().size() : 0);
+                    
+                    // Step 2: If we have recommendations, fetch full post details
+                    if (recommendationResponse.getRecommendations() != null && 
+                        !recommendationResponse.getRecommendations().isEmpty()) {
+                        
+                        List<String> postIds = recommendationResponse.getRecommendations().stream()
+                            .map(com.ctuconnect.dto.response.RecommendationFeedResponse.RecommendedPost::getPostId)
+                            .collect(java.util.stream.Collectors.toList());
+                        
+                        log.debug("📋 Fetching full details for {} posts: {}", postIds.size(), postIds);
+                        
+                        // Step 3: Fetch full post details maintaining order
+                        List<PostResponse> enrichedPosts = postService.getPostsByIds(postIds, currentUserId);
+                        
+                        // Step 4: Map scores from recommendations to posts
+                        Map<String, Double> scoreMap = recommendationResponse.getRecommendations().stream()
+                            .collect(java.util.stream.Collectors.toMap(
+                                com.ctuconnect.dto.response.RecommendationFeedResponse.RecommendedPost::getPostId,
+                                com.ctuconnect.dto.response.RecommendationFeedResponse.RecommendedPost::getScore,
+                                (existing, replacement) -> existing
+                            ));
+                        
+                        // Step 5: Sort posts by recommendation order and add debug info
+                        List<PostResponse> orderedPosts = postIds.stream()
+                            .map(postId -> enrichedPosts.stream()
+                                .filter(post -> post.getId().equals(postId))
+                                .findFirst()
+                                .orElse(null))
+                            .filter(java.util.Objects::nonNull)
+                            .peek(post -> {
+                                Double score = scoreMap.get(post.getId());
+                                log.debug("✅ Post {}: {} (score: {})", 
+                                    post.getId(), 
+                                    post.getContent() != null && post.getContent().length() > 50 
+                                        ? post.getContent().substring(0, 50) + "..." 
+                                        : post.getContent(),
+                                    score);
+                            })
+                            .collect(java.util.stream.Collectors.toList());
+                        
+                        long processingTime = System.currentTimeMillis() - startTime;
+                        log.info("========================================");
+                        log.info("✅ Returning {} personalized posts ({}ms)", orderedPosts.size(), processingTime);
+                        log.info("========================================");
+                        
+                        return ResponseEntity.ok(orderedPosts);
+                    }
+                    
+                    log.warn("⚠️  No recommendations returned, falling back to default feed");
+                    
+                } catch (Exception e) {
+                    log.error("❌ Error calling recommendation-service: {}", e.getMessage());
+                    log.warn("⚠️  Falling back to default feed");
+                }
+            } else {
+                log.warn("⚠️  RecommendationServiceClient not available, using fallback");
+            }
+            
+            // Fallback: Use NewsFeedService or regular posts
             if (newsFeedService != null) {
+                log.debug("Using NewsFeedService for fallback feed");
                 List<PostResponse> feed = newsFeedService.generatePersonalizedFeed(
                     currentUserId, page, size);
+                
+                long processingTime = System.currentTimeMillis() - startTime;
+                log.info("✅ Returning {} posts from NewsFeedService ({}ms)", feed.size(), processingTime);
                 return ResponseEntity.ok(feed);
             } else {
-                // Fallback to regular posts
+                log.debug("Using regular posts for fallback feed");
                 Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
                 Page<PostResponse> posts = postService.getAllPosts(pageable);
+                
+                long processingTime = System.currentTimeMillis() - startTime;
+                log.info("✅ Returning {} regular posts ({}ms)", posts.getContent().size(), processingTime);
                 return ResponseEntity.ok(posts.getContent());
             }
+            
+        } catch (SecurityException e) {
+            log.error("❌ Authentication error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required", "message", e.getMessage()));
         } catch (Exception e) {
+            log.error("❌ Error retrieving feed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to retrieve feed", "message", e.getMessage()));
         }

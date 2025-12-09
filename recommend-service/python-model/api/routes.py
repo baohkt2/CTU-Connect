@@ -15,13 +15,24 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+# Global singleton instance
+_prediction_service_instance = None
+
 # Dependency to get prediction service
 def get_prediction_service() -> PredictionService:
-    """Get prediction service instance"""
-    from app import prediction_service
-    if not prediction_service:
-        raise HTTPException(status_code=503, detail="Prediction service not initialized")
-    return prediction_service
+    """Get prediction service instance - singleton pattern"""
+    global _prediction_service_instance
+    
+    if _prediction_service_instance is None:
+        try:
+            logger.info("Initializing prediction service singleton...")
+            _prediction_service_instance = PredictionService()
+            logger.info("✅ Prediction service initialized")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize prediction service: {e}")
+            raise HTTPException(status_code=503, detail=f"Prediction service not available: {str(e)}")
+    
+    return _prediction_service_instance
 
 
 @router.post("/model/predict", response_model=PredictionResponse)

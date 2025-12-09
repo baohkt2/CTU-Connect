@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -68,6 +69,21 @@ export const PostFeed: React.FC<PostFeedProps> = ({
               first: true,
               last: true,
             };
+          } else if (activeTab === 'latest') {
+            // Use personalized feed from recommendation service via post-service
+            console.log('📥 Loading personalized feed from recommendation service...');
+            const feedPosts = await postService.getPersonalizedFeed(page, 10);
+            console.log('📤 Received', feedPosts.length, 'posts from feed');
+            
+            response = {
+              content: feedPosts,
+              totalElements: feedPosts.length,
+              totalPages: Math.ceil(feedPosts.length / 10),
+              size: 10,
+              number: page,
+              first: page === 0,
+              last: feedPosts.length < 10,
+            };
           } else {
             response = await postService.getPosts(
                 page,
@@ -89,6 +105,7 @@ export const PostFeed: React.FC<PostFeedProps> = ({
           setHasMore(!response.last && response.content.length > 0);
           setCurrentPage(response.number);
         } catch (err: any) {
+          console.error('❌ Error loading posts:', err);
           setError(err.response?.data?.message || 'Failed to load posts');
         } finally {
           setIsLoading(false);

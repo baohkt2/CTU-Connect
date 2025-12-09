@@ -397,6 +397,31 @@ export const postService = {
     return response.data;
   },
 
+  /**
+   * Get personalized feed using recommendation service
+   * This endpoint calls post-service /api/posts/feed which internally:
+   * 1. Calls recommend-service for AI recommendations
+   * 2. Enriches posts with full details
+   * 3. Returns ordered list
+   */
+  async getPersonalizedFeed(page = 0, size = 10): Promise<Post[]> {
+    try {
+      console.log('📥 Requesting personalized feed from post-service...');
+      const response = await api.get('/posts/feed', {
+        params: { page, size }
+      });
+      console.log('📤 Received feed response:', response.data);
+      
+      // Response is directly an array of posts
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error('❌ Error fetching personalized feed:', error);
+      // Fallback to regular posts
+      const fallbackResponse = await this.getPosts(page, size);
+      return fallbackResponse.content;
+    }
+  },
+
   // ============================================
   // RECOMMENDATION SERVICE INTEGRATION
   // ============================================
@@ -416,25 +441,6 @@ export const postService = {
       console.error('Error fetching AI recommendations:', error);
       // Fallback to trending posts
       return this.getTopViewedPosts();
-    }
-  },
-
-  /**
-   * Get personalized feed combining multiple recommendation strategies
-   * Uses: recommend-service /api/recommendation/feed
-   */
-  async getPersonalizedFeed(userId: string, page = 0, size = 20): Promise<Post[]> {
-    try {
-      const response = await api.get('/recommendation/feed', {
-        params: { userId, page, size }
-      });
-      console.log('Fetched personalized feed:', response.data);
-      return response.data.recommendations || [];
-    } catch (error) {
-      console.error('Error fetching personalized feed:', error);
-      // Fallback to regular posts
-      const postsResponse = await this.getPosts(page, size);
-      return postsResponse.content;
     }
   },
 

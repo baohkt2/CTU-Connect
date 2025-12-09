@@ -9,7 +9,7 @@ from datetime import datetime
 
 class UserAcademicProfile(BaseModel):
     """User academic profile"""
-    userId: str
+    userId: Optional[str] = None
     major: Optional[str] = None
     faculty: Optional[str] = None
     degree: Optional[str] = None

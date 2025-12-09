@@ -541,4 +541,55 @@ public class PostService {
             (int) stats.getViews()
         );
     }
+
+    /**
+     * Get multiple posts by their IDs (for recommendation service integration)
+     * Maintains the order of the input list
+     * 
+     * @param postIds List of post IDs in desired order
+     * @param currentUserId Current user ID (for view tracking)
+     * @return List of PostResponse in the same order as input
+     */
+    public List<PostResponse> getPostsByIds(List<String> postIds, String currentUserId) {
+        if (postIds == null || postIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        System.out.println("DEBUG: Fetching posts by IDs: " + postIds);
+
+        // Fetch all posts by IDs
+        List<PostEntity> posts = postRepository.findAllById(postIds);
+        
+        System.out.println("DEBUG: Found " + posts.size() + " posts from database");
+
+        // Create a map for quick lookup
+        java.util.Map<String, PostEntity> postMap = posts.stream()
+            .collect(Collectors.toMap(PostEntity::getId, p -> p));
+
+        // Build response maintaining the order of input postIds
+        List<PostResponse> orderedPosts = new ArrayList<>();
+        for (String postId : postIds) {
+            PostEntity post = postMap.get(postId);
+            if (post != null) {
+                // Recalculate stats before converting to response
+                recalculatePostStats(post);
+                
+                // Record view interaction if user is different from author
+                if (currentUserId != null && !currentUserId.equals(post.getAuthorId())) {
+                    recordViewInteraction(post.getId(), currentUserId);
+                }
+                
+                orderedPosts.add(new PostResponse(post));
+                System.out.println("DEBUG: Added post " + postId + " to response");
+            } else {
+                System.out.println("WARN: Post " + postId + " not found in database");
+            }
+        }
+
+        // Save updated stats
+        postRepository.saveAll(posts);
+
+        System.out.println("DEBUG: Returning " + orderedPosts.size() + " posts in order");
+        return orderedPosts;
+    }
 }
