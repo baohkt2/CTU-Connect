@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     private final List<String> openApiEndpoints = Arrays.asList(
             "/api/auth/register",
             "/api/auth/login",
+            "/api/auth/logout",
             "/api/auth/refresh-token",
             "/api/auth/forgot-password",
             "/api/auth/reset-password",

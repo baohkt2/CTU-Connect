@@ -2,8 +2,22 @@
 Pydantic models for API request/response
 """
 
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, Field, field_validator
+from typing import List, Optional, Dict, Any, Union
+from datetime import datetime
+
+
+class UserAcademicProfile(BaseModel):
+    """User academic profile"""
+    userId: Optional[str] = None
+    major: Optional[str] = None
+    faculty: Optional[str] = None
+    degree: Optional[str] = None
+    batch: Optional[str] = None
+
+
+from pydantic import BaseModel, Field, field_validator
+from typing import List, Optional, Dict, Any, Union
 from datetime import datetime
 
 
@@ -23,7 +37,24 @@ class UserInteractionHistory(BaseModel):
     commented: int = 0
     shared: int = 0
     viewDuration: float = 0.0
-    timestamp: Optional[int] = None
+    timestamp: Optional[Union[int, str]] = None
+    
+    @field_validator('timestamp', mode='before')
+    @classmethod
+    def normalize_timestamp(cls, v):
+        """Convert various timestamp formats to Unix timestamp"""
+        if v is None:
+            return None
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str):
+            try:
+                # Try parsing ISO format from Java LocalDateTime
+                dt = datetime.fromisoformat(v.replace('Z', '+00:00'))
+                return int(dt.timestamp() * 1000)  # milliseconds
+            except:
+                return None
+        return None
 
 
 class CandidatePost(BaseModel):
@@ -36,7 +67,7 @@ class CandidatePost(BaseModel):
     authorMajor: Optional[str] = None
     authorFaculty: Optional[str] = None
     authorBatch: Optional[str] = None
-    createdAt: Optional[str] = None
+    createdAt: Optional[Union[str, int]] = None
     # Support both naming conventions
     likeCount: int = 0
     likesCount: Optional[int] = None
@@ -45,6 +76,16 @@ class CandidatePost(BaseModel):
     shareCount: int = 0
     sharesCount: Optional[int] = None
     viewCount: int = 0
+    
+    @field_validator('createdAt', mode='before')
+    @classmethod
+    def normalize_created_at(cls, v):
+        """Accept both timestamp and ISO string format"""
+        if v is None:
+            return None
+        if isinstance(v, (int, str)):
+            return v
+        return None
     
     def model_post_init(self, __context):
         """Normalize field names after initialization"""

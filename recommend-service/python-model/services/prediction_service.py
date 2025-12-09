@@ -166,28 +166,35 @@ class PredictionService:
                     popularity = self._calculate_popularity_score(post)
                     
                     # Ensure all scores are valid floats (not None, not NaN, not Inf)
-                    content_sim = 0.3 if (content_sim is None or np.isnan(content_sim) or np.isinf(content_sim)) else float(content_sim)
+                    content_sim = 0.5 if (content_sim is None or np.isnan(content_sim) or np.isinf(content_sim)) else float(content_sim)
                     implicit_fb = 0.5 if (implicit_fb is None or np.isnan(implicit_fb) or np.isinf(implicit_fb)) else float(implicit_fb)
                     academic_score = 0.0 if (academic_score is None or np.isnan(academic_score) or np.isinf(academic_score)) else float(academic_score)
                     popularity = 0.0 if (popularity is None or np.isnan(popularity) or np.isinf(popularity)) else float(popularity)
                     
+                    # Add randomness boost for diversity (especially important for new users)
+                    diversity_boost = np.random.uniform(0.0, 0.15)  # Random boost 0-15%
+                    
                     # Debug log with detailed score info
                     logger.debug(f"Post {post_id} scores: " +
-                                f"content_sim={content_sim:.4f}, " +
-                                f"implicit_fb={implicit_fb:.4f}, " +
-                                f"academic={academic_score:.4f}, " +
-                                f"popularity={popularity:.4f}")
+                                f"content={content_sim}, " +
+                                f"implicit={implicit_fb}, " +
+                                f"academic={academic_score}, " +
+                                f"popularity={popularity}, " +
+                                f"diversity={diversity_boost}")
                     
                     # Combine scores with weights - ensure float multiplication
                     final_score = (
                         float(settings.WEIGHT_CONTENT_SIMILARITY) * float(content_sim) +
                         float(settings.WEIGHT_IMPLICIT_FEEDBACK) * float(implicit_fb) +
                         float(settings.WEIGHT_ACADEMIC_SCORE) * float(academic_score) +
-                        float(settings.WEIGHT_POPULARITY) * float(popularity)
+                        float(settings.WEIGHT_POPULARITY) * float(popularity) +
+                        diversity_boost  # Add diversity for better distribution
                     )
                     
                     # Clip score to [0, 1]
                     final_score = max(0.0, min(1.0, float(final_score)))
+                    
+                    logger.info(f"✅ Post {post_id} final score: {final_score:.4f}")
                     
                     ranked_posts.append(RankedPost(
                         postId=post_id,
@@ -286,64 +293,91 @@ class PredictionService:
         self,
         user_academic: Dict[str, Any],
         user_history: List[Dict[str, Any]]
-    ) -> Optional[np.ndarray]:
-        """Generate user profile embedding"""
+    ) -> np.ndarray:
+        """
+        Generate user profile embedding with improved fallback strategy
+        Always returns a valid embedding (never None)
+        """
         try:
             user_text_parts = []
             
-            # Combine user academic info into text
+            # Extract user academic info - handle various field naming conventions
+            user_id = user_academic.get('userId') or user_academic.get('user_id', '')
             major = user_academic.get('major', '')
             faculty = user_academic.get('faculty', '')
             degree = user_academic.get('degree', '')
             batch = user_academic.get('batch', '')
             
+            # Build user profile text from academic info
             if major:
-                user_text_parts.append(major)
+                user_text_parts.append(f"chuyên ngành {major}")
             if faculty:
-                user_text_parts.append(faculty)
+                user_text_parts.append(f"khoa {faculty}")
             if degree:
-                user_text_parts.append(degree)
+                user_text_parts.append(f"bậc {degree}")
             if batch:
-                user_text_parts.append(str(batch))
+                user_text_parts.append(f"khóa {batch}")
             
             user_text = " ".join(user_text_parts).strip()
+            logger.debug(f"User academic text: {user_text}")
             
-            # If no academic info, generate from history
-            if not user_text and user_history:
-                # Use most recent interactions
-                recent_content = " ".join([
-                    h.get("content", "")[:100]  # First 100 chars
-                    for h in user_history[-5:]  # Last 5 interactions
-                    if h.get("content")
-                ])
-                user_text = recent_content.strip()
+            # Strategy 2: If no academic info, try to extract from history
+            if not user_text and user_history and len(user_history) > 0:
+                logger.info(f"No academic info for user {user_id}, extracting from {len(user_history)} history items")
+                
+                # Collect content from recent interactions
+                history_texts = []
+                for h in user_history[-10:]:  # Last 10 interactions
+                    content = h.get("content", "")
+                    if content:
+                        # Take first 80 chars to avoid too long text
+                        history_texts.append(content[:80])
+                
+                if history_texts:
+                    user_text = " ".join(history_texts).strip()
+                    logger.debug(f"Generated user text from history: {user_text[:100]}...")
             
-            # Fallback: default text based on user type
-            if not user_text:
-                user_text = "sinh viên đại học cần tư vấn tuyển sinh"  # Generic Vietnamese student text
-                logger.warning("No user info available, using default Vietnamese text")
+            # Strategy 3: Fallback to generic Vietnamese student profile
+            if not user_text or len(user_text) < 5:
+                user_text = "sinh viên đại học Cần Thơ quan tâm học tập và hoạt động sinh viên"
+                logger.info(f"Using default profile text for user {user_id}")
             
-            logger.debug(f"Generating user embedding for: {user_text[:80]}...")
+            # Ensure text is not too long
+            if len(user_text) > 500:
+                user_text = user_text[:500]
             
-            # Generate base embedding
+            logger.info(f"Generating embedding for user {user_id} with text length: {len(user_text)}")
+            
+            # Generate embedding using PhoBERT
             embedding = await self.generate_embedding(user_text)
             
-            if embedding is None:
-                logger.error("Failed to generate user embedding even with fallback text")
-                # Return zero embedding as last resort
-                return np.zeros(self.embedding_dimension, dtype=np.float32)
+            # Final validation
+            if embedding is None or embedding.size == 0:
+                logger.warning(f"Failed to generate embedding, returning default for user {user_id}")
+                # Return a small random embedding (better than zeros for cold start)
+                embedding = np.random.normal(0, 0.1, self.embedding_dimension).astype(np.float32)
             
-            # Validate embedding
+            # Validate size
             if embedding.size != self.embedding_dimension:
                 logger.error(f"Invalid embedding size: {embedding.size}, expected: {self.embedding_dimension}")
-                return np.zeros(self.embedding_dimension, dtype=np.float32)
+                embedding = np.random.normal(0, 0.1, self.embedding_dimension).astype(np.float32)
             
+            # Normalize embedding to unit length (helps with cosine similarity)
+            norm = np.linalg.norm(embedding)
+            if norm > 0:
+                embedding = embedding / norm
+            
+            logger.debug(f"Generated user embedding: shape={embedding.shape}, norm={np.linalg.norm(embedding):.4f}")
             return embedding
             
         except Exception as e:
             logger.error(f"Error generating user embedding: {e}", exc_info=True)
-            # Return zero embedding on error
-            return np.zeros(self.embedding_dimension, dtype=np.float32)
+            # Return normalized random embedding as last resort (better than zeros)
+            embedding = np.random.normal(0, 0.1, self.embedding_dimension).astype(np.float32)
+            norm = np.linalg.norm(embedding)
+            if norm > 0:
+                embedding = embedding / norm
+            return embedding
     
     def _calculate_content_similarity(
         self,
@@ -353,29 +387,46 @@ class PredictionService:
         """Calculate cosine similarity between user and post embeddings"""
         # Handle None embeddings
         if user_embedding is None or post_embedding is None:
-            logger.warning("One or both embeddings are None, returning default similarity")
-            return 0.3  # Lower default for cold start
+            logger.warning("One or both embeddings are None, returning cold-start score")
+            return 0.5  # Neutral default for cold start
         
         # Handle empty embeddings
         if user_embedding.size == 0 or post_embedding.size == 0:
-            logger.warning("One or both embeddings are empty, returning default similarity")
-            return 0.3
+            logger.warning("One or both embeddings are empty, returning cold-start score")
+            return 0.5
         
         # Check if embeddings have correct shape
         if len(user_embedding.shape) == 0 or len(post_embedding.shape) == 0:
-            logger.warning("Invalid embedding shape, returning default similarity")
-            return 0.3
+            logger.warning("Invalid embedding shape, returning cold-start score")
+            return 0.5
+        
+        # Check dimension mismatch
+        if user_embedding.shape[0] != post_embedding.shape[0]:
+            logger.error(f"Embedding dimension mismatch: user={user_embedding.shape[0]}, post={post_embedding.shape[0]}")
+            return 0.5
         
         try:
+            # Calculate cosine similarity
             similarity = cosine_similarity(user_embedding, post_embedding)
+            
             # Ensure valid range
             if np.isnan(similarity) or np.isinf(similarity):
-                logger.warning("Invalid similarity value (NaN/Inf), returning default")
-                return 0.3
-            return max(0.0, min(1.0, similarity))
+                logger.warning("Invalid similarity value (NaN/Inf), returning cold-start score")
+                return 0.5
+            
+            # Clip to [0, 1] range
+            similarity = max(0.0, min(1.0, float(similarity)))
+            
+            # If similarity is too low, boost it slightly for better UX
+            # (avoid showing only zero-score items to new users)
+            if similarity < 0.1:
+                similarity = 0.5  # Give it a neutral chance
+            
+            return similarity
+            
         except Exception as e:
             logger.error(f"Error calculating similarity: {e}")
-            return 0.3
+            return 0.5  # Neutral default on error
     
     def _calculate_implicit_feedback(
         self,

@@ -7,7 +7,7 @@ import org.springframework.kafka.config.TopicBuilder;
 
 /**
  * Kafka configuration for topics only
- * Consumer configurations moved to KafkaConsumerConfig
+ * Consumer configurations are in KafkaConsumerConfig
  */
 @Configuration
 public class KafkaConfig {
@@ -39,6 +39,14 @@ public class KafkaConfig {
     @Bean
     public NewTopic userActionTopic() {
         return TopicBuilder.name("user_action")
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
+    
+    @Bean
+    public NewTopic commentEventsTopic() {
+        return TopicBuilder.name("comment-events")
             .partitions(3)
             .replicas(1)
             .build();

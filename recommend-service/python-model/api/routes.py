@@ -55,15 +55,30 @@ async def predict_recommendations(
     - processingTimeMs: Processing time in milliseconds
     """
     start_time = datetime.now()
-    
+
     try:
-        logger.info(f"Prediction request for user: {request.userAcademic.userId}, candidates: {len(request.candidatePosts)}")
+        logger.info(f"🎯 Prediction request for user: {request.userAcademic.userId}, candidates: {len(request.candidatePosts)}")
+        logger.debug(f"   User academic: major={request.userAcademic.major}, faculty={request.userAcademic.faculty}")
+        logger.debug(f"   User history: {len(request.userHistory)} interactions")
+        logger.debug(f"   TopK requested: {request.topK}")
         
+        # Log first candidate for debugging
+        if request.candidatePosts:
+            first_post = request.candidatePosts[0]
+            logger.debug(f"   Sample post: id={first_post.postId}, contentLength={len(first_post.content) if first_post.content else 0}, likes={first_post.likeCount}")
+        
+        # Log first history item if present
+        if request.userHistory:
+            first_history = request.userHistory[0]
+            logger.debug(f"   Sample history: postId={first_history.postId}, liked={first_history.liked}, timestamp={first_history.timestamp}")
+
         # Validate request
         if not request.candidatePosts:
+            logger.error("❌ No candidate posts provided")
             raise HTTPException(status_code=400, detail="No candidate posts provided")
-        
+
         if request.topK <= 0 or request.topK > 100:
+            logger.error(f"❌ Invalid topK: {request.topK}")
             raise HTTPException(status_code=400, detail="topK must be between 1 and 100")
         
         # Get predictions from service

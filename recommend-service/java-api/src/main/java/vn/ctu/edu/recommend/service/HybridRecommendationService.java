@@ -20,6 +20,8 @@ import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -274,14 +276,20 @@ public class HybridRecommendationService {
         List<UserFeedback> feedbacks = userFeedbackRepository.findRecentFeedbackByUser(userId, since);
 
         return feedbacks.stream()
-            .map(fb -> UserInteractionHistory.builder()
-                .postId(fb.getPostId())
-                .liked(fb.getFeedbackType() == FeedbackType.LIKE ? 1 : 0)
-                .commented(fb.getFeedbackType() == FeedbackType.COMMENT ? 1 : 0)
-                .shared(fb.getFeedbackType() == FeedbackType.SHARE ? 1 : 0)
-                .viewDuration(0.0)
-                .timestamp(fb.getTimestamp())
-                .build())
+            .map(fb -> {
+                // Convert LocalDateTime to Unix timestamp (milliseconds)
+                Long timestamp = fb.getTimestamp() != null ? 
+                    fb.getTimestamp().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null;
+                
+                return UserInteractionHistory.builder()
+                    .postId(fb.getPostId())
+                    .liked(fb.getFeedbackType() == FeedbackType.LIKE ? 1 : 0)
+                    .commented(fb.getFeedbackType() == FeedbackType.COMMENT ? 1 : 0)
+                    .shared(fb.getFeedbackType() == FeedbackType.SHARE ? 1 : 0)
+                    .viewDuration(0.0)
+                    .timestamp(timestamp)
+                    .build();
+            })
             .collect(Collectors.toList());
     }
 
@@ -292,20 +300,28 @@ public class HybridRecommendationService {
         return posts.stream()
             .filter(post -> !excludePostIds.contains(post.getPostId()))
             .limit(limit)
-            .map(post -> CandidatePost.builder()
-                .postId(post.getPostId())
-                .content(post.getContent())
-                .hashtags(Collections.emptyList())
-                .mediaDescription(post.getMediaDescription())
-                .authorId(post.getAuthorId())
-                .authorMajor(post.getAuthorMajor())
-                .authorFaculty(post.getAuthorFaculty())
-                .createdAt(post.getCreatedAt())
-                .likeCount(post.getLikeCount())
-                .commentCount(post.getCommentCount())
-                .shareCount(post.getShareCount())
-                .viewCount(post.getViewCount())
-                .build())
+            .map(post -> {
+                CandidatePost candidate = CandidatePost.builder()
+                    .postId(post.getPostId())
+                    .content(post.getContent())
+                    .hashtags(Collections.emptyList())
+                    .mediaDescription(post.getMediaDescription())
+                    .authorId(post.getAuthorId())
+                    .authorMajor(post.getAuthorMajor())
+                    .authorFaculty(post.getAuthorFaculty())
+                    .likeCount(post.getLikeCount())
+                    .commentCount(post.getCommentCount())
+                    .shareCount(post.getShareCount())
+                    .viewCount(post.getViewCount())
+                    .build();
+                    
+                // Convert LocalDateTime to ISO string for Python service & keep original
+                if (post.getCreatedAt() != null) {
+                    candidate.setCreatedAtFromDateTime(post.getCreatedAt());
+                }
+                
+                return candidate;
+            })
             .collect(Collectors.toList());
     }
 
@@ -330,7 +346,7 @@ public class HybridRecommendationService {
                     .academicScore(0.0f)
                     .popularityScore(0.0f)
                     .academicCategory(ranked.getCategory())
-                    .createdAt(post.getCreatedAt())
+                    .createdAt(post.getCreatedAtDateTime())
                     .build();
             })
             .filter(Objects::nonNull)
@@ -369,14 +385,19 @@ public class HybridRecommendationService {
                 double normalizedScore = Math.min(1.0, Math.log1p(engagementScore) / 7.0); // log(1+1000) ≈ 7
                 
                 // Calculate recency boost (newer posts get higher base)
-                long hoursSinceCreation = Duration.between(post.getCreatedAt(), LocalDateTime.now()).toHours();
-                double recencyBoost = Math.max(0.0, 0.3 - (hoursSinceCreation / 240.0)); // Decay over 10 days
+                LocalDateTime postCreatedAt = post.getCreatedAtDateTime();
+                double recencyBoost = 0.0;
+                long hoursSinceCreation = 0;
+                if (postCreatedAt != null) {
+                    hoursSinceCreation = Duration.between(postCreatedAt, LocalDateTime.now()).toHours();
+                    recencyBoost = Math.max(0.0, 0.3 - (hoursSinceCreation / 240.0)); // Decay over 10 days
+                }
                 
                 // Combine: base(0.2) + popularity(0.6) + recency(0.2)
                 double finalScore = 0.2 + (normalizedScore * 0.6) + recencyBoost;
                 finalScore = Math.min(1.0, Math.max(0.2, finalScore)); // Range: 0.2 - 1.0
                 
-                log.debug("Fallback score for post {}: engagement={}, hours={}, score={:.3f}", 
+                log.debug("Fallback score for post {}: engagement={}, hours={}, score={}", 
                     post.getPostId(), engagementScore, hoursSinceCreation, finalScore);
                 
                 return RecommendationResponse.RecommendedPost.builder()
@@ -386,7 +407,7 @@ public class HybridRecommendationService {
                     .score(finalScore)
                     .popularityScore((float)normalizedScore)
                     .academicCategory(null)
-                    .createdAt(post.getCreatedAt())
+                    .createdAt(post.getCreatedAtDateTime())
                     .build();
             })
             .collect(Collectors.toList());
@@ -499,7 +520,7 @@ public class HybridRecommendationService {
                     .commented(feedbackType == FeedbackType.COMMENT ? 1 : 0)
                     .shared(feedbackType == FeedbackType.SHARE ? 1 : 0)
                     .viewDuration(viewDuration != null ? viewDuration : 0.0)
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(System.currentTimeMillis())
                     .build();
 
                 trainingDataProducer.sendTrainingDataSample(userProfile, candidatePost, interaction);
