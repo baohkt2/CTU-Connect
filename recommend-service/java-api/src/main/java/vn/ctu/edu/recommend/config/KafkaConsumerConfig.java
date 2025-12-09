@@ -12,6 +12,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import vn.ctu.edu.recommend.kafka.event.PostEvent;
+import vn.ctu.edu.recommend.kafka.event.UserActionEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,38 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, PostEvent> factory =
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(postEventConsumerFactory());
+        return factory;
+    }
+
+    /**
+     * Consumer factory for user action events - accepts Map for flexibility
+     */
+    @Bean
+    public ConsumerFactory<String, Map> userActionConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId + "-user-action");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, Map.class.getName());
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+
+        return new DefaultKafkaConsumerFactory<>(
+            props,
+            new StringDeserializer(),
+            new ErrorHandlingDeserializer<>(new JsonDeserializer<>(Map.class, false))
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Map> userActionKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Map> factory =
+            new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(userActionConsumerFactory());
         return factory;
     }
 }

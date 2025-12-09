@@ -1,0 +1,176 @@
+═══════════════════════════════════════════════════════════════════
+  CHECKLIST KIỂM TRA SAU KHI SỬA LỖI - 9 THÁNG 12, 2025
+═══════════════════════════════════════════════════════════════════
+
+BƯỚC 1: RESTART SERVICES (3 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 1.1. Chạy: .\stop-all-services.ps1
+[ ] 1.2. Đợi 10 giây
+[ ] 1.3. Chạy: .\start-all-services.ps1
+[ ] 1.4. Đợi 2 phút cho services khởi động
+
+BƯỚC 2: CHECK SERVICE HEALTH (1 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 2.1. Recommend-service: curl http://localhost:8095/actuator/health
+        Expected: {"status":"UP"}
+        
+[ ] 2.2. Python model: curl http://localhost:8000/health
+        Expected: {"status":"healthy"}
+        
+[ ] 2.3. Post-service: curl http://localhost:8094/actuator/health
+        Expected: {"status":"UP"}
+
+[ ] 2.4. Check logs không có lỗi Bean Definition:
+        docker-compose logs recommend-service | Select-String "BeanDefinition"
+        Expected: Không có output (hoặc chỉ có "created bean")
+
+BƯỚC 3: TEST RECOMMENDATION SCORES (2 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 3.1. Get feed:
+        curl "http://localhost:8095/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=5"
+
+[ ] 3.2. Check recommend-service logs cho scores:
+        docker-compose logs recommend-service | Select-String "PostID.*score:"
+        
+        ✅ GOOD: Scores KHÁC NHAU
+        [ 1] 69379a30... -> score: 0.6543
+        [ 2] 6937b6b1... -> score: 0.5234
+        [ 3] 6937c00b... -> score: 0.4567
+        
+        ❌ BAD: Scores GIỐNG NHAU (cần debug thêm)
+        [ 1] postId1 -> score: 0.3000
+        [ 2] postId2 -> score: 0.3000
+        [ 3] postId3 -> score: 0.3000
+
+[ ] 3.3. Check Python logs cho score details:
+        docker-compose logs recommend-service | Select-String "Post.*scores:"
+        Expected: "Post X scores: content_sim=0.XXXX, implicit_fb=0.XXXX, ..."
+
+BƯỚC 4: TEST USER ACTION FLOW (3 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 4.1. Mở browser: http://localhost:3000
+
+[ ] 4.2. Login với tài khoản
+
+[ ] 4.3. LIKE một bài post
+
+[ ] 4.4. Check post-service published event:
+        docker-compose logs post-service | Select-String "Published user_action" | Select-Object -Last 5
+        Expected: "📤 Published user_action event: LIKE by user ... on post ..."
+
+[ ] 4.5. Check recommend-service received event:
+        docker-compose logs recommend-service | Select-String "Received user_action" | Select-Object -Last 5
+        Expected: "📥 Received user_action: LIKE by user ... on post ..."
+
+[ ] 4.6. Check feedback was saved:
+        docker-compose logs recommend-service | Select-String "Saved user feedback" | Select-Object -Last 5
+        Expected: "💾 Saved user feedback: ... -> ... (type: LIKE, value: 1.0)"
+
+[ ] 4.7. Check engagement was updated:
+        docker-compose logs recommend-service | Select-String "Updated engagement" | Select-Object -Last 5
+        Expected: "📊 Updated engagement for post ...: likes=X, comments=Y, ..."
+
+[ ] 4.8. Check cache was invalidated:
+        docker-compose logs recommend-service | Select-String "Invalidated cache" | Select-Object -Last 5
+        Expected: "🗑️ Invalidated cache for user: ..."
+
+BƯỚC 5: VERIFY DATABASE (2 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 5.1. Connect to PostgreSQL:
+        docker exec -it ctu-connect-postgres psql -U postgres -d ctu_connect_recommendation
+
+[ ] 5.2. Check user_feedback table:
+        SELECT user_id, post_id, feedback_type, feedback_value, created_at 
+        FROM user_feedback 
+        ORDER BY created_at DESC 
+        LIMIT 5;
+        
+        Expected: PHẢI có rows nếu đã like posts ở bước 4
+
+[ ] 5.3. Check post_embeddings engagement:
+        SELECT post_id, like_count, comment_count, popularity_score, updated_at 
+        FROM post_embeddings 
+        ORDER BY updated_at DESC 
+        LIMIT 5;
+        
+        Expected: like_count PHẢI tăng cho post đã like
+
+[ ] 5.4. Exit PostgreSQL: \q
+
+BƯỚC 6: TEST CACHE INVALIDATION (2 phút)
+═══════════════════════════════════════════════════════════════════
+[ ] 6.1. Get feed lần 1 (sẽ cache results)
+
+[ ] 6.2. Check logs: "Cached recommendations for user"
+
+[ ] 6.3. LIKE một post khác
+
+[ ] 6.4. Check logs: "Invalidated cache for user"
+
+[ ] 6.5. Get feed lần 2 (KHÔNG nên từ cache)
+
+[ ] 6.6. Check logs: KHÔNG thấy "Returning cached feed"
+        Thay vào đó phải thấy: "Prediction request for user"
+
+═══════════════════════════════════════════════════════════════════
+  TỔNG KẾT KẾT QUẢ
+═══════════════════════════════════════════════════════════════════
+
+CRITICAL TESTS (PHẢI PASS):
+[ ] Services start successfully
+[ ] No bean definition errors
+[ ] Scores are diverse (not all 0.3000)
+[ ] User actions published from post-service
+[ ] User actions received by recommend-service
+
+IMPORTANT TESTS (NÊN PASS):
+[ ] user_feedback table has data
+[ ] post_embeddings engagement updated
+[ ] Cache invalidation working
+[ ] Python logs show score details
+
+═══════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+NẾU SCORES VẪN GIỐNG NHAU (0.3000):
+1. Check Python logs: docker-compose logs recommend-service | Select-String "ERROR"
+2. Nếu thấy lỗi → Rebuild: docker-compose build recommend-service --no-cache
+3. Restart: docker-compose restart recommend-service
+
+NẾU USER ACTIONS KHÔNG NHẬN ĐƯỢC:
+1. Check Kafka: docker exec -it ctu-connect-kafka kafka-console-consumer --bootstrap-server localhost:9092 --topic user_action --from-beginning --max-messages 1
+2. Nếu không có message → Post-service issue
+3. Nếu có message → Recommend-service consumer issue
+4. Restart both: docker-compose restart post-service recommend-service
+
+NẾU BEAN DEFINITION ERROR:
+1. Verify fix: Get-Content "recommend-service\java-api\src\main\java\vn\ctu\edu\recommend\config\KafkaConfig.java" | Select-String "userActionConsumerFactory"
+2. MUST: No matches
+3. If matches found → Manually remove duplicate bean
+4. Rebuild: docker-compose build recommend-service
+
+═══════════════════════════════════════════════════════════════════
+  AUTOMATED TEST
+═══════════════════════════════════════════════════════════════════
+
+Thay vì làm thủ công, có thể chạy automated test:
+
+    .\test-fix.ps1
+
+Script sẽ tự động check tất cả các điểm trên.
+
+═══════════════════════════════════════════════════════════════════
+  TÀI LIỆU THAM KHẢO
+═══════════════════════════════════════════════════════════════════
+
+- FINAL-FIX-SUMMARY-DEC-9.md     : Chi tiết kỹ thuật đầy đủ
+- QUICK-START-AFTER-FIX.md       : Hướng dẫn quick start
+- FIX-STATUS-REPORT.md           : Báo cáo status
+- CRITICAL-FIXES-APPLIED.md      : Fixes trước đó
+
+═══════════════════════════════════════════════════════════════════
+Version: 1.0
+Date: December 9, 2025
+Status: ✅ READY FOR TESTING
+═══════════════════════════════════════════════════════════════════

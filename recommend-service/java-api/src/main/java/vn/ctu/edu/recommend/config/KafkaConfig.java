@@ -53,33 +53,4 @@ public class KafkaConfig {
             .replicas(1)
             .build();
     }
-    
-    /**
-     * Consumer factory for user_action topic with flexible deserialization
-     * Accepts any Object (Map or typed object)
-     */
-    @Bean
-    public ConsumerFactory<String, Object> userActionConsumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "recommendation-service-group");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false); // Don't use type headers
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "java.util.LinkedHashMap"); // Default to Map
-        
-        return new DefaultKafkaConsumerFactory<>(props);
-    }
-    
-    /**
-     * Listener container factory for user_action topic
-     */
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> userActionKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = 
-            new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(userActionConsumerFactory());
-        return factory;
-    }
 }

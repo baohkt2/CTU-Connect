@@ -132,6 +132,11 @@ class PredictionService:
             # Generate user profile embedding
             user_embedding = await self._generate_user_embedding(user_academic, user_history)
             
+            # Validate user embedding
+            if user_embedding is None or user_embedding.size == 0:
+                logger.warning("Invalid user embedding, generating default")
+                user_embedding = np.zeros(self.embedding_dimension, dtype=np.float32)
+            
             # Process each candidate post
             for post in candidate_posts:
                 try:
@@ -145,8 +150,8 @@ class PredictionService:
                     # Generate post embedding
                     post_embedding = await self.generate_embedding(content)
                     
-                    if post_embedding is None:
-                        logger.warning(f"Failed to generate embedding for post {post_id}, skipping")
+                    if post_embedding is None or post_embedding.size == 0:
+                        logger.warning(f"Failed to generate valid embedding for post {post_id}, skipping")
                         continue
                     
                     # Validate post embedding
@@ -160,15 +165,18 @@ class PredictionService:
                     academic_score = await self._calculate_academic_score(post, user_academic)
                     popularity = self._calculate_popularity_score(post)
                     
-                    # Validate all scores are numbers
-                    if any(score is None or not isinstance(score, (int, float)) 
-                          for score in [content_sim, implicit_fb, academic_score, popularity]):
-                        logger.error(f"Invalid scores for post {post_id}, skipping")
-                        continue
+                    # Ensure all scores are valid floats (not None, not NaN, not Inf)
+                    content_sim = 0.3 if (content_sim is None or np.isnan(content_sim) or np.isinf(content_sim)) else float(content_sim)
+                    implicit_fb = 0.5 if (implicit_fb is None or np.isnan(implicit_fb) or np.isinf(implicit_fb)) else float(implicit_fb)
+                    academic_score = 0.0 if (academic_score is None or np.isnan(academic_score) or np.isinf(academic_score)) else float(academic_score)
+                    popularity = 0.0 if (popularity is None or np.isnan(popularity) or np.isinf(popularity)) else float(popularity)
                     
-                    # Debug log
-                    logger.debug(f"Post {post_id} scores: sim={content_sim:.3f}, fb={implicit_fb:.3f}, " +
-                                f"acad={academic_score:.3f}, pop={popularity:.3f}")
+                    # Debug log with detailed score info
+                    logger.debug(f"Post {post_id} scores: " +
+                                f"content_sim={content_sim:.4f}, " +
+                                f"implicit_fb={implicit_fb:.4f}, " +
+                                f"academic={academic_score:.4f}, " +
+                                f"popularity={popularity:.4f}")
                     
                     # Combine scores with weights - ensure float multiplication
                     final_score = (

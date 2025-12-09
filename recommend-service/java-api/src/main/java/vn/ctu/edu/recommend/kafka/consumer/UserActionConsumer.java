@@ -1,11 +1,10 @@
 package vn.ctu.edu.recommend.kafka.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import vn.ctu.edu.recommend.kafka.event.UserActionEvent;
 import vn.ctu.edu.recommend.model.entity.postgres.PostEmbedding;
 import vn.ctu.edu.recommend.model.entity.postgres.UserFeedback;
 import vn.ctu.edu.recommend.model.enums.FeedbackType;
@@ -15,6 +14,7 @@ import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,35 +30,40 @@ public class UserActionConsumer {
     private final UserFeedbackRepository userFeedbackRepository;
     private final PostEmbeddingRepository postEmbeddingRepository;
     private final RedisCacheService redisCacheService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Handle user action events - supports both Map and UserActionEvent
-     * Using @Payload to extract message payload directly
+     * Handle user action events from Kafka - receives Map directly
      */
     @KafkaListener(
         topics = "user_action", 
         groupId = "recommendation-service-group",
         containerFactory = "userActionKafkaListenerContainerFactory"
     )
-    public void handleUserAction(@org.springframework.messaging.handler.annotation.Payload Object eventObject) {
+    public void handleUserAction(@Payload Map<String, Object> eventMap) {
         try {
-            log.debug("📨 Raw event object type: {}", eventObject.getClass().getName());
+            log.debug("📨 Received user_action event map with keys: {}", eventMap.keySet());
             
-            UserActionEvent event = parseUserActionEvent(eventObject);
+            // Extract fields from map
+            String actionType = getStringValue(eventMap, "actionType");
+            String userId = getStringValue(eventMap, "userId");
+            String postId = getStringValue(eventMap, "postId");
+            Object metadata = eventMap.get("metadata");
+            LocalDateTime timestamp = parseTimestamp(eventMap.get("timestamp"));
             
-            if (event == null || event.getActionType() == null || event.getUserId() == null || event.getPostId() == null) {
-                log.warn("❌ Invalid user_action event: missing required fields");
+            // Validate required fields
+            if (actionType == null || userId == null || postId == null) {
+                log.warn("❌ Invalid user_action event: missing required fields - actionType: {}, userId: {}, postId: {}", 
+                    actionType, userId, postId);
                 return;
             }
             
-            log.info("📥 Received user_action event: {} by user {} on post {}", 
-                event.getActionType(), event.getUserId(), event.getPostId());
+            log.info("📥 Received user_action: {} by user {} on post {}", 
+                actionType, userId, postId);
 
             // Parse action type to feedback type
-            FeedbackType feedbackType = parseFeedbackType(event.getActionType());
+            FeedbackType feedbackType = parseFeedbackType(actionType);
             if (feedbackType == null) {
-                log.warn("⚠️  Unknown action type: {}", event.getActionType());
+                log.warn("⚠️  Unknown action type: {}", actionType);
                 return;
             }
 
@@ -66,24 +71,27 @@ public class UserActionConsumer {
             Float feedbackValue = getFeedbackValue(feedbackType);
             
             UserFeedback feedback = UserFeedback.builder()
-                .userId(event.getUserId())
-                .postId(event.getPostId())
+                .userId(userId)
+                .postId(postId)
                 .feedbackType(feedbackType)
                 .feedbackValue(feedbackValue)
-                .context(event.getMetadata() != null ? event.getMetadata().toString() : null)
+                .context(metadata != null ? metadata.toString() : null)
                 .build();
 
             userFeedbackRepository.save(feedback);
             
-            log.debug("💾 Saved user feedback: {} -> {}", event.getUserId(), event.getPostId());
+            log.debug("💾 Saved user feedback: {} -> {} (type: {}, value: {})", 
+                userId, postId, feedbackType, feedbackValue);
 
             // Update post engagement metrics
-            updateEngagementMetrics(event.getPostId(), feedbackType);
+            updateEngagementMetrics(postId, feedbackType);
 
             // Invalidate user recommendation cache
-            redisCacheService.invalidateRecommendations(event.getUserId());
+            redisCacheService.invalidateRecommendations(userId);
+            log.debug("🗑️  Invalidated cache for user: {}", userId);
 
-            log.info("✅ Successfully processed user_action event: {}", feedbackType);
+            log.info("✅ Successfully processed user_action event: {} (feedback: {})", 
+                actionType, feedbackType);
 
         } catch (Exception e) {
             log.error("❌ Error processing user_action event: {}", e.getMessage(), e);
@@ -91,58 +99,35 @@ public class UserActionConsumer {
     }
     
     /**
-     * Parse event from various formats (Map or UserActionEvent object)
+     * Parse timestamp from various formats
      */
-    private UserActionEvent parseUserActionEvent(Object eventObject) {
-        try {
-            if (eventObject instanceof UserActionEvent) {
-                return (UserActionEvent) eventObject;
-            }
-            
-            if (eventObject instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> map = (Map<String, Object>) eventObject;
-                
-                UserActionEvent event = new UserActionEvent();
-                event.setActionType(getStringValue(map, "actionType"));
-                event.setUserId(getStringValue(map, "userId"));
-                event.setPostId(getStringValue(map, "postId"));
-                event.setMetadata(map.get("metadata"));
-                
-                // Parse timestamp - handle various formats
-                Object timestampObj = map.get("timestamp");
-                if (timestampObj instanceof String) {
-                    try {
-                        // Try ISO format first (from LocalDateTime.toString())
-                        event.setTimestamp(LocalDateTime.parse((String) timestampObj));
-                    } catch (Exception e) {
-                        try {
-                            // Try with DateTimeFormatter for different formats
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-                            event.setTimestamp(LocalDateTime.parse((String) timestampObj, formatter));
-                        } catch (Exception e2) {
-                            log.warn("⚠️ Failed to parse timestamp: {}, using current time", timestampObj);
-                            event.setTimestamp(LocalDateTime.now());
-                        }
-                    }
-                } else if (timestampObj instanceof Long) {
-                    // Convert milliseconds since epoch to LocalDateTime
-                    event.setTimestamp(LocalDateTime.now());
-                } else {
-                    event.setTimestamp(LocalDateTime.now());
-                }
-                
-                log.debug("✅ Parsed Map to UserActionEvent: {}", event.getActionType());
-                return event;
-            }
-            
-            // Try to convert using ObjectMapper
-            return objectMapper.convertValue(eventObject, UserActionEvent.class);
-            
-        } catch (Exception e) {
-            log.error("❌ Error parsing user action event: {}", e.getMessage());
-            return null;
+    private LocalDateTime parseTimestamp(Object timestampObj) {
+        if (timestampObj == null) {
+            return LocalDateTime.now();
         }
+        
+        if (timestampObj instanceof Long) {
+            return LocalDateTime.now();
+        }
+        
+        if (timestampObj instanceof String) {
+            String timestampStr = (String) timestampObj;
+            try {
+                // Try ISO format first (LocalDateTime.toString() format)
+                return LocalDateTime.parse(timestampStr);
+            } catch (DateTimeParseException e) {
+                try {
+                    // Try with custom formatter for microseconds
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+                    return LocalDateTime.parse(timestampStr, formatter);
+                } catch (DateTimeParseException e2) {
+                    log.warn("⚠️ Failed to parse timestamp: {}, using current time", timestampStr);
+                    return LocalDateTime.now();
+                }
+            }
+        }
+        
+        return LocalDateTime.now();
     }
     
     private String getStringValue(Map<String, Object> map, String key) {
@@ -198,8 +183,9 @@ public class UserActionConsumer {
                 post.calculatePopularityScore();
                 postEmbeddingRepository.save(post);
                 
-                log.debug("📊 Updated engagement metrics for post {}: likes={}, comments={}, shares={}",
-                    postId, post.getLikeCount(), post.getCommentCount(), post.getShareCount());
+                log.info("📊 Updated engagement for post {}: likes={}, comments={}, shares={}, views={}, popularity={}",
+                    postId, post.getLikeCount(), post.getCommentCount(), 
+                    post.getShareCount(), post.getViewCount(), post.getPopularityScore());
             } else {
                 log.warn("⚠️  Post embedding not found for postId: {}", postId);
             }

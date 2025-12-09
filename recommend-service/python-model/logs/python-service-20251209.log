@@ -98,3 +98,17 @@
 2025-12-09 15:21:29,754 - api.routes - INFO - Prediction completed: 0 posts ranked in 841.44ms
 2025-12-09 15:37:29,340 - inference - INFO - Using device: cpu
 2025-12-09 15:37:36,243 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 15:40:25,109 - inference - INFO - Using device: cpu
+2025-12-09 15:40:27,494 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 15:49:35,492 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-09 15:49:35,493 - services.prediction_service - INFO - Loading ML models...
+2025-12-09 15:49:40,890 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 4
+2025-12-09 15:49:45,046 - services.prediction_service - INFO - Prediction completed: 4 posts ranked in 4154.76ms
+2025-12-09 15:49:45,047 - api.routes - INFO - Prediction completed: 4 posts ranked in 4157.34ms
+2025-12-09 15:52:51,621 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 4
+2025-12-09 15:52:51,905 - services.prediction_service - INFO - Prediction completed: 4 posts ranked in 283.01ms
+2025-12-09 15:52:51,906 - api.routes - INFO - Prediction completed: 4 posts ranked in 285.02ms
+2025-12-09 16:01:29,350 - inference - INFO - Using device: cpu
+2025-12-09 16:01:31,994 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 16:04:04,257 - inference - INFO - Using device: cpu
+2025-12-09 16:04:06,311 - inference - INFO - PhoBERT model loaded successfully
