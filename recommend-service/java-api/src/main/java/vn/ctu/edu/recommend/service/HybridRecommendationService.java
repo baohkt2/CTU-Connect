@@ -340,32 +340,44 @@ public class HybridRecommendationService {
     private List<RecommendationResponse.RecommendedPost> fallbackRanking(
             List<CandidatePost> candidatePosts, int limit) {
         
-        log.info("🔄 Using fallback ranking for {} candidate posts", candidatePosts.size());
+        log.warn("🔄 Using fallback ranking for {} candidate posts (Python model unavailable)", candidatePosts.size());
         
         // Simple popularity-based ranking as fallback
-        // Calculate normalized popularity score
+        // Calculate normalized popularity score with diversity
         return candidatePosts.stream()
             .sorted((p1, p2) -> {
-                int score1 = (p1.getLikeCount() * 2) + p1.getCommentCount() + (p1.getShareCount() * 3) + p1.getViewCount();
-                int score2 = (p2.getLikeCount() * 2) + p2.getCommentCount() + (p2.getShareCount() * 3) + p2.getViewCount();
+                // Weight: Like=2, Comment=3, Share=4, View=1
+                int score1 = (p1.getLikeCount() * 2) + (p1.getCommentCount() * 3) + (p1.getShareCount() * 4) + p1.getViewCount();
+                int score2 = (p2.getLikeCount() * 2) + (p2.getCommentCount() * 3) + (p2.getShareCount() * 4) + p2.getViewCount();
+                
+                // If both have zero engagement, prioritize by recency
+                if (score1 == 0 && score2 == 0) {
+                    return p2.getCreatedAt().compareTo(p1.getCreatedAt());
+                }
+                
                 return Integer.compare(score2, score1);
             })
             .limit(limit * 2)
             .map(post -> {
                 // Calculate popularity score (0.0 - 1.0)
                 int engagementScore = (post.getLikeCount() * 2) + 
-                                     post.getCommentCount() + 
-                                     (post.getShareCount() * 3) + 
+                                     (post.getCommentCount() * 3) + 
+                                     (post.getShareCount() * 4) + 
                                      post.getViewCount();
                 
-                // Normalize to 0.0-1.0 range (assuming max engagement ~1000)
-                double normalizedScore = Math.min(1.0, engagementScore / 1000.0);
+                // Normalize to 0.0-1.0 range using log scale for better distribution
+                double normalizedScore = Math.min(1.0, Math.log1p(engagementScore) / 7.0); // log(1+1000) ≈ 7
                 
-                // Add base score to prevent 0
-                double finalScore = 0.3 + (normalizedScore * 0.7); // Range: 0.3 - 1.0
+                // Calculate recency boost (newer posts get higher base)
+                long hoursSinceCreation = Duration.between(post.getCreatedAt(), LocalDateTime.now()).toHours();
+                double recencyBoost = Math.max(0.0, 0.3 - (hoursSinceCreation / 240.0)); // Decay over 10 days
                 
-                log.debug("Fallback score for post {}: engagement={}, normalized={}, final={}", 
-                    post.getPostId(), engagementScore, normalizedScore, finalScore);
+                // Combine: base(0.2) + popularity(0.6) + recency(0.2)
+                double finalScore = 0.2 + (normalizedScore * 0.6) + recencyBoost;
+                finalScore = Math.min(1.0, Math.max(0.2, finalScore)); // Range: 0.2 - 1.0
+                
+                log.debug("Fallback score for post {}: engagement={}, hours={}, score={:.3f}", 
+                    post.getPostId(), engagementScore, hoursSinceCreation, finalScore);
                 
                 return RecommendationResponse.RecommendedPost.builder()
                     .postId(post.getPostId())

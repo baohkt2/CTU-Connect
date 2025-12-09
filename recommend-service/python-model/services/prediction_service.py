@@ -135,28 +135,54 @@ class PredictionService:
             # Process each candidate post
             for post in candidate_posts:
                 try:
-                    # Generate post embedding
-                    post_embedding = await self.generate_embedding(post["content"])
+                    post_id = post.get("postId", "unknown")
+                    content = post.get("content", "")
                     
-                    # Calculate scores
+                    if not content:
+                        logger.warning(f"Post {post_id} has no content, skipping")
+                        continue
+                    
+                    # Generate post embedding
+                    post_embedding = await self.generate_embedding(content)
+                    
+                    if post_embedding is None:
+                        logger.warning(f"Failed to generate embedding for post {post_id}, skipping")
+                        continue
+                    
+                    # Validate post embedding
+                    if post_embedding.size != self.embedding_dimension:
+                        logger.error(f"Invalid post embedding size for {post_id}: {post_embedding.size}")
+                        continue
+                    
+                    # Calculate scores (with None handling) - ensure all return float
                     content_sim = self._calculate_content_similarity(user_embedding, post_embedding)
                     implicit_fb = self._calculate_implicit_feedback(post, user_history)
                     academic_score = await self._calculate_academic_score(post, user_academic)
                     popularity = self._calculate_popularity_score(post)
                     
-                    # Combine scores with weights
+                    # Validate all scores are numbers
+                    if any(score is None or not isinstance(score, (int, float)) 
+                          for score in [content_sim, implicit_fb, academic_score, popularity]):
+                        logger.error(f"Invalid scores for post {post_id}, skipping")
+                        continue
+                    
+                    # Debug log
+                    logger.debug(f"Post {post_id} scores: sim={content_sim:.3f}, fb={implicit_fb:.3f}, " +
+                                f"acad={academic_score:.3f}, pop={popularity:.3f}")
+                    
+                    # Combine scores with weights - ensure float multiplication
                     final_score = (
-                        settings.WEIGHT_CONTENT_SIMILARITY * content_sim +
-                        settings.WEIGHT_IMPLICIT_FEEDBACK * implicit_fb +
-                        settings.WEIGHT_ACADEMIC_SCORE * academic_score +
-                        settings.WEIGHT_POPULARITY * popularity
+                        float(settings.WEIGHT_CONTENT_SIMILARITY) * float(content_sim) +
+                        float(settings.WEIGHT_IMPLICIT_FEEDBACK) * float(implicit_fb) +
+                        float(settings.WEIGHT_ACADEMIC_SCORE) * float(academic_score) +
+                        float(settings.WEIGHT_POPULARITY) * float(popularity)
                     )
                     
                     # Clip score to [0, 1]
-                    final_score = max(0.0, min(1.0, final_score))
+                    final_score = max(0.0, min(1.0, float(final_score)))
                     
                     ranked_posts.append(RankedPost(
-                        postId=post["postId"],
+                        postId=post_id,
                         score=round(final_score, 4),
                         contentSimilarity=round(content_sim, 4),
                         implicitFeedback=round(implicit_fb, 4),
@@ -165,7 +191,7 @@ class PredictionService:
                     ))
                     
                 except Exception as e:
-                    logger.error(f"Error processing post {post.get('postId')}: {e}")
+                    logger.error(f"Error processing post {post.get('postId', 'unknown')}: {e}")
                     continue
             
             # Sort by score descending
@@ -252,27 +278,96 @@ class PredictionService:
         self,
         user_academic: Dict[str, Any],
         user_history: List[Dict[str, Any]]
-    ) -> np.ndarray:
+    ) -> Optional[np.ndarray]:
         """Generate user profile embedding"""
-        # Combine user academic info into text
-        user_text = f"{user_academic.get('major', '')} {user_academic.get('faculty', '')}"
-        
-        # Generate base embedding
-        embedding = await self.generate_embedding(user_text)
-        
-        # TODO: Incorporate user history into embedding
-        # For now, just return base embedding
-        
-        return embedding
+        try:
+            user_text_parts = []
+            
+            # Combine user academic info into text
+            major = user_academic.get('major', '')
+            faculty = user_academic.get('faculty', '')
+            degree = user_academic.get('degree', '')
+            batch = user_academic.get('batch', '')
+            
+            if major:
+                user_text_parts.append(major)
+            if faculty:
+                user_text_parts.append(faculty)
+            if degree:
+                user_text_parts.append(degree)
+            if batch:
+                user_text_parts.append(str(batch))
+            
+            user_text = " ".join(user_text_parts).strip()
+            
+            # If no academic info, generate from history
+            if not user_text and user_history:
+                # Use most recent interactions
+                recent_content = " ".join([
+                    h.get("content", "")[:100]  # First 100 chars
+                    for h in user_history[-5:]  # Last 5 interactions
+                    if h.get("content")
+                ])
+                user_text = recent_content.strip()
+            
+            # Fallback: default text based on user type
+            if not user_text:
+                user_text = "sinh viên đại học cần tư vấn tuyển sinh"  # Generic Vietnamese student text
+                logger.warning("No user info available, using default Vietnamese text")
+            
+            logger.debug(f"Generating user embedding for: {user_text[:80]}...")
+            
+            # Generate base embedding
+            embedding = await self.generate_embedding(user_text)
+            
+            if embedding is None:
+                logger.error("Failed to generate user embedding even with fallback text")
+                # Return zero embedding as last resort
+                return np.zeros(self.embedding_dimension, dtype=np.float32)
+            
+            # Validate embedding
+            if embedding.size != self.embedding_dimension:
+                logger.error(f"Invalid embedding size: {embedding.size}, expected: {self.embedding_dimension}")
+                return np.zeros(self.embedding_dimension, dtype=np.float32)
+            
+            return embedding
+            
+        except Exception as e:
+            logger.error(f"Error generating user embedding: {e}", exc_info=True)
+            # Return zero embedding on error
+            return np.zeros(self.embedding_dimension, dtype=np.float32)
     
     def _calculate_content_similarity(
         self,
-        user_embedding: np.ndarray,
-        post_embedding: np.ndarray
+        user_embedding: Optional[np.ndarray],
+        post_embedding: Optional[np.ndarray]
     ) -> float:
         """Calculate cosine similarity between user and post embeddings"""
-        similarity = cosine_similarity(user_embedding, post_embedding)
-        return max(0.0, min(1.0, similarity))
+        # Handle None embeddings
+        if user_embedding is None or post_embedding is None:
+            logger.warning("One or both embeddings are None, returning default similarity")
+            return 0.3  # Lower default for cold start
+        
+        # Handle empty embeddings
+        if user_embedding.size == 0 or post_embedding.size == 0:
+            logger.warning("One or both embeddings are empty, returning default similarity")
+            return 0.3
+        
+        # Check if embeddings have correct shape
+        if len(user_embedding.shape) == 0 or len(post_embedding.shape) == 0:
+            logger.warning("Invalid embedding shape, returning default similarity")
+            return 0.3
+        
+        try:
+            similarity = cosine_similarity(user_embedding, post_embedding)
+            # Ensure valid range
+            if np.isnan(similarity) or np.isinf(similarity):
+                logger.warning("Invalid similarity value (NaN/Inf), returning default")
+                return 0.3
+            return max(0.0, min(1.0, similarity))
+        except Exception as e:
+            logger.error(f"Error calculating similarity: {e}")
+            return 0.3
     
     def _calculate_implicit_feedback(
         self,
@@ -281,19 +376,24 @@ class PredictionService:
     ) -> float:
         """Calculate implicit feedback score based on user history"""
         # Check if user has interacted with similar content
-        # For now, simple heuristic
         
-        if not user_history:
-            return 0.5  # Neutral score
+        if not user_history or len(user_history) == 0:
+            return 0.5  # Neutral score for new users
         
-        # Calculate average interaction quality
-        total_interactions = len(user_history)
-        positive_interactions = sum(
-            1 for h in user_history
-            if h.get("liked", 0) > 0 or h.get("commented", 0) > 0
-        )
-        
-        return positive_interactions / total_interactions if total_interactions > 0 else 0.5
+        try:
+            # Calculate average interaction quality
+            total_interactions = len(user_history)
+            positive_interactions = sum(
+                1 for h in user_history
+                if (h.get("liked", 0) > 0 or h.get("commented", 0) > 0 or 
+                    h.get("action") in ["LIKE", "COMMENT", "SHARE", "SAVE"])
+            )
+            
+            score = positive_interactions / total_interactions if total_interactions > 0 else 0.5
+            return float(score)
+        except Exception as e:
+            logger.error(f"Error calculating implicit feedback: {e}")
+            return 0.5
     
     async def _calculate_academic_score(
         self,
@@ -301,32 +401,46 @@ class PredictionService:
         user_academic: Dict[str, Any]
     ) -> float:
         """Calculate academic relevance score"""
-        # Classify post
-        classification = await self.classify_academic(post["content"])
-        academic_score = classification["confidence"]
-        
-        # Boost if same major/faculty
-        boost = 0.0
-        if post.get("authorMajor") == user_academic.get("major"):
-            boost += 0.2
-        if post.get("authorFaculty") == user_academic.get("faculty"):
-            boost += 0.1
-        
-        return min(1.0, academic_score + boost)
+        try:
+            # Classify post
+            content = post.get("content", "")
+            if not content:
+                return 0.0
+            
+            classification = await self.classify_academic(content)
+            academic_score = float(classification.get("confidence", 0.0))
+            
+            # Boost if same major/faculty
+            boost = 0.0
+            if post.get("authorMajor") and post.get("authorMajor") == user_academic.get("major"):
+                boost += 0.2
+            if post.get("authorFaculty") and post.get("authorFaculty") == user_academic.get("faculty"):
+                boost += 0.1
+            
+            final_score = min(1.0, academic_score + boost)
+            return float(final_score)
+        except Exception as e:
+            logger.error(f"Error calculating academic score: {e}")
+            return 0.0
     
     def _calculate_popularity_score(self, post: Dict[str, Any]) -> float:
         """Calculate popularity score based on engagement"""
-        likes = post.get("likesCount", 0)
-        comments = post.get("commentsCount", 0)
-        shares = post.get("sharesCount", 0)
-        
-        # Weighted sum
-        engagement = likes * 1.0 + comments * 2.0 + shares * 3.0
-        
-        # Normalize using log scale
-        normalized = np.log1p(engagement) / 10.0
-        
-        return min(1.0, normalized)
+        try:
+            likes = int(post.get("likesCount", 0) or 0)
+            comments = int(post.get("commentsCount", 0) or 0)
+            shares = int(post.get("sharesCount", 0) or 0)
+            
+            # Weighted sum
+            engagement = likes * 1.0 + comments * 2.0 + shares * 3.0
+            
+            # Normalize using log scale
+            normalized = np.log1p(engagement) / 10.0
+            
+            score = min(1.0, float(normalized))
+            return score
+        except Exception as e:
+            logger.error(f"Error calculating popularity score: {e}")
+            return 0.0
     
     def _fallback_ranking(
         self,

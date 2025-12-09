@@ -8,9 +8,11 @@ import vn.ctu.edu.recommend.kafka.event.PostEvent;
 import vn.ctu.edu.recommend.model.entity.postgres.PostEmbedding;
 import vn.ctu.edu.recommend.nlp.EmbeddingService;
 import vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository;
+import vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository;
 import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Kafka consumer for post events
@@ -24,6 +26,7 @@ public class PostEventConsumer {
     private final PostEmbeddingRepository postEmbeddingRepository;
     private final EmbeddingService embeddingService;
     private final RedisCacheService redisCacheService;
+    private final UserFeedbackRepository userFeedbackRepository;
 
     @KafkaListener(topics = "post_created", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
     public void handlePostCreated(PostEvent event) {
@@ -201,17 +204,32 @@ public class PostEventConsumer {
 
     @KafkaListener(topics = "post_deleted", groupId = "recommendation-service-group", containerFactory = "kafkaListenerContainerFactory")
     public void handlePostDeleted(PostEvent event) {
-        log.info("Received post_deleted event: {}", event.getPostId());
+        log.info("📥 Received post_deleted event: postId={}", event.getPostId());
 
         try {
-            postEmbeddingRepository.deleteByPostId(event.getPostId());
-            redisCacheService.invalidateEmbedding(event.getPostId());
+            String postId = event.getPostId();
+            
+            // Delete from post_embeddings
+            Optional<PostEmbedding> embeddingOpt = postEmbeddingRepository.findByPostId(postId);
+            if (embeddingOpt.isPresent()) {
+                postEmbeddingRepository.deleteByPostId(postId);
+                log.info("✅ Deleted post embedding for: {}", postId);
+            } else {
+                log.warn("⚠️  Post embedding not found for deletion: {}", postId);
+            }
+            
+            // Delete from user_feedback
+            int deletedFeedback = userFeedbackRepository.deleteByPostId(postId);
+            log.info("🗑️  Deleted {} user feedback records for post: {}", deletedFeedback, postId);
+            
+            // Invalidate caches
+            redisCacheService.invalidateEmbedding(postId);
             redisCacheService.invalidateAllRecommendations();
             
-            log.info("Successfully deleted post embedding: {}", event.getPostId());
+            log.info("✅ Successfully processed post_deleted event for: {}", postId);
 
         } catch (Exception e) {
-            log.error("Error processing post_deleted event: {}", e.getMessage(), e);
+            log.error("❌ Error processing post_deleted event: {}", e.getMessage(), e);
         }
     }
 }

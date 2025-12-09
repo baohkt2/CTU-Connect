@@ -1,9 +1,11 @@
 package vn.ctu.edu.recommend.repository.postgres;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import vn.ctu.edu.recommend.model.entity.postgres.UserFeedback;
 import vn.ctu.edu.recommend.model.enums.FeedbackType;
 
@@ -24,6 +26,11 @@ public interface UserFeedbackRepository extends JpaRepository<UserFeedback, UUID
     List<UserFeedback> findByPostId(String postId);
 
     List<UserFeedback> findByFeedbackType(FeedbackType feedbackType);
+    
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM UserFeedback uf WHERE uf.postId = :postId")
+    int deleteByPostId(@Param("postId") String postId);
 
     @Query("SELECT uf FROM UserFeedback uf WHERE uf.userId = :userId AND uf.timestamp >= :since")
     List<UserFeedback> findRecentFeedbackByUser(@Param("userId") String userId, @Param("since") LocalDateTime since);

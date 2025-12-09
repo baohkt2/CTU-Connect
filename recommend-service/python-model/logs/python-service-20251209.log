@@ -36,3 +36,65 @@
 2025-12-09 11:04:50,932 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
 2025-12-09 11:04:50,933 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 190.39ms
 2025-12-09 11:04:50,933 - api.routes - INFO - Prediction completed: 0 posts ranked in 191.90ms
+2025-12-09 11:25:38,754 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 11:25:38,934 - services.prediction_service - ERROR - Error processing post 6937148feb61c718b7804300: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 11:25:38,985 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 11:25:38,985 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 230.62ms
+2025-12-09 11:25:38,987 - api.routes - INFO - Prediction completed: 0 posts ranked in 232.69ms
+2025-12-09 11:55:58,075 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 11:55:58,705 - services.prediction_service - ERROR - Error processing post 6937148feb61c718b7804300: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 11:55:58,754 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 11:55:58,755 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 669.01ms
+2025-12-09 11:55:58,755 - api.routes - INFO - Prediction completed: 0 posts ranked in 682.18ms
+2025-12-09 12:39:21,895 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 12:39:22,143 - services.prediction_service - ERROR - Error processing post 6937148feb61c718b7804300: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 12:39:22,201 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 12:39:22,201 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 302.87ms
+2025-12-09 12:39:22,202 - api.routes - INFO - Prediction completed: 0 posts ranked in 307.95ms
+2025-12-09 12:42:32,449 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 12:42:32,573 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 12:42:32,655 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 12:42:32,655 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 205.12ms
+2025-12-09 12:42:32,655 - api.routes - INFO - Prediction completed: 0 posts ranked in 205.12ms
+2025-12-09 13:20:21,106 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 13:20:21,226 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:20:21,280 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:20:21,280 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 172.59ms
+2025-12-09 13:20:21,280 - api.routes - INFO - Prediction completed: 0 posts ranked in 174.59ms
+2025-12-09 13:21:08,121 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 2
+2025-12-09 13:21:08,265 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:21:08,324 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:21:08,324 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 203.93ms
+2025-12-09 13:21:08,325 - api.routes - INFO - Prediction completed: 0 posts ranked in 204.47ms
+2025-12-09 13:22:08,158 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 3
+2025-12-09 13:22:08,282 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:22:08,335 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:22:08,437 - services.prediction_service - ERROR - Error processing post 6937c00b9bb8191d64875b31: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:22:08,437 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 278.46ms
+2025-12-09 13:22:08,437 - api.routes - INFO - Prediction completed: 0 posts ranked in 279.48ms
+2025-12-09 13:30:43,478 - inference - INFO - Using device: cpu
+2025-12-09 13:30:45,885 - inference - INFO - PhoBERT model loaded successfully
+2025-12-09 13:54:47,315 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-09 13:54:47,317 - services.prediction_service - INFO - Loading ML models...
+2025-12-09 13:54:52,157 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 3
+2025-12-09 13:54:53,240 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:54:53,302 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:54:53,363 - services.prediction_service - ERROR - Error processing post 6937c00b9bb8191d64875b31: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 13:54:53,363 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 1202.23ms
+2025-12-09 13:54:53,363 - api.routes - INFO - Prediction completed: 0 posts ranked in 1205.42ms
+2025-12-09 14:15:11,402 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 4
+2025-12-09 14:15:11,635 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 14:15:11,698 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 14:15:11,753 - services.prediction_service - ERROR - Error processing post 6937c00b9bb8191d64875b31: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 14:15:11,804 - services.prediction_service - ERROR - Error processing post 6937c8069bb8191d64875b33: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 14:15:11,804 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 399.56ms
+2025-12-09 14:15:11,805 - api.routes - INFO - Prediction completed: 0 posts ranked in 402.37ms
+2025-12-09 15:21:28,914 - api.routes - INFO - Prediction request for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, candidates: 4
+2025-12-09 15:21:29,551 - services.prediction_service - ERROR - Error processing post 69379a305a8af849a3a4ede6: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 15:21:29,620 - services.prediction_service - ERROR - Error processing post 6937b6b1b68143159ae33783: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 15:21:29,688 - services.prediction_service - ERROR - Error processing post 6937c00b9bb8191d64875b31: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 15:21:29,754 - services.prediction_service - ERROR - Error processing post 6937c8069bb8191d64875b33: unsupported operand type(s) for *: 'NoneType' and 'float'
+2025-12-09 15:21:29,754 - services.prediction_service - INFO - Prediction completed: 0 posts ranked in 837.47ms
+2025-12-09 15:21:29,754 - api.routes - INFO - Prediction completed: 0 posts ranked in 841.44ms
+2025-12-09 15:37:29,340 - inference - INFO - Using device: cpu
+2025-12-09 15:37:36,243 - inference - INFO - PhoBERT model loaded successfully
