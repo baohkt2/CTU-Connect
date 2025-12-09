@@ -12,9 +12,12 @@ import vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository;
 import vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository;
 import vn.ctu.edu.recommend.repository.redis.RedisCacheService;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,6 +45,7 @@ public class UserActionConsumer {
     public void handleUserAction(@Payload Map<String, Object> eventMap) {
         try {
             log.debug("📨 Received user_action event map with keys: {}", eventMap.keySet());
+            log.debug("📨 Event data: {}", eventMap);
             
             // Extract fields from map
             String actionType = getStringValue(eventMap, "actionType");
@@ -57,7 +61,7 @@ public class UserActionConsumer {
                 return;
             }
             
-            log.info("📥 Received user_action: {} by user {} on post {}", 
+            log.info("📥 Processing user_action: {} by user {} on post {}", 
                 actionType, userId, postId);
 
             // Parse action type to feedback type
@@ -70,18 +74,31 @@ public class UserActionConsumer {
             // Record feedback
             Float feedbackValue = getFeedbackValue(feedbackType);
             
+            // Build context as Map for JSONB
+            Map<String, Object> contextMap = new HashMap<>();
+            if (metadata != null) {
+                if (metadata instanceof Map) {
+                    contextMap.putAll((Map<String, Object>) metadata);
+                } else {
+                    contextMap.put("metadata", metadata.toString());
+                }
+            }
+            contextMap.put("source", "post-service");
+            contextMap.put("eventTime", System.currentTimeMillis());
+            
             UserFeedback feedback = UserFeedback.builder()
                 .userId(userId)
                 .postId(postId)
                 .feedbackType(feedbackType)
                 .feedbackValue(feedbackValue)
-                .context(metadata != null ? metadata.toString() : null)
+                .context(contextMap)
+                .timestamp(timestamp)
                 .build();
 
             userFeedbackRepository.save(feedback);
             
-            log.debug("💾 Saved user feedback: {} -> {} (type: {}, value: {})", 
-                userId, postId, feedbackType, feedbackValue);
+            log.info("💾 Saved user feedback: {} -> {} (type: {}, value: {}, timestamp: {})", 
+                userId, postId, feedbackType, feedbackValue, timestamp);
 
             // Update post engagement metrics
             updateEngagementMetrics(postId, feedbackType);
@@ -106,10 +123,23 @@ public class UserActionConsumer {
             return LocalDateTime.now();
         }
         
+        // Handle Long (epoch millis or nanos)
         if (timestampObj instanceof Long) {
-            return LocalDateTime.now();
+            long timestampValue = (Long) timestampObj;
+            // Check if it's in milliseconds (13 digits) or nanoseconds (19 digits)
+            if (timestampValue > 1_000_000_000_000L) { // millis
+                return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestampValue), ZoneId.systemDefault());
+            } else { // seconds
+                return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestampValue), ZoneId.systemDefault());
+            }
         }
         
+        // Handle Integer
+        if (timestampObj instanceof Integer) {
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(((Integer) timestampObj).longValue()), ZoneId.systemDefault());
+        }
+        
+        // Handle String
         if (timestampObj instanceof String) {
             String timestampStr = (String) timestampObj;
             try {
@@ -121,8 +151,14 @@ public class UserActionConsumer {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
                     return LocalDateTime.parse(timestampStr, formatter);
                 } catch (DateTimeParseException e2) {
-                    log.warn("⚠️ Failed to parse timestamp: {}, using current time", timestampStr);
-                    return LocalDateTime.now();
+                    try {
+                        // Try parsing as epoch millis
+                        long epochMillis = Long.parseLong(timestampStr);
+                        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault());
+                    } catch (NumberFormatException e3) {
+                        log.warn("⚠️ Failed to parse timestamp: {}, using current time", timestampStr);
+                        return LocalDateTime.now();
+                    }
                 }
             }
         }

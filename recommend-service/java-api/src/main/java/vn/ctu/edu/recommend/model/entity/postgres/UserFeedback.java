@@ -1,14 +1,20 @@
 package vn.ctu.edu.recommend.model.entity.postgres;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import vn.ctu.edu.recommend.model.enums.FeedbackType;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -55,10 +61,34 @@ public class UserFeedback {
     @Column(name = "session_id", length = 100)
     private String sessionId;
 
-    @Column(name = "context", columnDefinition = "JSONB")
-    private String context;
+    /**
+     * Context stored as JSONB - use Map for JSON compatibility
+     */
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "context", columnDefinition = "jsonb")
+    private Map<String, Object> context;
 
     @CreationTimestamp
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
+    
+    /**
+     * Helper method to set context from string
+     */
+    public void setContextFromString(String contextStr) {
+        if (contextStr == null || contextStr.isEmpty()) {
+            this.context = null;
+            return;
+        }
+        
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            this.context = mapper.readValue(contextStr, Map.class);
+        } catch (JsonProcessingException e) {
+            // Fallback: create simple map with raw string
+            Map<String, Object> fallbackContext = new HashMap<>();
+            fallbackContext.put("raw", contextStr);
+            this.context = fallbackContext;
+        }
+    }
 }

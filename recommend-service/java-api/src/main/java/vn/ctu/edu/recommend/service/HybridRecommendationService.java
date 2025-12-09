@@ -234,7 +234,7 @@ public class HybridRecommendationService {
                 .postId(postId)
                 .feedbackType(feedbackType)
                 .feedbackValue(feedbackValue)
-                .context(context != null ? context.toString() : null)
+                .context(context)  // Now accepts Map<String, Object> directly
                 .build();
 
             userFeedbackRepository.save(feedback);

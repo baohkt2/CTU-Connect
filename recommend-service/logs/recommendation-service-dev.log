@@ -29296,3 +29296,1634 @@ Consider renaming one of the beans or enabling overriding by setting spring.main
 2025-12-09 16:58:56 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
 2025-12-09 16:58:56 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
 2025-12-09 16:58:56 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:08:45 [main] INFO  v.c.e.r.RecommendationServiceApplication - Starting RecommendationServiceApplication using Java 19.0.1 with PID 36536 (D:\LVTN\CTU-Connect-demo\recommend-service\java-api\target\classes started by ASUS in D:\LVTN\CTU-Connect-demo\recommend-service)
+2025-12-09 17:08:45 [main] DEBUG v.c.e.r.RecommendationServiceApplication - Running with Spring Boot v3.3.4, Spring v6.1.13
+2025-12-09 17:08:45 [main] INFO  v.c.e.r.RecommendationServiceApplication - The following 1 profile is active: "dev"
+2025-12-09 17:08:47 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-09 17:08:47 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-09 17:08:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 187 ms. Found 3 JPA repository interfaces.
+2025-12-09 17:08:48 [main] DEBUG o.s.d.n.r.config.StartupLogger - Bootstrapping imperative Neo4j repositories based on SDN v7.3.4 with Spring Data Commons v3.3.4 and Neo4j Driver v5.23.0.
+2025-12-09 17:08:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-09 17:08:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2025-12-09 17:08:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 19 ms. Found 2 Neo4j repository interfaces.
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-09 17:08:49 [main] DEBUG o.s.d.n.r.config.StartupLogger - Bootstrapping reactive Neo4j repositories based on SDN v7.3.4 with Spring Data Commons v3.3.4 and Neo4j Driver v5.23.0.
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.RecommendationCacheRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 102 ms. Found 0 Neo4j repository interfaces.
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.neo4j.PostGraphRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.neo4j.UserGraphRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.PostEmbeddingRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.RecommendationCacheRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface vn.ctu.edu.recommend.repository.postgres.UserFeedbackRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-09 17:08:49 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 32 ms. Found 0 Redis repository interfaces.
+2025-12-09 17:08:50 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=277453c5-1c4c-35d5-adff-abfb6e0a035d
+2025-12-09 17:08:51 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2025-12-09 17:08:51 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-09 17:08:51 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2025-12-09 17:08:51 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-09 17:08:51 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'reactorDeferringLoadBalancerExchangeFilterFunction' of type [org.springframework.cloud.client.loadbalancer.reactive.DeferringLoadBalancerExchangeFilterFunction] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2025-12-09 17:08:52 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8095 (http)
+2025-12-09 17:08:52 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-09 17:08:52 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2025-12-09 17:08:53 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-09 17:08:53 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7665 ms
+2025-12-09 17:08:53 [main] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-12-09 17:08:54 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-09 17:08:54 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-12-09 17:08:54 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-09 17:08:55 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-09 17:08:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-09 17:08:55 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@66f223fa
+2025-12-09 17:08:55 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-09 17:08:55 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-09 17:08:57 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-09 17:08:57 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       alter column content set data type TEXT
+2025-12-09 17:08:57 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       alter column embedding_vector set data type TEXT
+2025-12-09 17:08:57 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists post_embeddings 
+       alter column media_description set data type TEXT
+2025-12-09 17:08:57 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-09 17:08:58 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-09 17:09:00 [main] INFO  o.n.driver.internal.DriverFactory - Direct driver instance 793367373 created for server address localhost:7687
+2025-12-09 17:09:03 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-09 17:09:03 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 8 mappings in 'requestMappingHandlerMapping'
+2025-12-09 17:09:03 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-12-09 17:09:03 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-12-09 17:09:03 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-12-09 17:09:04 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2025-12-09 17:09:04 [main] INFO  o.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2025-12-09 17:09:04 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2025-12-09 17:09:04 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2025-12-09 17:09:04 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2025-12-09 17:09:04 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2025-12-09 17:09:04 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2025-12-09 17:09:04 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@11fcf35
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 4 endpoints beneath base path '/actuator'
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@34d20206
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@7a2b0101
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-12-09 17:09:06 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 102 ms
+2025-12-09 17:09:06 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2025-12-09 17:09:06 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-12-09 17:09:07 [main] INFO  o.a.k.c.admin.AdminClientConfig - AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = recommendation-service-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-12-09 17:09:07 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-09 17:09:07 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-09 17:09:07 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765274947243
+2025-12-09 17:09:07 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.utils.AppInfoParser - App info kafka.admin.client for recommendation-service-admin-0 unregistered
+2025-12-09 17:09:07 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-09 17:09:07 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-09 17:09:07 [kafka-admin-client-thread | recommendation-service-admin-0] INFO  o.a.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-09 17:09:08 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2025-12-09 17:09:08 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2025-12-09 17:09:08 [main] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/
+2025-12-09 17:09:08 [main] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:09:08 [main] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:09:08 [main] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2025-12-09 17:09:08 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1765274948567 with initial instances count: 4
+2025-12-09 17:09:08 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application RECOMMENDATION-SERVICE with eureka with status UP
+2025-12-09 17:09:08 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1765274948580, current=UP, previous=STARTING]
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb: registering service...
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] DEBUG o.s.web.client.RestTemplate - HTTP POST http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] DEBUG o.s.web.client.RestTemplate - Writing [InstanceInfo [instanceId = recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb, appName = RECOMMENDATION-SERVICE, hostName = 10.10.13.136, status = UP, ipAddr = 10.10.13.136, port = 8095, securePort = 443, dataCenterInfo = com.netflix.appinfo.MyDataCenterInfo@6e79cc31] as "application/json"
+2025-12-09 17:09:08 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8095 (http) with context path '/'
+2025-12-09 17:09:08 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8095
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] DEBUG o.s.web.client.RestTemplate - Response 204 NO_CONTENT
+2025-12-09 17:09:08 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb - registration status: 204
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = true
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages, spring.json.value.default.type, spring.json.use.type.headers, spring.deserializer.value.delegate.class]' were supplied but are not used yet.
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765274949285
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Subscribed to topic(s): post_updated
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-2
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = true
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages, spring.json.value.default.type, spring.json.use.type.headers, spring.deserializer.value.delegate.class]' were supplied but are not used yet.
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765274949314
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Subscribed to topic(s): user_action
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-3
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = true
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Cluster ID: 3kwagbx0Qymi6Vcy6eHOrw
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages, spring.json.value.default.type, spring.json.use.type.headers, spring.deserializer.value.delegate.class]' were supplied but are not used yet.
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765274949340
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Subscribed to topic(s): post_created
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Cluster ID: 3kwagbx0Qymi6Vcy6eHOrw
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-recommendation-service-group-4
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = true
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = recommendation-service-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.t.i.KafkaMetricsCollector - initializing Kafka metrics collector
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Cluster ID: 3kwagbx0Qymi6Vcy6eHOrw
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.consumer.ConsumerConfig - These configurations '[spring.json.trusted.packages, spring.json.value.default.type, spring.json.use.type.headers, spring.deserializer.value.delegate.class]' were supplied but are not used yet.
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka version: 3.7.1
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka commitId: e2494e6ffb89f828
+2025-12-09 17:09:09 [main] INFO  o.a.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1765274949356
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [main] INFO  o.a.k.c.c.i.LegacyKafkaConsumer - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Subscribed to topic(s): post_deleted
+2025-12-09 17:09:09 [main] INFO  o.s.s.quartz.SchedulerFactoryBean - Starting Quartz Scheduler now
+2025-12-09 17:09:09 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2025-12-09 17:09:09 [main] INFO  v.c.e.r.RecommendationServiceApplication - Started RecommendationServiceApplication in 25.781 seconds (process running for 28.439)
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Cluster ID: 3kwagbx0Qymi6Vcy6eHOrw
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-2-18385a02-2cad-4278-9856-625b81bc8aad
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-3-52869702-c260-4d50-a5f9-3d68bb26fdab
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-1-71ef47b5-6a3f-4f4a-a277-e1c41f83c81e
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Request joining group due to: need to re-join with the given member-id: consumer-recommendation-service-group-4-44e3789b-ef6a-4532-b25d-b027d8cda892
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] (Re-)joining group
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=33, memberId='consumer-recommendation-service-group-3-52869702-c260-4d50-a5f9-3d68bb26fdab', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=33, memberId='consumer-recommendation-service-group-4-44e3789b-ef6a-4532-b25d-b027d8cda892', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=33, memberId='consumer-recommendation-service-group-2-18385a02-2cad-4278-9856-625b81bc8aad', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Successfully joined group with generation Generation{generationId=33, memberId='consumer-recommendation-service-group-1-71ef47b5-6a3f-4f4a-a277-e1c41f83c81e', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Finished assignment for group at generation 33: {consumer-recommendation-service-group-3-52869702-c260-4d50-a5f9-3d68bb26fdab=Assignment(partitions=[post_created-0, post_created-1, post_created-2]), consumer-recommendation-service-group-2-18385a02-2cad-4278-9856-625b81bc8aad=Assignment(partitions=[user_action-0, user_action-1, user_action-2]), consumer-recommendation-service-group-4-44e3789b-ef6a-4532-b25d-b027d8cda892=Assignment(partitions=[post_deleted-0, post_deleted-1, post_deleted-2]), consumer-recommendation-service-group-1-71ef47b5-6a3f-4f4a-a277-e1c41f83c81e=Assignment(partitions=[post_updated-0, post_updated-1, post_updated-2])}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=33, memberId='consumer-recommendation-service-group-4-44e3789b-ef6a-4532-b25d-b027d8cda892', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=33, memberId='consumer-recommendation-service-group-1-71ef47b5-6a3f-4f4a-a277-e1c41f83c81e', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=33, memberId='consumer-recommendation-service-group-3-52869702-c260-4d50-a5f9-3d68bb26fdab', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Successfully synced group in generation Generation{generationId=33, memberId='consumer-recommendation-service-group-2-18385a02-2cad-4278-9856-625b81bc8aad', protocol='range'}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_created-0, post_created-1, post_created-2])
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_deleted-0, post_deleted-1, post_deleted-2])
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[post_updated-0, post_updated-1, post_updated-2])
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerCoordinator - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Notifying assignor about the new Assignment(partitions=[user_action-0, user_action-1, user_action-2])
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Adding newly assigned partitions: post_deleted-0, post_deleted-1, post_deleted-2
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Adding newly assigned partitions: post_created-0, post_created-1, post_created-2
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Adding newly assigned partitions: post_updated-0, post_updated-1, post_updated-2
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.i.ConsumerRebalanceListenerInvoker - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Adding newly assigned partitions: user_action-0, user_action-1, user_action-2
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition user_action-2 to the committed offset FetchPosition{offset=4, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_updated-1 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_deleted-0 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional[2], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition user_action-1 to the committed offset FetchPosition{offset=1, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_created-2 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_updated-0 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_deleted-1 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_updated-2 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition user_action-0 to the committed offset FetchPosition{offset=2, offsetEpoch=Optional[2], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_created-1 to the committed offset FetchPosition{offset=1, offsetEpoch=Optional[2], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_deleted-2 to the committed offset FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.a.k.c.c.internals.ConsumerUtils - Setting offset for partition post_created-0 to the committed offset FetchPosition{offset=10, offsetEpoch=Optional[2], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=2}}
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_updated-0, post_updated-1, post_updated-2]
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_deleted-0, post_deleted-1, post_deleted-2]
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [user_action-0, user_action-1, user_action-2]
+2025-12-09 17:09:12 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.s.k.l.KafkaMessageListenerContainer - recommendation-service-group: partitions assigned: [post_created-0, post_created-1, post_created-2]
+2025-12-09 17:09:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:09:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:09:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:09:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:09:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:09:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:09:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:10:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:10:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:10:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:10:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:10:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:10:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:10:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:10:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:10:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:10:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:10:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:10:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:10:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:10:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:11:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:11:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:11:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:11:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:11:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:11:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:11:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:11:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:11:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:11:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:11:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:11:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:11:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:11:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:12:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:12:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:12:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:12:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:12:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:12:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:12:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:12:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:12:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:12:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:12:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:12:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:12:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:12:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:13:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:13:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:13:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:13:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:13:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:13:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:13:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:13:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:13:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:13:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:13:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:13:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:13:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:13:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:14:08 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-09 17:14:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:14:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:14:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:14:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:14:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:14:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:14:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:14:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:14:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:14:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:14:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:14:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:14:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:14:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:15:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:15:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:15:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:15:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:15:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:15:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:15:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:15:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:15:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:15:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:15:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:15:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:15:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:15:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:16:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:16:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:16:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:16:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:16:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:16:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:16:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:16:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:16:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:16:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:16:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:16:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:16:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:16:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:17:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:17:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:17:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:17:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:17:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:17:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:17:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:17:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:17:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:17:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:17:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:17:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:17:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:17:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:17:41 [http-nio-8095-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-09 17:17:41 [http-nio-8095-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:41 [http-nio-8095-exec-1] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-09 17:17:41 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-09 17:17:42 [http-nio-8095-exec-1] DEBUG v.c.e.r.client.UserServiceClient - Fetching academic profile for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:42 [http-nio-8095-exec-1] DEBUG o.s.w.r.f.client.ExchangeFunctions - [68f13eab] HTTP GET http://user-service/api/users/31ba8a23-8a4e-4b24-99c2-0d768e617e71/academic-profile
+2025-12-09 17:17:43 [reactor-http-nio-1] WARN  v.c.e.r.client.UserServiceClient - Failed to fetch user profile: Failed to resolve 'user-service' [A(1)] after 2 queries 
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG v.c.e.r.s.HybridRecommendationService - User profile: major=unknown, faculty=unknown
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        uf 
+    FROM
+        UserFeedback uf 
+    WHERE
+        uf.userId = :userId 
+        AND uf.timestamp >= :since */ select
+            uf1_0.id,
+            uf1_0.context,
+            uf1_0.feedback_type,
+            uf1_0.feedback_value,
+            uf1_0.post_id,
+            uf1_0.session_id,
+            uf1_0.timestamp,
+            uf1_0.user_id 
+        from
+            user_feedback uf1_0 
+        where
+            uf1_0.user_id=? 
+            and uf1_0.timestamp>=?
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG v.c.e.r.s.HybridRecommendationService - User has 0 interactions in last 30 days
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.createdAt >= :since 
+    ORDER BY
+        pe.popularityScore DESC */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.content_similarity_score,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.graph_relation_score,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.created_at>=? 
+        order by
+            pe1_0.popularity_score desc
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG v.c.e.r.s.HybridRecommendationService - Found 4 candidate posts
+2025-12-09 17:17:43 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 🔍 Python service enabled: true
+2025-12-09 17:17:43 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Calling Python model service...
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG v.c.e.r.s.HybridRecommendationService - 📋 Request: 4 candidate posts, 0 user history
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG v.c.e.r.c.PythonModelServiceClient - Calling Python model service for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:43 [http-nio-8095-exec-1] DEBUG o.s.w.r.f.client.ExchangeFunctions - [7b8d6827] HTTP POST http://localhost:8000/api/model/predict
+2025-12-09 17:17:43 [reactor-http-nio-3] DEBUG org.springframework.web.HttpLogging - [7b8d6827] Encoding [PythonModelRequest(userAcademic=UserAcademicProfile(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, maj (truncated)...]
+2025-12-09 17:17:44 [reactor-http-nio-3] DEBUG o.s.w.r.f.client.ExchangeFunctions - [7b8d6827] [d3f474e4-1] Response 200 OK
+2025-12-09 17:17:44 [reactor-http-nio-3] DEBUG org.springframework.web.HttpLogging - [7b8d6827] [d3f474e4-1] Decoded [PythonModelResponse(rankedPosts=[PythonModelResponse.RankedPost(postId=6937b6b1b68143159ae33783, sco (truncated)...]
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG v.c.e.r.c.PythonModelServiceClient - Received 4 ranked posts from Python service
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Python model returned 4 ranked posts
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 📊 PYTHON MODEL RANKINGS (Top 5):
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | ML Score: 0.3469 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | ML Score: 0.3203 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | ML Score: 0.3060 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c8069bb8191d64875b33 | ML Score: 0.2358 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 📦 AFTER PYTHON/FALLBACK (before business rules):
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Score: 0.3203
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Score: 0.3060
+2025-12-09 17:17:44 [http-nio-8095-exec-1] ERROR v.c.e.r.s.HybridRecommendationService - Error fetching friends for 31ba8a23-8a4e-4b24-99c2-0d768e617e71: Cannot invoke "org.springframework.transaction.support.TransactionTemplate.execute(org.springframework.transaction.support.TransactionCallback)" because "this.this$0.transactionTemplate" is null
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - ⚖️  AFTER BUSINESS RULES:
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Adjusted Score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Adjusted Score: 0.3203
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Adjusted Score: 0.3060
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService - 🎯 FINAL RECOMMENDATIONS (before caching):
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    Top 5 Posts:
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.3469 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Score: 0.3203 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Score: 0.3060 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c8069bb8191d64875b33 | Score: 0.2358 | Category: N/A
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG v.c.e.r.r.redis.RedisCacheService - Cached recommendations for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Total Items: 4
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937b6b1b68143159ae33783 -> score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    [ 2] 69379a305a8af849a3a4ede6 -> score: 0.3203
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    [ 3] 6937c00b9bb8191d64875b31 -> score: 0.3060
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    [ 4] 6937c8069bb8191d64875b33 -> score: 0.2358
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.2358
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.3023
+2025-12-09 17:17:44 [http-nio-8095-exec-1] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-09 17:17:44 [http-nio-8095-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.s.HybridRecommendationService - Returning cached feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71 (4 posts)
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Total Items: 4
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937b6b1b68143159ae33783 -> score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    [ 2] 69379a305a8af849a3a4ede6 -> score: 0.3203
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    [ 3] 6937c00b9bb8191d64875b31 -> score: 0.3060
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    [ 4] 6937c8069bb8191d64875b33 -> score: 0.2358
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.3469
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.2358
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.3023
+2025-12-09 17:17:44 [http-nio-8095-exec-2] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-09 17:17:44 [http-nio-8095-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-09 17:18:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:18:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:18:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:18:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:18:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:18:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:18:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:18:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-09 17:18:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-09 17:18:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-4, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-09 17:18:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-09 17:18:36 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:18:36 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: UN-LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 6937b6b1b68143159ae33783
+2025-12-09 17:18:36 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  v.c.e.r.k.c.UserActionConsumer - ⚠️  Unknown action type: UN-LIKE
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 6937b6b1b68143159ae33783
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG org.hibernate.SQL - 
+    /* insert for
+        vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert 
+    into
+        user_feedback (context, feedback_type, feedback_value, post_id, session_id, timestamp, user_id, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.hibernate.orm.jdbc.batch - HHH100503: On release of batch it still contained JDBC statements
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR org.hibernate.orm.jdbc.batch - HHH100501: Exception executing batch [java.sql.BatchUpdateException: Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.], SQL: /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 0, SQLState: 42804
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186
+2025-12-09 17:18:37 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR v.c.e.r.k.c.UserActionConsumer - ❌ Error processing user_action event: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]; SQL [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]; SQL [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:277)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:566)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:663)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:413)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
+	at jdk.proxy2/jdk.proxy2.$Proxy180.save(Unknown Source)
+	at vn.ctu.edu.recommend.kafka.consumer.UserActionConsumer.handleUserAction(UserActionConsumer.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.springframework.messaging.handler.invocation.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:169)
+	at org.springframework.kafka.listener.adapter.KotlinAwareInvocableHandlerMethod.doInvoke(KotlinAwareInvocableHandlerMethod.java:45)
+	at org.springframework.messaging.handler.invocation.InvocableHandlerMethod.invoke(InvocableHandlerMethod.java:119)
+	at org.springframework.kafka.listener.adapter.HandlerAdapter.invoke(HandlerAdapter.java:70)
+	at org.springframework.kafka.listener.adapter.MessagingMessageListenerAdapter.invokeHandler(MessagingMessageListenerAdapter.java:420)
+	at org.springframework.kafka.listener.adapter.MessagingMessageListenerAdapter.invoke(MessagingMessageListenerAdapter.java:384)
+	at org.springframework.kafka.listener.adapter.RecordMessagingMessageListenerAdapter.onMessage(RecordMessagingMessageListenerAdapter.java:85)
+	at org.springframework.kafka.listener.adapter.RecordMessagingMessageListenerAdapter.onMessage(RecordMessagingMessageListenerAdapter.java:50)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeOnMessage(KafkaMessageListenerContainer.java:2800)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeOnMessage(KafkaMessageListenerContainer.java:2778)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.lambda$doInvokeRecordListener$53(KafkaMessageListenerContainer.java:2701)
+	at io.micrometer.observation.Observation.observe(Observation.java:565)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeRecordListener(KafkaMessageListenerContainer.java:2699)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeWithRecords(KafkaMessageListenerContainer.java:2541)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeRecordListener(KafkaMessageListenerContainer.java:2430)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeListener(KafkaMessageListenerContainer.java:2085)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeIfHaveRecords(KafkaMessageListenerContainer.java:1461)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.pollAndInvoke(KafkaMessageListenerContainer.java:1426)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.run(KafkaMessageListenerContainer.java:1296)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.lang.Thread.run(Thread.java:1589)
+Caused by: org.hibernate.exception.SQLGrammarException: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:91)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.lambda$performExecution$2(BatchImpl.java:294)
+	at org.hibernate.engine.jdbc.mutation.internal.PreparedStatementGroupSingleTable.forEachStatement(PreparedStatementGroupSingleTable.java:67)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.performExecution(BatchImpl.java:264)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.execute(BatchImpl.java:242)
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.executeBatch(JdbcCoordinatorImpl.java:188)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:663)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:500)
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:385)
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41)
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+	at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425)
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487)
+	at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324)
+	at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981)
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267)
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101)
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562)
+	... 38 common frames omitted
+Caused by: java.sql.BatchUpdateException: Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275517835, source=post-service}'),('LIKE'),('1.0'::real),('6937b6b1b68143159ae33783'),(NULL),('2025-12-09 17:18:37.904805+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('3b2a9870-cd76-4907-b969-cb3f09b1797c'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleError(BatchResultHandler.java:165)
+	at org.postgresql.core.ResultHandlerDelegate.handleError(ResultHandlerDelegate.java:52)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2421)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:580)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:888)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1739)
+	at com.zaxxer.hikari.pool.ProxyStatement.executeBatch(ProxyStatement.java:127)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeBatch(HikariProxyPreparedStatement.java)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.lambda$performExecution$2(BatchImpl.java:279)
+	... 56 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2733)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2420)
+	... 63 common frames omitted
+2025-12-09 17:18:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:18:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:18:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:18:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:18:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:18:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:18:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:18:39 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:18:39 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: UN-LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 69379a305a8af849a3a4ede6
+2025-12-09 17:18:39 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  v.c.e.r.k.c.UserActionConsumer - ⚠️  Unknown action type: UN-LIKE
+2025-12-09 17:18:41 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:18:41 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: UN-LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 6937c8069bb8191d64875b33
+2025-12-09 17:18:41 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  v.c.e.r.k.c.UserActionConsumer - ⚠️  Unknown action type: UN-LIKE
+2025-12-09 17:18:43 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:18:43 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: UN-LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 6937b6b1b68143159ae33783
+2025-12-09 17:18:43 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  v.c.e.r.k.c.UserActionConsumer - ⚠️  Unknown action type: UN-LIKE
+2025-12-09 17:19:08 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-09 17:19:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:19:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:19:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:19:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:19:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:19:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:19:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.client.UserServiceClient - Fetching academic profile for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG o.s.w.r.f.client.ExchangeFunctions - [442ec2fa] HTTP GET http://user-service/api/users/31ba8a23-8a4e-4b24-99c2-0d768e617e71/academic-profile
+2025-12-09 17:19:10 [reactor-http-nio-1] WARN  v.c.e.r.client.UserServiceClient - Failed to fetch user profile: Failed to resolve 'user-service' [A(1)] after 2 queries 
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.s.HybridRecommendationService - User profile: major=unknown, faculty=unknown
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        uf 
+    FROM
+        UserFeedback uf 
+    WHERE
+        uf.userId = :userId 
+        AND uf.timestamp >= :since */ select
+            uf1_0.id,
+            uf1_0.context,
+            uf1_0.feedback_type,
+            uf1_0.feedback_value,
+            uf1_0.post_id,
+            uf1_0.session_id,
+            uf1_0.timestamp,
+            uf1_0.user_id 
+        from
+            user_feedback uf1_0 
+        where
+            uf1_0.user_id=? 
+            and uf1_0.timestamp>=?
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.s.HybridRecommendationService - User has 0 interactions in last 30 days
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.createdAt >= :since 
+    ORDER BY
+        pe.popularityScore DESC */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.content_similarity_score,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.graph_relation_score,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.created_at>=? 
+        order by
+            pe1_0.popularity_score desc
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.s.HybridRecommendationService - Found 4 candidate posts
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 🔍 Python service enabled: true
+2025-12-09 17:19:10 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Calling Python model service...
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.s.HybridRecommendationService - 📋 Request: 4 candidate posts, 0 user history
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG v.c.e.r.c.PythonModelServiceClient - Calling Python model service for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:10 [http-nio-8095-exec-4] DEBUG o.s.w.r.f.client.ExchangeFunctions - [1d645cf2] HTTP POST http://localhost:8000/api/model/predict
+2025-12-09 17:19:10 [reactor-http-nio-5] DEBUG org.springframework.web.HttpLogging - [1d645cf2] Encoding [PythonModelRequest(userAcademic=UserAcademicProfile(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, maj (truncated)...]
+2025-12-09 17:19:11 [reactor-http-nio-5] DEBUG o.s.w.r.f.client.ExchangeFunctions - [1d645cf2] [ad595281-1] Response 200 OK
+2025-12-09 17:19:11 [reactor-http-nio-5] DEBUG org.springframework.web.HttpLogging - [1d645cf2] [ad595281-1] Decoded [PythonModelResponse(rankedPosts=[PythonModelResponse.RankedPost(postId=6937b6b1b68143159ae33783, sco (truncated)...]
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG v.c.e.r.c.PythonModelServiceClient - Received 4 ranked posts from Python service
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Python model returned 4 ranked posts
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 📊 PYTHON MODEL RANKINGS (Top 5):
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | ML Score: 0.3469 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | ML Score: 0.3203 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | ML Score: 0.3060 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c8069bb8191d64875b33 | ML Score: 0.2358 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 📦 AFTER PYTHON/FALLBACK (before business rules):
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Score: 0.3203
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Score: 0.3060
+2025-12-09 17:19:11 [http-nio-8095-exec-4] ERROR v.c.e.r.s.HybridRecommendationService - Error fetching friends for 31ba8a23-8a4e-4b24-99c2-0d768e617e71: Cannot invoke "org.springframework.transaction.support.TransactionTemplate.execute(org.springframework.transaction.support.TransactionCallback)" because "this.this$0.transactionTemplate" is null
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - ⚖️  AFTER BUSINESS RULES:
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Adjusted Score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Adjusted Score: 0.3203
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Adjusted Score: 0.3060
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService - 🎯 FINAL RECOMMENDATIONS (before caching):
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 4 posts
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    Top 5 Posts:
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.3469 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69379a305a8af849a3a4ede6 | Score: 0.3203 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c00b9bb8191d64875b31 | Score: 0.3060 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937c8069bb8191d64875b33 | Score: 0.2358 | Category: N/A
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG v.c.e.r.r.redis.RedisCacheService - Cached recommendations for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Total Items: 4
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937b6b1b68143159ae33783 -> score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    [ 2] 69379a305a8af849a3a4ede6 -> score: 0.3203
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    [ 3] 6937c00b9bb8191d64875b31 -> score: 0.3060
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    [ 4] 6937c8069bb8191d64875b33 -> score: 0.2358
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.2358
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.3023
+2025-12-09 17:19:11 [http-nio-8095-exec-4] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-09 17:19:11 [http-nio-8095-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.s.HybridRecommendationService - Returning cached feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71 (4 posts)
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Total Items: 4
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937b6b1b68143159ae33783 -> score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    [ 2] 69379a305a8af849a3a4ede6 -> score: 0.3203
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    [ 3] 6937c00b9bb8191d64875b31 -> score: 0.3060
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    [ 4] 6937c8069bb8191d64875b33 -> score: 0.2358
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.3469
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.2358
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.3023
+2025-12-09 17:19:11 [http-nio-8095-exec-5] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-09 17:19:11 [http-nio-8095-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG v.c.e.r.k.c.UserActionConsumer - 📨 Received user_action event map with keys: [actionType, metadata, postId, userId, timestamp]
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  v.c.e.r.k.c.UserActionConsumer - 📥 Received user_action: LIKE by user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 on post 6937c00b9bb8191d64875b31
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] DEBUG org.hibernate.SQL - 
+    /* insert for
+        vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert 
+    into
+        user_feedback (context, feedback_type, feedback_value, post_id, session_id, timestamp, user_id, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.hibernate.orm.jdbc.batch - HHH100503: On release of batch it still contained JDBC statements
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR org.hibernate.orm.jdbc.batch - HHH100501: Exception executing batch [java.sql.BatchUpdateException: Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.], SQL: /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 0, SQLState: 42804
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186
+2025-12-09 17:19:38 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] ERROR v.c.e.r.k.c.UserActionConsumer - ❌ Error processing user_action event: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]; SQL [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]; SQL [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:277)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:566)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:663)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:413)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
+	at jdk.proxy2/jdk.proxy2.$Proxy180.save(Unknown Source)
+	at vn.ctu.edu.recommend.kafka.consumer.UserActionConsumer.handleUserAction(UserActionConsumer.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.springframework.messaging.handler.invocation.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:169)
+	at org.springframework.kafka.listener.adapter.KotlinAwareInvocableHandlerMethod.doInvoke(KotlinAwareInvocableHandlerMethod.java:45)
+	at org.springframework.messaging.handler.invocation.InvocableHandlerMethod.invoke(InvocableHandlerMethod.java:119)
+	at org.springframework.kafka.listener.adapter.HandlerAdapter.invoke(HandlerAdapter.java:70)
+	at org.springframework.kafka.listener.adapter.MessagingMessageListenerAdapter.invokeHandler(MessagingMessageListenerAdapter.java:420)
+	at org.springframework.kafka.listener.adapter.MessagingMessageListenerAdapter.invoke(MessagingMessageListenerAdapter.java:384)
+	at org.springframework.kafka.listener.adapter.RecordMessagingMessageListenerAdapter.onMessage(RecordMessagingMessageListenerAdapter.java:85)
+	at org.springframework.kafka.listener.adapter.RecordMessagingMessageListenerAdapter.onMessage(RecordMessagingMessageListenerAdapter.java:50)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeOnMessage(KafkaMessageListenerContainer.java:2800)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeOnMessage(KafkaMessageListenerContainer.java:2778)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.lambda$doInvokeRecordListener$53(KafkaMessageListenerContainer.java:2701)
+	at io.micrometer.observation.Observation.observe(Observation.java:565)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeRecordListener(KafkaMessageListenerContainer.java:2699)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.doInvokeWithRecords(KafkaMessageListenerContainer.java:2541)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeRecordListener(KafkaMessageListenerContainer.java:2430)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeListener(KafkaMessageListenerContainer.java:2085)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.invokeIfHaveRecords(KafkaMessageListenerContainer.java:1461)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.pollAndInvoke(KafkaMessageListenerContainer.java:1426)
+	at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.run(KafkaMessageListenerContainer.java:1296)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.lang.Thread.run(Thread.java:1589)
+Caused by: org.hibernate.exception.SQLGrammarException: could not execute batch [Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.] [/* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (?,?,?,?,?,?,?,?)]
+	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:91)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.lambda$performExecution$2(BatchImpl.java:294)
+	at org.hibernate.engine.jdbc.mutation.internal.PreparedStatementGroupSingleTable.forEachStatement(PreparedStatementGroupSingleTable.java:67)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.performExecution(BatchImpl.java:264)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.execute(BatchImpl.java:242)
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.executeBatch(JdbcCoordinatorImpl.java:188)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:663)
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:500)
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:385)
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41)
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+	at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425)
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487)
+	at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324)
+	at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981)
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267)
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101)
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562)
+	... 38 common frames omitted
+Caused by: java.sql.BatchUpdateException: Batch entry 0 /* insert for vn.ctu.edu.recommend.model.entity.postgres.UserFeedback */insert into user_feedback (context,feedback_type,feedback_value,post_id,session_id,timestamp,user_id,id) values (('{eventTime=1765275578034, source=post-service}'),('LIKE'),('1.0'::real),('6937c00b9bb8191d64875b31'),(NULL),('2025-12-09 17:19:38.052393+07'),('31ba8a23-8a4e-4b24-99c2-0d768e617e71'),('5b0e2df9-ff4e-4d1d-bda3-5fdcc288b0e5'::uuid)) was aborted: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleError(BatchResultHandler.java:165)
+	at org.postgresql.core.ResultHandlerDelegate.handleError(ResultHandlerDelegate.java:52)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2421)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:580)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:888)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1739)
+	at com.zaxxer.hikari.pool.ProxyStatement.executeBatch(ProxyStatement.java:127)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeBatch(HikariProxyPreparedStatement.java)
+	at org.hibernate.engine.jdbc.batch.internal.BatchImpl.lambda$performExecution$2(BatchImpl.java:279)
+	... 56 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: column "context" is of type jsonb but expression is of type character varying
+  Hint: You will need to rewrite or cast the expression.
+  Position: 186
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2733)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2420)
+	... 63 common frames omitted
+2025-12-09 17:19:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:19:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:19:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:19:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:19:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:19:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:19:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:20:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:20:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:20:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:20:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:20:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:20:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:20:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:20:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:20:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:20:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:20:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:20:38 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:20:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:20:38 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-09 17:21:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:3e3f961102ca339d3ccb493e9f50a6cb?status=UP&lastDirtyTimestamp=1765274948579
+2025-12-09 17:21:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:21:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-09 17:21:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-09 17:21:08 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:21:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-09 17:21:08 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
