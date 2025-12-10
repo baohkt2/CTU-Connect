@@ -6,12 +6,14 @@ import Layout from '@/components/layout/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import ChatMessageArea from '@/components/chat/ChatMessageArea';
+import api from '@/lib/api';
 
 function MessagesContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const friendUserId = searchParams.get('userId');
 
   useEffect(() => {
@@ -19,6 +21,41 @@ function MessagesContent() {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  // Load conversation details when selected
+  useEffect(() => {
+    if (selectedConversationId) {
+      loadConversationDetails(selectedConversationId);
+    }
+  }, [selectedConversationId]);
+
+  const loadConversationDetails = async (conversationId: string) => {
+    try {
+      const response = await api.get(`/chats/conversations/${conversationId}`);
+      setSelectedConversation(response.data);
+    } catch (error) {
+      console.error('Error loading conversation details:', error);
+    }
+  };
+
+  const getConversationInfo = () => {
+    if (!selectedConversation) return {};
+
+    if (selectedConversation.type === 'DIRECT') {
+      const otherParticipant = selectedConversation.participants?.[0];
+      return {
+        name: otherParticipant?.fullName || 'Người dùng',
+        avatar: otherParticipant?.avatarUrl,
+        isOnline: otherParticipant?.isOnline,
+      };
+    }
+
+    return {
+      name: selectedConversation.name || 'Nhóm chat',
+      avatar: selectedConversation.metadata?.avatarUrl,
+      isOnline: false,
+    };
+  };
 
   if (loading) {
     return (
@@ -32,9 +69,11 @@ function MessagesContent() {
     return null;
   }
 
+  const conversationInfo = getConversationInfo();
+
   return (
     <Layout>
-      <div className="h-[calc(100vh-4rem)] flex bg-white">
+      <div className="h-[calc(100vh-4rem)] flex bg-white rounded-lg shadow-sm overflow-hidden">
         {/* Sidebar - Danh sách conversations */}
         <ChatSidebar
           selectedConversationId={selectedConversationId}
@@ -46,6 +85,9 @@ function MessagesContent() {
         <ChatMessageArea
           conversationId={selectedConversationId}
           currentUserId={user.id}
+          conversationName={conversationInfo.name}
+          conversationAvatar={conversationInfo.avatar}
+          isOnline={conversationInfo.isOnline}
         />
       </div>
     </Layout>

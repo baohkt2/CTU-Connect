@@ -1,5 +1,6 @@
 package com.ctuconnect.dto.request;
 
+import com.ctuconnect.model.Message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ public class SendMessageRequest {
     @Size(max = 2000, message = "Tin nhắn không được vượt quá 2000 ký tự")
     private String content; // Content có thể null nếu có attachment
 
+    private Message.MessageType type; // TEXT, IMAGE, FILE - default TEXT nếu null
+    
     private String replyToMessageId;
     
     private MessageAttachmentRequest attachment;

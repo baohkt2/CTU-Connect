@@ -99,6 +99,15 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     System.out.println("JwtAuthenticationFilter: Access token extracted from 'Authorization' header.");
                 }
             }
+            
+            // For WebSocket connections, try to get token from query parameter
+            if (accessToken == null && path.startsWith("/api/ws/")) {
+                String tokenParam = request.getQueryParams().getFirst("token");
+                if (tokenParam != null && !tokenParam.isEmpty()) {
+                    accessToken = tokenParam;
+                    System.out.println("JwtAuthenticationFilter: Access token extracted from query parameter for WebSocket.");
+                }
+            }
 
             // Require refresh token for /api/auth/refresh-token, access token for others
             if (accessToken == null && refreshToken == null) {

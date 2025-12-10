@@ -52,8 +52,10 @@ public class RouteConfig {
 
                 // WebSocket Chat Route - Special handling for WebSocket connections
                 .route("chat-websocket-route", r -> r
-                        .path("/ws/chat/**")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .path("/api/ws/chat/**")
+                        .filters(f -> f
+                                .rewritePath("/api/ws/chat/(?<segment>.*)", "/ws/chat/${segment}")
+                                .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://chat-service"))
 
                 // Recommendation Service Routes - AI-powered personalized recommendations

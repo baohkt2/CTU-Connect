@@ -64,7 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       href: '/messages',
       icon: ChatBubbleLeftRightIcon,
       iconSolid: ChatIconSolid,
-      badge: unreadCount
+      badge: undefined
     },
     {
       name: 'Thông báo',
@@ -117,7 +117,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
               {/* Navigation - Enhanced breakpoints */}
               <nav className="hidden lg:flex space-x-1 xl:space-x-2">
-                {navigation.slice(0, 3).map((item) => {
+                {navigation.slice(0, 4).map((item) => {
                   const IconComponent = isActive(item.href) ? item.iconSolid : item.icon;
                   return (
                     <Link

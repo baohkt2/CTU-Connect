@@ -70,7 +70,7 @@ public class MessageService {
         message.setCreatedAt(LocalDateTime.now());
         message.setUpdatedAt(LocalDateTime.now());
 
-        // Xử lý attachment nếu có
+        // Xử lý attachment và message type
         if (request.getAttachment() != null) {
             log.info("Processing attachment: {}", request.getAttachment().getFileName());
             Message.MessageAttachment attachment = new Message.MessageAttachment();
@@ -81,20 +81,25 @@ public class MessageService {
             attachment.setThumbnailUrl(request.getAttachment().getThumbnailUrl());
             message.setAttachment(attachment);
             
-            // Xác định message type dựa trên file type
-            if (request.getAttachment().getFileType() != null) {
+            // Sử dụng type từ request nếu có, nếu không thì tự động xác định
+            if (request.getType() != null) {
+                message.setType(request.getType());
+                log.info("Message type from request: {}", request.getType());
+            } else if (request.getAttachment().getFileType() != null) {
+                // Fallback: tự động xác định type dựa trên file type
                 if (request.getAttachment().getFileType().startsWith("image/")) {
                     message.setType(Message.MessageType.IMAGE);
-                    log.info("Message type set to IMAGE");
+                    log.info("Message type auto-detected as IMAGE");
                 } else {
                     message.setType(Message.MessageType.FILE);
-                    log.info("Message type set to FILE");
+                    log.info("Message type auto-detected as FILE");
                 }
             } else {
                 message.setType(Message.MessageType.TEXT);
             }
         } else {
-            message.setType(Message.MessageType.TEXT);
+            // Text message
+            message.setType(request.getType() != null ? request.getType() : Message.MessageType.TEXT);
         }
 
         // Lưu message
