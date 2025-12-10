@@ -485,6 +485,13 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       {/* Enhanced Content */}
       <div className="px-4 pb-3">
+        {/* Post Title */}
+        {post.title && (
+          <h2 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
+            {post.title}
+          </h2>
+        )}
+        
         {post.content && (
           <div className="prose prose-sm max-w-none">
             <div

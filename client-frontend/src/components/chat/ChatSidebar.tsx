@@ -1,19 +1,24 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { Menu, X } from 'lucide-react';
+
+interface Participant {
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  isOnline?: boolean;
+  presenceStatus?: string;
+}
 
 interface Conversation {
   id: string;
   type: 'DIRECT' | 'GROUP';
   name?: string;
-  participants: Array<{
-    id: string;
-    fullName: string;
-    avatarUrl?: string;
-    isOnline?: boolean;
-  }>;
+  participants: Participant[];
   lastMessage?: {
     content: string;
     createdAt: string;
@@ -38,9 +43,25 @@ export default function ChatSidebar({
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [creatingConversation, setCreatingConversation] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const processedFriendRef = useRef<string | null>(null);
   const isLoadingRef = useRef(false);
+
+  // Get current user ID
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await api.get('/users/me');
+        setCurrentUserId(response.data.id);
+        console.log('Current user ID:', response.data.id);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
 
   // Memoize comparison function to check if conversations changed
   const conversationsChanged = useCallback((prev: Conversation[], next: Conversation[]) => {
@@ -64,6 +85,8 @@ export default function ChatSidebar({
       isLoadingRef.current = true;
       const response = await api.get('/chats/conversations');
       const newConversations = response.data.content || [];
+      
+      console.log('Loaded conversations:', newConversations); // Debug log
       
       // Only update if actually changed to prevent unnecessary re-renders
       setConversations(prevConversations => {
@@ -134,18 +157,24 @@ export default function ChatSidebar({
     if (conversation.type === 'GROUP') {
       return conversation.name || 'Nhóm chat';
     }
-    // For DIRECT, show the other participant's name
-    const otherParticipant = conversation.participants[0];
-    return otherParticipant?.fullName || 'Người dùng';
-  }, []);
+    // For DIRECT, show the OTHER participant's name (not current user)
+    const otherParticipant = conversation.participants.find(
+      p => p.userId !== currentUserId
+    );
+    console.log('Getting name for conversation:', conversation.id, 'Other participant:', otherParticipant);
+    return otherParticipant?.userName || 'Người dùng';
+  }, [currentUserId]);
 
   const getConversationAvatar = useCallback((conversation: Conversation) => {
     if (conversation.type === 'GROUP') {
       return null; // Group avatar
     }
-    const otherParticipant = conversation.participants[0];
-    return otherParticipant?.avatarUrl;
-  }, []);
+    // For DIRECT, get the OTHER participant's avatar (not current user)
+    const otherParticipant = conversation.participants.find(
+      p => p.userId !== currentUserId
+    );
+    return otherParticipant?.userAvatar;
+  }, [currentUserId]);
 
   const formatLastMessageTime = useCallback((dateString?: string) => {
     if (!dateString) return '';
@@ -172,41 +201,74 @@ export default function ChatSidebar({
 
   if (loading) {
     return (
-      <div className="w-80 border-r border-gray-200 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="relative">
+        {/* Toggle button during loading */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`hidden sm:flex absolute ${isCollapsed ? 'left-4' : '-right-3'} top-4 z-30 w-8 h-8 bg-white border-2 border-gray-300 rounded-full items-center justify-center hover:bg-gray-50 transition-all shadow-lg`}
+          title={isCollapsed ? 'Mở sidebar' : 'Đóng sidebar'}
+        >
+          {isCollapsed ? (
+            <Menu className="w-4 h-4 text-gray-600" />
+          ) : (
+            <X className="w-4 h-4 text-gray-600" />
+          )}
+        </button>
+
+        <div className={`${isCollapsed ? 'w-0' : 'w-full sm:w-80 md:w-96'} transition-all duration-300 border-r border-gray-200 flex items-center justify-center bg-white overflow-hidden`}>
+          {!isCollapsed && (
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full sm:w-80 md:w-96 border-r border-gray-200 flex flex-col bg-white shadow-sm">
-      {/* Header */}
-      <div className="p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Tin nhắn</h2>
-        {/* Search */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Tìm kiếm cuộc trò chuyện..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
-          />
-          <svg
-            className="absolute left-3 top-2 sm:top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-      </div>
+    <div className="relative">
+      {/* Toggle button - ALWAYS visible */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className={`hidden sm:flex absolute ${isCollapsed ? 'left-4' : '-right-3'} top-4 z-30 w-8 h-8 bg-white border-2 border-gray-300 rounded-full items-center justify-center hover:bg-gray-50 transition-all shadow-lg`}
+        title={isCollapsed ? 'Mở sidebar' : 'Đóng sidebar'}
+      >
+        {isCollapsed ? (
+          <Menu className="w-4 h-4 text-gray-600" />
+        ) : (
+          <X className="w-4 h-4 text-gray-600" />
+        )}
+      </button>
+
+      <div className={`${isCollapsed ? 'w-0' : 'w-full sm:w-80 md:w-96'} transition-all duration-300 border-r border-gray-200 flex flex-col bg-white shadow-sm overflow-hidden`}>
+        {!isCollapsed && currentUserId && (
+          <>
+          {/* Header */}
+          <div className="p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Tin nhắn</h2>
+            {/* Search */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Tìm kiếm cuộc trò chuyện..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
+              />
+              <svg
+                className="absolute left-3 top-2 sm:top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+          </div>
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
@@ -255,6 +317,9 @@ export default function ChatSidebar({
               />
             ))}
           </div>
+        )}
+      </div>
+        </>
         )}
       </div>
     </div>
