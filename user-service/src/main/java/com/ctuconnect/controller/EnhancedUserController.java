@@ -154,10 +154,189 @@ public class EnhancedUserController {
         return ResponseEntity.ok(suggestions);
     }
 
+    /**
+     * Search friend suggestions with filters (enhanced version)
+     * Frontend expects: GET /api/users/friend-suggestions/search
+     * Supports: query (fullname/email), college, faculty, batch filters
+     */
+    @GetMapping("/friend-suggestions/search")
+    @RequireAuth
+    public ResponseEntity<List<UserSearchDTO>> searchFriendSuggestions(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String college,
+            @RequestParam(required = false) String faculty,
+            @RequestParam(required = false) String batch,
+            @RequestParam(defaultValue = "50") int limit) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /friend-suggestions/search - query={}, college={}, faculty={}, batch={}, limit={}", 
+                 query, college, faculty, batch, limit);
+
+        List<UserSearchDTO> suggestions = userService.searchFriendSuggestions(
+            currentUser.getId(), query, college, faculty, batch, limit);
+
+        return ResponseEntity.ok(suggestions);
+    }
+
     // ==================== FRIEND MANAGEMENT ====================
     
     /**
+     * Get current user's friends list
+     * Frontend expects: GET /api/users/me/friends
+     */
+    @GetMapping("/me/friends")
+    @RequireAuth
+    public ResponseEntity<PageResponse<UserSearchDTO>> getMyFriends(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /me/friends - Getting friends for user: {} (page={}, size={})", 
+                 currentUser.getEmail(), page, size);
+        
+        try {
+            Page<UserSearchDTO> friendsPage = userService.getFriends(
+                currentUser.getId(), PageRequest.of(page, size));
+            
+            log.info("GET /me/friends - Successfully retrieved {} friends (total: {})", 
+                     friendsPage.getNumberOfElements(), friendsPage.getTotalElements());
+            
+            // Convert Page to PageResponse to avoid serialization issues
+            PageResponse<UserSearchDTO> response = PageResponse.of(friendsPage);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("GET /me/friends - Error getting friends: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
+     * Get received friend requests
+     * Frontend expects: GET /api/users/me/friend-requests
+     */
+    @GetMapping("/me/friend-requests")
+    @RequireAuth
+    public ResponseEntity<List<FriendRequestDTO>> getMyFriendRequests() {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /me/friend-requests - Getting received requests for user: {}", currentUser.getEmail());
+        List<FriendRequestDTO> receivedRequests = userService.getReceivedFriendRequests(currentUser.getId());
+        return ResponseEntity.ok(receivedRequests);
+    }
+
+    /**
+     * Get sent friend requests
+     * Frontend expects: GET /api/users/me/friend-requested
+     */
+    @GetMapping("/me/friend-requested")
+    @RequireAuth
+    public ResponseEntity<List<FriendRequestDTO>> getMySentFriendRequests() {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /me/friend-requested - Getting sent requests for user: {}", currentUser.getEmail());
+        List<FriendRequestDTO> sentRequests = userService.getSentFriendRequests(currentUser.getId());
+        return ResponseEntity.ok(sentRequests);
+    }
+
+    /**
      * Send friend request
+     * Frontend expects: POST /api/users/me/invite/{friendId}
+     */
+    @PostMapping("/me/invite/{friendId}")
+    @RequireAuth
+    public ResponseEntity<Map<String, String>> sendMyFriendRequest(
+            @PathVariable String friendId) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("POST /me/invite/{} - Sending friend request", friendId);
+        userService.sendFriendRequest(currentUser.getId(), friendId);
+
+        // Invalidate friend suggestions cache for both users
+        socialGraphService.invalidateFriendSuggestionsCache(currentUser.getId());
+        socialGraphService.invalidateFriendSuggestionsCache(friendId);
+
+        return ResponseEntity.ok(Map.of("message", "Friend request sent successfully"));
+    }
+
+    /**
+     * Accept friend request
+     * Frontend expects: POST /api/users/me/accept-invite/{friendId}
+     */
+    @PostMapping("/me/accept-invite/{friendId}")
+    @RequireAuth
+    public ResponseEntity<Map<String, String>> acceptMyFriendRequest(
+            @PathVariable String friendId) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("POST /me/accept-invite/{} - Accepting friend request", friendId);
+        userService.acceptFriendRequest(friendId, currentUser.getId());
+
+        // Invalidate caches for both users
+        socialGraphService.invalidateFriendSuggestionsCache(currentUser.getId());
+        socialGraphService.invalidateFriendSuggestionsCache(friendId);
+
+        return ResponseEntity.ok(Map.of("message", "Friend request accepted successfully"));
+    }
+
+    /**
+     * Reject friend request
+     * Frontend expects: POST /api/users/me/reject-invite/{friendId}
+     */
+    @PostMapping("/me/reject-invite/{friendId}")
+    @RequireAuth
+    public ResponseEntity<Map<String, String>> rejectMyFriendRequest(
+            @PathVariable String friendId) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("POST /me/reject-invite/{} - Rejecting friend request", friendId);
+        userService.rejectFriendRequest(friendId, currentUser.getId());
+
+        return ResponseEntity.ok(Map.of("message", "Friend request rejected successfully"));
+    }
+
+    /**
+     * Remove friend
+     * Frontend expects: DELETE /api/users/me/friends/{friendId}
+     */
+    @DeleteMapping("/me/friends/{friendId}")
+    @RequireAuth
+    public ResponseEntity<Map<String, String>> removeMyFriend(
+            @PathVariable String friendId) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("DELETE /me/friends/{} - Removing friend", friendId);
+        userService.removeFriend(currentUser.getId(), friendId);
+
+        return ResponseEntity.ok(Map.of("message", "Friend removed successfully"));
+    }
+    
+    /**
+     * Send friend request (alternative path)
      * Frontend expects: POST /api/users/:id/friend-request
      */
     @PostMapping("/{targetUserId}/friend-request")
@@ -180,7 +359,7 @@ public class EnhancedUserController {
     }
 
     /**
-     * Accept friend request
+     * Accept friend request (alternative path)
      * Frontend expects: POST /api/users/:id/accept-friend
      */
     @PostMapping("/{requesterId}/accept-friend")
@@ -203,7 +382,7 @@ public class EnhancedUserController {
     }
     
     /**
-     * Reject friend request
+     * Reject friend request (alternative path)
      */
     @PostMapping("/{requesterId}/reject-friend")
     @RequireAuth
@@ -221,7 +400,7 @@ public class EnhancedUserController {
     }
     
     /**
-     * Unfriend/Remove friend
+     * Unfriend/Remove friend (alternative path)
      */
     @DeleteMapping("/{friendId}/friend")
     @RequireAuth
@@ -239,7 +418,7 @@ public class EnhancedUserController {
     }
     
     /**
-     * Cancel sent friend request
+     * Cancel sent friend request (alternative path)
      */
     @DeleteMapping("/{targetUserId}/friend-request")
     @RequireAuth
@@ -257,7 +436,7 @@ public class EnhancedUserController {
     }
 
     /**
-     * Get sent friend requests
+     * Get sent friend requests (alternative path)
      */
     @GetMapping("/sent-requests")
     @RequireAuth
@@ -272,7 +451,7 @@ public class EnhancedUserController {
     }
 
     /**
-     * Get received friend requests
+     * Get received friend requests (alternative path)
      */
     @GetMapping("/received-requests")
     @RequireAuth
@@ -303,6 +482,60 @@ public class EnhancedUserController {
 
         int count = socialGraphService.getMutualFriendsCount(currentUser.getId(), targetUserId);
         return ResponseEntity.ok(Map.of("count", count));
+    }
+
+    /**
+     * Get mutual friends list (paginated)
+     * Frontend expects: GET /api/users/:id/mutual-friends
+     */
+    @GetMapping("/{targetUserId}/mutual-friends")
+    @RequireAuth
+    public ResponseEntity<PageResponse<UserSearchDTO>> getMutualFriendsList(
+            @PathVariable String targetUserId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /{}/mutual-friends - Getting mutual friends", targetUserId);
+        
+        try {
+            Page<UserSearchDTO> mutualFriendsPage = userService.getMutualFriendsList(
+                currentUser.getId(), targetUserId, PageRequest.of(page, size));
+            
+            log.info("GET /{}/mutual-friends - Successfully retrieved {} mutual friends (total: {})",
+                     targetUserId, mutualFriendsPage.getNumberOfElements(), mutualFriendsPage.getTotalElements());
+            
+            // Convert Page to PageResponse to avoid serialization issues
+            PageResponse<UserSearchDTO> response = PageResponse.of(mutualFriendsPage);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("GET /{}/mutual-friends - Error getting mutual friends: {}", targetUserId, e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
+     * Get friendship status with target user
+     * Frontend expects: GET /api/users/:id/friendship-status
+     * Returns: {"status": "none" | "friends" | "sent" | "received" | "self"}
+     */
+    @GetMapping("/{targetUserId}/friendship-status")
+    @RequireAuth
+    public ResponseEntity<Map<String, String>> getFriendshipStatus(
+            @PathVariable String targetUserId) {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /{}/friendship-status - Getting friendship status", targetUserId);
+        String status = userService.getFriendshipStatus(currentUser.getId(), targetUserId);
+
+        return ResponseEntity.ok(Map.of("status", status));
     }
 
     // ==================== USER SEARCH ====================

@@ -174,16 +174,14 @@ public class SocialGraphService {
      */
     private List<FriendSuggestionDTO> getFriendsOfFriendsSuggestions(UserEntity user, int limit) {
         try {
-            // Get friends of the current user - returns Page<UserSearchProjection>
-            Page<UserRepository.UserSearchProjection> friendsPage = userRepository.findFriends(user.getId(), org.springframework.data.domain.Pageable.unpaged());
+            // Get friends of the current user - returns List<UserEntity>
+            List<UserEntity> friends = userRepository.findFriends(user.getId());
             List<FriendSuggestionDTO> suggestions = new ArrayList<>();
 
-            for (UserRepository.UserSearchProjection friendProj : friendsPage.getContent()) {
-                UserEntity friend = friendProj.getUser();
-                Page<UserRepository.UserSearchProjection> friendsOfFriendPage = userRepository.findFriends(friend.getId(), org.springframework.data.domain.Pageable.unpaged());
+            for (UserEntity friend : friends) {
+                List<UserEntity> friendsOfFriend = userRepository.findFriends(friend.getId());
 
-                for (UserRepository.UserSearchProjection suggestionProj : friendsOfFriendPage.getContent()) {
-                    UserEntity suggestion = suggestionProj.getUser();
+                for (UserEntity suggestion : friendsOfFriend) {
                     if (!suggestion.getId().equals(user.getId()) &&
                         !userRepository.areFriends(user.getId(), suggestion.getId())) {
 

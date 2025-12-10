@@ -33,6 +33,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -230,8 +231,21 @@ public class UserService {
                                          @NotNull Pageable pageable) {
         log.info("Searching users with term: {}, currentUserId: {}", searchTerm, currentUserId);
 
-        var searchResults = userRepository.searchUsers(searchTerm, currentUserId, pageable);
-        return searchResults.map(userMapper::toUserSearchDTO);
+        var searchResults = userRepository.searchUsers(searchTerm, currentUserId);
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResults.size());
+        
+        if (start >= searchResults.size()) {
+            return new org.springframework.data.domain.PageImpl<>(new ArrayList<>(), pageable, searchResults.size());
+        }
+        
+        List<UserSearchDTO> dtos = searchResults.subList(start, end).stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+            
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, searchResults.size());
     }
 
     @Transactional(readOnly = true)
@@ -240,8 +254,21 @@ public class UserService {
                                                 @NotNull Pageable pageable) {
         log.info("Finding users by college: {}, currentUserId: {}", collegeName, currentUserId);
 
-        var searchResults = userRepository.findUsersByCollege(collegeName, currentUserId, pageable);
-        return searchResults.map(userMapper::toUserSearchDTO);
+        var searchResults = userRepository.findUsersByCollege(collegeName, currentUserId);
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResults.size());
+        
+        if (start >= searchResults.size()) {
+            return new org.springframework.data.domain.PageImpl<>(new ArrayList<>(), pageable, searchResults.size());
+        }
+        
+        List<UserSearchDTO> dtos = searchResults.subList(start, end).stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+            
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, searchResults.size());
     }
 
     @Transactional(readOnly = true)
@@ -250,8 +277,21 @@ public class UserService {
                                                 @NotNull Pageable pageable) {
         log.info("Finding users by faculty: {}, currentUserId: {}", facultyName, currentUserId);
 
-        var searchResults = userRepository.findUsersByFaculty(facultyName, currentUserId, pageable);
-        return searchResults.map(userMapper::toUserSearchDTO);
+        var searchResults = userRepository.findUsersByFaculty(facultyName, currentUserId);
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResults.size());
+        
+        if (start >= searchResults.size()) {
+            return new org.springframework.data.domain.PageImpl<>(new ArrayList<>(), pageable, searchResults.size());
+        }
+        
+        List<UserSearchDTO> dtos = searchResults.subList(start, end).stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+            
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, searchResults.size());
     }
 
     @Transactional(readOnly = true)
@@ -260,8 +300,21 @@ public class UserService {
                                               @NotNull Pageable pageable) {
         log.info("Finding users by major: {}, currentUserId: {}", majorName, currentUserId);
 
-        var searchResults = userRepository.findUsersByMajor(majorName, currentUserId, pageable);
-        return searchResults.map(userMapper::toUserSearchDTO);
+        var searchResults = userRepository.findUsersByMajor(majorName, currentUserId);
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResults.size());
+        
+        if (start >= searchResults.size()) {
+            return new org.springframework.data.domain.PageImpl<>(new ArrayList<>(), pageable, searchResults.size());
+        }
+        
+        List<UserSearchDTO> dtos = searchResults.subList(start, end).stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+            
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, searchResults.size());
     }
 
     @Transactional(readOnly = true)
@@ -270,8 +323,21 @@ public class UserService {
                                               @NotNull Pageable pageable) {
         log.info("Finding users by batch: {}, currentUserId: {}", batchYear, currentUserId);
 
-        var searchResults = userRepository.findUsersByBatch(batchYear, currentUserId, pageable);
-        return searchResults.map(userMapper::toUserSearchDTO);
+        var searchResults = userRepository.findUsersByBatch(batchYear, currentUserId);
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResults.size());
+        
+        if (start >= searchResults.size()) {
+            return new org.springframework.data.domain.PageImpl<>(new ArrayList<>(), pageable, searchResults.size());
+        }
+        
+        List<UserSearchDTO> dtos = searchResults.subList(start, end).stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+            
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, searchResults.size());
     }
 
     // Friend Management
@@ -279,9 +345,42 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<UserSearchDTO> getFriends(@NotBlank String userId, @NotNull Pageable pageable) {
         log.info("Getting friends for userId: {}", userId);
-
-        var friends = userRepository.findFriends(userId, pageable);
-        return friends.map(userMapper::toUserSearchDTO);
+        
+        try {
+            log.debug("Step 1: Calling userRepository.findFriends");
+            
+            var friends = userRepository.findFriends(userId);
+            
+            log.debug("Step 2: Retrieved {} friends from repository", friends.size());
+            log.debug("Step 3: Starting DTO mapping for {} friends", friends.size());
+            
+            // Apply pagination manually
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), friends.size());
+            
+            List<UserSearchDTO> friendDTOs = friends.subList(start, end).stream()
+                .map(user -> {
+                    try {
+                        log.trace("Mapping friend: {}", user.getId());
+                        return userMapper.toUserSearchDTO(user);
+                    } catch (Exception e) {
+                        log.error("Error mapping friend to DTO: {}", e.getMessage(), e);
+                        throw new RuntimeException("Error mapping friend data", e);
+                    }
+                })
+                .collect(Collectors.toList());
+            
+            var result = new org.springframework.data.domain.PageImpl<>(
+                friendDTOs, pageable, friends.size());
+            
+            log.debug("Step 4: Successfully mapped all friends to DTOs");
+            log.info("Successfully retrieved {} friends for userId: {}", result.getTotalElements(), userId);
+            
+            return result;
+        } catch (Exception e) {
+            log.error("Error getting friends for userId {}: {}", userId, e.getMessage(), e);
+            throw new RuntimeException("Failed to get friends list", e);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -290,7 +389,7 @@ public class UserService {
 
         var sentRequests = userRepository.findSentFriendRequests(userId);
         return sentRequests.stream()
-            .map(userMapper::toFriendRequestDTO)
+            .map(user -> userMapper.toFriendRequestDTO(user, "SENT"))
             .collect(Collectors.toList());
     }
 
@@ -300,7 +399,7 @@ public class UserService {
 
         var receivedRequests = userRepository.findReceivedFriendRequests(userId);
         return receivedRequests.stream()
-            .map(userMapper::toFriendRequestDTO)
+            .map(user -> userMapper.toFriendRequestDTO(user, "RECEIVED"))
             .collect(Collectors.toList());
     }
 
@@ -462,10 +561,10 @@ public class UserService {
         }
         
         String facultyName = user.getMajor().getFaculty().getName();
-        var users = userRepository.findUsersByFaculty(facultyName, userId, Pageable.unpaged());
+        var users = userRepository.findUsersByFaculty(facultyName, userId);
         
         return users.stream()
-            .map(projection -> projection.getUser().getId())
+            .map(UserEntity::getId)
             .collect(Collectors.toSet());
     }
 
@@ -480,10 +579,10 @@ public class UserService {
         }
         
         String majorName = user.getMajor().getName();
-        var users = userRepository.findUsersByMajor(majorName, userId, Pageable.unpaged());
+        var users = userRepository.findUsersByMajor(majorName, userId);
         
         return users.stream()
-            .map(projection -> projection.getUser().getId())
+            .map(UserEntity::getId)
             .collect(Collectors.toSet());
     }
 
@@ -539,26 +638,33 @@ public class UserService {
         log.info("Searching users with context: query={}, faculty={}, major={}, batch={}", 
                  query, faculty, major, batch);
         
-        Pageable pageable = PageRequest.of(page, size);
-        Page<UserRepository.UserSearchProjection> results;
+        List<UserEntity> results;
         
         // Search by specific filters
         if (major != null && !major.isEmpty()) {
-            results = userRepository.findUsersByMajor(major, currentUserId, pageable);
+            results = userRepository.findUsersByMajor(major, currentUserId);
         } else if (faculty != null && !faculty.isEmpty()) {
-            results = userRepository.findUsersByFaculty(faculty, currentUserId, pageable);
+            results = userRepository.findUsersByFaculty(faculty, currentUserId);
         } else if (batch != null && !batch.isEmpty()) {
             try {
                 Integer batchYear = Integer.parseInt(batch);
-                results = userRepository.findUsersByBatch(batchYear, currentUserId, pageable);
+                results = userRepository.findUsersByBatch(batchYear, currentUserId);
             } catch (NumberFormatException e) {
-                results = userRepository.searchUsers(query, currentUserId, pageable);
+                results = userRepository.searchUsers(query, currentUserId);
             }
         } else {
-            results = userRepository.searchUsers(query, currentUserId, pageable);
+            results = userRepository.searchUsers(query, currentUserId);
         }
         
-        return results.stream()
+        // Apply pagination manually
+        int start = page * size;
+        int end = Math.min((start + size), results.size());
+        
+        if (start >= results.size()) {
+            return new ArrayList<>();
+        }
+        
+        return results.subList(start, end).stream()
             .map(userMapper::toUserDTO)
             .collect(Collectors.toList());
     }
@@ -589,5 +695,169 @@ public class UserService {
         // Return empty list for now
         // This can be enhanced with actual activity tracking from other services
         return new java.util.ArrayList<>();
+    }
+
+    // ==================== FRIENDSHIP STATUS ====================
+
+    /**
+     * Get friendship status between current user and target user
+     * Returns: "none", "friends", "sent", "received", "self"
+     */
+    @Transactional(readOnly = true)
+    public String getFriendshipStatus(@NotBlank String currentUserId, @NotBlank String targetUserId) {
+        log.info("Getting friendship status: currentUserId={}, targetUserId={}", currentUserId, targetUserId);
+        
+        // Check if viewing own profile
+        if (currentUserId.equals(targetUserId)) {
+            return "self";
+        }
+        
+        // Verify both users exist
+        if (!userRepository.existsById(currentUserId) || !userRepository.existsById(targetUserId)) {
+            throw new UserNotFoundException("One or both users not found");
+        }
+        
+        // Check if they are friends
+        if (userRepository.areFriends(currentUserId, targetUserId)) {
+            return "friends";
+        }
+        
+        // Check if current user sent request to target
+        if (userRepository.hasPendingFriendRequest(currentUserId, targetUserId)) {
+            return "sent";
+        }
+        
+        // Check if target user sent request to current user
+        if (userRepository.hasPendingFriendRequest(targetUserId, currentUserId)) {
+            return "received";
+        }
+        
+        return "none";
+    }
+
+    // ==================== MUTUAL FRIENDS ====================
+
+    /**
+     * Get mutual friends list between two users (paginated)
+     */
+    @Transactional(readOnly = true)
+    public Page<UserSearchDTO> getMutualFriendsList(
+            @NotBlank String userId1,
+            @NotBlank String userId2,
+            @NotNull Pageable pageable) {
+        log.info("Getting mutual friends list: userId1={}, userId2={}", userId1, userId2);
+        
+        // Verify both users exist
+        if (!userRepository.existsById(userId1) || !userRepository.existsById(userId2)) {
+            throw new UserNotFoundException("One or both users not found");
+        }
+        
+        // Get all mutual friends (not paginated from repository)
+        List<UserEntity> mutualFriends = userRepository.findMutualFriends(userId1, userId2);
+        
+        // Convert to DTOs
+        List<UserSearchDTO> mutualFriendDTOs = mutualFriends.stream()
+            .map(userMapper::toUserSearchDTO)
+            .collect(Collectors.toList());
+        
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), mutualFriendDTOs.size());
+        
+        List<UserSearchDTO> pageContent = start < mutualFriendDTOs.size() 
+            ? mutualFriendDTOs.subList(start, end) 
+            : new ArrayList<>();
+        
+        return new org.springframework.data.domain.PageImpl<>(
+            pageContent, pageable, mutualFriendDTOs.size());
+    }
+
+    /**
+     * Get mutual friends count between two users
+     */
+    @Transactional(readOnly = true)
+    public int getMutualFriendsCount(@NotBlank String userId1, @NotBlank String userId2) {
+        log.info("Getting mutual friends count: userId1={}, userId2={}", userId1, userId2);
+        
+        // Verify both users exist
+        if (!userRepository.existsById(userId1) || !userRepository.existsById(userId2)) {
+            return 0;
+        }
+        
+        List<UserEntity> mutualFriends = userRepository.findMutualFriends(userId1, userId2);
+        return mutualFriends.size();
+    }
+
+    // ==================== ENHANCED FRIEND SUGGESTIONS ====================
+
+    /**
+     * Search friend suggestions with filters
+     * If query is provided: search by fullname/email and apply filters
+     * If query is null: return suggestions based on filters only
+     */
+    @Transactional(readOnly = true)
+    public List<UserSearchDTO> searchFriendSuggestions(
+            @NotBlank String currentUserId,
+            String query,
+            String college,
+            String faculty,
+            String batch,
+            @Min(1) @Max(100) int limit) {
+        log.info("Searching friend suggestions: currentUserId={}, query={}, college={}, faculty={}, batch={}, limit={}",
+                 currentUserId, query, college, faculty, batch, limit);
+        
+        try {
+            log.debug("Step 1: Verifying user exists");
+            // Verify user exists
+            var currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + currentUserId));
+            
+            log.debug("Step 2: User found, building search criteria");
+            
+            List<UserEntity> results;
+            
+            // Build search based on available filters
+            if (query != null && !query.trim().isEmpty()) {
+                log.debug("Step 3a: Searching by query: {}", query);
+                results = userRepository.searchUsers(query.trim(), currentUserId);
+                log.debug("Step 3a: Found {} results", results.size());
+            } else if (faculty != null && !faculty.isEmpty()) {
+                log.debug("Step 3b: Filtering by faculty: {}", faculty);
+                results = userRepository.findUsersByFaculty(faculty, currentUserId);
+                log.debug("Step 3b: Found {} results", results.size());
+            } else if (batch != null && !batch.isEmpty()) {
+                log.debug("Step 3c: Filtering by batch: {}", batch);
+                try {
+                    Integer batchYear = Integer.parseInt(batch);
+                    results = userRepository.findUsersByBatch(batchYear, currentUserId);
+                    log.debug("Step 3c: Found {} results", results.size());
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid batch year: {}", batch);
+                    results = new ArrayList<>();
+                }
+            } else if (college != null && !college.isEmpty()) {
+                log.debug("Step 3d: Filtering by college: {}", college);
+                results = userRepository.findUsersByCollege(college, currentUserId);
+                log.debug("Step 3d: Found {} results", results.size());
+            } else {
+                log.debug("Step 3e: No filters provided, getting friend suggestions");
+                results = userRepository.findFriendSuggestions(currentUserId);
+                log.debug("Step 3e: Found {} results", results.size());
+            }
+            
+            log.debug("Step 4: Converting results to DTOs and filtering");
+            // Convert to DTOs and limit results
+            List<UserSearchDTO> filtered = results.stream()
+                .limit(limit)
+                .map(userMapper::toUserSearchDTO)
+                .collect(Collectors.toList());
+            
+            log.info("Successfully found {} friend suggestions", filtered.size());
+            return filtered;
+            
+        } catch (Exception e) {
+            log.error("Error searching friend suggestions: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to search friend suggestions", e);
+        }
     }
 }

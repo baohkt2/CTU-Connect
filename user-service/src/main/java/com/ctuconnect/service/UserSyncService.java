@@ -80,22 +80,21 @@ public class UserSyncService {
         }
 
         // Xóa mối quan hệ bạn bè
-        var friends = userRepository.findFriends(userId, null).getContent(); // Pageable=null nghĩa là tất cả
-        for (var friendProj : friends) {
-            String friendId = friendProj.getUser().getId();
-            userRepository.removeFriend(userId, friendId);
+        var friends = userRepository.findFriends(userId);
+        for (var friend : friends) {
+            userRepository.removeFriend(userId, friend.getId());
         }
 
         // Xóa lời mời đã gửi
         var sentRequests = userRepository.findSentFriendRequests(userId);
         for (var req : sentRequests) {
-            userRepository.rejectFriendRequest(userId, req.getUser().getId());
+            userRepository.rejectFriendRequest(userId, req.getId());
         }
 
         // Xóa lời mời đã nhận
         var receivedRequests = userRepository.findReceivedFriendRequests(userId);
         for (var req : receivedRequests) {
-            userRepository.rejectFriendRequest(req.getUser().getId(), userId);
+            userRepository.rejectFriendRequest(req.getId(), userId);
         }
 
         userRepository.deleteById(userId);

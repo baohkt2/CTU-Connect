@@ -1,0 +1,20 @@
+2025-12-10 07:38:14,633 - inference - INFO - Using device: cpu
+2025-12-10 07:38:21,089 - inference - INFO - PhoBERT model loaded successfully
+2025-12-10 07:42:05,628 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-10 07:42:05,630 - services.prediction_service - INFO - Loading ML models...
+2025-12-10 07:42:12,876 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 07:42:16,908 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 4033.22ms
+2025-12-10 07:42:16,909 - api.routes - INFO - Prediction completed: 2 posts ranked in 4104.14ms
+2025-12-10 07:42:16,917 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 07:42:17,094 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 176.70ms
+2025-12-10 07:42:17,094 - api.routes - INFO - Prediction completed: 2 posts ranked in 182.19ms
+2025-12-10 07:43:38,095 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 07:43:38,349 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 254.60ms
+2025-12-10 07:43:38,350 - api.routes - INFO - Prediction completed: 2 posts ranked in 263.77ms
+2025-12-10 08:12:32,499 - inference - INFO - Using device: cpu
+2025-12-10 08:12:34,688 - inference - INFO - PhoBERT model loaded successfully
+2025-12-10 08:15:30,885 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-10 08:15:30,885 - services.prediction_service - INFO - Loading ML models...
+2025-12-10 08:15:35,711 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 08:15:36,608 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 896.92ms
+2025-12-10 08:15:36,608 - api.routes - INFO - Prediction completed: 2 posts ranked in 913.55ms

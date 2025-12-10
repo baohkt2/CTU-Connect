@@ -113,11 +113,11 @@ export const userService = {
     return response.data;
   },
 
-  // Get friend suggestions (old endpoint - deprecated)
-  async getFriendSuggestions(): Promise<PaginatedResponse<User>> {
-    const response = await api.get('/users/me/friend-suggestions');
-    return response.data;
-  },
+  // // Get friend suggestions (old endpoint - deprecated)
+  // async getFriendSuggestions(): Promise<PaginatedResponse<User>> {
+  //   const response = await api.get('/users/me/friend-suggestions');
+  //   return response.data;
+  // },
 
   // Get friend suggestions with filters (NEW - enhanced version)
   async searchFriendSuggestions(params?: {
@@ -138,17 +138,17 @@ export const userService = {
     return response.data;
   },
 
-  // Search user by email
-  async searchUserByEmail(email: string): Promise<User> {
-    const response = await api.get(`/users/search/email?email=${encodeURIComponent(email)}`);
-    return response.data;
-  },
+  // // Search user by email
+  // async searchUserByEmail(email: string): Promise<User> {
+  //   const response = await api.get(`/users/search/email?email=${encodeURIComponent(email)}`);
+  //   return response.data;
+  // },
 
-  // Get mutual friends with another user
-  async getMutualFriends(otherUserId: string): Promise<PaginatedResponse<User>> {
-    const response = await api.get(`/users/me/mutual-friends/${otherUserId}`);
-    return response.data;
-  },
+  // // Get mutual friends with another user
+  // async getMutualFriends(otherUserId: string): Promise<PaginatedResponse<User>> {
+  //   const response = await api.get(`/users/me/mutual-friends/${otherUserId}`);
+  //   return response.data;
+  // },
 
   // Send friend request
   async sendFriendRequest(friendId: string): Promise<ApiResponse<string>> {

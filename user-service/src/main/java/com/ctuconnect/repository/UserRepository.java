@@ -34,8 +34,8 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
     Optional<UserEntity> findUserWithRelationships(@Param("userId") String userId);
 
-    // Enhanced user search with relationship context
-    @Query(value = """
+    // Simple user search - returns UserEntity directly
+    @Query("""
     MATCH (u:User)
     WHERE u.isActive = true
     AND (
@@ -45,122 +45,38 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         toLower(u.studentId) CONTAINS toLower($searchTerm)
     )
     AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    OPTIONAL MATCH (u)-[:ENROLLED_IN]->(m:Major)
-    OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-    OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-    OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
-    OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-    OPTIONAL MATCH (currentUser:User {id: $currentUserId})
-    OPTIONAL MATCH (currentUser)-[:IS_FRIENDS_WITH]-(u)
-    OPTIONAL MATCH (currentUser)-[:SENT_FRIEND_REQUEST_TO]->(u)
-    OPTIONAL MATCH (u)-[:SENT_FRIEND_REQUEST_TO]->(currentUser)
-    OPTIONAL MATCH (currentUser)-[:IS_FRIENDS_WITH]-(mutual:User)-[:IS_FRIENDS_WITH]-(u)
-    WHERE currentUser.id <> u.id
-    RETURN u as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friend) as friendsCount,
-           count(DISTINCT mutual) as mutualFriendsCount,
-           CASE WHEN currentUser IS NULL THEN false ELSE EXISTS((currentUser)-[:IS_FRIENDS_WITH]-(u)) END as isFriend,
-           CASE WHEN currentUser IS NULL THEN false ELSE EXISTS((currentUser)-[:SENT_FRIEND_REQUEST_TO]->(u)) END as requestSent,
-           CASE WHEN currentUser IS NULL THEN false ELSE EXISTS((u)-[:SENT_FRIEND_REQUEST_TO]->(currentUser)) END as requestReceived
-    ORDER BY 
-        CASE WHEN currentUser IS NULL THEN 0 ELSE count(DISTINCT mutual) END DESC,
-        u.fullName ASC
-""",
-            countQuery = """
-    MATCH (u:User)
-    WHERE u.isActive = true
-    AND (
-        toLower(u.fullName) CONTAINS toLower($searchTerm) OR
-        toLower(u.username) CONTAINS toLower($searchTerm) OR
-        toLower(u.email) CONTAINS toLower($searchTerm) OR
-        toLower(u.studentId) CONTAINS toLower($searchTerm)
-    )
-    AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    RETURN count(u)
-""")
-    Page<UserSearchProjection> searchUsers(@Param("searchTerm") String searchTerm,
-                                           @Param("currentUserId") String currentUserId,
-                                           Pageable pageable);
+    RETURN u
+    ORDER BY u.fullName ASC
+    """)
+    List<UserEntity> searchUsers(@Param("searchTerm") String searchTerm,
+                                  @Param("currentUserId") String currentUserId);
 
-    // Find friends of a user
-    @Query(value = """
+    // Find friends of a user - returns UserEntity directly
+    @Query("""
     MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)
     WHERE friend.isActive = true
-    OPTIONAL MATCH (friend)-[:ENROLLED_IN]->(m:Major)
-    OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-    OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-    OPTIONAL MATCH (friend)-[:IN_BATCH]->(b:Batch)
-    OPTIONAL MATCH (friend)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (friend)-[:IS_FRIENDS_WITH]-(friendOfFriend:User)
-    RETURN friend as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friendOfFriend) as friendsCount
+    RETURN friend
     ORDER BY friend.fullName ASC
-""",
-            countQuery = """
-    MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)
-    WHERE friend.isActive = true
-    RETURN count(friend)
-""")
-    Page<UserSearchProjection> findFriends(@Param("userId") String userId, Pageable pageable);
+    """)
+    List<UserEntity> findFriends(@Param("userId") String userId);
 
-    // Find sent friend requests
+    // Find sent friend requests - returns UserEntity directly
     @Query("""
         MATCH (u:User {id: $userId})-[:SENT_FRIEND_REQUEST_TO]->(target:User)
         WHERE target.isActive = true
-        
-        OPTIONAL MATCH (target)-[:ENROLLED_IN]->(m:Major)
-        OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-        OPTIONAL MATCH (target)-[:IN_BATCH]->(b:Batch)
-        OPTIONAL MATCH (target)-[:HAS_GENDER]->(g:Gender)
-        OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(mutual:User)-[:IS_FRIENDS_WITH]-(target)
-        
-        RETURN target as user,
-               c.name as college,
-               f.name as faculty,
-               m.name as major,
-               b.year as batch,
-               g.name as gender,
-               count(DISTINCT mutual) as mutualFriendsCount,
-               'SENT' as requestType
+        RETURN target
         ORDER BY target.fullName ASC
         """)
-    List<FriendRequestProjection> findSentFriendRequests(@Param("userId") String userId);
+    List<UserEntity> findSentFriendRequests(@Param("userId") String userId);
 
-    // Find received friend requests
+    // Find received friend requests - returns UserEntity directly
     @Query("""
         MATCH (requester:User)-[:SENT_FRIEND_REQUEST_TO]->(u:User {id: $userId})
         WHERE requester.isActive = true
-        
-        OPTIONAL MATCH (requester)-[:ENROLLED_IN]->(m:Major)
-        OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-        OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-        OPTIONAL MATCH (requester)-[:IN_BATCH]->(b:Batch)
-        OPTIONAL MATCH (requester)-[:HAS_GENDER]->(g:Gender)
-        OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(mutual:User)-[:IS_FRIENDS_WITH]-(requester)
-        
-        RETURN requester as user,
-               c.name as college,
-               f.name as faculty,
-               m.name as major,
-               b.year as batch,
-               g.name as gender,
-               count(DISTINCT mutual) as mutualFriendsCount,
-               'RECEIVED' as requestType
+        RETURN requester
         ORDER BY requester.fullName ASC
         """)
-    List<FriendRequestProjection> findReceivedFriendRequests(@Param("userId") String userId);
+    List<UserEntity> findReceivedFriendRequests(@Param("userId") String userId);
 
     // Send friend request
     @Query("""
@@ -200,110 +116,56 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
     boolean removeFriend(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
-    // Find users by college
-    @Query(value = """
+    // Find users by college - returns UserEntity directly
+    @Query("""
     MATCH (u:User)-[:ENROLLED_IN]->(m:Major)-[:HAS_MAJOR]-(f:Faculty)-[:HAS_FACULTY]-(c:College {name: $collegeName})
     WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
-    OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-    RETURN u as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friend) as friendsCount
+    RETURN u
     ORDER BY u.fullName ASC
-""",
-            countQuery = """
-    MATCH (u:User)-[:ENROLLED_IN]->(m:Major)-[:HAS_MAJOR]-(f:Faculty)-[:HAS_FACULTY]-(c:College {name: $collegeName})
-    WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    RETURN count(u)
-""")
-    Page<UserSearchProjection> findUsersByCollege(@Param("collegeName") String collegeName,
-                                                  @Param("currentUserId") String currentUserId,
-                                                  Pageable pageable);
+    """)
+    List<UserEntity> findUsersByCollege(@Param("collegeName") String collegeName,
+                                        @Param("currentUserId") String currentUserId);
 
-    // Find users by faculty
-    @Query(value = """
+    // Find users by faculty - returns UserEntity directly
+    @Query("""
     MATCH (u:User)-[:ENROLLED_IN]->(m:Major)-[:HAS_MAJOR]-(f:Faculty {name: $facultyName})
     WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-    OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
-    OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-    RETURN u as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friend) as friendsCount
+    RETURN u
     ORDER BY u.fullName ASC
-""",
-            countQuery = """
+    """)
+    List<UserEntity> findUsersByFaculty(@Param("facultyName") String facultyName,
+                                        @Param("currentUserId") String currentUserId);
+
+    // Simple query to get users by faculty (returns UserEntity directly)
+    @Query("""
     MATCH (u:User)-[:ENROLLED_IN]->(m:Major)-[:HAS_MAJOR]-(f:Faculty {name: $facultyName})
-    WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    RETURN count(u)
-""")
-    Page<UserSearchProjection> findUsersByFaculty(@Param("facultyName") String facultyName,
-                                                  @Param("currentUserId") String currentUserId,
-                                                  Pageable pageable);
+    WHERE u.isActive = true AND u.id <> $currentUserId
+    RETURN u
+    ORDER BY u.fullName ASC
+    """)
+    List<UserEntity> findSimpleUsersByFaculty(@Param("facultyName") String facultyName,
+                                              @Param("currentUserId") String currentUserId,
+                                              Pageable pageable);
 
-    // Find users by major
-    @Query(value = """
+    // Find users by major - returns UserEntity directly
+    @Query("""
     MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $majorName})
     WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-    OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-    OPTIONAL MATCH (u)-[:IN_BATCH]->(b:Batch)
-    OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-    RETURN u as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friend) as friendsCount
+    RETURN u
     ORDER BY u.fullName ASC
-""",
-            countQuery = """
-    MATCH (u:User)-[:ENROLLED_IN]->(m:Major {name: $majorName})
-    WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    RETURN count(u)
-""")
-    Page<UserSearchProjection> findUsersByMajor(@Param("majorName") String majorName,
-                                                @Param("currentUserId") String currentUserId,
-                                                Pageable pageable);
+    """)
+    List<UserEntity> findUsersByMajor(@Param("majorName") String majorName,
+                                      @Param("currentUserId") String currentUserId);
 
-    // Find users by batch
-    @Query(value = """
+    // Find users by batch - returns UserEntity directly
+    @Query("""
     MATCH (u:User)-[:IN_BATCH]->(b:Batch {year: $batchYear})
     WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    OPTIONAL MATCH (u)-[:ENROLLED_IN]->(m:Major)
-    OPTIONAL MATCH (m)-[:HAS_MAJOR]-(f:Faculty)
-    OPTIONAL MATCH (f)-[:HAS_FACULTY]-(c:College)
-    OPTIONAL MATCH (u)-[:HAS_GENDER]->(g:Gender)
-    OPTIONAL MATCH (u)-[:IS_FRIENDS_WITH]-(friend:User)
-    RETURN u as user,
-           c.name as college,
-           f.name as faculty,
-           m.name as major,
-           b.year as batch,
-           g.name as gender,
-           count(DISTINCT friend) as friendsCount
+    RETURN u
     ORDER BY u.fullName ASC
-""",
-            countQuery = """
-    MATCH (u:User)-[:IN_BATCH]->(b:Batch {year: $batchYear})
-    WHERE u.isActive = true AND ($currentUserId IS NULL OR u.id <> $currentUserId)
-    RETURN count(u)
-""")
-    Page<UserSearchProjection> findUsersByBatch(@Param("batchYear") Integer batchYear,
-                                                @Param("currentUserId") String currentUserId,
-                                                Pageable pageable);
+    """)
+    List<UserEntity> findUsersByBatch(@Param("batchYear") Integer batchYear,
+                                      @Param("currentUserId") String currentUserId);
 
     // Friend suggestion query based on mutual friends
     @Query("""
@@ -391,52 +253,5 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         MERGE (u)-[:HAS_GENDER]->(g)
         """)
     void updateUserGender(@Param("userId") String userId, @Param("genderName") String genderName);
-
-    // Interface for projections
-    interface UserProfileProjection {
-        String getUserId();
-        String getEmail();
-        String getUsername();
-        String getStudentId();
-        String getFullName();
-        String getBio();
-        String getRole();
-        Boolean getIsActive();
-        java.time.LocalDateTime getCreatedAt();
-        java.time.LocalDateTime getUpdatedAt();
-        String getCollege();
-        String getFaculty();
-        String getMajor();
-        String getBatch();
-        String getGender();
-        Long getFriendsCount();
-        Long getSentRequestsCount();
-        Long getReceivedRequestsCount();
-    }
-
-    interface UserSearchProjection {
-        UserEntity getUser();
-        String getCollege();
-        String getFaculty();
-        String getMajor();
-        String getBatch();
-        String getGender();
-        Long getFriendsCount();
-        Long getMutualFriendsCount();
-        Boolean getIsFriend();
-        Boolean getRequestSent();
-        Boolean getRequestReceived();
-    }
-
-    interface FriendRequestProjection {
-        UserEntity getUser();
-        String getCollege();
-        String getFaculty();
-        String getMajor();
-        Integer getBatch();
-        String getGender();
-        Long getMutualFriendsCount();
-        String getRequestType();
-    }
 }
 
