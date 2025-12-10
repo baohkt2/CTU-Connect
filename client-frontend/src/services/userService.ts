@@ -168,6 +168,12 @@ export const userService = {
     return response.data;
   },
 
+  // Cancel friend request (that you sent)
+  async cancelFriendRequest(friendId: string): Promise<ApiResponse<string>> {
+    const response = await api.post(`/users/me/reject-invite/${friendId}`);
+    return response.data;
+  },
+
   // Remove friend
   async removeFriend(friendId: string): Promise<ApiResponse<string>> {
     const response = await api.delete(`/users/me/friends/${friendId}`);

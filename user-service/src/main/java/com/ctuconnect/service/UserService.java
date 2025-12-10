@@ -403,6 +403,34 @@ public class UserService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Get all friend requests (both sent and received) for a user
+     * This combines both sent and received requests in a single list
+     */
+    @Transactional(readOnly = true)
+    public List<FriendRequestDTO> getAllFriendRequests(@NotBlank String userId) {
+        log.info("Getting all friend requests (sent + received) for userId: {}", userId);
+
+        List<FriendRequestDTO> allRequests = new ArrayList<>();
+        
+        // Get sent requests
+        var sentRequests = userRepository.findSentFriendRequests(userId);
+        allRequests.addAll(sentRequests.stream()
+            .map(user -> userMapper.toFriendRequestDTO(user, "SENT"))
+            .collect(Collectors.toList()));
+        
+        // Get received requests
+        var receivedRequests = userRepository.findReceivedFriendRequests(userId);
+        allRequests.addAll(receivedRequests.stream()
+            .map(user -> userMapper.toFriendRequestDTO(user, "RECEIVED"))
+            .collect(Collectors.toList()));
+        
+        log.info("Found {} total friend requests ({} sent, {} received)", 
+                allRequests.size(), sentRequests.size(), receivedRequests.size());
+        
+        return allRequests;
+    }
+
     public void sendFriendRequest(@NotBlank String senderId, @NotBlank String receiverId) {
         log.info("Sending friend request from userId: {} to userId: {}", senderId, receiverId);
 
@@ -807,45 +835,55 @@ public class UserService {
                  currentUserId, query, college, faculty, batch, limit);
         
         try {
-            log.debug("Step 1: Verifying user exists");
             // Verify user exists
             var currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + currentUserId));
             
-            log.debug("Step 2: User found, building search criteria");
-            
             List<UserEntity> results;
             
-            // Build search based on available filters
-            if (query != null && !query.trim().isEmpty()) {
-                log.debug("Step 3a: Searching by query: {}", query);
+            // Check which filters are provided
+            boolean hasQuery = query != null && !query.trim().isEmpty();
+            boolean hasFaculty = faculty != null && !faculty.isEmpty();
+            boolean hasBatch = batch != null && !batch.isEmpty();
+            boolean hasCollege = college != null && !college.isEmpty();
+            
+            // If ALL filters are null -> return random users
+            if (!hasQuery && !hasFaculty && !hasBatch && !hasCollege) {
+                log.debug("No filters provided, getting random users");
+                results = userRepository.findRandomUsers(currentUserId, limit);
+                log.debug("Found {} random users", results.size());
+            }
+            // If query provided -> search by query
+            else if (hasQuery) {
+                log.debug("Searching by query: {}", query);
                 results = userRepository.searchUsers(query.trim(), currentUserId);
-                log.debug("Step 3a: Found {} results", results.size());
-            } else if (faculty != null && !faculty.isEmpty()) {
-                log.debug("Step 3b: Filtering by faculty: {}", faculty);
+                log.debug("Found {} results", results.size());
+            }
+            // If faculty provided -> filter by faculty
+            else if (hasFaculty) {
+                log.debug("Filtering by faculty: {}", faculty);
                 results = userRepository.findUsersByFaculty(faculty, currentUserId);
-                log.debug("Step 3b: Found {} results", results.size());
-            } else if (batch != null && !batch.isEmpty()) {
-                log.debug("Step 3c: Filtering by batch: {}", batch);
+                log.debug("Found {} results", results.size());
+            }
+            // If batch provided -> filter by batch
+            else if (hasBatch) {
+                log.debug("Filtering by batch: {}", batch);
                 try {
                     Integer batchYear = Integer.parseInt(batch);
                     results = userRepository.findUsersByBatch(batchYear, currentUserId);
-                    log.debug("Step 3c: Found {} results", results.size());
+                    log.debug("Found {} results", results.size());
                 } catch (NumberFormatException e) {
                     log.warn("Invalid batch year: {}", batch);
                     results = new ArrayList<>();
                 }
-            } else if (college != null && !college.isEmpty()) {
-                log.debug("Step 3d: Filtering by college: {}", college);
+            }
+            // If college provided -> filter by college
+            else {
+                log.debug("Filtering by college: {}", college);
                 results = userRepository.findUsersByCollege(college, currentUserId);
-                log.debug("Step 3d: Found {} results", results.size());
-            } else {
-                log.debug("Step 3e: No filters provided, getting friend suggestions");
-                results = userRepository.findFriendSuggestions(currentUserId);
-                log.debug("Step 3e: Found {} results", results.size());
+                log.debug("Found {} results", results.size());
             }
             
-            log.debug("Step 4: Converting results to DTOs and filtering");
             // Convert to DTOs and limit results
             List<UserSearchDTO> filtered = results.stream()
                 .limit(limit)

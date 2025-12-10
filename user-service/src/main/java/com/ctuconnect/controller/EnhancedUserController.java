@@ -218,8 +218,9 @@ public class EnhancedUserController {
     }
 
     /**
-     * Get received friend requests
+     * Get RECEIVED friend requests ONLY
      * Frontend expects: GET /api/users/me/friend-requests
+     * Returns only requests that OTHER users sent TO current user
      */
     @GetMapping("/me/friend-requests")
     @RequireAuth
@@ -229,14 +230,15 @@ public class EnhancedUserController {
             throw new SecurityException("No authenticated user found");
         }
 
-        log.info("GET /me/friend-requests - Getting received requests for user: {}", currentUser.getEmail());
+        log.info("GET /me/friend-requests - Getting RECEIVED requests for user: {}", currentUser.getEmail());
         List<FriendRequestDTO> receivedRequests = userService.getReceivedFriendRequests(currentUser.getId());
         return ResponseEntity.ok(receivedRequests);
     }
 
     /**
-     * Get sent friend requests
-     * Frontend expects: GET /api/users/me/friend-requested
+     * Get SENT friend requests ONLY
+     * Frontend expects: GET /api/users/me/friend-requested  
+     * Returns only requests that current user sent TO other users
      */
     @GetMapping("/me/friend-requested")
     @RequireAuth
@@ -246,9 +248,27 @@ public class EnhancedUserController {
             throw new SecurityException("No authenticated user found");
         }
 
-        log.info("GET /me/friend-requested - Getting sent requests for user: {}", currentUser.getEmail());
+        log.info("GET /me/friend-requested - Getting SENT requests for user: {}", currentUser.getEmail());
         List<FriendRequestDTO> sentRequests = userService.getSentFriendRequests(currentUser.getId());
         return ResponseEntity.ok(sentRequests);
+    }
+
+    /**
+     * Get ALL friend requests (both sent and received) - Optional endpoint
+     * Frontend can use: GET /api/users/me/friend-requests/all
+     * Returns combined list with requestType to distinguish
+     */
+    @GetMapping("/me/friend-requests/all")
+    @RequireAuth
+    public ResponseEntity<List<FriendRequestDTO>> getAllMyFriendRequests() {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("GET /me/friend-requests/all - Getting ALL requests for user: {}", currentUser.getEmail());
+        List<FriendRequestDTO> allRequests = userService.getAllFriendRequests(currentUser.getId());
+        return ResponseEntity.ok(allRequests);
     }
 
     /**

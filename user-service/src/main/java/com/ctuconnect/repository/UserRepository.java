@@ -90,12 +90,13 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
     boolean sendFriendRequest(@Param("senderId") String senderId, @Param("receiverId") String receiverId);
 
-    // Accept friend request
+    // Accept friend request - Fix: Neo4j requires directed relationships in CREATE
     @Query("""
         MATCH (requester:User {id: $requesterId})-[r:SENT_FRIEND_REQUEST_TO]->(accepter:User {id: $accepterId})
         WHERE requester.isActive = true AND accepter.isActive = true
         DELETE r
-        CREATE (requester)-[:IS_FRIENDS_WITH]-(accepter)
+        CREATE (requester)-[:IS_FRIENDS_WITH]->(accepter)
+        CREATE (accepter)-[:IS_FRIENDS_WITH]->(requester)
         RETURN count(*) > 0 as success
         """)
     boolean acceptFriendRequest(@Param("requesterId") String requesterId, @Param("accepterId") String accepterId);
@@ -166,6 +167,22 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     """)
     List<UserEntity> findUsersByBatch(@Param("batchYear") Integer batchYear,
                                       @Param("currentUserId") String currentUserId);
+
+    // Get random active users (for when no filters provided)
+    @Query("""
+        MATCH (currentUser:User {id: $currentUserId})
+        MATCH (u:User)
+        WHERE u.isActive = true 
+        AND u.id <> currentUser.id
+        AND NOT (currentUser)-[:IS_FRIENDS_WITH]-(u)
+        AND NOT (currentUser)-[:SENT_FRIEND_REQUEST_TO]->(u)
+        AND NOT (u)-[:SENT_FRIEND_REQUEST_TO]->(currentUser)
+        RETURN u
+        ORDER BY rand()
+        LIMIT $limit
+        """)
+    List<UserEntity> findRandomUsers(@Param("currentUserId") String currentUserId, 
+                                     @Param("limit") int limit);
 
     // Friend suggestion query based on mutual friends
     @Query("""
