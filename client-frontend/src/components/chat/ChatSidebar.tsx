@@ -179,10 +179,10 @@ export default function ChatSidebar({
   }
 
   return (
-    <div className="w-96 border-r border-gray-200 flex flex-col bg-white shadow-sm">
+    <div className="w-full sm:w-80 md:w-96 border-r border-gray-200 flex flex-col bg-white shadow-sm">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Tin nhắn</h2>
+      <div className="p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Tin nhắn</h2>
         {/* Search */}
         <div className="relative">
           <input
@@ -190,10 +190,10 @@ export default function ChatSidebar({
             placeholder="Tìm kiếm cuộc trò chuyện..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
+            className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
           />
           <svg
-            className="absolute left-3 top-3 h-5 w-5 text-gray-400"
+            className="absolute left-3 top-2 sm:top-3 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -211,17 +211,17 @@ export default function ChatSidebar({
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
         {creatingConversation && (
-          <div className="flex items-center justify-center py-4 bg-blue-50">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-2"></div>
-            <span className="text-sm text-blue-600">Đang tạo cuộc trò chuyện...</span>
+          <div className="flex items-center justify-center py-3 sm:py-4 bg-blue-50">
+            <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-blue-600 mr-2"></div>
+            <span className="text-xs sm:text-sm text-blue-600">Đang tạo cuộc trò chuyện...</span>
           </div>
         )}
         
         {filteredConversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 p-6">
-            <div className="bg-gray-100 rounded-full p-6 mb-4">
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 p-4 sm:p-6">
+            <div className="bg-gray-100 rounded-full p-4 sm:p-6 mb-3 sm:mb-4">
               <svg
-                className="h-16 w-16 text-gray-400"
+                className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -234,10 +234,10 @@ export default function ChatSidebar({
                 />
               </svg>
             </div>
-            <p className="text-center text-lg font-medium text-gray-600 mb-1">
+            <p className="text-center text-base sm:text-lg font-medium text-gray-600 mb-1">
               Chưa có cuộc trò chuyện nào
             </p>
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-xs sm:text-sm text-gray-500">
               Bắt đầu trò chuyện với bạn bè của bạn
             </p>
           </div>
@@ -283,15 +283,15 @@ const ConversationItem = React.memo(({
   return (
     <div
       onClick={onSelect}
-      className={`flex items-center p-4 cursor-pointer transition-all duration-150 ${
+      className={`flex items-center p-3 sm:p-4 cursor-pointer transition-all duration-150 ${
         isSelected 
           ? 'bg-blue-50 border-l-4 border-blue-600' 
           : 'hover:bg-gray-50 border-l-4 border-transparent'
       }`}
     >
       {/* Avatar */}
-      <div className="relative mr-3 flex-shrink-0">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center overflow-hidden shadow-md">
+      <div className="relative mr-2 sm:mr-3 flex-shrink-0">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center overflow-hidden shadow-md">
           {conversationAvatar ? (
             <img
               src={conversationAvatar}
@@ -299,7 +299,7 @@ const ConversationItem = React.memo(({
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-white text-xl font-bold">
+            <span className="text-white text-lg sm:text-xl font-bold">
               {conversationName.charAt(0).toUpperCase()}
             </span>
           )}
@@ -307,14 +307,14 @@ const ConversationItem = React.memo(({
         {/* Online status for direct chats */}
         {conversation.type === 'DIRECT' &&
           conversation.participants[0]?.isOnline && (
-            <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 border-2 border-white rounded-full"></div>
           )}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-semibold text-gray-900 truncate text-base">
+          <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
             {conversationName}
           </h3>
           <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
@@ -322,7 +322,7 @@ const ConversationItem = React.memo(({
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <p className={`text-sm truncate ${
+          <p className={`text-xs sm:text-sm truncate ${
             conversation.unreadCount && conversation.unreadCount > 0
               ? 'text-gray-900 font-medium'
               : 'text-gray-600'
@@ -330,7 +330,7 @@ const ConversationItem = React.memo(({
             {conversation.lastMessage?.content || 'Bắt đầu cuộc trò chuyện'}
           </p>
           {conversation.unreadCount && conversation.unreadCount > 0 && (
-            <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full font-semibold flex-shrink-0">
+            <span className="ml-2 px-1.5 sm:px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full font-semibold flex-shrink-0">
               {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
             </span>
           )}

@@ -86,50 +86,50 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId 
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center space-x-3">
-          <h1 className="text-xl font-semibold text-gray-900">Messages</h1>
+      <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Messages</h1>
           {!isConnected && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
               Disconnected
             </span>
           )}
           {isConnected && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Connected
             </span>
           )}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <button
             onClick={() => setShowNewConversationModal(true)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
             title="New conversation"
           >
-            <PlusIcon className="h-5 w-5" />
+            <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
           >
-            <XMarkIcon className="h-5 w-5" />
+            <XMarkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="bg-red-50 border-l-4 border-red-400 p-3 sm:p-4">
           <div className="flex">
             <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-xs sm:text-sm text-red-700">{error}</p>
             </div>
             <div className="ml-auto pl-3">
               <button
                 onClick={clearError}
                 className="text-red-400 hover:text-red-600"
               >
-                <XMarkIcon className="h-5 w-5" />
+                <XMarkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
           </div>
@@ -138,9 +138,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId 
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex items-center justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-          <span className="ml-2 text-gray-600">Loading...</span>
+        <div className="flex items-center justify-center p-6 sm:p-8">
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600"></div>
+          <span className="ml-2 text-sm sm:text-base text-gray-600">Loading...</span>
         </div>
       )}
 
@@ -174,10 +174,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, currentUserId 
                 onBack={isMobile ? handleBackToConversations : undefined}
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center bg-gray-50">
+              <div className="flex-1 flex items-center justify-center bg-gray-50 p-4">
                 <div className="text-center">
-                  <div className="text-gray-400 text-lg mb-2">💬</div>
-                  <p className="text-gray-500">Select a conversation to start messaging</p>
+                  <div className="text-gray-400 text-3xl sm:text-4xl mb-2">💬</div>
+                  <p className="text-sm sm:text-base text-gray-500">Select a conversation to start messaging</p>
                 </div>
               </div>
             )}

@@ -148,25 +148,25 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   };
 
   return (
-    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-xs lg:max-w-md ${isOwnMessage ? 'order-2' : 'order-1'}`}>
+    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} px-2 sm:px-0`}>
+      <div className={`max-w-[85%] sm:max-w-xs lg:max-w-md ${isOwnMessage ? 'order-2' : 'order-1'}`}>
         {/* Sender Info */}
         {showSenderInfo && !isOwnMessage && (
-          <div className="flex items-center space-x-2 mb-1">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 mb-1">
             {message.senderAvatar ? (
               <img
                 src={message.senderAvatar}
                 alt={message.senderName}
-                className="w-6 h-6 rounded-full"
+                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full"
               />
             ) : (
-              <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-300 flex items-center justify-center">
                 <span className="text-xs font-medium text-gray-600">
                   {message.senderName.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-xs sm:text-sm font-medium text-gray-700">
               {message.senderName}
             </span>
           </div>
@@ -175,12 +175,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Message Container */}
         <div
           className="relative group"
-          onMouseEnter={() => setShowActions(true)}
-          onMouseLeave={() => setShowActions(false)}
+          onMouseEnter={() => !isMobile && setShowActions(true)}
+          onMouseLeave={() => !isMobile && setShowActions(false)}
         >
           {/* Message Bubble */}
           <div
-            className={`relative px-4 py-2 rounded-2xl ${
+            className={`relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl ${
               isOwnMessage
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-900'
@@ -192,10 +192,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             {/* Message Content */}
             <div className="break-words">
               {message.isDeleted ? (
-                <span className="text-sm">Tin nhắn đã được xóa</span>
+                <span className="text-xs sm:text-sm">Tin nhắn đã được xóa</span>
               ) : (
                 <>
-                  <p className="text-sm">{message.content}</p>
+                  <p className="text-xs sm:text-sm">{message.content}</p>
                   {message.isEdited && (
                     <span className="text-xs opacity-75 ml-2">(đã chỉnh sửa)</span>
                   )}
@@ -221,8 +221,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           {/* Reactions */}
           {renderReactions()}
 
-          {/* Action Buttons */}
-          {showActions && !message.isDeleted && (
+          {/* Action Buttons - Desktop only */}
+          {!isMobile && showActions && !message.isDeleted && (
             <div
               className={`absolute top-0 ${
                 isOwnMessage ? 'left-0 -translate-x-full' : 'right-0 translate-x-full'

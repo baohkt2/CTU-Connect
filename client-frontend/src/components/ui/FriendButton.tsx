@@ -125,16 +125,17 @@ export const FriendButton: React.FC<FriendButtonProps> = ({
   };
 
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-2.5 text-base'
+    sm: 'px-2 sm:px-3 py-1 sm:py-1.5 text-xs',
+    md: 'px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm',
+    lg: 'px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base'
   };
 
   const baseClasses = `
     ${sizeClasses[size]}
     font-medium rounded-lg transition-all duration-200
-    flex items-center justify-center space-x-2
+    flex items-center justify-center space-x-1 sm:space-x-2
     disabled:opacity-50 disabled:cursor-not-allowed
+    whitespace-nowrap
     ${className}
   `;
 
@@ -166,13 +167,13 @@ export const FriendButton: React.FC<FriendButtonProps> = ({
 
   if (status === 'received') {
     return (
-      <div className="flex space-x-2">
+      <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-2 w-full sm:w-auto">
         <button
           onClick={handleAcceptRequest}
           disabled={loading}
           className={`${baseClasses} bg-blue-500 text-white hover:bg-blue-600`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>Chấp nhận</span>
         </button>
         <button
@@ -180,7 +181,7 @@ export const FriendButton: React.FC<FriendButtonProps> = ({
           disabled={loading}
           className={`${baseClasses} bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-300`}
         >
-          <X className="w-4 h-4" />
+          <X className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>Từ chối</span>
         </button>
       </div>

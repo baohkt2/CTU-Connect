@@ -130,16 +130,16 @@ const MessageInput: React.FC<MessageInputProps> = ({
   const popularEmojis = ['😀', '😂', '❤️', '👍', '👎', '😮', '😢', '😡', '🎉', '🔥'];
 
   return (
-    <div className="p-4 border-t bg-white">
+    <div className="p-3 sm:p-4 border-t bg-white">
       {/* Emoji Picker */}
       {showEmojiPicker && (
-        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="grid grid-cols-10 gap-2">
+        <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-10 gap-1 sm:gap-2">
             {popularEmojis.map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => handleEmojiSelect(emoji)}
-                className="p-2 hover:bg-gray-200 rounded text-lg transition-colors"
+                className="p-1 sm:p-2 hover:bg-gray-200 rounded text-base sm:text-lg transition-colors"
               >
                 {emoji}
               </button>
@@ -152,41 +152,41 @@ const MessageInput: React.FC<MessageInputProps> = ({
       )}
 
       {/* Input Area */}
-      <div className="flex items-end space-x-2">
+      <div className="flex items-end space-x-1 sm:space-x-2">
         {/* Action Buttons - Left Side */}
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-0.5 sm:space-x-1">
           {/* Image Upload */}
           <button
             onClick={() => imageInputRef.current?.click()}
             disabled={disabled}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 sm:p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Gửi hình ảnh"
           >
-            <PhotoIcon className="h-5 w-5" />
+            <PhotoIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
 
           {/* File Upload */}
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 sm:p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Gửi file"
           >
-            <PaperClipIcon className="h-5 w-5" />
+            <PaperClipIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
 
           {/* Emoji Picker Toggle */}
           <button
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             disabled={disabled}
-            className={`p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`p-1.5 sm:p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               showEmojiPicker 
                 ? 'text-blue-600 bg-blue-50' 
                 : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50'
             }`}
             title="Emoji"
           >
-            <FaceSmileIcon className="h-5 w-5" />
+            <FaceSmileIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
 
@@ -200,8 +200,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full px-4 py-2 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ minHeight: '40px' }}
+            className="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ minHeight: '36px' }}
           />
 
           {/* Character Limit Indicator */}
@@ -218,10 +218,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
             <button
               onClick={handleSendMessage}
               disabled={disabled || !message.trim()}
-              className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 sm:p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Gửi tin nhắn"
             >
-              <PaperAirplaneIcon className="h-5 w-5" />
+              <PaperAirplaneIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           ) : (
             <button
@@ -229,14 +229,14 @@ const MessageInput: React.FC<MessageInputProps> = ({
               onMouseUp={() => setIsRecording(false)}
               onMouseLeave={() => setIsRecording(false)}
               disabled={disabled}
-              className={`p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`p-1.5 sm:p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 isRecording 
                   ? 'bg-red-600 text-white' 
                   : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
               }`}
               title="Ghi âm tin nhắn"
             >
-              <MicrophoneIcon className="h-5 w-5" />
+              <MicrophoneIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           )}
         </div>
@@ -246,7 +246,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
       {isRecording && (
         <div className="mt-2 flex items-center justify-center space-x-2 text-red-600">
           <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-          <span className="text-sm">Đang ghi âm... Thả để gửi</span>
+          <span className="text-xs sm:text-sm">Đang ghi âm... Thả để gửi</span>
         </div>
       )}
 
