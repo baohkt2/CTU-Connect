@@ -47,8 +47,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({
         totalElements: response.totalElements
       });
     } catch (err) {
-      setError('Failed to load friends');
-      toast.error('Failed to load friends');
+      setError('Không thể tải danh sách bạn bè');
+      toast.error('Không thể tải danh sách bạn bè');
       console.error('Error loading friends:', err);
     } finally {
       setLoading(false);
@@ -59,9 +59,9 @@ export const FriendsList: React.FC<FriendsListProps> = ({
     try {
       await userService.removeFriend(friendId);
       setFriends(prev => prev.filter(friend => friend.id !== friendId));
-      toast.success('Friend removed successfully');
+      toast.success('Đã hủy kết bạn');
     } catch (err) {
-      toast.error('Failed to remove friend');
+      toast.error('Không thể hủy kết bạn');
       console.error('Error removing friend:', err);
     }
   };
@@ -86,7 +86,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
           onClick={loadFriends}
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Try Again
+          Thử lại
         </button>
       </div>
     );
@@ -95,7 +95,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   if (friends.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">No friends yet</p>
+        <p className="text-gray-500">Chưa có bạn bè</p>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">
-        Friends ({pagination.totalElements})
+        Bạn bè ({pagination.totalElements})
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {friends.map((friend) => (
@@ -147,13 +147,13 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                     onClick={() => handleViewProfile(friend.id)}
                     className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
                   >
-                    View Profile
+                    Xem hồ sơ
                   </button>
                   <button
                     onClick={() => handleRemoveFriend(friend.id)}
                     className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
                   >
-                    Unfriend
+                    Xóa kết bạn
                   </button>
                 </div>
               )}

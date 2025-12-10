@@ -14313,3 +14313,293 @@ Caused by: io.lettuce.core.RedisCommandTimeoutException: Command timed out after
 2025-12-10 12:48:48 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
 2025-12-10 12:48:48 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
 2025-12-10 12:48:48 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:49:17 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-10 12:49:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:49:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:49:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:49:18 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:49:18 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:49:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:49:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:49:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:49:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:49:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:49:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:49:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:49:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:49:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:50:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:50:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:50:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:50:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:50:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:50:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:50:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:50:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:50:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:50:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:50:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:50:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:50:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:50:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:51:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:51:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:51:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:51:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:51:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:51:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:51:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:51:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:51:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:51:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:51:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:51:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:51:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:51:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:52:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:52:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:52:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:52:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:52:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:52:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:52:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:52:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:52:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:52:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:52:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:52:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:52:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:52:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:53:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:53:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:53:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:53:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:53:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:53:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:53:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:53:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:53:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:53:48 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:53:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:53:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:53:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:53:49 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.client.UserServiceClient - Fetching academic profile for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG o.s.w.r.f.client.ExchangeFunctions - [1048008a] HTTP GET http://user-service/api/users/31ba8a23-8a4e-4b24-99c2-0d768e617e71/academic-profile
+2025-12-10 12:53:53 [reactor-http-nio-1] WARN  v.c.e.r.client.UserServiceClient - Failed to fetch user profile: Failed to resolve 'user-service' [A(1)] after 2 queries 
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.s.HybridRecommendationService - User profile: major=unknown, faculty=unknown
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        uf 
+    FROM
+        UserFeedback uf 
+    WHERE
+        uf.userId = :userId 
+        AND uf.timestamp >= :since */ select
+            uf1_0.id,
+            uf1_0.context,
+            uf1_0.feedback_type,
+            uf1_0.feedback_value,
+            uf1_0.post_id,
+            uf1_0.session_id,
+            uf1_0.timestamp,
+            uf1_0.user_id 
+        from
+            user_feedback uf1_0 
+        where
+            uf1_0.user_id=? 
+            and uf1_0.timestamp>=?
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.s.HybridRecommendationService - User has 4 interactions in last 30 days
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.createdAt >= :since 
+    ORDER BY
+        pe.popularityScore DESC */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.content_similarity_score,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.graph_relation_score,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.created_at>=? 
+        order by
+            pe1_0.popularity_score desc
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.s.HybridRecommendationService - Found 2 candidate posts
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 🔍 Python service enabled: true
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Calling Python model service...
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.s.HybridRecommendationService - 📋 Request: 2 candidate posts, 4 user history
+2025-12-10 12:53:53 [http-nio-8095-exec-6] INFO  v.c.e.r.c.PythonModelServiceClient - 🚀 Calling Python model service for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.PythonModelServiceClient -    User academic: major=unknown, faculty=unknown
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.PythonModelServiceClient -    User history size: 4
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.PythonModelServiceClient -    Candidate posts: 2
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.PythonModelServiceClient -    TopK requested: 20
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG v.c.e.r.c.PythonModelServiceClient -    Sample post: id=6937fcf6e50c0d59bf337f74, contentLength=29, likes=0, comments=0, shares=0
+2025-12-10 12:53:53 [http-nio-8095-exec-6] DEBUG o.s.w.r.f.client.ExchangeFunctions - [127be8dc] HTTP POST http://localhost:8000/api/model/predict
+2025-12-10 12:53:53 [reactor-http-nio-13] DEBUG org.springframework.web.HttpLogging - [127be8dc] Encoding [PythonModelRequest(userAcademic=UserAcademicProfile(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, maj (truncated)...]
+2025-12-10 12:53:54 [reactor-http-nio-13] DEBUG o.s.w.r.f.client.ExchangeFunctions - [127be8dc] [2c73dab0-1] Response 200 OK
+2025-12-10 12:53:54 [reactor-http-nio-13] DEBUG org.springframework.web.HttpLogging - [127be8dc] [2c73dab0-1] Decoded [PythonModelResponse(rankedPosts=[PythonModelResponse.RankedPost(postId=6937fcf6e50c0d59bf337f74, sco (truncated)...]
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.PythonModelServiceClient - ✅ Received 2 ranked posts from Python service
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Python model returned 2 ranked posts
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 📊 PYTHON MODEL RANKINGS (Top 5):
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937fcf6e50c0d59bf337f74 | ML Score: 0.4411 | Category: N/A
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | ML Score: 0.4026 | Category: N/A
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 📦 AFTER PYTHON/FALLBACK (before business rules):
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 2 posts
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937fcf6e50c0d59bf337f74 | Score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-6] ERROR v.c.e.r.s.HybridRecommendationService - Error fetching friends for 31ba8a23-8a4e-4b24-99c2-0d768e617e71: Cannot invoke "org.springframework.transaction.support.TransactionTemplate.execute(org.springframework.transaction.support.TransactionCallback)" because "this.this$0.transactionTemplate" is null
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - ⚖️  AFTER BUSINESS RULES:
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 2 posts
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937fcf6e50c0d59bf337f74 | Adjusted Score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Adjusted Score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService - 🎯 FINAL RECOMMENDATIONS (before caching):
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 2 posts
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    Top 5 Posts:
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937fcf6e50c0d59bf337f74 | Score: 0.4411 | Category: N/A
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6937b6b1b68143159ae33783 | Score: 0.4026 | Category: N/A
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG v.c.e.r.r.redis.RedisCacheService - Cached recommendations for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Total Items: 2
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937fcf6e50c0d59bf337f74 -> score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    [ 2] 6937b6b1b68143159ae33783 -> score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.4219
+2025-12-10 12:53:54 [http-nio-8095-exec-6] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-10 12:53:54 [http-nio-8095-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71&page=0&size=10", parameters={masked}
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer)
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71, size: 10
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.s.HybridRecommendationService - Returning cached feed for user: 31ba8a23-8a4e-4b24-99c2-0d768e617e71 (2 posts)
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Total Items: 2
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    User ID: 31ba8a23-8a4e-4b24-99c2-0d768e617e71
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    [ 1] 6937fcf6e50c0d59bf337f74 -> score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    [ 2] 6937b6b1b68143159ae33783 -> score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.4411
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.4026
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.4219
+2025-12-10 12:53:54 [http-nio-8095-exec-8] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=31ba8a23-8a4e-4b24-99c2-0d768e617e71, recommendations=[RecommendationR (truncated)...]
+2025-12-10 12:53:54 [http-nio-8095-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-10 12:54:17 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-10 12:54:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:040d792a3b5605d4d5e3c78d849a28ae?status=UP&lastDirtyTimestamp=1765342757610
+2025-12-10 12:54:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:54:18 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:54:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-10 12:54:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-10 12:54:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-10 12:54:19 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -91,9 +92,9 @@ export const FriendSuggestions: React.FC = () => {
       const response = await userService.searchFriendSuggestions(params);
       setSuggestions(response || []);
     } catch (err: any) {
-      setError('Failed to load friend suggestions');
+      setError('Không thể tải gợi ý kết bạn');
       console.error('Error loading friend suggestions:', err);
-      toast.error('Failed to load suggestions');
+      toast.error('Không thể tải gợi ý kết bạn');
     } finally {
       setLoading(false);
     }
@@ -114,9 +115,9 @@ export const FriendSuggestions: React.FC = () => {
       setSendingRequest(userId);
       await userService.sendFriendRequest(userId);
       setSuggestions(prev => prev.filter(user => user.id !== userId));
-      toast.success('Friend request sent');
+      toast.success('Đã gửi lời mời kết bạn');
     } catch (err) {
-      toast.error('Failed to send friend request');
+      toast.error('Không thể gửi lời mời kết bạn');
       console.error('Error sending friend request:', err);
     } finally {
       setSendingRequest(null);
@@ -125,9 +126,9 @@ export const FriendSuggestions: React.FC = () => {
 
   const getConnectionBadges = (suggestion: any) => {
     const badges: string[] = [];
-    if (suggestion.sameCollege) badges.push('Same College');
-    if (suggestion.sameFaculty) badges.push('Same Faculty');
-    if (suggestion.sameBatch) badges.push('Same Batch');
+    if (suggestion.sameCollege) badges.push('Cùng trường');
+    if (suggestion.sameFaculty) badges.push('Cùng khoa');
+    if (suggestion.sameBatch) badges.push('Cùng khóa');
     return badges;
   };
 
@@ -149,7 +150,7 @@ export const FriendSuggestions: React.FC = () => {
           onClick={loadSuggestions}
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Try Again
+          Thử lại
         </button>
       </div>
     );
@@ -160,14 +161,14 @@ export const FriendSuggestions: React.FC = () => {
       {/* Header with Title */}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
-          {hasActiveFilters ? 'Search Results' : 'People You May Know'}
+          {hasActiveFilters ? 'Kết quả tìm kiếm' : 'Những người bạn có thể biết'}
         </h3>
         <button
           onClick={() => setShowFilters(!showFilters)}
           className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
         >
           <Filter className="w-4 h-4" />
-          {showFilters ? 'Hide Filters' : 'Show Filters'}
+          {showFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
         </button>
       </div>
 
@@ -190,7 +191,7 @@ export const FriendSuggestions: React.FC = () => {
             onClick={handleSearch}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
-            Search
+            Tìm kiếm
           </button>
           {hasActiveFilters && (
             <button
@@ -198,7 +199,7 @@ export const FriendSuggestions: React.FC = () => {
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
             >
               <X className="w-4 h-4" />
-              Clear
+              Xóa
             </button>
           )}
         </div>
@@ -208,7 +209,7 @@ export const FriendSuggestions: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Faculty
+                Khoa
               </label>
               <select
                 value={filters.faculty}
@@ -216,7 +217,7 @@ export const FriendSuggestions: React.FC = () => {
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loadingCategories}
               >
-                <option value="">All Faculties</option>
+                <option value="">Tất cả khoa</option>
                 {faculties.map((faculty: any) => (
                   <option key={faculty.code} value={faculty.name}>
                     {faculty.name}
@@ -224,13 +225,13 @@ export const FriendSuggestions: React.FC = () => {
                 ))}
               </select>
               {loadingCategories && (
-                <p className="text-xs text-gray-500 mt-1">Loading faculties...</p>
+                <p className="text-xs text-gray-500 mt-1">Đang tải khoa...</p>
               )}
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Batch (Year)
+                Khóa học
               </label>
               <select
                 value={filters.batch}
@@ -238,7 +239,7 @@ export const FriendSuggestions: React.FC = () => {
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loadingCategories}
               >
-                <option value="">All Batches</option>
+                <option value="">Tất cả khóa</option>
                 {batches.map((batch: any) => (
                   <option key={batch.year} value={batch.year}>
                     {batch.year}
@@ -246,13 +247,13 @@ export const FriendSuggestions: React.FC = () => {
                 ))}
               </select>
               {loadingCategories && (
-                <p className="text-xs text-gray-500 mt-1">Loading batches...</p>
+                <p className="text-xs text-gray-500 mt-1">Đang tải khóa học...</p>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                College
+                Trường
               </label>
               <select
                 value={filters.college}
@@ -260,7 +261,7 @@ export const FriendSuggestions: React.FC = () => {
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loadingCategories}
               >
-                <option value="">All Colleges</option>
+                <option value="">Tất cả trường</option>
                 {colleges.map((college: any) => (
                   <option key={college.code} value={college.name}>
                     {college.name}
@@ -268,7 +269,7 @@ export const FriendSuggestions: React.FC = () => {
                 ))}
               </select>
               {loadingCategories && (
-                <p className="text-xs text-gray-500 mt-1">Loading colleges...</p>
+                <p className="text-xs text-gray-500 mt-1">Đang tải trường...</p>
               )}
             </div>
           </div>
@@ -279,22 +280,22 @@ export const FriendSuggestions: React.FC = () => {
           <div className="flex flex-wrap gap-2 pt-2">
             {searchQuery && (
               <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                Query: {searchQuery}
+                Tìm kiếm: {searchQuery}
               </span>
             )}
             {filters.faculty && (
               <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                Faculty: {filters.faculty}
+                Khoa: {filters.faculty}
               </span>
             )}
             {filters.batch && (
               <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                Batch: {filters.batch}
+                Khóa: {filters.batch}
               </span>
             )}
             {filters.college && (
               <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">
-                College: {filters.college}
+                Trường: {filters.college}
               </span>
             )}
           </div>
@@ -307,23 +308,23 @@ export const FriendSuggestions: React.FC = () => {
           <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500">
             {hasActiveFilters 
-              ? 'No users found matching your search criteria' 
-              : 'No friend suggestions available'}
+              ? 'Không tìm thấy người dùng phù hợp với tiêu chí tìm kiếm' 
+              : 'Không có gợi ý kết bạn'}
           </p>
           {hasActiveFilters && (
             <button
               onClick={handleClearSearch}
               className="mt-3 text-blue-500 hover:text-blue-600"
             >
-              Clear filters
+              Xóa bộ lọc
             </button>
           )}
         </div>
       ) : (
         <>
           <p className="text-sm text-gray-600">
-            {suggestions.length} {suggestions.length === 1 ? 'person' : 'people'} found
-            {!hasActiveFilters && ' (sorted by priority: same college → faculty → batch)'}
+            Tìm thấy {suggestions.length} người
+           
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {suggestions.map((suggestion: any) => {
@@ -350,8 +351,8 @@ export const FriendSuggestions: React.FC = () => {
                       <h4 className="font-semibold text-gray-900">{suggestion.fullName}</h4>
                       <p className="text-sm text-gray-500">@{suggestion.username || suggestion.email?.split('@')[0]}</p>
                       
-                      {/* Academic Info */}
-                      {(suggestion.faculty || suggestion.major) && (
+                      {/* Academic Info - only show if available */}
+                      {(suggestion.faculty || suggestion.major || suggestion.batch || suggestion.studentId) && (
                         <div className="mt-2 space-y-1">
                           {suggestion.faculty && (
                             <p className="text-xs text-gray-600">{suggestion.faculty}</p>
@@ -360,12 +361,15 @@ export const FriendSuggestions: React.FC = () => {
                             <p className="text-xs text-gray-500">{suggestion.major}</p>
                           )}
                           {suggestion.batch && (
-                            <p className="text-xs text-gray-500">K{suggestion.batch}</p>
+                            <p className="text-xs text-gray-500">{suggestion.batch}</p>
+                          )}
+                          {suggestion.studentId && (
+                            <p className="text-xs text-gray-500">{suggestion.studentId}</p>
                           )}
                         </div>
                       )}
 
-                      {/* Connection Badges */}
+                      {/* Connection Badges
                       {badges.length > 0 && (
                         <div className="flex flex-wrap gap-1 justify-center mt-2">
                           {badges.map((badge, idx) => (
@@ -377,15 +381,15 @@ export const FriendSuggestions: React.FC = () => {
                             </span>
                           ))}
                         </div>
-                      )}
+                      )} */}
 
-                      {/* Mutual Friends */}
+                      {/* Mutual Friends
                       {suggestion.mutualFriendsCount && suggestion.mutualFriendsCount > 0 && (
                         <p className="text-xs text-blue-600 mt-2">
                           <Users className="w-3 h-3 inline mr-1" />
                           {suggestion.mutualFriendsCount} mutual {suggestion.mutualFriendsCount === 1 ? 'friend' : 'friends'}
                         </p>
-                      )}
+                      )} */}
                     </div>
 
                     <button
@@ -394,7 +398,7 @@ export const FriendSuggestions: React.FC = () => {
                       className="w-full px-3 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-colors"
                     >
                       <UserPlus className="w-4 h-4" />
-                      <span>{sendingRequest === suggestion.id ? 'Sending...' : 'Add Friend'}</span>
+                      <span>{sendingRequest === suggestion.id ? 'Đang gửi...' : 'Thêm bạn'}</span>
                     </button>
                   </div>
                 </div>

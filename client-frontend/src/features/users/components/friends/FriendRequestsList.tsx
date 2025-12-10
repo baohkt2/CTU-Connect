@@ -37,8 +37,8 @@ export const FriendRequestsList: React.FC = () => {
       setReceivedRequests(received);
       setSentRequests(sent);
     } catch (err) {
-      setError('Failed to load friend requests');
-      toast.error('Failed to load friend requests');
+      setError('Không thể tải lời mời kết bạn');
+      toast.error('Không thể tải lời mời kết bạn');
       console.error('Error loading friend requests:', err);
     } finally {
       setLoading(false);
@@ -50,9 +50,9 @@ export const FriendRequestsList: React.FC = () => {
       setProcessing(friendId);
       await userService.acceptFriendRequest(friendId);
       setReceivedRequests(prev => prev.filter(request => request.id !== friendId));
-      toast.success('Friend request accepted');
+      toast.success('Đã chấp nhận lời mời kết bạn');
     } catch (err) {
-      toast.error('Failed to accept friend request');
+      toast.error('Không thể chấp nhận lời mời');
       console.error('Error accepting friend request:', err);
     } finally {
       setProcessing(null);
@@ -64,9 +64,9 @@ export const FriendRequestsList: React.FC = () => {
       setProcessing(friendId);
       await userService.rejectFriendRequest(friendId);
       setReceivedRequests(prev => prev.filter(request => request.id !== friendId));
-      toast.success('Friend request rejected');
+      toast.success('Đã từ chối lời mời kết bạn');
     } catch (err) {
-      toast.error('Failed to reject friend request');
+      toast.error('Không thể từ chối lời mời');
       console.error('Error rejecting friend request:', err);
     } finally {
       setProcessing(null);
@@ -78,9 +78,9 @@ export const FriendRequestsList: React.FC = () => {
       setProcessing(friendId);
       await userService.cancelFriendRequest(friendId);
       setSentRequests(prev => prev.filter(request => request.id !== friendId));
-      toast.success('Friend request cancelled');
+      toast.success('Đã hủy lời mời kết bạn');
     } catch (err) {
-      toast.error('Failed to cancel friend request');
+      toast.error('Không thể hủy lời mời');
       console.error('Error cancelling friend request:', err);
     } finally {
       setProcessing(null);
@@ -103,7 +103,7 @@ export const FriendRequestsList: React.FC = () => {
           onClick={loadAllFriendRequests}
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Try Again
+          Thử lại
         </button>
       </div>
     );
@@ -123,7 +123,7 @@ export const FriendRequestsList: React.FC = () => {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Received ({receivedRequests.length})
+          Đã nhận ({receivedRequests.length})
         </button>
         <button
           onClick={() => setActiveTab('sent')}
@@ -133,7 +133,7 @@ export const FriendRequestsList: React.FC = () => {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Sent ({sentRequests.length})
+          Đã gửi ({sentRequests.length})
         </button>
       </div>
 
@@ -143,12 +143,12 @@ export const FriendRequestsList: React.FC = () => {
           {activeTab === 'received' ? (
             <>
               <UserPlus className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No pending friend requests</p>
+              <p className="text-gray-500">Không có lời mời kết bạn</p>
             </>
           ) : (
             <>
               <Send className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No sent friend requests</p>
+              <p className="text-gray-500">Chưa gửi lời mời kết bạn nào</p>
             </>
           )}
         </div>
@@ -190,7 +190,7 @@ export const FriendRequestsList: React.FC = () => {
                         className="px-3 py-1.5 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50 flex items-center space-x-1"
                       >
                         <Check className="w-4 h-4" />
-                        <span>Accept</span>
+                        <span>Chấp nhận</span>
                       </button>
                       <button
                         onClick={() => handleRejectRequest(request.id)}
@@ -198,7 +198,7 @@ export const FriendRequestsList: React.FC = () => {
                         className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50 flex items-center space-x-1"
                       >
                         <X className="w-4 h-4" />
-                        <span>Reject</span>
+                        <span>Từ chối</span>
                       </button>
                     </>
                   ) : (
@@ -208,7 +208,7 @@ export const FriendRequestsList: React.FC = () => {
                       className="px-3 py-1.5 bg-red-100 text-red-600 rounded text-sm hover:bg-red-200 disabled:opacity-50 flex items-center space-x-1"
                     >
                       <X className="w-4 h-4" />
-                      <span>Cancel</span>
+                      <span>Hủy</span>
                     </button>
                   )}
                 </div>
