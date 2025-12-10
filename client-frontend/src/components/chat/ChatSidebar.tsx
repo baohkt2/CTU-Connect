@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { apiClient } from '@/shared/config/api-client';
+import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
 interface Conversation {
@@ -37,42 +37,51 @@ export default function ChatSidebar({
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [creatingConversation, setCreatingConversation] = useState(false);
 
   useEffect(() => {
     loadConversations();
   }, []);
 
-  // Auto-select conversation if friendUserId is provided
+  // Auto-create/select conversation if friendUserId is provided
   useEffect(() => {
-    if (friendUserId && conversations.length === 0) {
+    if (friendUserId && !creatingConversation) {
       createOrGetConversationWithFriend(friendUserId);
     }
-  }, [friendUserId, conversations]);
+  }, [friendUserId]);
 
   const loadConversations = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/chats/conversations');
-      setConversations(response.content || []);
+      const response = await api.get('/chats/conversations');
+      setConversations(response.data.content || []);
     } catch (error) {
       console.error('Error loading conversations:', error);
-      toast.error('Không thể tải danh sách trò chuyện');
+      // Don't show error toast if it's just empty conversations
+      if (error.response?.status !== 404) {
+        toast.error('Không thể tải danh sách trò chuyện');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const createOrGetConversationWithFriend = async (friendId: string) => {
+    if (creatingConversation) return; // Prevent duplicate calls
+    
     try {
-      const response = await apiClient.post(`/chats/conversations/direct/${friendId}`);
-      if (response && response.id) {
-        onSelectConversation(response.id);
+      setCreatingConversation(true);
+      const response = await api.post(`/chats/conversations/direct/${friendId}`);
+      if (response.data && response.data.id) {
+        onSelectConversation(response.data.id);
         // Reload conversations to include the new one
-        loadConversations();
+        await loadConversations();
       }
     } catch (error) {
       console.error('Error creating conversation:', error);
       toast.error('Không thể tạo cuộc trò chuyện');
+    } finally {
+      setCreatingConversation(false);
     }
   };
 

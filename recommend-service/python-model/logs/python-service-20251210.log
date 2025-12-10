@@ -82,3 +82,6 @@
 2025-12-10 14:15:56,854 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
 2025-12-10 14:15:57,176 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 322.33ms
 2025-12-10 14:15:57,176 - api.routes - INFO - Prediction completed: 2 posts ranked in 331.53ms
+2025-12-10 14:19:26,490 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 14:19:26,825 - services.prediction_service - INFO - Prediction completed: 3 posts ranked in 334.97ms
+2025-12-10 14:19:26,825 - api.routes - INFO - Prediction completed: 3 posts ranked in 342.53ms

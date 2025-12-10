@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Web configuration to register security interceptors
+ * CORS is handled by SecurityConfig only to avoid duplicate headers
  */
 @Configuration
 @RequiredArgsConstructor
@@ -26,4 +27,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/chats/v3/api-docs/**"
                 );
     }
+
+    // CORS removed - handled by SecurityConfig to avoid duplicate headers
 }

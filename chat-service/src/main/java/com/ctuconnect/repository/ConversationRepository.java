@@ -18,9 +18,9 @@ public interface ConversationRepository extends MongoRepository<Conversation, St
     @Query("{'participantIds': ?0}")
     Page<Conversation> findByParticipantIdsContaining(String userId, Pageable pageable);
     
-    // Tìm conversation trực tiếp giữa 2 users
+    // Tìm conversation trực tiếp giữa 2 users - return List to handle duplicates
     @Query("{'type': 'DIRECT', 'participantIds': {$all: [?0, ?1], $size: 2}}")
-    Optional<Conversation> findDirectConversationBetweenUsers(String userId1, String userId2);
+    List<Conversation> findDirectConversationsBetweenUsers(String userId1, String userId2);
     
     // Tìm conversations theo tên (search)
     @Query("{'participantIds': ?0, 'name': {$regex: ?1, $options: 'i'}}")

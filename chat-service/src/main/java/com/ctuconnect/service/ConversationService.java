@@ -18,6 +18,7 @@ import com.ctuconnect.repository.MessageRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,11 +45,21 @@ public class ConversationService {
             request.getParticipantIds().size() == 1) {
 
             String otherUserId = request.getParticipantIds().get(0);
-            Optional<Conversation> existingConversation =
-                conversationRepository.findDirectConversationBetweenUsers(createdBy, otherUserId);
+            List<Conversation> existingConversations =
+                conversationRepository.findDirectConversationsBetweenUsers(createdBy, otherUserId);
 
-            if (existingConversation.isPresent()) {
-                return convertToResponse(existingConversation.get());
+            if (!existingConversations.isEmpty()) {
+                // Nếu có duplicate, lấy conversation mới nhất
+                Conversation existing = existingConversations.stream()
+                    .max((c1, c2) -> c1.getCreatedAt().compareTo(c2.getCreatedAt()))
+                    .orElse(existingConversations.get(0));
+                
+                log.info("Found existing conversation: {}", existing.getId());
+                if (existingConversations.size() > 1) {
+                    log.warn("Found {} duplicate conversations between {} and {}", 
+                        existingConversations.size(), createdBy, otherUserId);
+                }
+                return convertToResponse(existing);
             }
         }
 
@@ -95,11 +106,30 @@ public class ConversationService {
         log.info("Getting or creating direct conversation between {} and {}", userId, friendId);
         
         // Kiểm tra conversation đã tồn tại chưa
-        Optional<Conversation> existing = conversationRepository.findDirectConversationBetweenUsers(userId, friendId);
+        List<Conversation> existingConversations = conversationRepository.findDirectConversationsBetweenUsers(userId, friendId);
         
-        if (existing.isPresent()) {
-            log.info("Found existing conversation: {}", existing.get().getId());
-            return convertToResponse(existing.get());
+        if (!existingConversations.isEmpty()) {
+            // Nếu có duplicate, lấy conversation mới nhất (hoặc có tin nhắn gần nhất)
+            Conversation existing = existingConversations.stream()
+                .max((c1, c2) -> {
+                    // Ưu tiên conversation có lastMessageAt gần nhất
+                    if (c1.getLastMessageAt() != null && c2.getLastMessageAt() != null) {
+                        return c1.getLastMessageAt().compareTo(c2.getLastMessageAt());
+                    }
+                    // Nếu không có message, chọn conversation mới tạo nhất
+                    return c1.getCreatedAt().compareTo(c2.getCreatedAt());
+                })
+                .orElse(existingConversations.get(0));
+            
+            log.info("Found existing conversation: {}", existing.getId());
+            
+            if (existingConversations.size() > 1) {
+                log.warn("Found {} duplicate direct conversations between {} and {}. Using conversation: {}", 
+                    existingConversations.size(), userId, friendId, existing.getId());
+                // TODO: Clean up duplicate conversations in background
+            }
+            
+            return convertToResponse(existing);
         }
         
         // Tạo mới nếu chưa có
@@ -230,9 +260,18 @@ public class ConversationService {
     private ParticipantInfo getParticipantInfo(String userId) {
         ParticipantInfo info = new ParticipantInfo();
         info.setUserId(userId);
-        // TODO: Implement thực tế sau khi tích hợp với UserService
-        info.setUserName("User " + userId);
-        info.setUserAvatar("");
+        
+        try {
+            // Get user info from user-service
+            Map<String, Object> userInfo = userService.getUserInfo(userId);
+            info.setUserName((String) userInfo.getOrDefault("fullName", "User " + userId));
+            info.setUserAvatar((String) userInfo.getOrDefault("avatarUrl", ""));
+        } catch (Exception e) {
+            log.warn("Failed to get user info for userId: {}, using defaults", userId, e);
+            info.setUserName("User " + userId);
+            info.setUserAvatar("");
+        }
+        
         return info;
     }
 

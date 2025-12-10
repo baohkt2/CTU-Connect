@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { apiClient } from '@/shared/config/api-client';
+import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -60,13 +60,18 @@ export default function ChatMessageArea({
 
     try {
       setLoading(true);
-      const response = await apiClient.get(
+      const response = await api.get(
         `/chats/messages/conversation/${conversationId}`
       );
-      setMessages(response.content?.reverse() || []);
+      setMessages(response.data.content?.reverse() || []);
     } catch (error) {
       console.error('Error loading messages:', error);
-      toast.error('Không thể tải tin nhắn');
+      // Don't show error for 404 (empty conversation)
+      if (error.response?.status === 404) {
+        setMessages([]); // Just set empty messages
+      } else {
+        toast.error('Không thể tải tin nhắn');
+      }
     } finally {
       setLoading(false);
     }
@@ -81,13 +86,13 @@ export default function ChatMessageArea({
     if (!messageInput.trim() || !conversationId) return;
 
     try {
-      const response = await apiClient.post('/chats/messages', {
+      const response = await api.post('/chats/messages', {
         conversationId,
         content: messageInput.trim(),
       });
 
-      if (response) {
-        setMessages((prev) => [...prev, response]);
+      if (response.data) {
+        setMessages((prev) => [...prev, response.data]);
         setMessageInput('');
       }
     } catch (error) {
@@ -108,26 +113,26 @@ export default function ChatMessageArea({
       formData.append('file', file);
       formData.append('type', file.type.startsWith('image/') ? 'image' : 'document');
 
-      const uploadResponse = await apiClient.post('/media/upload', formData, {
+      const uploadResponse = await api.post('/media/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (uploadResponse && uploadResponse.url) {
+      if (uploadResponse.data && uploadResponse.data.url) {
         // Send message with attachment
-        const messageResponse = await apiClient.post('/chats/messages', {
+        const messageResponse = await api.post('/chats/messages', {
           conversationId,
           content: file.name,
           attachment: {
             fileName: file.name,
-            fileUrl: uploadResponse.url,
+            fileUrl: uploadResponse.data.url,
             fileType: file.type,
             fileSize: file.size,
-            thumbnailUrl: uploadResponse.thumbnailUrl,
+            thumbnailUrl: uploadResponse.data.thumbnailUrl,
           },
         });
 
-        if (messageResponse) {
-          setMessages((prev) => [...prev, messageResponse]);
+        if (messageResponse.data) {
+          setMessages((prev) => [...prev, messageResponse.data]);
         }
       }
 

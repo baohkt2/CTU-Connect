@@ -5,15 +5,15 @@ export const API_ENDPOINTS = {
   
   // Authentication endpoints
   AUTH: {
-    BASE: '/api/auth',
-    LOGIN: '/api/auth/login',
-    REGISTER: '/api/auth/register',
-    REFRESH: '/api/auth/refresh',
-    LOGOUT: '/api/auth/logout',
-    VERIFY_EMAIL: '/api/auth/verify-email',
-    FORGOT_PASSWORD: '/api/auth/forgot-password',
-    RESET_PASSWORD: '/api/auth/reset-password',
-    PROFILE: '/api/auth/profile'
+    BASE: '/api',
+    LOGIN: '/api/login',
+    REGISTER: '/api/register',
+    REFRESH: '/api/refresh',
+    LOGOUT: '/api/logout',
+    VERIFY_EMAIL: '/api/verify-email',
+    FORGOT_PASSWORD: '/api/forgot-password',
+    RESET_PASSWORD: '/api/reset-password',
+    PROFILE: '/api/profile'
   },
 
   // User management endpoints

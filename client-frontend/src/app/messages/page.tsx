@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import ChatMessageArea from '@/components/chat/ChatMessageArea';
 
-export default function MessagesPage() {
+function MessagesContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,5 +49,17 @@ export default function MessagesPage() {
         />
       </div>
     </Layout>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    }>
+      <MessagesContent />
+    </Suspense>
   );
 }

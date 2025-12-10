@@ -54,7 +54,7 @@ export class ApiClient {
   private handleUnauthorized() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
-      window.location.href = '/auth/login';
+      window.location.href = '/login';
     }
   }
 
