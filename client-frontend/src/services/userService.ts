@@ -4,8 +4,9 @@ import {ApiResponse, LecturerProfileUpdateRequest, PaginatedResponse, StudentPro
 
 
 export const userService = {
+  // Get user profile by ID
   async getProfile(userId: string): Promise<User> {
-    const response = await api.get(`/users/${userId}/profile`);
+    const response = await api.get(`/users/${userId}`);
     return response.data;
   },
 

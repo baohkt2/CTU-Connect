@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { User, PaginatedResponse } from '@/types';
 import { userService } from '@/services/userService';
 import { toast } from 'react-hot-toast';
@@ -15,6 +16,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   userId,
   showActions = true
 }) => {
+  const router = useRouter();
   const [friends, setFriends] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +66,10 @@ export const FriendsList: React.FC<FriendsListProps> = ({
     }
   };
 
+  const handleViewProfile = (friendId: string) => {
+    router.push(`/profile/${friendId}`);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-8">
@@ -101,9 +107,16 @@ export const FriendsList: React.FC<FriendsListProps> = ({
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {friends.map((friend) => (
-          <div key={friend.id} className="bg-white rounded-lg border p-4 shadow-sm">
+          <div 
+            key={friend.id} 
+            className="bg-white rounded-lg border p-4 shadow-sm hover:shadow-md transition-shadow"
+          >
             <div className="flex flex-col items-center space-y-3">
-              <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              {/* Avatar - Clickable */}
+              <div 
+                onClick={() => handleViewProfile(friend.id)}
+                className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+              >
                 {friend.avatarUrl ? (
                   <img
                     src={friend.avatarUrl}
@@ -117,18 +130,32 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                 )}
               </div>
 
+              {/* Name - Clickable */}
               <div className="text-center">
-                <h4 className="font-semibold text-gray-900">{friend.fullName}</h4>
+                <h4 
+                  onClick={() => handleViewProfile(friend.id)}
+                  className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  {friend.fullName}
+                </h4>
                 <p className="text-sm text-gray-500">@{friend.username}</p>
               </div>
 
               {showActions && (
-                <button
-                  onClick={() => handleRemoveFriend(friend.id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-                >
-                  Unfriend
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handleViewProfile(friend.id)}
+                    className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+                  >
+                    View Profile
+                  </button>
+                  <button
+                    onClick={() => handleRemoveFriend(friend.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
+                  >
+                    Unfriend
+                  </button>
+                </div>
               )}
             </div>
           </div>
