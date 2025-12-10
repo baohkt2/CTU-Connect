@@ -46,6 +46,20 @@ public class CategoryDTO {
     @Builder
     public static class BatchInfo {
         private String year;
+        
+        // Helper method to get display name (K47, K48, etc.)
+        public String getName() {
+            if (year == null || year.isEmpty()) {
+                return "";
+            }
+            try {
+                int yearNum = Integer.parseInt(year);
+                int k = yearNum - 1974; // CTU founded in 1966, K1 started 1974
+                return "K" + k + " (" + year + ")";
+            } catch (NumberFormatException e) {
+                return year;
+            }
+        }
     }
 
     @Data

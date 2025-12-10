@@ -13,6 +13,20 @@ interface Filters {
   batch: string;
 }
 
+interface FacultyOption {
+  code: string;
+  name: string;
+}
+
+interface BatchOption {
+  year: string;
+}
+
+interface CollegeOption {
+  code: string;
+  name: string;
+}
+
 export const FriendSuggestions: React.FC = () => {
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,9 +40,36 @@ export const FriendSuggestions: React.FC = () => {
     batch: ''
   });
 
+  // Category options from database
+  const [colleges, setColleges] = useState<CollegeOption[]>([]);
+  const [faculties, setFaculties] = useState<FacultyOption[]>([]);
+  const [batches, setBatches] = useState<BatchOption[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
   useEffect(() => {
+    loadCategories();
     loadSuggestions();
   }, []); // Only load on mount
+
+  const loadCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const [collegesData, facultiesData, batchesData] = await Promise.all([
+        userService.getColleges(),
+        userService.getFaculties(),
+        userService.getBatches()
+      ]);
+      
+      setColleges(collegesData || []);
+      setFaculties(facultiesData || []);
+      setBatches(batchesData || []);
+    } catch (err) {
+      console.error('Error loading categories:', err);
+      // Don't show error to user, just use empty arrays
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
 
   const loadSuggestions = async () => {
     try {
@@ -173,14 +214,18 @@ export const FriendSuggestions: React.FC = () => {
                 value={filters.faculty}
                 onChange={(e) => setFilters({...filters, faculty: e.target.value})}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={loadingCategories}
               >
                 <option value="">All Faculties</option>
-                <option value="Công nghệ thông tin">Công nghệ thông tin</option>
-                <option value="Kinh tế">Kinh tế</option>
-                <option value="Nông nghiệp">Nông nghiệp</option>
-                <option value="Môi trường">Môi trường</option>
-                <option value="Sư phạm">Sư phạm</option>
+                {faculties.map((faculty: any) => (
+                  <option key={faculty.code} value={faculty.name}>
+                    {faculty.name}
+                  </option>
+                ))}
               </select>
+              {loadingCategories && (
+                <p className="text-xs text-gray-500 mt-1">Loading faculties...</p>
+              )}
             </div>
             
             <div>
@@ -191,15 +236,18 @@ export const FriendSuggestions: React.FC = () => {
                 value={filters.batch}
                 onChange={(e) => setFilters({...filters, batch: e.target.value})}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={loadingCategories}
               >
                 <option value="">All Batches</option>
-                <option value="2024">K50 (2024)</option>
-                <option value="2023">K49 (2023)</option>
-                <option value="2022">K48 (2022)</option>
-                <option value="2021">K47 (2021)</option>
-                <option value="2020">K46 (2020)</option>
-                <option value="2019">K45 (2019)</option>
+                {batches.map((batch: any) => (
+                  <option key={batch.year} value={batch.year}>
+                    {batch.year}
+                  </option>
+                ))}
               </select>
+              {loadingCategories && (
+                <p className="text-xs text-gray-500 mt-1">Loading batches...</p>
+              )}
             </div>
 
             <div>
@@ -210,12 +258,18 @@ export const FriendSuggestions: React.FC = () => {
                 value={filters.college}
                 onChange={(e) => setFilters({...filters, college: e.target.value})}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={loadingCategories}
               >
                 <option value="">All Colleges</option>
-                <option value="Công nghệ">Công nghệ</option>
-                <option value="Kinh tế">Kinh tế</option>
-                <option value="Nông nghiệp">Nông nghiệp</option>
+                {colleges.map((college: any) => (
+                  <option key={college.code} value={college.name}>
+                    {college.name}
+                  </option>
+                ))}
               </select>
+              {loadingCategories && (
+                <p className="text-xs text-gray-500 mt-1">Loading colleges...</p>
+              )}
             </div>
           </div>
         )}

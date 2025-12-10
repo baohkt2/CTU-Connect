@@ -171,7 +171,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     RETURN u
     ORDER BY u.fullName ASC
     """)
-    List<UserEntity> findUsersByBatch(@Param("batchYear") Integer batchYear,
+    List<UserEntity> findUsersByBatch(@Param("batchYear") String batchYear,
                                       @Param("currentUserId") String currentUserId);
 
     // Get random active users (for when no filters provided)

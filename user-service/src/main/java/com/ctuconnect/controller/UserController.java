@@ -232,7 +232,7 @@ public class UserController {
     @GetMapping("/batch/{batchYear}")
     public ResponseEntity<Page<UserSearchDTO>> findUsersByBatch(
             @Parameter(description = "Batch year", required = true)
-            @PathVariable @NotNull Integer batchYear,
+            @PathVariable @NotNull String batchYear,
             @Parameter(description = "Current user ID for relationship context")
             @RequestParam(required = false) String currentUserId,
             @Parameter(description = "Page number (0-based)")

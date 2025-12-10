@@ -197,6 +197,38 @@ export const userService = {
   async getMutualFriendsCount(targetUserId: string): Promise<number> {
     const response = await api.get(`/users/${targetUserId}/mutual-friends-count`);
     return response.data.count;
+  },
+
+  // ==================== CATEGORIES APIs ====================
+  
+  // Get all colleges with their faculties and majors
+  async getColleges(): Promise<any[]> {
+    const response = await api.get('/users/categories/colleges');
+    return response.data;
+  },
+
+  // Get all faculties with their majors
+  async getFaculties(): Promise<any[]> {
+    const response = await api.get('/users/categories/faculties');
+    return response.data;
+  },
+
+  // Get all majors
+  async getMajors(): Promise<any[]> {
+    const response = await api.get('/users/categories/majors');
+    return response.data;
+  },
+
+  // Get all batches
+  async getBatches(): Promise<any[]> {
+    const response = await api.get('/users/categories/batches');
+    return response.data;
+  },
+
+  // Get all categories in hierarchical structure
+  async getAllCategories(): Promise<any> {
+    const response = await api.get('/users/categories/all');
+    return response.data;
   }
 
 };

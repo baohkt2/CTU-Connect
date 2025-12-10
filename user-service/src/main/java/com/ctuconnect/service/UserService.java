@@ -318,7 +318,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserSearchDTO> findUsersByBatch(@NotNull Integer batchYear,
+    public Page<UserSearchDTO> findUsersByBatch(@NotNull String batchYear,
                                               String currentUserId,
                                               @NotNull Pageable pageable) {
         log.info("Finding users by batch: {}, currentUserId: {}", batchYear, currentUserId);
@@ -680,8 +680,8 @@ public class UserService {
             results = userRepository.findUsersByFaculty(faculty, currentUserId);
         } else if (batch != null && !batch.isEmpty()) {
             try {
-                Integer batchYear = Integer.parseInt(batch);
-                results = userRepository.findUsersByBatch(batchYear, currentUserId);
+               
+                results = userRepository.findUsersByBatch(batch, currentUserId);
             } catch (NumberFormatException e) {
                 results = userRepository.searchUsers(query, currentUserId);
             }
@@ -874,8 +874,8 @@ public class UserService {
             else if (hasBatch) {
                 log.debug("Filtering by batch: {}", batch);
                 try {
-                    Integer batchYear = Integer.parseInt(batch);
-                    results = userRepository.findUsersByBatch(batchYear, currentUserId);
+                  
+                    results = userRepository.findUsersByBatch(batch, currentUserId);
                     log.debug("Found {} results", results.size());
                 } catch (NumberFormatException e) {
                     log.warn("Invalid batch year: {}", batch);
