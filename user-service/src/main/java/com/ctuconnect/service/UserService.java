@@ -470,16 +470,21 @@ public class UserService {
         log.info("Friend request accepted successfully from userId: {} by userId: {}", requesterId, accepterId);
     }
 
-    public void rejectFriendRequest(@NotBlank String requesterId, @NotBlank String rejecterId) {
-        log.info("Rejecting friend request from userId: {} by userId: {}", requesterId, rejecterId);
+    /**
+     * Reject/Cancel friend request - supports both directions
+     * - If user1 sent request to user2: user2 can reject OR user1 can cancel
+     * - Works regardless of who calls it
+     */
+    public void rejectFriendRequest(@NotBlank String userId1, @NotBlank String userId2) {
+        log.info("Rejecting/Canceling friend request between userId: {} and userId: {}", userId1, userId2);
 
-        boolean success = userRepository.rejectFriendRequest(requesterId, rejecterId);
+        boolean success = userRepository.rejectFriendRequest(userId1, userId2);
 
         if (!success) {
-            throw new InvalidOperationException("Unable to reject friend request. Request may not exist");
+            throw new InvalidOperationException("Unable to reject/cancel friend request. Request may not exist");
         }
 
-        log.info("Friend request rejected successfully from userId: {} by userId: {}", requesterId, rejecterId);
+        log.info("Friend request rejected/cancelled successfully between userId: {} and userId: {}", userId1, userId2);
     }
 
     public void removeFriend(@NotBlank String userId1, @NotBlank String userId2) {

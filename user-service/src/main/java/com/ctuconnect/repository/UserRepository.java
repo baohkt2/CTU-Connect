@@ -53,7 +53,7 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
 
     // Find friends of a user - returns UserEntity directly
     @Query("""
-    MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]-(friend:User)
+    MATCH (u:User {id: $userId})-[:IS_FRIENDS_WITH]->(friend:User)
     WHERE friend.isActive = true
     RETURN friend
     ORDER BY friend.fullName ASC
@@ -101,13 +101,19 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
         """)
     boolean acceptFriendRequest(@Param("requesterId") String requesterId, @Param("accepterId") String accepterId);
 
-    // Reject friend request
+    // Reject/Cancel friend request - supports both directions
+    // Can be used by receiver to reject OR sender to cancel
     @Query("""
-        MATCH (requester:User {id: $requesterId})-[r:SENT_FRIEND_REQUEST_TO]->(rejecter:User {id: $rejecterId})
-        DELETE r
-        RETURN count(*) > 0 as success
+        MATCH (user1:User {id: $userId1})
+        MATCH (user2:User {id: $userId2})
+        OPTIONAL MATCH (user1)-[r1:SENT_FRIEND_REQUEST_TO]->(user2)
+        OPTIONAL MATCH (user2)-[r2:SENT_FRIEND_REQUEST_TO]->(user1)
+        WITH r1, r2
+        WHERE r1 IS NOT NULL OR r2 IS NOT NULL
+        DELETE r1, r2
+        RETURN count(r1) + count(r2) > 0 as success
         """)
-    boolean rejectFriendRequest(@Param("requesterId") String requesterId, @Param("rejecterId") String rejecterId);
+    boolean rejectFriendRequest(@Param("userId1") String userId1, @Param("userId2") String userId2);
 
     // Remove friend
     @Query("""
