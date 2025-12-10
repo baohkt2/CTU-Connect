@@ -1,18 +1,18 @@
-/*
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ChatProvider } from '@/contexts/ChatContext';
 import Layout from '@/components/layout/Layout';
-import ChatWindow from '@/components/chat/ChatWindow';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import ChatSidebar from '@/components/chat/ChatSidebar';
+import ChatMessageArea from '@/components/chat/ChatMessageArea';
 
 export default function MessagesPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [isChatOpen, setIsChatOpen] = useState(true);
+  const searchParams = useSearchParams();
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const friendUserId = searchParams.get('userId');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,16 +34,20 @@ export default function MessagesPage() {
 
   return (
     <Layout>
-      <div className="h-[calc(100vh-8rem)] max-w-7xl mx-auto">
-        <ChatProvider>
-          <ChatWindow
-            isOpen={isChatOpen}
-            onClose={() => setIsChatOpen(false)}
-            currentUserId={user.id}
-          />
-        </ChatProvider>
+      <div className="h-[calc(100vh-4rem)] flex bg-white">
+        {/* Sidebar - Danh sách conversations */}
+        <ChatSidebar
+          selectedConversationId={selectedConversationId}
+          onSelectConversation={setSelectedConversationId}
+          friendUserId={friendUserId}
+        />
+        
+        {/* Main chat area */}
+        <ChatMessageArea
+          conversationId={selectedConversationId}
+          currentUserId={user.id}
+        />
       </div>
     </Layout>
   );
 }
-*/

@@ -61,3 +61,24 @@
 2025-12-10 13:38:59,152 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
 2025-12-10 13:38:59,437 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 285.74ms
 2025-12-10 13:38:59,437 - api.routes - INFO - Prediction completed: 2 posts ranked in 300.70ms
+2025-12-10 13:48:35,803 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 13:48:35,978 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 175.09ms
+2025-12-10 13:48:35,978 - api.routes - INFO - Prediction completed: 2 posts ranked in 181.09ms
+2025-12-10 13:52:41,437 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 13:52:41,654 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 217.63ms
+2025-12-10 13:52:41,655 - api.routes - INFO - Prediction completed: 2 posts ranked in 238.40ms
+2025-12-10 13:54:14,198 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 13:54:14,501 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 303.22ms
+2025-12-10 13:54:14,501 - api.routes - INFO - Prediction completed: 2 posts ranked in 317.47ms
+2025-12-10 13:59:21,619 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 13:59:21,807 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 187.72ms
+2025-12-10 13:59:21,807 - api.routes - INFO - Prediction completed: 2 posts ranked in 195.55ms
+2025-12-10 14:02:43,272 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 14:02:43,478 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 206.03ms
+2025-12-10 14:02:43,479 - api.routes - INFO - Prediction completed: 2 posts ranked in 213.91ms
+2025-12-10 14:07:42,980 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 14:07:43,283 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 303.47ms
+2025-12-10 14:07:43,283 - api.routes - INFO - Prediction completed: 2 posts ranked in 311.51ms
+2025-12-10 14:15:56,854 - services.prediction_service - INFO - Generating embedding for user 31ba8a23-8a4e-4b24-99c2-0d768e617e71 with text length: 58
+2025-12-10 14:15:57,176 - services.prediction_service - INFO - Prediction completed: 2 posts ranked in 322.33ms
+2025-12-10 14:15:57,176 - api.routes - INFO - Prediction completed: 2 posts ranked in 331.53ms

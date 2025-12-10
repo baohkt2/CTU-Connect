@@ -69,6 +69,16 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   const handleViewProfile = (friendId: string) => {
     router.push(`/profile/${friendId}`);
   };
+  
+  const handleChatWithFriend = async (friendId: string) => {
+    try {
+      // Navigate to messages page with friend ID
+      router.push(`/messages?userId=${friendId}`);
+    } catch (err) {
+      toast.error('Không thể mở chat');
+      console.error('Error opening chat:', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -148,6 +158,15 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                     className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
                   >
                     Xem hồ sơ
+                  </button>
+                  <button
+                    onClick={() => handleChatWithFriend(friend.id)}
+                    className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors flex items-center gap-1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Nhắn tin
                   </button>
                   <button
                     onClick={() => handleRemoveFriend(friend.id)}

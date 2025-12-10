@@ -54,6 +54,16 @@ public class ConversationController {
         return ResponseEntity.ok(response);
     }
     
+    // Endpoint mới: Tạo hoặc lấy conversation với friend
+    @PostMapping("/direct/{friendId}")
+    public ResponseEntity<ConversationResponse> getOrCreateDirectConversation(
+            @PathVariable String friendId) {
+        
+        String userId = SecurityContextHolder.getCurrentUserIdOrThrow();
+        ConversationResponse response = conversationService.getOrCreateDirectConversation(userId, friendId);
+        return ResponseEntity.ok(response);
+    }
+    
     @PutMapping("/{conversationId}")
     public ResponseEntity<ConversationResponse> updateConversation(
             @PathVariable String conversationId,

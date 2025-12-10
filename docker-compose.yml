@@ -179,6 +179,24 @@ services:
         timeout: 5s
         retries: 1
 
+  # MongoDB for Chat Service
+  chat_db:
+    image: mongo:7.0
+    container_name: chat_mongodb
+    ports:
+      - "27019:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=chat_db
+    volumes:
+      - chat-data:/data/db
+    networks:
+      - ctuconnect-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 
   # Redis Cache (Global)
   redis:
@@ -330,5 +348,6 @@ volumes:
   kafka-data:
   media_data:
   post-data:
+  chat-data:
   recommend-postgres-data:
   recommend-redis-data:

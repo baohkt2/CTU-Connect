@@ -22,6 +22,7 @@ import com.ctuconnect.repository.MessageRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class MessageService {
     private final ConversationRepository conversationRepository;
     private final WebSocketService webSocketService;
     private final NotificationService notificationService;
+    private final UserService userService;
 
     public MessageResponse sendMessage(SendMessageRequest request, String senderId) {
         log.info("Sending message from user: {} to conversation: {}", senderId, request.getConversationId());
@@ -46,21 +48,46 @@ public class MessageService {
             throw new ChatException("Bạn không có quyền gửi tin nhắn trong cuộc trò chuyện này");
         }
 
+        // Lấy thông tin sender từ user-service
+        Map<String, Object> userInfo = userService.getUserInfo(senderId);
+        String senderName = (String) userInfo.getOrDefault("fullName", "User " + senderId);
+        String senderAvatar = (String) userInfo.getOrDefault("avatarUrl", "");
+
         // Tạo message mới
         Message message = new Message();
         message.setConversationId(request.getConversationId());
         message.setSenderId(senderId);
-        message.setType(Message.MessageType.TEXT);
+        message.setSenderName(senderName);
+        message.setSenderAvatar(senderAvatar);
         message.setContent(request.getContent());
         message.setReplyToMessageId(request.getReplyToMessageId());
         message.setStatus(Message.MessageStatus.SENT);
         message.setCreatedAt(LocalDateTime.now());
         message.setUpdatedAt(LocalDateTime.now());
 
-        // Lấy thông tin sender (cache)
-        // TODO: Tích hợp với UserService
-        message.setSenderName("User " + senderId);
-        message.setSenderAvatar("");
+        // Xử lý attachment nếu có
+        if (request.getAttachment() != null) {
+            Message.MessageAttachment attachment = new Message.MessageAttachment();
+            attachment.setFileName(request.getAttachment().getFileName());
+            attachment.setFileUrl(request.getAttachment().getFileUrl());
+            attachment.setFileType(request.getAttachment().getFileType());
+            attachment.setFileSize(request.getAttachment().getFileSize());
+            attachment.setThumbnailUrl(request.getAttachment().getThumbnailUrl());
+            message.setAttachment(attachment);
+            
+            // Xác định message type dựa trên file type
+            if (request.getAttachment().getFileType() != null) {
+                if (request.getAttachment().getFileType().startsWith("image/")) {
+                    message.setType(Message.MessageType.IMAGE);
+                } else {
+                    message.setType(Message.MessageType.FILE);
+                }
+            } else {
+                message.setType(Message.MessageType.TEXT);
+            }
+        } else {
+            message.setType(Message.MessageType.TEXT);
+        }
 
         // Lưu message
         Message savedMessage = messageRepository.save(message);

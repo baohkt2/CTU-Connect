@@ -89,6 +89,33 @@ public class ConversationService {
 
         return conversations.map(this::convertToResponse);
     }
+    
+    // Method mới: Tạo hoặc lấy direct conversation với friend
+    public ConversationResponse getOrCreateDirectConversation(String userId, String friendId) {
+        log.info("Getting or creating direct conversation between {} and {}", userId, friendId);
+        
+        // Kiểm tra conversation đã tồn tại chưa
+        Optional<Conversation> existing = conversationRepository.findDirectConversationBetweenUsers(userId, friendId);
+        
+        if (existing.isPresent()) {
+            log.info("Found existing conversation: {}", existing.get().getId());
+            return convertToResponse(existing.get());
+        }
+        
+        // Tạo mới nếu chưa có
+        Conversation conversation = new Conversation();
+        conversation.setType(Conversation.ConversationType.DIRECT);
+        conversation.getParticipantIds().add(userId);
+        conversation.getParticipantIds().add(friendId);
+        conversation.setCreatedBy(userId);
+        conversation.setCreatedAt(LocalDateTime.now());
+        conversation.setUpdatedAt(LocalDateTime.now());
+        
+        Conversation saved = conversationRepository.save(conversation);
+        log.info("Created new direct conversation: {}", saved.getId());
+        
+        return convertToResponse(saved);
+    }
 
     public ConversationResponse getConversationById(String conversationId, String userId) {
         Conversation conversation = conversationRepository.findById(conversationId)
