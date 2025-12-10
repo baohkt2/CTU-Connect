@@ -102,7 +102,8 @@ public class ConversationService {
     }
     
     // Method mới: Tạo hoặc lấy direct conversation với friend
-    public ConversationResponse getOrCreateDirectConversation(String userId, String friendId) {
+    // Synchronized to prevent race condition when creating duplicate conversations
+    public synchronized ConversationResponse getOrCreateDirectConversation(String userId, String friendId) {
         log.info("Getting or creating direct conversation between {} and {}", userId, friendId);
         
         // Kiểm tra conversation đã tồn tại chưa
@@ -126,10 +127,18 @@ public class ConversationService {
             if (existingConversations.size() > 1) {
                 log.warn("Found {} duplicate direct conversations between {} and {}. Using conversation: {}", 
                     existingConversations.size(), userId, friendId, existing.getId());
-                // TODO: Clean up duplicate conversations in background
+                // Clean up duplicate conversations (keep the one with messages or newest)
+                cleanupDuplicateConversations(existingConversations, existing.getId());
             }
             
             return convertToResponse(existing);
+        }
+        
+        // Double-check before creating (in case another thread created it)
+        existingConversations = conversationRepository.findDirectConversationsBetweenUsers(userId, friendId);
+        if (!existingConversations.isEmpty()) {
+            log.info("Conversation was created by another thread, returning existing one");
+            return convertToResponse(existingConversations.get(0));
         }
         
         // Tạo mới nếu chưa có
@@ -145,6 +154,25 @@ public class ConversationService {
         log.info("Created new direct conversation: {}", saved.getId());
         
         return convertToResponse(saved);
+    }
+    
+    // Clean up duplicate conversations, keeping only the one with most activity
+    private void cleanupDuplicateConversations(List<Conversation> duplicates, String keepConversationId) {
+        log.info("Cleaning up {} duplicate conversations, keeping {}", duplicates.size(), keepConversationId);
+        
+        for (Conversation conv : duplicates) {
+            if (!conv.getId().equals(keepConversationId)) {
+                try {
+                    // Delete messages from duplicate conversation
+                    messageRepository.deleteByConversationId(conv.getId());
+                    // Delete the duplicate conversation
+                    conversationRepository.delete(conv);
+                    log.info("Deleted duplicate conversation: {}", conv.getId());
+                } catch (Exception e) {
+                    log.error("Failed to delete duplicate conversation: {}", conv.getId(), e);
+                }
+            }
+        }
     }
 
     public ConversationResponse getConversationById(String conversationId, String userId) {

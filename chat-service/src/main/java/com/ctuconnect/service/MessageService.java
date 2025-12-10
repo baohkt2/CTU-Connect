@@ -40,6 +40,11 @@ public class MessageService {
     public MessageResponse sendMessage(SendMessageRequest request, String senderId) {
         log.info("Sending message from user: {} to conversation: {}", senderId, request.getConversationId());
 
+        // Validate: message phải có content hoặc attachment
+        if ((request.getContent() == null || request.getContent().trim().isEmpty()) && request.getAttachment() == null) {
+            throw new ChatException("Tin nhắn phải có nội dung hoặc file đính kèm");
+        }
+
         // Kiểm tra conversation tồn tại và user có quyền gửi tin nhắn
         Conversation conversation = conversationRepository.findById(request.getConversationId())
             .orElseThrow(() -> new ChatException("Không tìm thấy cuộc trò chuyện"));
@@ -59,7 +64,7 @@ public class MessageService {
         message.setSenderId(senderId);
         message.setSenderName(senderName);
         message.setSenderAvatar(senderAvatar);
-        message.setContent(request.getContent());
+        message.setContent(request.getContent() != null ? request.getContent() : ""); // Set empty string nếu null
         message.setReplyToMessageId(request.getReplyToMessageId());
         message.setStatus(Message.MessageStatus.SENT);
         message.setCreatedAt(LocalDateTime.now());
@@ -67,6 +72,7 @@ public class MessageService {
 
         // Xử lý attachment nếu có
         if (request.getAttachment() != null) {
+            log.info("Processing attachment: {}", request.getAttachment().getFileName());
             Message.MessageAttachment attachment = new Message.MessageAttachment();
             attachment.setFileName(request.getAttachment().getFileName());
             attachment.setFileUrl(request.getAttachment().getFileUrl());
@@ -79,8 +85,10 @@ public class MessageService {
             if (request.getAttachment().getFileType() != null) {
                 if (request.getAttachment().getFileType().startsWith("image/")) {
                     message.setType(Message.MessageType.IMAGE);
+                    log.info("Message type set to IMAGE");
                 } else {
                     message.setType(Message.MessageType.FILE);
+                    log.info("Message type set to FILE");
                 }
             } else {
                 message.setType(Message.MessageType.TEXT);
@@ -91,6 +99,7 @@ public class MessageService {
 
         // Lưu message
         Message savedMessage = messageRepository.save(message);
+        log.info("Message saved with ID: {}, Type: {}", savedMessage.getId(), savedMessage.getType());
 
         // Cập nhật last message của conversation
         conversation.setLastMessageId(savedMessage.getId());

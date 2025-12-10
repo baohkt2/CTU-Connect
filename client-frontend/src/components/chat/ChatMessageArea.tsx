@@ -42,6 +42,7 @@ export default function ChatMessageArea({
   const [loading, setLoading] = useState(false);
   const [messageInput, setMessageInput] = useState('');
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [sendingMessage, setSendingMessage] = useState(false); // Prevent double send
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -83,9 +84,10 @@ export default function ChatMessageArea({
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!messageInput.trim() || !conversationId) return;
+    if (!messageInput.trim() || !conversationId || sendingMessage) return;
 
     try {
+      setSendingMessage(true); // Prevent double send
       const response = await api.post('/chats/messages', {
         conversationId,
         content: messageInput.trim(),
@@ -98,6 +100,8 @@ export default function ChatMessageArea({
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Không thể gửi tin nhắn');
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -107,6 +111,7 @@ export default function ChatMessageArea({
 
     try {
       setUploadingFile(true);
+      console.log('Uploading file:', file.name, 'Type:', file.type);
 
       // Upload to media service
       const formData = new FormData();
@@ -117,32 +122,45 @@ export default function ChatMessageArea({
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (uploadResponse.data && uploadResponse.data.url) {
+      console.log('Upload response:', uploadResponse.data);
+
+      if (uploadResponse.data && uploadResponse.data.cloudinaryUrl) {
         // Send message with attachment
-        const messageResponse = await api.post('/chats/messages', {
+        const messagePayload = {
           conversationId,
           content: file.name,
           attachment: {
-            fileName: file.name,
-            fileUrl: uploadResponse.data.url,
-            fileType: file.type,
-            fileSize: file.size,
-            thumbnailUrl: uploadResponse.data.thumbnailUrl,
+            fileName: uploadResponse.data.originalFileName || file.name,
+            fileUrl: uploadResponse.data.cloudinaryUrl,
+            fileType: uploadResponse.data.contentType || file.type,
+            fileSize: uploadResponse.data.fileSize || file.size,
+            thumbnailUrl: uploadResponse.data.cloudinaryUrl,
           },
-        });
+        };
+
+        console.log('Sending message with attachment:', messagePayload);
+
+        const messageResponse = await api.post('/chats/messages', messagePayload);
+
+        console.log('Message response:', messageResponse.data);
 
         if (messageResponse.data) {
           setMessages((prev) => [...prev, messageResponse.data]);
+          toast.success('Gửi file thành công');
         }
+      } else {
+        console.error('Upload response invalid:', uploadResponse.data);
+        toast.error('Upload file không trả về URL');
       }
 
       // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file:', error);
-      toast.error('Không thể gửi file');
+      console.error('Error response:', error.response?.data);
+      toast.error(error.response?.data?.message || 'Không thể gửi file');
     } finally {
       setUploadingFile(false);
     }
@@ -332,12 +350,16 @@ export default function ChatMessageArea({
           {/* Send button */}
           <button
             type="submit"
-            disabled={!messageInput.trim()}
+            disabled={!messageInput.trim() || sendingMessage}
             className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-            </svg>
+            {sendingMessage ? (
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            ) : (
+              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+              </svg>
+            )}
           </button>
         </form>
       </div>

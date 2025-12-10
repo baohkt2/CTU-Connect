@@ -15,7 +15,7 @@ public class SendMessageRequest {
     private String conversationId;
 
     @Size(max = 2000, message = "Tin nhắn không được vượt quá 2000 ký tự")
-    private String content;
+    private String content; // Content có thể null nếu có attachment
 
     private String replyToMessageId;
     

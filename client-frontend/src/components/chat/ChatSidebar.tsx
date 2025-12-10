@@ -44,8 +44,14 @@ export default function ChatSidebar({
   }, []);
 
   // Auto-create/select conversation if friendUserId is provided
+  // Use ref to track if we've already created conversation for this friendUserId
+  const processedFriendRef = React.useRef<string | null>(null);
+  
   useEffect(() => {
-    if (friendUserId && !creatingConversation) {
+    if (friendUserId && 
+        !creatingConversation && 
+        processedFriendRef.current !== friendUserId) {
+      processedFriendRef.current = friendUserId;
       createOrGetConversationWithFriend(friendUserId);
     }
   }, [friendUserId]);
