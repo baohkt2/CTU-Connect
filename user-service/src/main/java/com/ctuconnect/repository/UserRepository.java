@@ -16,6 +16,13 @@ public interface UserRepository extends Neo4jRepository<UserEntity, String> {
     Optional<UserEntity> findByEmail(String email);
 
     boolean existsByEmail(String email);
+    
+    // Fallback query to fetch avatarUrl separately
+    @Query("""
+        MATCH (u:User {id: $userId})
+        RETURN u.avatarUrl as avatarUrl
+        """)
+    String findAvatarUrlById(@Param("userId") String userId);
 
     Optional<UserEntity> findByStudentId(String studentId);
 

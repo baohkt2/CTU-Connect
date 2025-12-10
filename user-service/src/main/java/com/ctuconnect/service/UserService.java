@@ -61,9 +61,8 @@ public class UserService {
         log.info("Fetching user profile for userId: {}", userId);
 
         // Use standard findById which loads relationships automatically
-        var user = userRepository.findById(userId)
+        UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-        
         // Log the relationship status and image URLs for debugging
         log.info("User relationships loaded - major: {}, batch: {}, gender: {}", 
                 user.getMajor() != null ? user.getMajor().getName() : "null", 
@@ -75,6 +74,18 @@ public class UserService {
         UserProfileDTO dto = userMapper.toUserProfileDTO(user);
         log.info("UserProfileDTO created - avatarUrl: {}, backgroundUrl: {}", 
                 dto.getAvatarUrl(), dto.getBackgroundUrl());
+        
+        // Fallback: If avatarUrl is null in DTO, try to fetch it separately
+        if (dto.getAvatarUrl() == null && user.getAvatarUrl() == null) {
+            log.warn("avatarUrl is null, attempting to fetch separately for userId: {}", userId);
+            String avatarUrl = userRepository.findAvatarUrlById(userId);
+            if (avatarUrl != null) {
+                dto.setAvatarUrl(avatarUrl);
+                log.info("Successfully fetched avatarUrl via fallback: {}", avatarUrl);
+            } else {
+                log.warn("No avatarUrl found even after fallback query for userId: {}", userId);
+            }
+        }
         
         return dto;
     }
@@ -143,7 +154,7 @@ public class UserService {
         // Update avatar and background images
         if (updateDTO.getAvatarUrl() != null) {
             user.setAvatarUrl(updateDTO.getAvatarUrl());
-            log.info("Updated avatar URL for userId: {}", userId);
+            log.info("Updated avatar URL for userId: {}, avatarUrl: {}", userId, updateDTO.getAvatarUrl());
         }
 
         if (updateDTO.getBackgroundUrl() != null) {

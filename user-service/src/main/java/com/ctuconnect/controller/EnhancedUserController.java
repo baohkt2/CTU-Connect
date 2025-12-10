@@ -79,7 +79,7 @@ public class EnhancedUserController {
             throw new SecurityException("No authenticated user found");
         }
         
-        log.info("PUT /profile - Updating profile for user: {}", currentUser.getEmail());
+        log.info("PUT /profile - Updating profile for user: {}", currentUser);
         UserProfileDTO updatedProfile = userService.updateUserProfile(currentUser.getId(), updateDTO);
         return ResponseEntity.ok(updatedProfile);
     }
