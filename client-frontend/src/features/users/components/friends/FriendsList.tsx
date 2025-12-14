@@ -182,12 +182,24 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                   )}
                 </div>
 
-                {/* Name */}
+                {/* Name and Info */}
                 <div className="text-center w-full">
                   <h4 className="font-semibold text-sm sm:text-base text-gray-900 hover:text-blue-600 transition-colors truncate px-6">
                     {friend.fullName}
                   </h4>
                   <p className="text-xs sm:text-sm text-gray-500 truncate">@{friend.username}</p>
+                  
+                  {/* Academic Info */}
+                  {((friend as any).facultyName || (friend as any).faculty) && (
+                    <p className="text-xs text-gray-600 truncate mt-1">
+                      {(friend as any).facultyName || (friend as any).faculty}
+                    </p>
+                  )}
+                  {((friend as any).majorName || (friend as any).major) && (
+                    <p className="text-xs text-gray-500 truncate">
+                      {(friend as any).majorName || (friend as any).major}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

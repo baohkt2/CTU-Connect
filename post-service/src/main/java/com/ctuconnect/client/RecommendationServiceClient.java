@@ -22,12 +22,14 @@ public interface RecommendationServiceClient {
      * @param userId User ID
      * @param page Page number (default 0)
      * @param size Number of recommendations to fetch (default 20)
+     * @param excludePostIds Comma-separated list of post IDs to exclude (for pagination)
      * @return RecommendationFeedResponse containing list of recommended posts with scores
      */
     @GetMapping("/api/recommendations/feed")
     RecommendationFeedResponse getRecommendationFeed(
         @RequestParam("userId") String userId,
         @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-        @RequestParam(value = "size", required = false, defaultValue = "20") Integer size
+        @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+        @RequestParam(value = "excludePostIds", required = false) String excludePostIds
     );
 }

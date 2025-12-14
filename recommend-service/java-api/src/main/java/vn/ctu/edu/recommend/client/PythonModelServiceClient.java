@@ -121,4 +121,95 @@ public class PythonModelServiceClient {
             .processingTimeMs(0L)
             .build();
     }
+
+    // ==================== Friend Recommendation Methods ====================
+
+    /**
+     * Call Python model service to rank friend candidates
+     * Uses hybrid scoring: PhoBERT similarity + graph signals
+     * 
+     * @param request contains current user profile, candidates, and additional scores
+     * @return ranked friend candidates with scores
+     */
+    public vn.ctu.edu.recommend.model.dto.FriendRankingResponse rankFriendCandidates(
+            vn.ctu.edu.recommend.model.dto.FriendRankingRequest request) {
+        try {
+            log.info("🤝 Calling Python service for friend ranking, user: {}", 
+                request.getCurrentUser().getUserId());
+            log.debug("   Candidates count: {}", request.getCandidates().size());
+            log.debug("   TopK requested: {}", request.getTopK());
+
+            WebClient webClient = webClientBuilder.baseUrl(pythonServiceUrl).build();
+
+            vn.ctu.edu.recommend.model.dto.FriendRankingResponse response = webClient.post()
+                .uri("/api/friends/rank")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(vn.ctu.edu.recommend.model.dto.FriendRankingResponse.class)
+                .timeout(Duration.ofMillis(timeout))
+                .onErrorResume(e -> {
+                    log.error("❌ Friend ranking error: {} - {}", e.getClass().getSimpleName(), e.getMessage());
+                    return Mono.just(createFallbackFriendResponse());
+                })
+                .block();
+
+            if (response != null && response.getRankings() != null) {
+                log.info("✅ Received {} ranked friends from Python service", response.getRankings().size());
+                return response;
+            }
+
+            log.warn("⚠️  Received empty friend ranking response, using fallback");
+            return createFallbackFriendResponse();
+
+        } catch (Exception e) {
+            log.error("❌ Error ranking friend candidates: {}", e.getMessage(), e);
+            return createFallbackFriendResponse();
+        }
+    }
+
+    /**
+     * Generate embedding for a user profile
+     */
+    public vn.ctu.edu.recommend.model.dto.EmbeddingResponse generateUserEmbedding(
+            String userId, String major, String faculty, String bio, 
+            java.util.List<String> skills, java.util.List<String> courses) {
+        try {
+            log.debug("🔢 Generating user embedding for: {}", userId);
+
+            java.util.Map<String, Object> request = java.util.Map.of(
+                "user_id", userId,
+                "major", major != null ? major : "",
+                "faculty", faculty != null ? faculty : "",
+                "bio", bio != null ? bio : "",
+                "skills", skills != null ? skills : java.util.Collections.emptyList(),
+                "courses", courses != null ? courses : java.util.Collections.emptyList()
+            );
+
+            WebClient webClient = webClientBuilder.baseUrl(pythonServiceUrl).build();
+
+            return webClient.post()
+                .uri("/embed/user")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(vn.ctu.edu.recommend.model.dto.EmbeddingResponse.class)
+                .timeout(Duration.ofMillis(timeout))
+                .block();
+
+        } catch (Exception e) {
+            log.error("❌ Error generating user embedding: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create fallback response for friend ranking
+     */
+    private vn.ctu.edu.recommend.model.dto.FriendRankingResponse createFallbackFriendResponse() {
+        return vn.ctu.edu.recommend.model.dto.FriendRankingResponse.builder()
+            .rankings(java.util.Collections.emptyList())
+            .count(0)
+            .modelVersion("fallback")
+            .build();
+    }
 }
+

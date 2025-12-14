@@ -14,9 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -136,49 +135,104 @@ public class EnhancedUserController {
     // ==================== FRIEND SUGGESTIONS ====================
     
     /**
-     * Get friend suggestions
+     * Get friend suggestions with pagination support
      * Frontend expects: GET /api/users/friend-suggestions
+     * @param limit Number of suggestions to return (default 20)
+     * @param excludeUserIds Comma-separated list of user IDs to exclude (for "Load More" pagination)
      */
     @GetMapping("/friend-suggestions")
     @RequireAuth
-    public ResponseEntity<List<FriendSuggestionDTO>> getFriendSuggestions(
-            @RequestParam(defaultValue = "20") int limit) {
+    public ResponseEntity<Map<String, Object>> getFriendSuggestions(
+            @RequestParam(defaultValue = "100") int limit,
+            @RequestParam(required = false) String excludeUserIds) {
         AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
         if (currentUser == null) {
             throw new SecurityException("No authenticated user found");
         }
 
-        List<FriendSuggestionDTO> suggestions = socialGraphService.getFriendSuggestions(
-            currentUser.getId(), limit);
+        // Parse excluded user IDs (CSV format: "id1,id2,id3")
+        Set<String> excludedIds = new HashSet<>();
+        if (excludeUserIds != null && !excludeUserIds.isEmpty()) {
+            excludedIds.addAll(Arrays.asList(excludeUserIds.split(",")));
+        }
+        
+        log.info("👥 GET /friend-suggestions - User: {}, Limit: {}, Exclude: {} users",
+            currentUser.getId(), limit, excludedIds.size());
 
-        return ResponseEntity.ok(suggestions);
+        // Get large list of suggestions (over-fetch for filtering)
+        List<FriendSuggestionDTO> allSuggestions = socialGraphService.getFriendSuggestions(
+            currentUser.getId(), limit ); // Fetch 5x to ensure enough after filtering
+
+        // Filter out excluded user IDs
+        List<FriendSuggestionDTO> filteredSuggestions = allSuggestions.stream()
+            .filter(s -> !excludedIds.contains(s.getUserId()))
+            .limit(limit)
+            .collect(Collectors.toList());
+        
+        // Check if there are more suggestions available
+        long remainingCount = allSuggestions.stream()
+            .filter(s -> !excludedIds.contains(s.getUserId()))
+            .count();
+        boolean hasMore = remainingCount > limit;
+
+        return ResponseEntity.ok(Map.of(
+            "suggestions", filteredSuggestions,
+            "hasMore", hasMore,
+            "total", allSuggestions.size(),
+            "returned", filteredSuggestions.size()
+        ));
     }
 
     /**
      * Search friend suggestions with filters (enhanced version)
      * Frontend expects: GET /api/users/friend-suggestions/search
      * Supports: query (fullname/email), college, faculty, batch filters
+     * @param excludeUserIds For pagination support in search results
      */
     @GetMapping("/friend-suggestions/search")
     @RequireAuth
-    public ResponseEntity<List<UserSearchDTO>> searchFriendSuggestions(
+    public ResponseEntity<Map<String, Object>> searchFriendSuggestions(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String college,
             @RequestParam(required = false) String faculty,
             @RequestParam(required = false) String batch,
-            @RequestParam(defaultValue = "50") int limit) {
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(required = false) String excludeUserIds) {
         AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
         if (currentUser == null) {
             throw new SecurityException("No authenticated user found");
         }
 
-        log.info("GET /friend-suggestions/search - query={}, college={}, faculty={}, batch={}, limit={}", 
-                 query, college, faculty, batch, limit);
+        // Parse excluded user IDs
+        Set<String> excludedIds = new HashSet<>();
+        if (excludeUserIds != null && !excludeUserIds.isEmpty()) {
+            excludedIds.addAll(Arrays.asList(excludeUserIds.split(",")));
+        }
 
-        List<UserSearchDTO> suggestions = userService.searchFriendSuggestions(
-            currentUser.getId(), query, college, faculty, batch, limit);
+        log.info("GET /friend-suggestions/search - query={}, college={}, faculty={}, batch={}, limit={}, exclude={}", 
+                 query, college, faculty, batch, limit, excludedIds.size());
 
-        return ResponseEntity.ok(suggestions);
+        // Get large list for filtering
+        List<UserSearchDTO> allResults = userService.searchFriendSuggestions(
+            currentUser.getId(), query, college, faculty, batch, limit * 3);
+
+        // Filter out excluded users (using id field, not getUserId)
+        List<UserSearchDTO> filteredResults = allResults.stream()
+            .filter(u -> !excludedIds.contains(u.getId()))
+            .limit(limit)
+            .collect(Collectors.toList());
+        
+        long remainingCount = allResults.stream()
+            .filter(u -> !excludedIds.contains(u.getId()))
+            .count();
+        boolean hasMore = remainingCount > limit;
+
+        return ResponseEntity.ok(Map.of(
+            "results", filteredResults,
+            "hasMore", hasMore,
+            "total", allResults.size(),
+            "returned", filteredResults.size()
+        ));
     }
 
     // ==================== FRIEND MANAGEMENT ====================

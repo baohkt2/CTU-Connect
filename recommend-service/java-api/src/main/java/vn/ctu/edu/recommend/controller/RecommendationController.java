@@ -10,7 +10,7 @@ import vn.ctu.edu.recommend.model.enums.FeedbackType;
 import vn.ctu.edu.recommend.service.HybridRecommendationService;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Unified REST Controller for Recommendation Service
@@ -38,23 +38,31 @@ public class RecommendationController {
      * @param userId User ID
      * @param page Page number (default 0)
      * @param size Number of items per page (default 20)
+     * @param excludePostIds Comma-separated list of post IDs to exclude (for pagination)
      * @return Personalized feed recommendations
      */
     @GetMapping("/feed")
     public ResponseEntity<RecommendationResponse> getFeed(
             @RequestParam String userId,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer size) {
+            @RequestParam(required = false, defaultValue = "20") Integer size,
+            @RequestParam(required = false) String excludePostIds) {
+        
+        // Parse excluded post IDs (CSV format: "id1,id2,id3")
+        Set<String> excludedIds = new HashSet<>();
+        if (excludePostIds != null && !excludePostIds.isEmpty()) {
+            excludedIds.addAll(Arrays.asList(excludePostIds.split(",")));
+        }
         
         log.info("========================================");
         log.info("📥 API REQUEST: GET /api/recommendations/feed");
         log.info("   User ID: {}", userId);
-        log.info("   Page: {}, Size: {}", page, size);
+        log.info("   Page: {}, Size: {}, Exclude: {} posts", page, size, excludedIds.size());
         log.info("========================================");
         
         try {
             log.debug("🔄 Calling hybrid recommendation service for feed generation");
-            RecommendationResponse response = recommendationService.getFeed(userId, page, size);
+            RecommendationResponse response = recommendationService.getFeed(userId, page, size, excludedIds);
             
             log.info("========================================");
             log.info("📤 API RESPONSE: GET /api/recommendations/feed");

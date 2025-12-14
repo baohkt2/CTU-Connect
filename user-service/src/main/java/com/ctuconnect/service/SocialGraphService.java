@@ -1,11 +1,13 @@
 package com.ctuconnect.service;
 
+import com.ctuconnect.client.RecommendServiceClient;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.dto.FriendSuggestionDTO;
 import com.ctuconnect.dto.UserDTO;
 import com.ctuconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,13 +27,22 @@ public class SocialGraphService {
     @SuppressWarnings("unused")
     private final Neo4jTemplate neo4jTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RecommendServiceClient recommendServiceClient;
 
     private static final String FRIEND_SUGGESTIONS_CACHE = "friend_suggestions:";
     private static final String MUTUAL_FRIENDS_CACHE = "mutual_friends:";
     private static final int CACHE_TTL_HOURS = 6;
 
+    @Value("${recommendation.ml.enabled:true}")
+    private boolean mlRecommendationEnabled;
+
+    @Value("${recommendation.ml.fallback-enabled:true}")
+    private boolean fallbackEnabled;
+
     /**
-     * Facebook-like friend suggestion algorithm using multiple signals
+     * Hybrid friend suggestion algorithm:
+     * - Primary: ML-enhanced recommendations from recommend-service
+     * - Fallback: Rule-based recommendations using multiple signals
      */
     public List<FriendSuggestionDTO> getFriendSuggestions(String userId, int limit) {
         String cacheKey = FRIEND_SUGGESTIONS_CACHE + userId;
@@ -39,9 +50,41 @@ public class SocialGraphService {
         // Try cache first
         List<FriendSuggestionDTO> cached = getCachedSuggestions(cacheKey);
         if (cached != null && !cached.isEmpty()) {
+            log.debug("📦 Returning {} cached suggestions for user: {}", cached.size(), userId);
             return cached.stream().limit(limit).collect(Collectors.toList());
         }
 
+        List<FriendSuggestionDTO> suggestions;
+
+        // Try ML-enhanced recommendations first
+        if (mlRecommendationEnabled) {
+            log.info("🤖 Attempting ML-enhanced friend suggestions for user: {}", userId);
+            suggestions = recommendServiceClient.getMLFriendSuggestions(userId, limit);
+            
+            if (!suggestions.isEmpty()) {
+                log.info("✅ Got {} ML-enhanced suggestions from recommend-service", suggestions.size());
+                cacheSuggestions(cacheKey, suggestions);
+                return suggestions;
+            }
+            
+            log.info("⚠️ ML service returned empty, falling back to rule-based");
+        }
+
+        // Fallback to rule-based recommendations
+        if (fallbackEnabled) {
+            log.info("📊 Using rule-based friend suggestions for user: {}", userId);
+            suggestions = getRuleBasedSuggestions(userId, limit);
+            cacheSuggestions(cacheKey, suggestions);
+            return suggestions;
+        }
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * Original rule-based friend suggestion algorithm (now as fallback)
+     */
+    private List<FriendSuggestionDTO> getRuleBasedSuggestions(String userId, int limit) {
         UserEntity currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -76,15 +119,10 @@ public class SocialGraphService {
                     }
                 ));
 
-        List<FriendSuggestionDTO> rankedSuggestions = uniqueSuggestions.values().stream()
+        return uniqueSuggestions.values().stream()
                 .sorted((a, b) -> Double.compare(b.getRelevanceScore(), a.getRelevanceScore()))
                 .limit(limit)
                 .collect(Collectors.toList());
-
-        // Cache the results
-        cacheSuggestions(cacheKey, rankedSuggestions);
-
-        return rankedSuggestions;
     }
 
     /**
@@ -100,11 +138,7 @@ public class SocialGraphService {
                     .map(suggestedUser -> {
                         int mutualCount = getMutualFriendsCount(user.getId(), suggestedUser.getId());
 
-                        return FriendSuggestionDTO.builder()
-                                .userId(suggestedUser.getId())
-                                .username(suggestedUser.getUsername())
-                                .fullName(suggestedUser.getFullName())
-                                .avatarUrl(suggestedUser.getAvatarUrl())
+                        return createSuggestionDTO(suggestedUser, user)
                                 .mutualFriendsCount(mutualCount)
                                 .suggestionReason("You have " + mutualCount + " mutual friends")
                                 .relevanceScore(calculateMutualFriendsScore(mutualCount))
@@ -116,6 +150,44 @@ public class SocialGraphService {
             log.warn("Failed to get mutual friends suggestions: {}", e.getMessage());
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Helper method to create base FriendSuggestionDTO builder with all standard fields
+     */
+    private FriendSuggestionDTO.FriendSuggestionDTOBuilder createSuggestionDTO(UserEntity suggestedUser, UserEntity currentUser) {
+        return FriendSuggestionDTO.builder()
+                .userId(suggestedUser.getId())
+                .id(suggestedUser.getId())  // For frontend compatibility
+                .username(suggestedUser.getUsername())
+                .fullName(suggestedUser.getFullName())
+                .avatarUrl(suggestedUser.getAvatarUrl())
+                .bio(suggestedUser.getBio())
+                .email(suggestedUser.getEmail())
+                .studentId(suggestedUser.getStudentId())
+                .facultyName(suggestedUser.getFacultyName())
+                .majorName(suggestedUser.getMajorName())
+                .batchYear(suggestedUser.getBatchYear() != null ? suggestedUser.getBatchYear().toString() : null)
+                .sameFaculty(isSameFaculty(currentUser, suggestedUser))
+                .sameMajor(isSameMajor(currentUser, suggestedUser))
+                .sameBatch(isSameBatch(currentUser, suggestedUser))
+                .sameCollege(isSameCollege(currentUser, suggestedUser));
+    }
+
+    private boolean isSameCollege(UserEntity u1, UserEntity u2) {
+        return u1.hasSameCollege(u2);
+    }
+
+    private boolean isSameFaculty(UserEntity u1, UserEntity u2) {
+        return u1.hasSameFaculty(u2);
+    }
+
+    private boolean isSameMajor(UserEntity u1, UserEntity u2) {
+        return u1.hasSameMajor(u2);
+    }
+
+    private boolean isSameBatch(UserEntity u1, UserEntity u2) {
+        return u1.hasSameBatch(u2);
     }
 
     /**
@@ -132,11 +204,7 @@ public class SocialGraphService {
                 suggestions.addAll(sameFacultyUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)
-                        .map(suggestedUser -> FriendSuggestionDTO.builder()
-                                .userId(suggestedUser.getId())
-                                .username(suggestedUser.getUsername())
-                                .fullName(suggestedUser.getFullName())
-                                .avatarUrl(suggestedUser.getAvatarUrl())
+                        .map(suggestedUser -> createSuggestionDTO(suggestedUser, user)
                                 .suggestionReason("Same faculty: " + user.getFacultyName())
                                 .relevanceScore(calculateAcademicScore(2))
                                 .suggestionType(FriendSuggestionDTO.SuggestionType.ACADEMIC_CONNECTION)
@@ -151,11 +219,7 @@ public class SocialGraphService {
                 suggestions.addAll(sameMajorUsers.stream()
                         .filter(u -> !u.getId().equals(user.getId()))
                         .limit(limit / 3)
-                        .map(suggestedUser -> FriendSuggestionDTO.builder()
-                                .userId(suggestedUser.getId())
-                                .username(suggestedUser.getUsername())
-                                .fullName(suggestedUser.getFullName())
-                                .avatarUrl(suggestedUser.getAvatarUrl())
+                        .map(suggestedUser -> createSuggestionDTO(suggestedUser, user)
                                 .suggestionReason("Same major: " + user.getMajorName())
                                 .relevanceScore(calculateAcademicScore(3))
                                 .suggestionType(FriendSuggestionDTO.SuggestionType.ACADEMIC_CONNECTION)
@@ -185,11 +249,7 @@ public class SocialGraphService {
                     if (!suggestion.getId().equals(user.getId()) &&
                         !userRepository.areFriends(user.getId(), suggestion.getId())) {
 
-                        suggestions.add(FriendSuggestionDTO.builder()
-                                .userId(suggestion.getId())
-                                .username(suggestion.getUsername())
-                                .fullName(suggestion.getFullName())
-                                .avatarUrl(suggestion.getAvatarUrl())
+                        suggestions.add(createSuggestionDTO(suggestion, user)
                                 .suggestionReason("Friend of " + friend.getFullName())
                                 .relevanceScore(calculateFriendsOfFriendsScore(1))
                                 .suggestionType(FriendSuggestionDTO.SuggestionType.FRIENDS_OF_FRIENDS)
@@ -330,5 +390,40 @@ public class SocialGraphService {
         if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
+
+        // Invalidate in recommend-service as well
+        if (mlRecommendationEnabled) {
+            recommendServiceClient.invalidateCache(userId);
+        }
+    }
+
+    /**
+     * Record feedback on friend suggestion for ML improvement
+     */
+    public void recordFeedbackOnSuggestion(String userId, String suggestedUserId, String action) {
+        if (mlRecommendationEnabled) {
+            recommendServiceClient.recordFeedback(userId, suggestedUserId, action);
+        }
+    }
+
+    /**
+     * Record when user clicks on a suggestion
+     */
+    public void recordSuggestionClick(String userId, String suggestedUserId) {
+        recordFeedbackOnSuggestion(userId, suggestedUserId, "CLICK");
+    }
+
+    /**
+     * Record when user sends friend request from suggestion
+     */
+    public void recordFriendRequestFromSuggestion(String userId, String suggestedUserId) {
+        recordFeedbackOnSuggestion(userId, suggestedUserId, "REQUEST");
+    }
+
+    /**
+     * Record when suggestion is dismissed
+     */
+    public void recordSuggestionDismiss(String userId, String suggestedUserId) {
+        recordFeedbackOnSuggestion(userId, suggestedUserId, "DISMISS");
     }
 }

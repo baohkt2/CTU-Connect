@@ -154,7 +154,7 @@ export const FriendRequestsList: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-2 sm:space-y-3">
-          {currentRequests.map((request) => (
+          {currentRequests.map((request: any) => (
             <div key={request.id} className="bg-white rounded-lg border p-3 sm:p-4 shadow-sm">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
@@ -175,8 +175,22 @@ export const FriendRequestsList: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-sm sm:text-base text-gray-900 truncate">{request.fullName}</h4>
                     <p className="text-xs sm:text-sm text-gray-500 truncate">@{request.username}</p>
-                    {request.major && (
-                      <p className="text-xs text-gray-400 mt-0.5 truncate">{request.major.name}</p>
+                    {/* Academic Info */}
+                    {(request.facultyName || request.faculty) && (
+                      <p className="text-xs text-gray-600 mt-0.5 truncate">
+                        {request.facultyName || request.faculty}
+                      </p>
+                    )}
+                    {(request.majorName || request.major?.name || request.major) && (
+                      <p className="text-xs text-gray-400 truncate">
+                        {request.majorName || request.major?.name || request.major}
+                      </p>
+                    )}
+                    {/* Mutual friends count */}
+                    {request.mutualFriendsCount > 0 && (
+                      <p className="text-xs text-blue-600 mt-0.5">
+                        {request.mutualFriendsCount} bạn chung
+                      </p>
                     )}
                   </div>
                 </div>
@@ -222,3 +236,5 @@ export const FriendRequestsList: React.FC = () => {
     </div>
   );
 };
+
+export default FriendRequestsList;

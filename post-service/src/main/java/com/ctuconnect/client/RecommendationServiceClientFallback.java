@@ -16,7 +16,7 @@ import java.util.Collections;
 public class RecommendationServiceClientFallback implements RecommendationServiceClient {
 
     @Override
-    public RecommendationFeedResponse getRecommendationFeed(String userId, Integer page, Integer size) {
+    public RecommendationFeedResponse getRecommendationFeed(String userId, Integer page, Integer size, String excludePostIds) {
         log.warn("⚠️  Recommendation service unavailable - using fallback for user: {}", userId);
         
         // Return empty response - post-service will fall back to regular posts

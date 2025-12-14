@@ -24,6 +24,8 @@ public class UserMapper {
             .fullName(user.getFullName())
             .role(user.getRole())
             .isActive(user.getIsActive())
+            .avatarUrl(user.getAvatarUrl())
+            .bio(user.getBio())
             .college(user.getMajor() != null && user.getMajor().getFaculty() != null &&
                     user.getMajor().getFaculty().getCollege() != null ?
                     user.getMajor().getFaculty().getCollege().getName() : null)

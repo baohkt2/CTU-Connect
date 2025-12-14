@@ -1,3 +1,4 @@
+-- Active: 1765215123966@@127.0.0.1@5435@recommend_db
 # 🎓 KIẾN TRÚC HỆ THỐNG CTU-CONNECT
 
 ## Mô tả tổng quan

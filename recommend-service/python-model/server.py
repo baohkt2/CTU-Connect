@@ -98,12 +98,21 @@ class PostEmbeddingBatchRequest(BaseModel):
 
 
 class UserEmbeddingRequest(BaseModel):
-    user_id: str = Field(..., description="User ID")
+    user_id: Optional[str] = Field(None, alias="userId", description="User ID")
+    userId: Optional[str] = Field(None, description="User ID (camelCase from Java)")
     major: Optional[str] = Field(None, description="User's major")
     faculty: Optional[str] = Field(None, description="User's faculty")
     courses: Optional[List[str]] = Field([], description="List of courses")
     skills: Optional[List[str]] = Field([], description="List of skills")
     bio: Optional[str] = Field(None, description="User bio")
+    
+    @property
+    def effective_user_id(self) -> str:
+        """Get user_id from either field"""
+        return self.user_id or self.userId or "unknown"
+    
+    class Config:
+        populate_by_name = True
 
 
 class EmbeddingResponse(BaseModel):
@@ -275,6 +284,282 @@ async def compute_batch_similarity(request: BatchSimilarityRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== Friend Recommendation Endpoints (NEW) ====================
+
+class UserBatchEmbeddingRequest(BaseModel):
+    """Request for batch user embedding generation"""
+    users: List[UserEmbeddingRequest] = Field(..., description="List of users")
+
+
+class FriendCandidateScore(BaseModel):
+    """Additional scores for a friend candidate"""
+    mutual_friends_score: float = Field(0.0, description="Mutual friends score (0-1)")
+    academic_score: float = Field(0.0, description="Academic connection score (0-1)")
+    activity_score: float = Field(0.0, description="Activity score (0-1)")
+    recency_score: float = Field(0.0, description="Recency score (0-1)")
+    mutual_friends_count: Optional[int] = Field(0, description="Number of mutual friends")
+
+
+class UserProfileData(BaseModel):
+    """User profile data for friend ranking - matches Java FriendRankingRequest.UserProfileData"""
+    userId: Optional[str] = Field(None, description="User ID (camelCase from Java)")
+    user_id: Optional[str] = Field(None, description="User ID (snake_case)")
+    major: Optional[str] = Field(None, description="User's major")
+    faculty: Optional[str] = Field(None, description="User's faculty")
+    courses: Optional[List[str]] = Field([], description="List of courses")
+    skills: Optional[List[str]] = Field([], description="List of skills")
+    bio: Optional[str] = Field(None, description="User bio")
+    
+    @property
+    def effective_user_id(self) -> str:
+        """Get user_id from either field"""
+        return self.userId or self.user_id or "unknown"
+    
+    class Config:
+        populate_by_name = True
+
+
+class FriendRankingRequest(BaseModel):
+    """Request for friend candidate ranking - matches Java FriendRankingRequest"""
+    currentUser: Optional[UserProfileData] = Field(None, alias="current_user", description="Current user profile")
+    current_user: Optional[UserProfileData] = Field(None, description="Current user profile (snake_case)")
+    candidates: List[UserProfileData] = Field(..., description="Candidate users")
+    additionalScores: Optional[Dict[str, FriendCandidateScore]] = Field(
+        None, alias="additional_scores", description="Additional scores per candidate user_id"
+    )
+    additional_scores: Optional[Dict[str, FriendCandidateScore]] = Field(
+        None, description="Additional scores per candidate user_id (snake_case)"
+    )
+    topK: int = Field(20, alias="top_k", description="Number of top candidates to return")
+    top_k: int = Field(20, description="Number of top candidates to return (snake_case)")
+    
+    @property
+    def effective_current_user(self) -> Optional[UserProfileData]:
+        return self.currentUser or self.current_user
+    
+    @property
+    def effective_additional_scores(self) -> Optional[Dict[str, FriendCandidateScore]]:
+        return self.additionalScores or self.additional_scores
+    
+    @property
+    def effective_top_k(self) -> int:
+        return self.topK or self.top_k or 20
+    
+    class Config:
+        populate_by_name = True
+
+
+class RankedFriend(BaseModel):
+    """Ranked friend candidate result"""
+    user_id: str
+    final_score: float
+    content_similarity: float
+    mutual_friends_score: float
+    academic_score: float
+    activity_score: float
+    recency_score: float
+    suggestion_type: str
+    suggestion_reason: Optional[str] = None
+
+
+class FriendRankingResponse(BaseModel):
+    """Response for friend ranking"""
+    rankings: List[RankedFriend]
+    count: int
+    model_version: str = "phobert-v1"
+
+
+@app.post("/embed/user/batch", response_model=BatchEmbeddingResponse)
+async def embed_users_batch(request: UserBatchEmbeddingRequest):
+    """Generate embeddings for multiple user profiles"""
+    try:
+        if inference_engine is None:
+            raise HTTPException(status_code=503, detail="Model not loaded")
+        
+        results = []
+        for user in request.users:
+            user_data = {
+                'major': user.major,
+                'faculty': user.faculty,
+                'courses': user.courses or [],
+                'skills': user.skills or [],
+                'bio': user.bio
+            }
+            
+            embedding = inference_engine.encode_user_profile(user_data)
+            
+            results.append(EmbeddingResponse(
+                id=user.user_id,
+                embedding=embedding.tolist(),
+                dimension=len(embedding)
+            ))
+        
+        return BatchEmbeddingResponse(embeddings=results, count=len(results))
+    
+    except Exception as e:
+        logger.error(f"Error generating batch user embeddings: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/friends/rank", response_model=FriendRankingResponse)
+async def rank_friend_candidates(request: FriendRankingRequest):
+    """
+    Rank friend candidates using hybrid scoring
+    
+    Scoring weights:
+    - Content Similarity (PhoBERT): 30%
+    - Mutual Friends: 25%
+    - Academic Connection: 20%
+    - Activity Score: 15%
+    - Recency: 10%
+    """
+    try:
+        if inference_engine is None:
+            raise HTTPException(status_code=503, detail="Model not loaded")
+        
+        from services.user_similarity_service import get_user_similarity_service
+        
+        # Get or create similarity service
+        similarity_service = get_user_similarity_service(inference_engine)
+        
+        # Get current user from either field name
+        current_user = request.effective_current_user
+        if current_user is None:
+            logger.error("No current user provided in request")
+            raise HTTPException(status_code=400, detail="current_user or currentUser is required")
+        
+        # Generate current user embedding
+        current_user_data = {
+            'major': current_user.major,
+            'faculty': current_user.faculty,
+            'courses': current_user.courses or [],
+            'skills': current_user.skills or [],
+            'bio': current_user.bio
+        }
+        current_user_embedding = similarity_service.generate_user_embedding(current_user_data)
+        
+        # Generate candidate embeddings
+        candidate_embeddings = []
+        candidate_ids = []
+        candidate_infos = {}
+        
+        for candidate in request.candidates:
+            candidate_data = {
+                'major': candidate.major,
+                'faculty': candidate.faculty,
+                'courses': candidate.courses or [],
+                'skills': candidate.skills or [],
+                'bio': candidate.bio
+            }
+            
+            embedding = similarity_service.generate_user_embedding(candidate_data)
+            candidate_embeddings.append(embedding)
+            candidate_id = candidate.effective_user_id
+            candidate_ids.append(candidate_id)
+            
+            # Store info for reason generation
+            candidate_infos[candidate_id] = {
+                'major_name': candidate.major,
+                'faculty_name': candidate.faculty,
+                'same_major': candidate.major == current_user.major if candidate.major and current_user.major else False,
+                'same_faculty': candidate.faculty == current_user.faculty if candidate.faculty and current_user.faculty else False
+            }
+        
+        # Convert additional scores to dict format
+        additional_scores_dict = None
+        additional_scores = request.effective_additional_scores
+        if additional_scores:
+            additional_scores_dict = {
+                user_id: {
+                    'mutual_friends_score': scores.mutual_friends_score,
+                    'academic_score': scores.academic_score,
+                    'activity_score': scores.activity_score,
+                    'recency_score': scores.recency_score,
+                    'mutual_friends_count': scores.mutual_friends_count
+                }
+                for user_id, scores in additional_scores.items()
+            }
+        
+        # Rank candidates
+        ranked_results = similarity_service.rank_friend_candidates(
+            current_user_embedding=current_user_embedding,
+            candidate_embeddings=candidate_embeddings,
+            candidate_ids=candidate_ids,
+            additional_scores=additional_scores_dict,
+            top_k=request.effective_top_k
+        )
+        
+        # Build response
+        rankings = []
+        for result in ranked_results:
+            user_id = result['user_id']
+            
+            # Determine suggestion type and reason
+            suggestion_type = similarity_service.determine_suggestion_type(result)
+            
+            # Get user info for reason generation
+            user_info = candidate_infos.get(user_id, {})
+            if additional_scores_dict and user_id in additional_scores_dict:
+                user_info['mutual_friends_count'] = additional_scores_dict[user_id].get('mutual_friends_count', 0)
+            
+            scores_with_count = {**result}
+            if additional_scores_dict and user_id in additional_scores_dict:
+                scores_with_count['mutual_friends_count'] = additional_scores_dict[user_id].get('mutual_friends_count', 0)
+            
+            suggestion_reason = similarity_service.generate_suggestion_reason(
+                scores=scores_with_count,
+                user_info=user_info
+            )
+            
+            rankings.append(RankedFriend(
+                user_id=user_id,
+                final_score=result['final_score'],
+                content_similarity=result['content_similarity'],
+                mutual_friends_score=result['mutual_friends_score'],
+                academic_score=result['academic_score'],
+                activity_score=result['activity_score'],
+                recency_score=result['recency_score'],
+                suggestion_type=suggestion_type,
+                suggestion_reason=suggestion_reason
+            ))
+        
+        logger.info(f"🤝 Ranked {len(rankings)} friend candidates for user {current_user.effective_user_id}")
+        
+        return FriendRankingResponse(
+            rankings=rankings,
+            count=len(rankings)
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error ranking friend candidates: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/similarity/users/batch", response_model=BatchSimilarityResponse)
+async def compute_user_similarity_batch(request: BatchSimilarityRequest):
+    """
+    Compute similarity between a query user embedding and multiple candidate user embeddings
+    Specialized endpoint for user-to-user similarity (same as /similarity/batch but semantic naming)
+    """
+    try:
+        if inference_engine is None:
+            raise HTTPException(status_code=503, detail="Model not loaded")
+        
+        query = np.array(request.query_embedding)
+        candidates = np.array(request.candidate_embeddings)
+        similarities = inference_engine.compute_batch_similarity(query, candidates)
+        
+        return BatchSimilarityResponse(
+            similarities=similarities.tolist(),
+            count=len(similarities)
+        )
+    except Exception as e:
+        logger.error(f"Error computing user batch similarity: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Include additional ML routes from api.routes if they exist
 try:
     from api.routes import router as ml_router
@@ -289,3 +574,4 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     logger.info(f"🚀 Starting server on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
+

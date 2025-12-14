@@ -4,6 +4,8 @@ import com.ctuconnect.dto.UserProfileDTO;
 import com.ctuconnect.dto.UserUpdateDTO;
 import com.ctuconnect.dto.UserSearchDTO;
 import com.ctuconnect.dto.FriendRequestDTO;
+import com.ctuconnect.dto.UserAcademicProfileDTO;
+import com.ctuconnect.dto.FriendCandidateResponseDTO;
 import com.ctuconnect.service.UserService;
 import com.ctuconnect.exception.ErrorResponse;
 
@@ -378,5 +380,59 @@ public class UserController {
 
         boolean exists = userService.studentIdExists(studentId);
         return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    // ===== Friend Recommendation Support Endpoints =====
+
+    @Operation(summary = "Get user academic profile",
+               description = "Get academic profile for recommend-service integration")
+    @GetMapping("/{userId}/academic-profile")
+    public ResponseEntity<UserAcademicProfileDTO> getAcademicProfile(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId) {
+        
+        log.info("GET /api/users/{}/academic-profile - Getting academic profile", userId);
+        UserAcademicProfileDTO profile = userService.getAcademicProfile(userId);
+        return ResponseEntity.ok(profile);
+    }
+
+    @Operation(summary = "Get friend candidates",
+               description = "Get potential friend candidates for ML-based recommendation")
+    @GetMapping("/{userId}/friend-candidates")
+    public ResponseEntity<List<FriendCandidateResponseDTO>> getFriendCandidates(
+            @Parameter(description = "User ID", required = true)
+            @PathVariable @NotBlank String userId,
+            @Parameter(description = "Maximum number of candidates to return")
+            @RequestParam(defaultValue = "100") @Min(1) @Max(500) int limit) {
+        
+        log.info("GET /api/users/{}/friend-candidates?limit={}", userId, limit);
+        List<FriendCandidateResponseDTO> candidates = userService.getFriendCandidates(userId, limit);
+        return ResponseEntity.ok(candidates);
+    }
+
+    @Operation(summary = "Get mutual friends count",
+               description = "Get count of mutual friends between two users")
+    @GetMapping("/{userId1}/mutual-friends/{userId2}/count")
+    public ResponseEntity<Map<String, Integer>> getMutualFriendsCount(
+            @Parameter(description = "First user ID", required = true)
+            @PathVariable @NotBlank String userId1,
+            @Parameter(description = "Second user ID", required = true)
+            @PathVariable @NotBlank String userId2) {
+        
+        int count = userService.getMutualFriendsCount(userId1, userId2);
+        return ResponseEntity.ok(Map.of("count", count));
+    }
+
+    @Operation(summary = "Check if users are friends",
+               description = "Check friendship status between two users")
+    @GetMapping("/{userId1}/is-friend/{userId2}")
+    public ResponseEntity<Map<String, Boolean>> areFriends(
+            @Parameter(description = "First user ID", required = true)
+            @PathVariable @NotBlank String userId1,
+            @Parameter(description = "Second user ID", required = true)
+            @PathVariable @NotBlank String userId2) {
+        
+        boolean friends = userService.areFriends(userId1, userId2);
+        return ResponseEntity.ok(Map.of("areFriends", friends));
     }
 }

@@ -21,6 +21,10 @@ public class UserSearchDTO {
     private String fullName;
     private String role;
     private Boolean isActive;
+    
+    // Profile information
+    private String avatarUrl;
+    private String bio;
 
     // Academic information
     private String college;

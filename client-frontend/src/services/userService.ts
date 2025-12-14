@@ -114,13 +114,26 @@ export const userService = {
     return response.data;
   },
 
-  // // Get friend suggestions (old endpoint - deprecated)
-  // async getFriendSuggestions(): Promise<PaginatedResponse<User>> {
-  //   const response = await api.get('/users/me/friend-suggestions');
-  //   return response.data;
-  // },
+  // Get ML-based friend suggestions (no filters - uses recommendation engine)
+  async getFriendSuggestions(limit: number = 20, excludeUserIds?: string[]): Promise<User[]> {
+    const params = new URLSearchParams();
+    params.append('limit', limit.toString());
+    if (excludeUserIds && excludeUserIds.length > 0) {
+      params.append('excludeUserIds', excludeUserIds.join(','));
+    }
+    const response = await api.get(`/users/friend-suggestions?${params.toString()}`);
+    // Backend returns { suggestions: User[], hasMore: boolean, total: number, returned: number }
+    return response.data.suggestions || response.data || [];
+  },
+
+  // Refresh friend suggestions cache
+  async refreshFriendSuggestions(): Promise<{ success: boolean; message: string }> {
+    const response = await api.post('/users/friend-suggestions/refresh');
+    return response.data;
+  },
 
   // Get friend suggestions with filters (NEW - enhanced version)
+  // Uses ML endpoint when no filters, search endpoint when filters present
   async searchFriendSuggestions(params?: {
     query?: string;
     college?: string;
@@ -128,6 +141,15 @@ export const userService = {
     batch?: string;
     limit?: number;
   }): Promise<User[]> {
+    // Check if any filters are provided
+    const hasFilters = params?.query || params?.college || params?.faculty || params?.batch;
+    
+    // If no filters, use ML-based endpoint
+    if (!hasFilters) {
+      return this.getFriendSuggestions(params?.limit || 50);
+    }
+    
+    // Otherwise use search endpoint with filters
     const queryParams = new URLSearchParams();
     if (params?.query) queryParams.append('query', params.query);
     if (params?.college) queryParams.append('college', params.college);
@@ -136,7 +158,8 @@ export const userService = {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     
     const response = await api.get(`/users/friend-suggestions/search?${queryParams.toString()}`);
-    return response.data;
+    // Backend returns { results: User[], hasMore: boolean, total: number, returned: number }
+    return response.data.results || response.data || [];
   },
 
   // // Search user by email

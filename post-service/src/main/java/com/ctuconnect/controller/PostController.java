@@ -117,7 +117,8 @@ public class PostController {
     @RequireAuth
     public ResponseEntity<?> getPersonalizedFeed(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String excludePostIds) {
         
         long startTime = System.currentTimeMillis();
         
@@ -125,7 +126,9 @@ public class PostController {
             String currentUserId = SecurityContextHolder.getCurrentUserIdOrThrow();
             
             log.info("========================================");
-            log.info("📥 GET /api/posts/feed - User: {}, Page: {}, Size: {}", currentUserId, page, size);
+            log.info("📥 GET /api/posts/feed - User: {}, Page: {}, Size: {}, Exclude: {} posts", 
+                currentUserId, page, size,
+                excludePostIds != null ? excludePostIds.split(",").length : 0);
             log.info("========================================");
             
             // Step 1: Try to get recommendations from recommendation-service
@@ -134,7 +137,7 @@ public class PostController {
                     log.debug("🔄 Calling recommendation-service for user: {}", currentUserId);
                     
                     com.ctuconnect.dto.response.RecommendationFeedResponse recommendationResponse = 
-                        recommendationServiceClient.getRecommendationFeed(currentUserId, page, size);
+                        recommendationServiceClient.getRecommendationFeed(currentUserId, page, size, excludePostIds);
                     
                     log.info("📤 Received {} recommendations from recommendation-service", 
                         recommendationResponse.getRecommendations() != null ? 

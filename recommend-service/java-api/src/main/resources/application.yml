@@ -157,6 +157,19 @@ recommendation:
     enabled: true
     fallback-to-legacy: true
 
+  # Friend Recommendation Configuration
+  friend:
+    enabled: ${FRIEND_RECOMMENDATION_ENABLED:true}
+    cache-ttl-hours: 6
+    default-limit: 20
+    # Scoring weights for hybrid friend ranking
+    weights:
+      content-similarity: 0.30    # PhoBERT semantic similarity
+      mutual-friends: 0.25        # Social graph signal
+      academic-connection: 0.20   # Same faculty/major/batch
+      activity-score: 0.15        # User engagement level
+      recency: 0.10               # Recent activity bonus
+
   # Caching Configuration
   cache:
     embedding-ttl: 3600          # 1 hour in seconds

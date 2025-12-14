@@ -165,3 +165,8 @@ logging:
 
 # Development-specific settings
 debug: false
+
+# User Service Configuration (local development)
+user-service:
+  url: http://localhost:8081
+  timeout: 5000

@@ -6,7 +6,7 @@ import { User } from '@/types';
 import { userService } from '@/services/userService';
 import { toast } from 'react-hot-toast';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { UserPlus, Users, Search, Filter, X } from 'lucide-react';
+import { UserPlus, Users, Search, Filter, X, RefreshCw } from 'lucide-react';
 
 interface Filters {
   college: string;
@@ -31,6 +31,7 @@ interface CollegeOption {
 export const FriendSuggestions: React.FC = () => {
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendingRequest, setSendingRequest] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,7 +90,18 @@ export const FriendSuggestions: React.FC = () => {
       if (filters.faculty) params.faculty = filters.faculty;
       if (filters.batch) params.batch = filters.batch;
       
-      const response = await userService.searchFriendSuggestions(params);
+      // Check if any filters are present
+      const hasFilters = searchQuery.trim() || filters.college || filters.faculty || filters.batch;
+      
+      let response;
+      if (hasFilters) {
+        // Use search endpoint with filters
+        response = await userService.searchFriendSuggestions(params);
+      } else {
+        // Use ML endpoint
+        response = await userService.getFriendSuggestions(50);
+      }
+      
       setSuggestions(response || []);
     } catch (err: any) {
       setError('Không thể tải gợi ý kết bạn');
@@ -97,6 +109,21 @@ export const FriendSuggestions: React.FC = () => {
       toast.error('Không thể tải gợi ý kết bạn');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      // Invalidate cache and reload
+      await userService.refreshFriendSuggestions();
+      await loadSuggestions();
+      toast.success('Đã làm mới danh sách gợi ý');
+    } catch (err) {
+      console.error('Error refreshing suggestions:', err);
+      toast.error('Không thể làm mới gợi ý');
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -158,18 +185,29 @@ export const FriendSuggestions: React.FC = () => {
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      {/* Header with Title */}
+      {/* Header with Title and Refresh Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 px-2 sm:px-0">
         <h3 className="text-base sm:text-lg font-semibold">
           {hasActiveFilters ? 'Kết quả tìm kiếm' : 'Những người bạn có thể biết'}
         </h3>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-        >
-          <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
-          {showFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Refresh Button */}
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing || loading}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? 'Đang làm mới...' : 'Làm mới'}
+          </button>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          >
+            <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
+            {showFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -319,12 +357,19 @@ export const FriendSuggestions: React.FC = () => {
               Xóa bộ lọc
             </button>
           )}
+          {!hasActiveFilters && (
+            <button
+              onClick={handleRefresh}
+              className="mt-3 text-sm sm:text-base text-blue-500 hover:text-blue-600"
+            >
+              Làm mới gợi ý
+            </button>
+          )}
         </div>
       ) : (
         <>
           <p className="text-xs sm:text-sm text-gray-600 px-2 sm:px-0">
             Tìm thấy {suggestions.length} người
-           
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {suggestions.map((suggestion: any) => {
@@ -332,12 +377,23 @@ export const FriendSuggestions: React.FC = () => {
               
               return (
                 <div 
-                  key={suggestion.id} 
+                  key={suggestion.id || suggestion.userId} 
                   className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                 >
+                  {/* Connection badges at top */}
+                  {badges.length > 0 && (
+                    <div className="px-3 pt-2 flex flex-wrap gap-1">
+                      {badges.map((badge, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
                   {/* Card content - clickable for profile */}
                   <div 
-                    onClick={() => window.location.href = `/profile/${suggestion.id}`}
+                    onClick={() => window.location.href = `/profile/${suggestion.id || suggestion.userId}`}
                     className="p-3 sm:p-4 cursor-pointer"
                   >
                     <div className="flex flex-col items-center space-y-2 sm:space-y-3">
@@ -363,21 +419,41 @@ export const FriendSuggestions: React.FC = () => {
                           @{suggestion.username || suggestion.email?.split('@')[0]}
                         </p>
                         
-                        {/* Academic Info - only show if available */}
-                        {(suggestion.faculty || suggestion.major || suggestion.batch || suggestion.studentId) && (
-                          <div className="mt-1.5 space-y-0.5">
-                            {suggestion.faculty && (
-                              <p className="text-xs text-gray-600 truncate">{suggestion.faculty}</p>
-                            )}
-                            {suggestion.major && (
-                              <p className="text-xs text-gray-500 truncate">{suggestion.major}</p>
-                            )}
-                            {(suggestion.batch || suggestion.studentId) && (
-                              <p className="text-xs text-gray-500 truncate">
-                                {[suggestion.batch, suggestion.studentId].filter(Boolean).join(' • ')}
-                              </p>
-                            )}
-                          </div>
+                        {/* Mutual Friends */}
+                        {suggestion.mutualFriendsCount > 0 && (
+                          <p className="text-xs text-blue-600 mt-1">
+                            <Users className="w-3 h-3 inline mr-1" />
+                            {suggestion.mutualFriendsCount} bạn chung
+                          </p>
+                        )}
+                        
+                        {/* Academic Info - using correct field names from FriendSuggestionDTO */}
+                        <div className="mt-1.5 space-y-0.5">
+                          {(suggestion.facultyName || suggestion.faculty) && (
+                            <p className="text-xs text-gray-600 truncate">
+                              {suggestion.facultyName || suggestion.faculty}
+                            </p>
+                          )}
+                          {(suggestion.majorName || suggestion.major) && (
+                            <p className="text-xs text-gray-500 truncate">
+                              {suggestion.majorName || suggestion.major}
+                            </p>
+                          )}
+                          {(suggestion.batchYear || suggestion.batch || suggestion.studentId) && (
+                            <p className="text-xs text-gray-500 truncate">
+                              {[
+                                suggestion.batchYear || suggestion.batch,
+                                suggestion.studentId
+                              ].filter(Boolean).join(' • ')}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {/* Suggestion reason */}
+                        {suggestion.suggestionReason && (
+                          <p className="text-xs text-gray-400 mt-1 truncate italic">
+                            {suggestion.suggestionReason}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -388,13 +464,13 @@ export const FriendSuggestions: React.FC = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSendRequest(suggestion.id);
+                        handleSendRequest(suggestion.id || suggestion.userId);
                       }}
-                      disabled={sendingRequest === suggestion.id}
+                      disabled={sendingRequest === (suggestion.id || suggestion.userId)}
                       className="w-full px-3 py-2 bg-blue-500 text-white rounded-lg text-xs sm:text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-colors"
                     >
                       <UserPlus className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span>{sendingRequest === suggestion.id ? 'Đang gửi...' : 'Thêm bạn'}</span>
+                      <span>{sendingRequest === (suggestion.id || suggestion.userId) ? 'Đang gửi...' : 'Thêm bạn'}</span>
                     </button>
                   </div>
                 </div>
@@ -406,3 +482,5 @@ export const FriendSuggestions: React.FC = () => {
     </div>
   );
 };
+
+export default FriendSuggestions;

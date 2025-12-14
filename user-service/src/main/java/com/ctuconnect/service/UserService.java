@@ -4,6 +4,8 @@ import com.ctuconnect.dto.UserProfileDTO;
 import com.ctuconnect.dto.UserUpdateDTO;
 import com.ctuconnect.dto.UserSearchDTO;
 import com.ctuconnect.dto.FriendRequestDTO;
+import com.ctuconnect.dto.UserAcademicProfileDTO;
+import com.ctuconnect.dto.FriendCandidateResponseDTO;
 import com.ctuconnect.entity.UserEntity;
 import com.ctuconnect.exception.UserNotFoundException;
 import com.ctuconnect.exception.InvalidOperationException;
@@ -900,10 +902,10 @@ public class UserService {
                 log.debug("Found {} results", results.size());
             }
             
-            // Convert to DTOs and limit results
+            // Convert to DTOs with enhanced information
             List<UserSearchDTO> filtered = results.stream()
                 .limit(limit)
-                .map(userMapper::toUserSearchDTO)
+                .map(user -> enhanceUserSearchDTO(currentUser, user))
                 .collect(Collectors.toList());
             
             log.info("Successfully found {} friend suggestions", filtered.size());
@@ -912,6 +914,163 @@ public class UserService {
         } catch (Exception e) {
             log.error("Error searching friend suggestions: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to search friend suggestions", e);
+        }
+    }
+
+    /**
+     * Enhance UserSearchDTO with mutual friends count and relationship flags
+     */
+    private UserSearchDTO enhanceUserSearchDTO(UserEntity currentUser, UserEntity targetUser) {
+        UserSearchDTO dto = userMapper.toUserSearchDTO(targetUser);
+        
+        // Calculate mutual friends count
+        try {
+            List<UserEntity> mutualFriends = userRepository.findMutualFriends(currentUser.getId(), targetUser.getId());
+            dto.setMutualFriendsCount((long) mutualFriends.size());
+        } catch (Exception e) {
+            log.debug("Error calculating mutual friends: {}", e.getMessage());
+            dto.setMutualFriendsCount(0L);
+        }
+        
+        // Calculate relationship flags
+        dto.setSameCollege(isSameCollege(currentUser, targetUser));
+        dto.setSameFaculty(isSameFaculty(currentUser, targetUser));
+        dto.setSameMajor(isSameMajor(currentUser, targetUser));
+        dto.setSameBatch(isSameBatch(currentUser, targetUser));
+        
+        // Check friendship status
+        dto.setIsFriend(currentUser.getFriends().stream()
+            .anyMatch(f -> f.getId().equals(targetUser.getId())));
+        dto.setRequestSent(currentUser.getSentFriendRequests().stream()
+            .anyMatch(f -> f.getId().equals(targetUser.getId())));
+        dto.setRequestReceived(currentUser.getReceivedFriendRequests().stream()
+            .anyMatch(f -> f.getId().equals(targetUser.getId())));
+        
+        return dto;
+    }
+
+    private boolean isSameCollege(UserEntity u1, UserEntity u2) {
+        if (u1.getMajor() == null || u2.getMajor() == null) return false;
+        if (u1.getMajor().getFaculty() == null || u2.getMajor().getFaculty() == null) return false;
+        if (u1.getMajor().getFaculty().getCollege() == null || u2.getMajor().getFaculty().getCollege() == null) return false;
+        String c1 = u1.getMajor().getFaculty().getCollege().getName();
+        String c2 = u2.getMajor().getFaculty().getCollege().getName();
+        return c1 != null && c1.equals(c2);
+    }
+
+    private boolean isSameFaculty(UserEntity u1, UserEntity u2) {
+        if (u1.getMajor() == null || u2.getMajor() == null) return false;
+        if (u1.getMajor().getFaculty() == null || u2.getMajor().getFaculty() == null) return false;
+        String f1 = u1.getMajor().getFaculty().getName();
+        String f2 = u2.getMajor().getFaculty().getName();
+        return f1 != null && f1.equals(f2);
+    }
+
+    private boolean isSameMajor(UserEntity u1, UserEntity u2) {
+        if (u1.getMajor() == null || u2.getMajor() == null) return false;
+        String m1 = u1.getMajor().getName();
+        String m2 = u2.getMajor().getName();
+        return m1 != null && m1.equals(m2);
+    }
+
+    private boolean isSameBatch(UserEntity u1, UserEntity u2) {
+        if (u1.getBatch() == null || u2.getBatch() == null) return false;
+        String b1 = u1.getBatch().getYear();
+        String b2 = u2.getBatch().getYear();
+        return b1 != null && b1.equals(b2);
+    }
+
+    // ===== Friend Recommendation Support Methods =====
+
+    /**
+     * Get academic profile for recommend-service
+     */
+    @Transactional(readOnly = true)
+    public UserAcademicProfileDTO getAcademicProfile(@NotBlank String userId) {
+        log.info("Getting academic profile for user: {}", userId);
+        
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        
+        return UserAcademicProfileDTO.builder()
+            .userId(user.getId())
+            .major(user.getMajorName())
+            .faculty(user.getFacultyName())
+            .degree(null) // UserEntity doesn't have degree field
+            .batch(user.getBatchYear() != null ? user.getBatchYear().toString() : null)
+            .studentId(user.getStudentId())
+            .build();
+    }
+
+    /**
+     * Get friend candidates for ML recommendation
+     */
+    @Transactional(readOnly = true)
+    public List<FriendCandidateResponseDTO> getFriendCandidates(
+            @NotBlank String userId, 
+            @Min(1) @Max(500) int limit) {
+        
+        log.info("Getting {} friend candidates for user: {}", limit, userId);
+        
+        UserEntity currentUser = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        
+        // Get all users except current user and existing friends
+        List<UserEntity> allUsers = userRepository.findAll();
+        List<UserEntity> friends = userRepository.findFriends(userId);
+        
+        return allUsers.stream()
+            .filter(user -> !user.getId().equals(userId))
+            .filter(user -> friends.stream().noneMatch(f -> f.getId().equals(user.getId())))
+            .filter(user -> !userRepository.hasPendingFriendRequest(userId, user.getId()))
+            .limit(limit)
+            .map(candidate -> buildFriendCandidate(currentUser, candidate))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Build friend candidate DTO
+     */
+    private FriendCandidateResponseDTO buildFriendCandidate(UserEntity currentUser, UserEntity candidate) {
+        int mutualCount = getMutualFriendsCount(currentUser.getId(), candidate.getId());
+        
+        boolean sameFaculty = currentUser.getFacultyName() != null && 
+                              currentUser.getFacultyName().equals(candidate.getFacultyName());
+        boolean sameMajor = currentUser.getMajorName() != null && 
+                            currentUser.getMajorName().equals(candidate.getMajorName());
+        boolean sameBatch = currentUser.getBatchYear() != null && 
+                            currentUser.getBatchYear().equals(candidate.getBatchYear());
+        
+        return FriendCandidateResponseDTO.builder()
+            .userId(candidate.getId())
+            .username(candidate.getUsername())
+            .fullName(candidate.getFullName())
+            .avatarUrl(candidate.getAvatarUrl())
+            .bio(candidate.getBio())
+            .facultyName(candidate.getFacultyName())
+            .majorName(candidate.getMajorName())
+            .batchYear(candidate.getBatchYear())
+            .sameFaculty(sameFaculty)
+            .sameMajor(sameMajor)
+            .sameBatch(sameBatch)
+            .mutualFriendsCount(mutualCount)
+            .activityScore(0.5) // Default activity score
+            .skills(null) // TODO: Add when user profile has skills field
+            .interests(null) // TODO: Add when user profile has interests field
+            .courses(null) // TODO: Add when courses are implemented
+            .build();
+    }
+
+    /**
+     * Check if two users are friends
+     */
+    @Transactional(readOnly = true)
+    public boolean areFriends(@NotBlank String userId1, @NotBlank String userId2) {
+        try {
+            return userRepository.areFriends(userId1, userId2);
+        } catch (Exception e) {
+            log.warn("Error checking friendship: {}", e.getMessage());
+            return false;
         }
     }
 }

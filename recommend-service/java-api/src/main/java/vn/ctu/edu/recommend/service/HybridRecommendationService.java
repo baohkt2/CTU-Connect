@@ -60,22 +60,30 @@ public class HybridRecommendationService {
     /**
      * Main entry point for getting feed recommendations
      * Follows the hybrid architecture flow
+     * @param excludePostIds Client-sent list of already-seen post IDs to exclude from results
      */
     @Transactional(readOnly = true)
-    public RecommendationResponse getFeed(String userId, Integer page, Integer size) {
+    public RecommendationResponse getFeed(String userId, Integer page, Integer size, Set<String> excludePostIds) {
         long startTime = System.currentTimeMillis();
         
         int requestSize = size != null ? size : defaultRecommendationCount;
-        log.info("Getting feed for user: {}, size: {}", userId, requestSize);
+        boolean isPagination = excludePostIds != null && !excludePostIds.isEmpty();
+        
+        log.info("Getting feed for user: {}, size: {}, pagination: {}", userId, requestSize, isPagination);
 
         try {
-            // Step 1: Check cache first (30-120s TTL)
-            List<RecommendationResponse.RecommendedPost> cachedFeed = 
-                redisCacheService.getRecommendations(userId, RecommendationResponse.RecommendedPost.class);
-            
-            if (cachedFeed != null && !cachedFeed.isEmpty()) {
-                log.info("Returning cached feed for user: {} ({} posts)", userId, cachedFeed.size());
-                return buildResponse(userId, cachedFeed, requestSize, startTime, "cached");
+            // Step 1: Check cache ONLY if this is the first request (no excludePostIds)
+            // Skip cache for pagination requests since each has different exclusion list
+            if (!isPagination) {
+                List<RecommendationResponse.RecommendedPost> cachedFeed = 
+                    redisCacheService.getRecommendations(userId, RecommendationResponse.RecommendedPost.class);
+                
+                if (cachedFeed != null && !cachedFeed.isEmpty()) {
+                    log.info("Returning cached feed for user: {} ({} posts)", userId, cachedFeed.size());
+                    return buildResponse(userId, cachedFeed, requestSize, startTime, "cached");
+                }
+            } else {
+                log.info("🔄 Pagination request - skipping cache, excluding {} posts", excludePostIds.size());
             }
 
             // Step 2: Get user academic profile from user-service
@@ -86,13 +94,22 @@ public class HybridRecommendationService {
             List<UserInteractionHistory> userHistory = getUserInteractionHistory(userId, 30);
             log.debug("User has {} interactions in last 30 days", userHistory.size());
 
-            // Step 4: Get candidate posts (filter already seen, apply business rules)
-            Set<String> seenPostIds = userHistory.stream()
+            // Step 4: Combine exclusions - interaction history + client-sent excludePostIds
+            Set<String> allExcludedIds = new HashSet<>();
+            allExcludedIds.addAll(userHistory.stream()
                 .map(UserInteractionHistory::getPostId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
+            if (excludePostIds != null) {
+                allExcludedIds.addAll(excludePostIds);
+            }
             
-            List<CandidatePost> candidatePosts = getCandidatePosts(userId, seenPostIds, requestSize * 5);
-            log.debug("Found {} candidate posts", candidatePosts.size());
+            log.info("🚫 Total exclusions: {} posts ({} from history, {} from client)",
+                allExcludedIds.size(), userHistory.size(), 
+                excludePostIds != null ? excludePostIds.size() : 0);
+            
+            // Step 5: Get candidate posts (exclude all seen + client-excluded posts)
+            List<CandidatePost> candidatePosts = getCandidatePosts(userId, allExcludedIds, requestSize * 5);
+            log.debug("Found {} candidate posts after exclusions", candidatePosts.size());
 
             if (candidatePosts.isEmpty()) {
                 log.warn("No candidate posts available for user: {}", userId);
@@ -101,7 +118,7 @@ public class HybridRecommendationService {
 
             List<RecommendationResponse.RecommendedPost> finalRecommendations;
 
-            // Step 5: Call Python model service for ML-based ranking
+            // Step 6: Call Python model service for ML-based ranking
             log.info("🔍 Python service enabled: {}", pythonServiceEnabled);
             
             if (pythonServiceEnabled) {
@@ -163,7 +180,7 @@ public class HybridRecommendationService {
                     });
             }
 
-            // Step 6: Apply business rules (block list, friend priority, major priority)
+            // Step 7: Apply business rules (block list, friend priority, major priority)
             finalRecommendations = applyBusinessRules(userId, finalRecommendations, userProfile);
             
             // 🔍 DEBUG: Log recommendations after business rules
@@ -180,13 +197,13 @@ public class HybridRecommendationService {
                     });
             }
 
-            // Step 7: Limit to requested size
+            // Step 8: Limit to requested size
             finalRecommendations = finalRecommendations.stream()
                 .limit(requestSize)
                 .collect(Collectors.toList());
             
-            // 🔍 DEBUG: Log final recommendations before caching
-            log.info("🎯 FINAL RECOMMENDATIONS (before caching):");
+            // 🔍 DEBUG: Log final recommendations
+            log.info("🎯 FINAL RECOMMENDATIONS:");
             log.info("   Total: {} posts", finalRecommendations.size());
             
             if (!finalRecommendations.isEmpty()) {
@@ -202,16 +219,24 @@ public class HybridRecommendationService {
                     });
             }
 
-            // Step 8: Cache results (30-120s TTL)
-            long cacheTtl = calculateCacheTtl(finalRecommendations.size());
-            redisCacheService.cacheRecommendations(
-                userId, 
-                finalRecommendations, 
-                Duration.ofSeconds(cacheTtl)
-            );
+            // Step 9: Cache results ONLY for first request (not pagination)
+            // Don't cache paginated results since each request has different exclusions
+            if (!isPagination) {
+                long cacheTtl = calculateCacheTtl(finalRecommendations.size());
+                redisCacheService.cacheRecommendations(
+                    userId, 
+                    finalRecommendations, 
+                    Duration.ofSeconds(cacheTtl)
+                );
+                log.debug("✅ Cached {} recommendations for user: {}, TTL: {}s", 
+                    finalRecommendations.size(), userId, cacheTtl);
+            } else {
+                log.debug("⏭️  Skipping cache for pagination request");
+            }
 
-            // Step 9: Return response
-            return buildResponse(userId, finalRecommendations, requestSize, startTime, "computed");
+            // Step 10: Return response
+            return buildResponse(userId, finalRecommendations, requestSize, startTime, 
+                isPagination ? "paginated" : "computed");
 
         } catch (Exception e) {
             log.error("Error generating feed for user: {}", userId, e);
@@ -298,7 +323,10 @@ public class HybridRecommendationService {
         List<PostEmbedding> posts = postEmbeddingRepository.findTrendingPosts(since);
 
         return posts.stream()
+            // Exclude posts already seen/interacted
             .filter(post -> !excludePostIds.contains(post.getPostId()))
+            // Exclude user's own posts - user shouldn't see their own posts in recommendations
+            .filter(post -> !userId.equals(post.getAuthorId()))
             .limit(limit)
             .map(post -> {
                 CandidatePost candidate = CandidatePost.builder()
