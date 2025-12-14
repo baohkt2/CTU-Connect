@@ -32,6 +32,11 @@ public interface UserFeedbackRepository extends JpaRepository<UserFeedback, UUID
     @Query("DELETE FROM UserFeedback uf WHERE uf.postId = :postId")
     int deleteByPostId(@Param("postId") String postId);
 
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM UserFeedback uf WHERE uf.userId = :userId")
+    int deleteByUserId(@Param("userId") String userId);
+
     @Query("SELECT uf FROM UserFeedback uf WHERE uf.userId = :userId AND uf.timestamp >= :since")
     List<UserFeedback> findRecentFeedbackByUser(@Param("userId") String userId, @Param("since") LocalDateTime since);
 

@@ -184,6 +184,45 @@ public class EnhancedUserController {
     }
 
     /**
+     * Refresh friend suggestions (bypass cache)
+     * Frontend expects: POST /api/users/friend-suggestions/refresh
+     */
+    @PostMapping("/friend-suggestions/refresh")
+    @RequireAuth
+    public ResponseEntity<Map<String, Object>> refreshFriendSuggestions() {
+        AuthenticatedUser currentUser = SecurityContextHolder.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new SecurityException("No authenticated user found");
+        }
+
+        log.info("🔄 POST /friend-suggestions/refresh - User: {}", currentUser.getId());
+
+        try {
+            // Invalidate cache in recommend-service
+            socialGraphService.invalidateFriendSuggestionsCache(currentUser.getId());
+            
+            // Get fresh suggestions (ML will not use cache)
+            List<FriendSuggestionDTO> freshSuggestions = socialGraphService.getFriendSuggestions(
+                currentUser.getId(), 100);
+            
+            log.info("✅ Refreshed {} friend suggestions for user {}", 
+                freshSuggestions.size(), currentUser.getId());
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Friend suggestions refreshed successfully",
+                "count", freshSuggestions.size()
+            ));
+        } catch (Exception e) {
+            log.error("Error refreshing friend suggestions: {}", e.getMessage());
+            return ResponseEntity.ok(Map.of(
+                "success", false,
+                "message", "Failed to refresh: " + e.getMessage()
+            ));
+        }
+    }
+
+    /**
      * Search friend suggestions with filters (enhanced version)
      * Frontend expects: GET /api/users/friend-suggestions/search
      * Supports: query (fullname/email), college, faculty, batch filters

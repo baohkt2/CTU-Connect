@@ -221,6 +221,107 @@ public class RecommendationController {
     }
 
     /**
+     * GET /api/recommendations/stats
+     * Get statistics about posts in the recommendation database
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> getStats() {
+        log.info("📊 Getting recommendation service statistics");
+        
+        try {
+            Map<String, Object> stats = recommendationService.getStats();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            log.error("❌ ERROR getting stats: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "error", e.getMessage(),
+                "timestamp", LocalDateTime.now()
+            ));
+        }
+    }
+
+    /**
+     * POST /api/recommendations/sync-posts
+     * Manually sync posts from post-service to recommendation database
+     * Useful when Kafka events are missed
+     */
+    @PostMapping("/sync-posts")
+    public ResponseEntity<Map<String, Object>> syncPosts(
+            @RequestParam(defaultValue = "100") int limit) {
+        log.info("🔄 Manual post sync requested, limit: {}", limit);
+        
+        try {
+            int syncedCount = recommendationService.syncPostsFromPostService(limit);
+            
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Posts synced successfully",
+                "syncedCount", syncedCount,
+                "timestamp", LocalDateTime.now()
+            ));
+        } catch (Exception e) {
+            log.error("❌ ERROR syncing posts: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "success", false,
+                "message", "Failed to sync posts: " + e.getMessage(),
+                "timestamp", LocalDateTime.now()
+            ));
+        }
+    }
+
+    /**
+     * GET /api/recommendations/user/{userId}/history
+     * Get user's interaction history (debug endpoint)
+     */
+    @GetMapping("/user/{userId}/history")
+    public ResponseEntity<Map<String, Object>> getUserHistory(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "30") int days) {
+        log.info("📜 Getting interaction history for user: {}, days: {}", userId, days);
+        
+        try {
+            Map<String, Object> history = recommendationService.getUserInteractionStats(userId, days);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            log.error("❌ ERROR getting user history: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "error", e.getMessage(),
+                "timestamp", LocalDateTime.now()
+            ));
+        }
+    }
+
+    /**
+     * DELETE /api/recommendations/user/{userId}/history
+     * Clear user's interaction history (allows re-recommendation of viewed posts)
+     */
+    @DeleteMapping("/user/{userId}/history")
+    public ResponseEntity<Map<String, Object>> clearUserHistory(@PathVariable String userId) {
+        log.info("🗑️ Clearing interaction history for user: {}", userId);
+        
+        try {
+            int clearedCount = recommendationService.clearUserHistory(userId);
+            
+            // Also clear cache
+            recommendationService.invalidateUserCache(userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "User history cleared",
+                "clearedInteractions", clearedCount,
+                "timestamp", LocalDateTime.now()
+            ));
+        } catch (Exception e) {
+            log.error("❌ ERROR clearing user history: {}", e.getMessage(), e);
+            return ResponseEntity.ok(Map.of(
+                "success", false,
+                "message", "Failed to clear history: " + e.getMessage(),
+                "timestamp", LocalDateTime.now()
+            ));
+        }
+    }
+
+    /**
      * GET /api/recommendations/health/python
      * Health check endpoint for Python model service
      */

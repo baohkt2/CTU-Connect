@@ -38,12 +38,14 @@ public class HybridRecommendationService {
 
     private final PythonModelServiceClient pythonModelService;
     private final UserServiceClient userServiceClient;
+    private final vn.ctu.edu.recommend.client.PostServiceClient postServiceClient;
     private final PostEmbeddingRepository postEmbeddingRepository;
     private final UserFeedbackRepository userFeedbackRepository;
     private final UserGraphRepository userGraphRepository;
     private final RedisCacheService redisCacheService;
     private final UserInteractionProducer interactionProducer;
     private final TrainingDataProducer trainingDataProducer;
+    private final vn.ctu.edu.recommend.nlp.EmbeddingService embeddingService;
 
     @Value("${recommendation.python-service.enabled:true}")
     private boolean pythonServiceEnabled;
@@ -319,15 +321,62 @@ public class HybridRecommendationService {
     }
 
     private List<CandidatePost> getCandidatePosts(String userId, Set<String> excludePostIds, int limit) {
+        // Try to get posts from last 7 days first
         LocalDateTime since = LocalDateTime.now().minusDays(7);
         List<PostEmbedding> posts = postEmbeddingRepository.findTrendingPosts(since);
-
-        return posts.stream()
-            // Exclude posts already seen/interacted
+        
+        // Fallback: If no recent posts, try last 30 days
+        if (posts.isEmpty()) {
+            log.warn("⚠️ No posts in last 7 days, trying 30 days");
+            since = LocalDateTime.now().minusDays(30);
+            posts = postEmbeddingRepository.findTrendingPosts(since);
+        }
+        
+        // Fallback: If still empty, get all posts
+        if (posts.isEmpty()) {
+            log.warn("⚠️ No posts in last 30 days, fetching all posts");
+            posts = postEmbeddingRepository.findAll();
+        }
+        
+        log.info("📦 Found {} total posts in database", posts.size());
+        
+        // Debug: Count posts by filter reason
+        long excludedByHistory = posts.stream()
+            .filter(post -> excludePostIds.contains(post.getPostId()))
+            .count();
+        long excludedByOwnPost = posts.stream()
+            .filter(post -> userId.equals(post.getAuthorId()))
+            .count();
+        long availablePosts = posts.stream()
             .filter(post -> !excludePostIds.contains(post.getPostId()))
-            // Exclude user's own posts - user shouldn't see their own posts in recommendations
+            .filter(post -> !userId.equals(post.getAuthorId()))
+            .count();
+            
+        log.info("🔍 Post filtering breakdown for user {}:", userId);
+        log.info("   - Total posts: {}", posts.size());
+        log.info("   - Excluded by interaction history: {}", excludedByHistory);
+        log.info("   - Excluded (user's own posts): {}", excludedByOwnPost);
+        log.info("   - Available for recommendation: {}", availablePosts);
+
+        // First pass: get posts NOT in history (fresh posts)
+        List<PostEmbedding> freshPosts = posts.stream()
+            .filter(post -> !excludePostIds.contains(post.getPostId()))
             .filter(post -> !userId.equals(post.getAuthorId()))
             .limit(limit)
+            .collect(Collectors.toList());
+        
+        // If no fresh posts, fallback to already-viewed posts (excluding user's own)
+        // This ensures users always see content, even if they've viewed everything
+        if (freshPosts.isEmpty()) {
+            log.warn("⚠️ No fresh posts available, falling back to previously viewed posts");
+            freshPosts = posts.stream()
+                .filter(post -> !userId.equals(post.getAuthorId())) // Still exclude own posts
+                .limit(limit)
+                .collect(Collectors.toList());
+            log.info("📦 Fallback: {} posts available for re-recommendation", freshPosts.size());
+        }
+
+        return freshPosts.stream()
             .map(post -> {
                 CandidatePost candidate = CandidatePost.builder()
                     .postId(post.getPostId())
@@ -630,5 +679,147 @@ public class HybridRecommendationService {
     public void invalidateUserCache(String userId) {
         log.info("Invalidating cache for user: {}", userId);
         redisCacheService.invalidateRecommendations(userId);
+    }
+
+    /**
+     * Get statistics about posts in the recommendation database
+     */
+    public Map<String, Object> getStats() {
+        long totalPosts = postEmbeddingRepository.count();
+        
+        // Get posts from last 7 days
+        LocalDateTime since7Days = LocalDateTime.now().minusDays(7);
+        List<PostEmbedding> recentPosts = postEmbeddingRepository.findTrendingPosts(since7Days);
+        
+        // Get posts from last 30 days
+        LocalDateTime since30Days = LocalDateTime.now().minusDays(30);
+        List<PostEmbedding> monthPosts = postEmbeddingRepository.findTrendingPosts(since30Days);
+        
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalPostsInDb", totalPosts);
+        stats.put("postsLast7Days", recentPosts.size());
+        stats.put("postsLast30Days", monthPosts.size());
+        stats.put("timestamp", LocalDateTime.now());
+        
+        log.info("📊 Stats: total={}, last7days={}, last30days={}", 
+            totalPosts, recentPosts.size(), monthPosts.size());
+        
+        return stats;
+    }
+
+    /**
+     * Sync posts from post-service to recommendation database
+     * Useful when Kafka events are missed
+     */
+    @Transactional
+    public int syncPostsFromPostService(int limit) {
+        log.info("🔄 Starting manual post sync from post-service, limit: {}", limit);
+        
+        int syncedCount = 0;
+        try {
+            // Get posts from post-service via Feign client
+            List<vn.ctu.edu.recommend.model.dto.PostDTO> posts = postServiceClient.getFeedPosts(0, limit);
+            
+            log.info("📥 Fetched {} posts from post-service", posts.size());
+            
+            for (vn.ctu.edu.recommend.model.dto.PostDTO post : posts) {
+                try {
+                    // Skip if already exists
+                    if (postEmbeddingRepository.existsByPostId(post.getId())) {
+                        log.debug("Post {} already exists, skipping", post.getId());
+                        continue;
+                    }
+                    
+                    String content = post.getContent() != null ? post.getContent() : "";
+                    
+                    // Generate embedding
+                    float[] embedding = embeddingService.generateEmbedding(content, post.getId());
+                    
+                    // Create post embedding entity
+                    PostEmbedding postEmbedding = PostEmbedding.builder()
+                        .postId(post.getId())
+                        .authorId(post.getAuthorId())
+                        .content(content)
+                        .academicScore(0.0f)
+                        .academicCategory("GENERAL")
+                        .popularityScore(0.0f)
+                        .contentSimilarityScore(0.0f)
+                        .graphRelationScore(0.0f)
+                        .likeCount(post.getLikeCount() != null ? post.getLikeCount() : 0)
+                        .commentCount(post.getCommentCount() != null ? post.getCommentCount() : 0)
+                        .shareCount(post.getShareCount() != null ? post.getShareCount() : 0)
+                        .viewCount(0)
+                        .embeddingUpdatedAt(LocalDateTime.now())
+                        .build();
+                    
+                    postEmbedding.setEmbeddingVectorFromArray(embedding);
+                    postEmbeddingRepository.save(postEmbedding);
+                    syncedCount++;
+                    
+                    log.debug("✅ Synced post: {}", post.getId());
+                    
+                } catch (Exception e) {
+                    log.warn("⚠️ Failed to sync post {}: {}", post.getId(), e.getMessage());
+                }
+            }
+            
+            // Invalidate all recommendation caches after sync
+            redisCacheService.invalidateAllRecommendations();
+            
+            log.info("✅ Manual sync completed: {} posts synced", syncedCount);
+            return syncedCount;
+            
+        } catch (Exception e) {
+            log.error("❌ Error syncing posts: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to sync posts: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Get user interaction statistics (debug endpoint)
+     */
+    public Map<String, Object> getUserInteractionStats(String userId, int days) {
+        LocalDateTime since = LocalDateTime.now().minusDays(days);
+        List<UserFeedback> feedbacks = userFeedbackRepository.findRecentFeedbackByUser(userId, since);
+        
+        // Group by post ID to see unique posts
+        Set<String> uniquePostIds = feedbacks.stream()
+            .map(UserFeedback::getPostId)
+            .collect(Collectors.toSet());
+        
+        // Group by feedback type
+        Map<String, Long> feedbackCounts = feedbacks.stream()
+            .collect(Collectors.groupingBy(
+                fb -> fb.getFeedbackType().name(),
+                Collectors.counting()
+            ));
+        
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("userId", userId);
+        stats.put("days", days);
+        stats.put("totalInteractions", feedbacks.size());
+        stats.put("uniquePostsViewed", uniquePostIds.size());
+        stats.put("feedbackBreakdown", feedbackCounts);
+        stats.put("viewedPostIds", uniquePostIds);
+        stats.put("timestamp", LocalDateTime.now());
+        
+        log.info("📜 User {} history: {} interactions, {} unique posts in {} days", 
+            userId, feedbacks.size(), uniquePostIds.size(), days);
+        
+        return stats;
+    }
+
+    /**
+     * Clear user interaction history (allows re-recommendation of viewed posts)
+     */
+    @Transactional
+    public int clearUserHistory(String userId) {
+        log.info("🗑️ Clearing interaction history for user: {}", userId);
+        
+        int deletedCount = userFeedbackRepository.deleteByUserId(userId);
+        
+        log.info("✅ Cleared {} interactions for user: {}", deletedCount, userId);
+        
+        return deletedCount;
     }
 }
