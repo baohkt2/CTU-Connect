@@ -122,15 +122,18 @@ public class UserSyncService {
 
     /**
      * Lấy thông tin tác giả cho post-service
+     * Trả về null nếu không tìm thấy user (không throw exception để tránh 500 error)
      */
     public AuthorDTO getAuthorInfo(String authorId) {
-        UserEntity user = userRepository.findById(authorId)
-                .orElseThrow(() -> new RuntimeException("Author not found: " + authorId));
-
-        AuthorDTO authorDTO = new AuthorDTO();
-        authorDTO.setId(user.getId());
-        authorDTO.setFullName(user.getFullName());
-        return authorDTO;
+        return userRepository.findById(authorId)
+                .map(user -> {
+                    AuthorDTO authorDTO = new AuthorDTO();
+                    authorDTO.setId(user.getId());
+                    authorDTO.setFullName(user.getFullName());
+                    authorDTO.setAvatarUrl(user.getAvatarUrl());
+                    return authorDTO;
+                })
+                .orElse(null);
     }
 
     /**

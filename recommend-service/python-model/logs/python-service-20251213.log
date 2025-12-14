@@ -1,0 +1,2 @@
+2025-12-13 17:43:15,185 - inference - INFO - Using device: cpu
+2025-12-13 17:43:18,543 - inference - ERROR - Error loading model: Error no file named pytorch_model.bin, tf_model.h5, model.ckpt.index or flax_model.msgpack found in directory ./model/academic_posts_model.

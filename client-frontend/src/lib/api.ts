@@ -36,11 +36,17 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
-    console.log('DEBUG: API Error interceptor triggered:', originalRequest.url, error.response?.status);
+    console.log('DEBUG: API Error interceptor triggered:', originalRequest?.url, error.response?.status);
+    console.log('DEBUG: Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      hasConfig: !!error.config
+    });
 
     // Nếu nhận 401 từ API Gateway
     if (error.response?.status === 401) {
-      console.log('DEBUG: 401 Unauthorized received for:', originalRequest.url);
+      console.log('DEBUG: 401 Unauthorized received for:', originalRequest?.url);
 
       // IMPORTANT: Don't intercept logout requests - let them fail naturally
       if (originalRequest.url?.includes('/auth/logout')) {

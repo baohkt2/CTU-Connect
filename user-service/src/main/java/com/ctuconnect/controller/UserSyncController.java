@@ -79,10 +79,14 @@ public class UserSyncController {
      * Lấy thông tin tác giả cho post-service
      * Endpoint này được gọi từ post-service để lấy author info
      * Không yêu cầu authentication vì đây là internal service call
+     * Trả về 404 nếu không tìm thấy user (thay vì 500 error)
      */
     @GetMapping("/authors/{id}")
     public ResponseEntity<AuthorDTO> getAuthorInfo(@PathVariable("id") String authorId) {
         AuthorDTO authorInfo = userSyncService.getAuthorInfo(authorId);
+        if (authorInfo == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(authorInfo);
     }
 

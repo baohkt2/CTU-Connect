@@ -410,15 +410,43 @@ export const postService = {
       const response = await api.get('/posts/feed', {
         params: { page, size }
       });
-      console.log('📤 Received feed response:', response.data);
+      console.log('📤 Received feed response:', response);
+      console.log('📤 Response data type:', typeof response.data, Array.isArray(response.data));
+      console.log('📤 Response data:', response.data);
       
       // Response is directly an array of posts
-      return Array.isArray(response.data) ? response.data : [];
-    } catch (error) {
+      if (Array.isArray(response.data)) {
+        console.log('✅ Valid array response with', response.data.length, 'posts');
+        return response.data;
+      } else if (response.data && typeof response.data === 'object') {
+        console.warn('⚠️  Response is object, not array:', response.data);
+        // Check if it has an error property
+        if (response.data.error) {
+          console.error('❌ API returned error:', response.data.error, response.data.message);
+          throw new Error(response.data.message || response.data.error);
+        }
+      }
+      
+      console.warn('⚠️  Invalid response format, returning empty array');
+      return [];
+    } catch (error: any) {
       console.error('❌ Error fetching personalized feed:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      
       // Fallback to regular posts
-      const fallbackResponse = await this.getPosts(page, size);
-      return fallbackResponse.content;
+      console.log('🔄 Falling back to regular posts...');
+      try {
+        const fallbackResponse = await this.getPosts(page, size);
+        return fallbackResponse.content;
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError);
+        return [];
+      }
     }
   },
 
