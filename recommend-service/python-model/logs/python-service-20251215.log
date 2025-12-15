@@ -94,3 +94,127 @@
 2025-12-15 09:15:11,404 - services.prediction_service - INFO - [OK] Post 69395f89ef6e67678ab7d7eb final score: 0.4045
 2025-12-15 09:15:11,404 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 9188.02ms
 2025-12-15 09:15:11,404 - api.routes - INFO - Prediction completed: 20 posts ranked in 9190.58ms
+2025-12-15 09:34:27,428 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 09:34:27,440 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 70
+2025-12-15 09:34:28,877 - services.prediction_service - INFO - [OK] Post 693963bfef6e67678ab7d7f8 final score: 0.4516
+2025-12-15 09:34:29,315 - services.prediction_service - INFO - [OK] Post 693962efef6e67678ab7d7f1 final score: 0.3685
+2025-12-15 09:34:29,709 - services.prediction_service - INFO - [OK] Post 69396387ef6e67678ab7d7f6 final score: 0.4008
+2025-12-15 09:34:29,808 - services.prediction_service - INFO - [OK] Post 693eeab234c75b6dbd076623 final score: 0.4769
+2025-12-15 09:34:30,194 - services.prediction_service - INFO - [OK] Post 69396316ef6e67678ab7d7f2 final score: 0.4512
+2025-12-15 09:34:30,591 - services.prediction_service - INFO - [OK] Post 693962b8ef6e67678ab7d7ef final score: 0.3940
+2025-12-15 09:34:30,984 - services.prediction_service - INFO - [OK] Post 69396340ef6e67678ab7d7f4 final score: 0.4994
+2025-12-15 09:34:31,397 - services.prediction_service - INFO - [OK] Post 69396375ef6e67678ab7d7f5 final score: 0.4247
+2025-12-15 09:34:31,760 - services.prediction_service - INFO - [OK] Post 69396331ef6e67678ab7d7f3 final score: 0.4846
+2025-12-15 09:34:32,151 - services.prediction_service - INFO - [OK] Post 6939642bef6e67678ab7d7fa final score: 0.4093
+2025-12-15 09:34:32,579 - services.prediction_service - INFO - [OK] Post 693967f2ef6e67678ab7d80a final score: 0.3585
+2025-12-15 09:34:32,988 - services.prediction_service - INFO - [OK] Post 69396096ef6e67678ab7d7ee final score: 0.4109
+2025-12-15 09:34:33,520 - services.prediction_service - INFO - [OK] Post 69396832ef6e67678ab7d80b final score: 0.4177
+2025-12-15 09:34:33,942 - services.prediction_service - INFO - [OK] Post 693968cbef6e67678ab7d80d final score: 0.2813
+2025-12-15 09:34:34,254 - services.prediction_service - INFO - [OK] Post 6939686cef6e67678ab7d80c final score: 0.3689
+2025-12-15 09:34:34,645 - services.prediction_service - INFO - [OK] Post 6939661bef6e67678ab7d7fb final score: 0.4002
+2025-12-15 09:34:35,052 - services.prediction_service - INFO - [OK] Post 69396397ef6e67678ab7d7f7 final score: 0.4047
+2025-12-15 09:34:35,457 - services.prediction_service - INFO - [OK] Post 6939679def6e67678ab7d808 final score: 0.4392
+2025-12-15 09:34:35,880 - services.prediction_service - INFO - [OK] Post 693962deef6e67678ab7d7f0 final score: 0.4233
+2025-12-15 09:34:36,405 - services.prediction_service - INFO - [OK] Post 693966f6ef6e67678ab7d806 final score: 0.5021
+2025-12-15 09:34:36,983 - services.prediction_service - INFO - [OK] Post 69396773ef6e67678ab7d807 final score: 0.4380
+2025-12-15 09:34:37,484 - services.prediction_service - INFO - [OK] Post 693967b4ef6e67678ab7d809 final score: 0.3240
+2025-12-15 09:34:37,936 - services.prediction_service - INFO - [OK] Post 693963f0ef6e67678ab7d7f9 final score: 0.3650
+2025-12-15 09:34:38,417 - services.prediction_service - INFO - [OK] Post 69396924ef6e67678ab7d80e final score: 0.3294
+2025-12-15 09:34:38,692 - services.prediction_service - INFO - [OK] Post 69396027ef6e67678ab7d7ed final score: 0.4548
+2025-12-15 09:34:38,824 - services.prediction_service - INFO - [OK] Post 69395fb9ef6e67678ab7d7ec final score: 0.5171
+2025-12-15 09:34:38,962 - services.prediction_service - INFO - [OK] Post 69395f89ef6e67678ab7d7eb final score: 0.4482
+2025-12-15 09:34:38,966 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 11525.74ms
+2025-12-15 09:34:38,967 - api.routes - INFO - Prediction completed: 20 posts ranked in 11540.67ms
+2025-12-15 09:36:52,714 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 09:36:52,716 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 70
+2025-12-15 09:36:53,295 - services.prediction_service - INFO - [OK] Post 693963bfef6e67678ab7d7f8 final score: 0.5121
+2025-12-15 09:36:53,729 - services.prediction_service - INFO - [OK] Post 693962efef6e67678ab7d7f1 final score: 0.4650
+2025-12-15 09:36:54,208 - services.prediction_service - INFO - [OK] Post 69396387ef6e67678ab7d7f6 final score: 0.5046
+2025-12-15 09:36:54,322 - services.prediction_service - INFO - [OK] Post 693eeab234c75b6dbd076623 final score: 0.4476
+2025-12-15 09:36:54,775 - services.prediction_service - INFO - [OK] Post 69396316ef6e67678ab7d7f2 final score: 0.3490
+2025-12-15 09:36:55,183 - services.prediction_service - INFO - [OK] Post 693962b8ef6e67678ab7d7ef final score: 0.4790
+2025-12-15 09:36:55,558 - services.prediction_service - INFO - [OK] Post 69396340ef6e67678ab7d7f4 final score: 0.4568
+2025-12-15 09:36:55,963 - services.prediction_service - INFO - [OK] Post 69396375ef6e67678ab7d7f5 final score: 0.3766
+2025-12-15 09:36:56,273 - services.prediction_service - INFO - [OK] Post 69396331ef6e67678ab7d7f3 final score: 0.3883
+2025-12-15 09:36:56,644 - services.prediction_service - INFO - [OK] Post 6939642bef6e67678ab7d7fa final score: 0.4027
+2025-12-15 09:36:57,000 - services.prediction_service - INFO - [OK] Post 693967f2ef6e67678ab7d80a final score: 0.4302
+2025-12-15 09:36:57,346 - services.prediction_service - INFO - [OK] Post 69396096ef6e67678ab7d7ee final score: 0.3630
+2025-12-15 09:36:57,729 - services.prediction_service - INFO - [OK] Post 69396832ef6e67678ab7d80b final score: 0.3929
+2025-12-15 09:36:58,116 - services.prediction_service - INFO - [OK] Post 693968cbef6e67678ab7d80d final score: 0.2624
+2025-12-15 09:36:58,420 - services.prediction_service - INFO - [OK] Post 6939686cef6e67678ab7d80c final score: 0.4211
+2025-12-15 09:36:58,799 - services.prediction_service - INFO - [OK] Post 6939661bef6e67678ab7d7fb final score: 0.3165
+2025-12-15 09:36:59,199 - services.prediction_service - INFO - [OK] Post 69396397ef6e67678ab7d7f7 final score: 0.3566
+2025-12-15 09:36:59,555 - services.prediction_service - INFO - [OK] Post 6939679def6e67678ab7d808 final score: 0.4514
+2025-12-15 09:36:59,912 - services.prediction_service - INFO - [OK] Post 693962deef6e67678ab7d7f0 final score: 0.4161
+2025-12-15 09:37:00,313 - services.prediction_service - INFO - [OK] Post 693966f6ef6e67678ab7d806 final score: 0.4983
+2025-12-15 09:37:00,627 - services.prediction_service - INFO - [OK] Post 69396773ef6e67678ab7d807 final score: 0.4317
+2025-12-15 09:37:01,030 - services.prediction_service - INFO - [OK] Post 693967b4ef6e67678ab7d809 final score: 0.3254
+2025-12-15 09:37:01,422 - services.prediction_service - INFO - [OK] Post 693963f0ef6e67678ab7d7f9 final score: 0.3583
+2025-12-15 09:37:01,796 - services.prediction_service - INFO - [OK] Post 69396924ef6e67678ab7d80e final score: 0.3250
+2025-12-15 09:37:01,929 - services.prediction_service - INFO - [OK] Post 69396027ef6e67678ab7d7ed final score: 0.4437
+2025-12-15 09:37:02,017 - services.prediction_service - INFO - [OK] Post 69395fb9ef6e67678ab7d7ec final score: 0.4641
+2025-12-15 09:37:02,117 - services.prediction_service - INFO - [OK] Post 69395f89ef6e67678ab7d7eb final score: 0.4250
+2025-12-15 09:37:02,118 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 9402.85ms
+2025-12-15 09:37:02,118 - api.routes - INFO - Prediction completed: 20 posts ranked in 9404.85ms
+2025-12-15 09:41:44,976 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 09:41:51,554 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 09:41:51,557 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 09:41:51,557 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 09:41:51,557 - inference - INFO - Using device: cpu
+2025-12-15 09:41:54,722 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 09:41:54,722 - server - INFO - ✅ Model loaded successfully
+2025-12-15 09:41:54,722 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 09:41:57,817 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 09:41:57,817 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 09:41:57,817 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 09:41:57,817 - inference - INFO - Using device: cpu
+2025-12-15 09:42:00,870 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 09:42:00,870 - server - INFO - ✅ Model loaded successfully
+2025-12-15 09:44:20,331 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 09:44:23,457 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 09:44:23,458 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 09:44:23,459 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 09:44:23,459 - inference - INFO - Using device: cpu
+2025-12-15 09:44:25,991 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 09:44:25,991 - server - INFO - ✅ Model loaded successfully
+2025-12-15 10:15:25,363 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-15 10:15:25,364 - services.prediction_service - INFO - Loading ML models...
+2025-12-15 10:15:25,365 - services.prediction_service - WARNING - [WARN] Vectorizer not found at ./model/academic_posts_model/vectorizer.pkl
+2025-12-15 10:15:25,365 - services.prediction_service - WARNING - [WARN] Ranking model not found at ./model/academic_posts_model/ranking_model.pkl
+2025-12-15 10:15:39,283 - services.prediction_service - INFO - [OK] PhoBERT model loaded
+2025-12-15 10:15:39,284 - services.academic_classifier_service - INFO - [LOAD] Loading academic classifier from: ./model/academic_posts_model
+2025-12-15 10:15:42,029 - services.academic_classifier_service - INFO - [OK] Tokenizer loaded
+2025-12-15 10:15:45,508 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-15 10:15:45,509 - services.prediction_service - INFO - Loading ML models...
+2025-12-15 10:15:45,510 - services.prediction_service - WARNING - [WARN] Vectorizer not found at ./model/academic_posts_model/vectorizer.pkl
+2025-12-15 10:15:45,510 - services.prediction_service - WARNING - [WARN] Ranking model not found at ./model/academic_posts_model/ranking_model.pkl
+2025-12-15 10:15:46,796 - services.academic_classifier_service - INFO - [INFO] Classifier shape: torch.Size([2, 768])
+2025-12-15 10:15:50,231 - services.academic_classifier_service - INFO - [OK] Academic classifier loaded successfully on cpu
+2025-12-15 10:15:50,232 - services.academic_classifier_service - INFO -    - Labels: {0: 'non_academic', 1: 'academic'}
+2025-12-15 10:15:50,233 - services.academic_classifier_service - INFO -    - Num labels: 2
+2025-12-15 10:15:50,233 - services.academic_classifier_service - INFO -    - Max length: 256
+2025-12-15 10:15:50,268 - services.prediction_service - INFO - [OK] Academic classifier loaded (ML-based)
+2025-12-15 10:15:50,269 - services.prediction_service - INFO - [OK] All models loaded successfully
+2025-12-15 10:15:50,269 - api.routes - INFO - ✅ Prediction service initialized
+2025-12-15 10:15:50,305 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 10:15:50,315 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 58
+2025-12-15 10:15:53,435 - services.prediction_service - INFO - [OK] PhoBERT model loaded
+2025-12-15 10:15:53,435 - services.prediction_service - INFO - [OK] Academic classifier loaded (ML-based)
+2025-12-15 10:15:53,436 - services.prediction_service - INFO - [OK] All models loaded successfully
+2025-12-15 10:15:53,437 - api.routes - INFO - ✅ Prediction service initialized
+2025-12-15 10:15:53,707 - services.prediction_service - INFO - [BATCH] Processing 27 posts with batch embeddings...
+2025-12-15 10:16:02,034 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 8326ms
+2025-12-15 10:16:10,105 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 19791.55ms
+2025-12-15 10:16:10,106 - api.routes - INFO - Prediction completed: 20 posts ranked in 19802.11ms
+2025-12-15 10:16:10,108 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 10:16:10,109 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 58
+2025-12-15 10:16:10,170 - services.prediction_service - INFO - [BATCH] Processing 27 posts with batch embeddings...
+2025-12-15 10:16:16,798 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 6627ms
+2025-12-15 10:16:24,164 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 14055.53ms
+2025-12-15 10:16:24,165 - api.routes - INFO - Prediction completed: 20 posts ranked in 14056.62ms
+2025-12-15 10:22:58,959 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 10:22:58,960 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 70
+2025-12-15 10:22:59,062 - services.prediction_service - INFO - [BATCH] Processing 27 posts with batch embeddings...
+2025-12-15 10:23:04,050 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 4988ms
+2025-12-15 10:23:08,626 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 9665.44ms
+2025-12-15 10:23:08,627 - api.routes - INFO - Prediction completed: 20 posts ranked in 9667.42ms

@@ -10,7 +10,7 @@ export class ApiClient {
   constructor() {
     this.instance = axios.create({
       baseURL: API_ENDPOINTS.BASE_URL,
-      timeout: 10000,
+      timeout: 30000, // 30s for ML-based feed recommendations
       headers: {
         'Content-Type': 'application/json',
       },
