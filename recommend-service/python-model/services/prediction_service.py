@@ -27,7 +27,7 @@ class PredictionService:
         self.embedding_dimension = settings.EMBEDDING_DIMENSION
         self.academic_categories = settings.ACADEMIC_CATEGORIES
         self.model_version = "1.0.0"
-        
+
         # Model placeholders
         self.vectorizer = None
         self.post_encoder = None
@@ -59,16 +59,16 @@ class PredictionService:
             if os.path.exists(settings.VECTORIZER_PATH):
                 with open(settings.VECTORIZER_PATH, 'rb') as f:
                     self.vectorizer = pickle.load(f)
-                logger.info("✅ Vectorizer loaded")
+                logger.info("[OK] Vectorizer loaded")
             else:
-                logger.warning(f"⚠️ Vectorizer not found at {settings.VECTORIZER_PATH}")
+                logger.warning(f"[WARN] Vectorizer not found at {settings.VECTORIZER_PATH}")
             
             if os.path.exists(settings.RANKING_MODEL_PATH):
                 with open(settings.RANKING_MODEL_PATH, 'rb') as f:
                     self.ranking_model = pickle.load(f)
-                logger.info("✅ Ranking model loaded")
+                logger.info("[OK] Ranking model loaded")
             else:
-                logger.warning(f"⚠️ Ranking model not found at {settings.RANKING_MODEL_PATH}")
+                logger.warning(f"[WARN] Ranking model not found at {settings.RANKING_MODEL_PATH}")
             
             # Load PhoBERT model (for embedding generation)
             try:
@@ -76,9 +76,9 @@ class PredictionService:
                 self.phobert_tokenizer = AutoTokenizer.from_pretrained(settings.PHOBERT_MODEL_NAME)
                 self.phobert_model = AutoModel.from_pretrained(settings.PHOBERT_MODEL_NAME)
                 self.phobert_model.eval()
-                logger.info("✅ PhoBERT model loaded")
+                logger.info("[OK] PhoBERT model loaded")
             except Exception as e:
-                logger.warning(f"⚠️ PhoBERT loading failed: {e}")
+                logger.warning(f"[WARN] PhoBERT loading failed: {e}")
             
             # Load Academic Classifier (fine-tuned PhoBERT for academic classification)
             if self.use_ml_classifier:
@@ -87,19 +87,19 @@ class PredictionService:
                         settings.ACADEMIC_CLASSIFIER_MODEL_PATH
                     )
                     if self.academic_classifier.is_ready():
-                        logger.info("✅ Academic classifier loaded (ML-based)")
+                        logger.info("[OK] Academic classifier loaded (ML-based)")
                     else:
-                        logger.warning("⚠️ Academic classifier loaded but not ready, using fallback")
+                        logger.warning("[WARN] Academic classifier loaded but not ready, using fallback")
                 except Exception as e:
-                    logger.warning(f"⚠️ Academic classifier loading failed: {e}, using heuristic fallback")
+                    logger.warning(f"[WARN] Academic classifier loading failed: {e}, using heuristic fallback")
                     self.academic_classifier = None
             else:
-                logger.info("ℹ️ ML academic classifier disabled, using heuristic")
+                logger.info("[INFO] ML academic classifier disabled, using heuristic")
             
-            logger.info("✅ All models loaded successfully")
+            logger.info("[OK] All models loaded successfully")
             
         except Exception as e:
-            logger.error(f"❌ Model loading error: {e}")
+            logger.error(f"[ERROR] Model loading error: {e}")
             logger.warning("Service will use fallback methods")
     
     def is_ready(self) -> bool:
@@ -215,7 +215,7 @@ class PredictionService:
                     # Clip score to [0, 1]
                     final_score = max(0.0, min(1.0, float(final_score)))
                     
-                    logger.info(f"✅ Post {post_id} final score: {final_score:.4f}")
+                    logger.info(f"[OK] Post {post_id} final score: {final_score:.4f}")
                     
                     ranked_posts.append(RankedPost(
                         postId=post_id,
@@ -292,7 +292,7 @@ class PredictionService:
         if self.academic_classifier and self.academic_classifier.is_ready():
             try:
                 result = self.academic_classifier.predict(content)
-                logger.debug(f"🎯 ML classification: {result['label']} ({result['confidence']:.2%})")
+                logger.debug(f"[ML] ML classification: {result['label']} ({result['confidence']:.2%})")
                 return {
                     "is_academic": result["is_academic"],
                     "confidence": result["confidence"],
@@ -301,7 +301,7 @@ class PredictionService:
                     "method": "ml_classifier"
                 }
             except Exception as e:
-                logger.warning(f"⚠️ ML classifier failed, using fallback: {e}")
+                logger.warning(f"[WARN] ML classifier failed, using fallback: {e}")
         
         # Fallback: Heuristic-based classifier
         return self._heuristic_classify_academic(content)

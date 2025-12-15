@@ -32,13 +32,24 @@ from inference import get_inference_engine
 
 # Configure logging
 os.makedirs('logs', exist_ok=True)
+
+# Create handlers with UTF-8 encoding
+file_handler = logging.FileHandler(
+    f'logs/python-service-{datetime.now().strftime("%Y%m%d")}.log',
+    encoding='utf-8'
+)
+stream_handler = logging.StreamHandler()
+
+# For Windows, ensure stream handler uses UTF-8 with error replacement
+if sys.platform == 'win32':
+    stream_handler.setStream(
+        open(sys.stdout.fileno(), mode='w', encoding='utf-8', errors='replace', buffering=1)
+    )
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f'logs/python-service-{datetime.now().strftime("%Y%m%d")}.log'),
-        logging.StreamHandler()
-    ],
+    handlers=[file_handler, stream_handler],
     force=True
 )
 logger = logging.getLogger(__name__)

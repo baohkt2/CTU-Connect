@@ -45,17 +45,17 @@ class AcademicClassifierService:
     def _load_model(self):
         """Load the fine-tuned PhoBERT model"""
         try:
-            logger.info(f"🔄 Loading academic classifier from: {self.model_path}")
+            logger.info(f"[LOAD] Loading academic classifier from: {self.model_path}")
             
             if not os.path.exists(self.model_path):
-                logger.error(f"❌ Model path does not exist: {self.model_path}")
+                logger.error(f"[ERROR] Model path does not exist: {self.model_path}")
                 return
             
             # Check required files
             required_files = ["pytorch_model.bin", "config.json", "vocab.txt"]
             for f in required_files:
                 if not os.path.exists(os.path.join(self.model_path, f)):
-                    logger.error(f"❌ Missing required file: {f}")
+                    logger.error(f"[ERROR] Missing required file: {f}")
                     return
             
             # Load tokenizer (use PhoBERT tokenizer)
@@ -63,7 +63,7 @@ class AcademicClassifierService:
                 self.model_path,
                 use_fast=False  # PhoBERT uses slow tokenizer
             )
-            logger.info("✅ Tokenizer loaded")
+            logger.info("[OK] Tokenizer loaded")
             
             # Load model weights
             model_weights = torch.load(
@@ -75,10 +75,10 @@ class AcademicClassifierService:
             # Check classifier structure
             if "classifier.weight" in model_weights:
                 classifier_shape = model_weights["classifier.weight"].shape
-                logger.info(f"📊 Classifier shape: {classifier_shape}")
+                logger.info(f"[INFO] Classifier shape: {classifier_shape}")
                 num_labels = classifier_shape[0]
             else:
-                logger.error("❌ No classifier weights found in model")
+                logger.error("[ERROR] No classifier weights found in model")
                 return
             
             # Build custom model with simple classifier head
@@ -126,9 +126,9 @@ class AcademicClassifierService:
             # Load PhoBERT weights
             missing, unexpected = self.model.phobert.load_state_dict(phobert_weights, strict=False)
             if missing:
-                logger.warning(f"⚠️ Missing keys in PhoBERT: {len(missing)} keys")
+                logger.warning(f"[WARN] Missing keys in PhoBERT: {len(missing)} keys")
             if unexpected:
-                logger.warning(f"⚠️ Unexpected keys: {len(unexpected)} keys")
+                logger.warning(f"[WARN] Unexpected keys: {len(unexpected)} keys")
             
             # Load classifier weights
             self.model.classifier.weight.data = classifier_weights["classifier.weight"]
@@ -138,13 +138,13 @@ class AcademicClassifierService:
             self.model.eval()
             
             self.is_loaded = True
-            logger.info(f"✅ Academic classifier loaded successfully on {self.device}")
+            logger.info(f"[OK] Academic classifier loaded successfully on {self.device}")
             logger.info(f"   - Labels: {self.LABELS}")
             logger.info(f"   - Num labels: {num_labels}")
             logger.info(f"   - Max length: {self.max_length}")
             
         except Exception as e:
-            logger.error(f"❌ Failed to load academic classifier: {e}")
+            logger.error(f"[ERROR] Failed to load academic classifier: {e}")
             import traceback
             traceback.print_exc()
             self.is_loaded = False
@@ -164,7 +164,7 @@ class AcademicClassifierService:
             - probabilities: Dict[str, float]
         """
         if not self.is_loaded or self.model is None or self.tokenizer is None:
-            logger.warning("⚠️ Model not loaded, using fallback")
+            logger.warning("[WARN] Model not loaded, using fallback")
             return self._fallback_predict(text)
         
         try:
@@ -202,12 +202,12 @@ class AcademicClassifierService:
                 }
             }
             
-            logger.debug(f"🎯 Classification: '{text[:50]}...' -> {label} ({confidence:.2%})")
+            logger.debug(f"[ML] Classification: '{text[:50]}...' -> {label} ({confidence:.2%})")
             
             return result
             
         except Exception as e:
-            logger.error(f"❌ Prediction error: {e}")
+            logger.error(f"[ERROR] Prediction error: {e}")
             return self._fallback_predict(text)
     
     def _fallback_predict(self, text: str) -> Dict[str, Any]:
@@ -288,11 +288,11 @@ class AcademicClassifierService:
                     }
                 })
             
-            logger.info(f"🎯 Batch classified {len(texts)} texts")
+            logger.info(f"[ML] Batch classified {len(texts)} texts")
             return results
             
         except Exception as e:
-            logger.error(f"❌ Batch prediction error: {e}")
+            logger.error(f"[ERROR] Batch prediction error: {e}")
             return [self._fallback_predict(text) for text in texts]
     
     def is_ready(self) -> bool:
