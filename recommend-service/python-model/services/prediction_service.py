@@ -14,6 +14,7 @@ from config import settings
 from models.schemas import RankedPost
 from utils.similarity import cosine_similarity
 from utils.feature_engineering import extract_features
+from services.academic_classifier_service import get_academic_classifier, AcademicClassifierService
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,10 @@ class PredictionService:
         self.ranking_model = None
         self.phobert_model = None
         self.phobert_tokenizer = None
+        
+        # Academic classifier (fine-tuned PhoBERT)
+        self.academic_classifier: Optional[AcademicClassifierService] = None
+        self.use_ml_classifier = settings.USE_ML_ACADEMIC_CLASSIFIER
         
         # Performance metrics
         self.metrics = {
@@ -74,6 +79,22 @@ class PredictionService:
                 logger.info("✅ PhoBERT model loaded")
             except Exception as e:
                 logger.warning(f"⚠️ PhoBERT loading failed: {e}")
+            
+            # Load Academic Classifier (fine-tuned PhoBERT for academic classification)
+            if self.use_ml_classifier:
+                try:
+                    self.academic_classifier = get_academic_classifier(
+                        settings.ACADEMIC_CLASSIFIER_MODEL_PATH
+                    )
+                    if self.academic_classifier.is_ready():
+                        logger.info("✅ Academic classifier loaded (ML-based)")
+                    else:
+                        logger.warning("⚠️ Academic classifier loaded but not ready, using fallback")
+                except Exception as e:
+                    logger.warning(f"⚠️ Academic classifier loading failed: {e}, using heuristic fallback")
+                    self.academic_classifier = None
+            else:
+                logger.info("ℹ️ ML academic classifier disabled, using heuristic")
             
             logger.info("✅ All models loaded successfully")
             
@@ -261,12 +282,39 @@ class PredictionService:
             return np.random.rand(self.embedding_dimension).astype(np.float32)
     
     async def classify_academic(self, content: str) -> Dict[str, Any]:
-        """Classify if content is academic"""
-        # Simple heuristic-based classifier (can be replaced with trained model)
+        """
+        Classify if content is academic using ML model or fallback heuristic
+        
+        Uses fine-tuned PhoBERT classifier if available, otherwise falls back
+        to keyword-based heuristic classification.
+        """
+        # Try ML classifier first
+        if self.academic_classifier and self.academic_classifier.is_ready():
+            try:
+                result = self.academic_classifier.predict(content)
+                logger.debug(f"🎯 ML classification: {result['label']} ({result['confidence']:.2%})")
+                return {
+                    "is_academic": result["is_academic"],
+                    "confidence": result["confidence"],
+                    "category": "academic" if result["is_academic"] else "general",
+                    "probabilities": result.get("probabilities", {}),
+                    "method": "ml_classifier"
+                }
+            except Exception as e:
+                logger.warning(f"⚠️ ML classifier failed, using fallback: {e}")
+        
+        # Fallback: Heuristic-based classifier
+        return self._heuristic_classify_academic(content)
+    
+    def _heuristic_classify_academic(self, content: str) -> Dict[str, Any]:
+        """Fallback heuristic-based classifier using keywords"""
         academic_keywords = [
             "nghiên cứu", "học thuật", "hội thảo", "seminar", "workshop",
             "luận văn", "luận án", "đề tài", "học bổng", "scholarship",
-            "tuyển sinh", "đào tạo", "khóa học", "giảng viên", "giáo sư"
+            "tuyển sinh", "đào tạo", "khóa học", "giảng viên", "giáo sư",
+            "báo cáo", "thuyết trình", "đề cương", "tài liệu", "giáo trình",
+            "thực tập", "internship", "research", "paper", "thesis",
+            "academic", "conference", "journal", "publication"
         ]
         
         content_lower = content.lower()
@@ -278,7 +326,8 @@ class PredictionService:
         return {
             "is_academic": is_academic,
             "confidence": round(confidence, 4),
-            "category": "academic" if is_academic else "general"
+            "category": "academic" if is_academic else "general",
+            "method": "heuristic"
         }
     
     async def reload_models(self):

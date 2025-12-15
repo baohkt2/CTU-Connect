@@ -560,6 +560,84 @@ async def compute_user_similarity_batch(request: BatchSimilarityRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== Academic Classification Endpoints ====================
+
+class AcademicClassifyRequest(BaseModel):
+    content: str = Field(..., description="Text content to classify")
+
+
+class AcademicClassifyBatchRequest(BaseModel):
+    contents: List[str] = Field(..., description="List of text contents to classify")
+
+
+class AcademicClassifyResponse(BaseModel):
+    is_academic: bool
+    confidence: float
+    label: str
+    category: str
+    probabilities: Optional[Dict[str, float]] = None
+    method: str = "unknown"
+
+
+@app.post("/classify/academic", response_model=AcademicClassifyResponse)
+async def classify_academic(request: AcademicClassifyRequest):
+    """
+    Classify if content is academic using fine-tuned PhoBERT model
+    Returns classification result with confidence score
+    """
+    try:
+        from services.academic_classifier_service import get_academic_classifier
+        
+        classifier = get_academic_classifier()
+        result = classifier.predict(request.content)
+        
+        return AcademicClassifyResponse(
+            is_academic=result["is_academic"],
+            confidence=result["confidence"],
+            label=result["label"],
+            category="academic" if result["is_academic"] else "general",
+            probabilities=result.get("probabilities"),
+            method="ml_classifier" if not result.get("fallback") else "heuristic"
+        )
+    except Exception as e:
+        logger.error(f"Error classifying content: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/classify/academic/batch")
+async def classify_academic_batch(request: AcademicClassifyBatchRequest):
+    """
+    Batch classify multiple contents as academic/non-academic
+    """
+    try:
+        from services.academic_classifier_service import get_academic_classifier
+        
+        classifier = get_academic_classifier()
+        results = classifier.batch_predict(request.contents)
+        
+        return {
+            "results": results,
+            "count": len(results),
+            "classifier_ready": classifier.is_ready()
+        }
+    except Exception as e:
+        logger.error(f"Error batch classifying content: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/classify/academic/info")
+async def get_classifier_info():
+    """Get information about the academic classifier"""
+    try:
+        from services.academic_classifier_service import get_academic_classifier
+        
+        classifier = get_academic_classifier()
+        return classifier.get_info()
+    except Exception as e:
+        logger.error(f"Error getting classifier info: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Include additional ML routes from api.routes if they exist
 try:
     from api.routes import router as ml_router

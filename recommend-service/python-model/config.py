@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     ACADEMIC_ENCODER_PATH: str = f"./model/academic_posts_model/academic_encoder.pkl"
     RANKING_MODEL_PATH: str = f"./model/academic_posts_model/ranking_model.pkl"
     
+    # Academic Classifier Model (fine-tuned PhoBERT)
+    ACADEMIC_CLASSIFIER_MODEL_PATH: str = os.getenv(
+        "ACADEMIC_CLASSIFIER_MODEL_PATH", 
+        "./model/academic_posts_model"
+    )
+    USE_ML_ACADEMIC_CLASSIFIER: bool = os.getenv("USE_ML_ACADEMIC_CLASSIFIER", "True").lower() == "true"
+    
     # PhoBERT configuration
     PHOBERT_MODEL_NAME: str = "vinai/phobert-base"
     EMBEDDING_DIMENSION: int = 768
