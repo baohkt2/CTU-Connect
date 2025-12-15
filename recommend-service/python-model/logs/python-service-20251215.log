@@ -238,3 +238,34 @@
 2025-12-15 14:01:36,104 - inference - INFO - Using device: cpu
 2025-12-15 14:01:43,361 - inference - INFO - PhoBERT model loaded successfully
 2025-12-15 14:01:43,361 - server - INFO - ✅ Model loaded successfully
+2025-12-15 14:16:05,501 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 14:16:05,502 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 14:16:05,502 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 14:16:05,502 - inference - INFO - Using device: cpu
+2025-12-15 14:16:07,240 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 14:16:07,240 - server - INFO - ✅ Model loaded successfully
+2025-12-15 14:16:07,240 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 14:26:19,905 - services.user_similarity_service - INFO - UserSimilarityService initialized
+2025-12-15 14:26:23,428 - server - INFO - 🤝 Ranked 10 friend candidates for user aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 14:26:26,041 - server - INFO - 🤝 Ranked 10 friend candidates for user aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 14:37:08,142 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-15 14:37:08,150 - services.prediction_service - INFO - Loading ML models...
+2025-12-15 14:37:08,152 - services.prediction_service - WARNING - [WARN] Vectorizer not found at ./model/academic_posts_model/vectorizer.pkl
+2025-12-15 14:37:08,153 - services.prediction_service - WARNING - [WARN] Ranking model not found at ./model/academic_posts_model/ranking_model.pkl
+2025-12-15 14:37:13,923 - services.prediction_service - INFO - [OK] PhoBERT model loaded
+2025-12-15 14:37:13,942 - services.academic_classifier_service - INFO - [LOAD] Loading academic classifier from: ./model/academic_posts_model
+2025-12-15 14:37:14,149 - services.academic_classifier_service - INFO - [OK] Tokenizer loaded
+2025-12-15 14:37:15,281 - services.academic_classifier_service - INFO - [INFO] Classifier shape: torch.Size([2, 768])
+2025-12-15 14:37:17,882 - services.academic_classifier_service - INFO - [OK] Academic classifier loaded successfully on cpu
+2025-12-15 14:37:17,884 - services.academic_classifier_service - INFO -    - Labels: {0: 'non_academic', 1: 'academic'}
+2025-12-15 14:37:17,884 - services.academic_classifier_service - INFO -    - Num labels: 2
+2025-12-15 14:37:17,884 - services.academic_classifier_service - INFO -    - Max length: 256
+2025-12-15 14:37:17,912 - services.prediction_service - INFO - [OK] Academic classifier loaded (ML-based)
+2025-12-15 14:37:17,913 - services.prediction_service - INFO - [OK] All models loaded successfully
+2025-12-15 14:37:17,913 - api.routes - INFO - ✅ Prediction service initialized
+2025-12-15 14:37:17,940 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 14:37:17,950 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 70
+2025-12-15 14:37:18,222 - services.prediction_service - INFO - [BATCH] Processing 27 posts with batch embeddings...
+2025-12-15 14:37:24,382 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 6159ms
+2025-12-15 14:37:31,797 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 13848.22ms
+2025-12-15 14:37:31,798 - api.routes - INFO - Prediction completed: 20 posts ranked in 13859.37ms

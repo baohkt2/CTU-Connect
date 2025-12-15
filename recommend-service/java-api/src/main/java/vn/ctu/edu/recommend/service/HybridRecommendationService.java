@@ -450,7 +450,7 @@ public class HybridRecommendationService {
                 
                 return Integer.compare(score2, score1);
             })
-            .limit(limit * 2)
+            .limit(limit)
             .map(post -> {
                 // Calculate popularity score (0.0 - 1.0)
                 int engagementScore = (post.getLikeCount() * 2) + 

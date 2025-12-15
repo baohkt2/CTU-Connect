@@ -171,7 +171,7 @@ public class HybridFriendRecommendationService {
                 .currentUser(currentUserData)
                 .candidates(candidateProfiles)
                 .additionalScores(additionalScores)
-                .topK(limit * 2) // Request more for filtering
+                .topK(limit) // Request more for filtering
                 .build();
 
             // Call Python service
