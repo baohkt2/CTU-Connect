@@ -218,3 +218,23 @@
 2025-12-15 10:23:04,050 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 4988ms
 2025-12-15 10:23:08,626 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 9665.44ms
 2025-12-15 10:23:08,627 - api.routes - INFO - Prediction completed: 20 posts ranked in 9667.42ms
+2025-12-15 10:25:23,456 - api.routes - INFO - 🎯 Prediction request for user: aa9a97e0-e3da-4857-bd42-446520947f26, candidates: 27
+2025-12-15 10:25:23,457 - services.prediction_service - INFO - Generating embedding for user aa9a97e0-e3da-4857-bd42-446520947f26 with text length: 70
+2025-12-15 10:25:23,534 - services.prediction_service - INFO - [BATCH] Processing 27 posts with batch embeddings...
+2025-12-15 10:25:28,194 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 4660ms
+2025-12-15 10:25:32,527 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 9069.99ms
+2025-12-15 10:25:32,527 - api.routes - INFO - Prediction completed: 20 posts ranked in 9071.00ms
+2025-12-15 11:25:25,087 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 11:25:32,645 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 11:25:32,645 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 11:25:32,645 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 11:25:32,645 - inference - INFO - Using device: cpu
+2025-12-15 11:25:36,089 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 11:25:36,089 - server - INFO - ✅ Model loaded successfully
+2025-12-15 14:01:01,230 - server - INFO - 👋 Shutting down AI Inference Service...
+2025-12-15 14:01:36,104 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 14:01:36,104 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 14:01:36,104 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 14:01:36,104 - inference - INFO - Using device: cpu
+2025-12-15 14:01:43,361 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 14:01:43,361 - server - INFO - ✅ Model loaded successfully

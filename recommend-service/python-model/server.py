@@ -571,6 +571,212 @@ async def compute_user_similarity_batch(request: BatchSimilarityRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== User Embedding Endpoints (Phase 1) ====================
+
+class SingleUserEmbeddingRequest(BaseModel):
+    """Request for single user embedding with caching"""
+    user_id: str = Field(..., description="User ID")
+    major: Optional[str] = Field(None, description="User's major")
+    faculty: Optional[str] = Field(None, description="User's faculty")
+    courses: Optional[List[str]] = Field(default_factory=list, description="List of courses")
+    skills: Optional[List[str]] = Field(default_factory=list, description="List of skills")
+    bio: Optional[str] = Field(None, description="User bio")
+    force_regenerate: bool = Field(False, description="Force regeneration even if cached")
+
+
+class SingleUserEmbeddingResponse(BaseModel):
+    """Response for single user embedding"""
+    user_id: str
+    embedding: List[float]
+    dimension: int
+    source: str  # 'cache' or 'generated'
+    profile_hash: str
+
+
+class UserSimilarityBatchRequest(BaseModel):
+    """Request for computing similarities between users"""
+    current_user_id: str = Field(..., description="Current user ID")
+    current_user_data: UserProfileData = Field(..., description="Current user profile")
+    candidate_user_ids: List[str] = Field(..., description="List of candidate user IDs")
+    candidate_users_data: List[UserProfileData] = Field(..., description="List of candidate profiles")
+
+
+class UserSimilarityBatchResponse(BaseModel):
+    """Response for user similarity batch"""
+    current_user_id: str
+    similarities: List[Dict[str, float]]  # [{"user_id": "...", "similarity": 0.85}, ...]
+    count: int
+
+
+@app.post("/embed/user", response_model=SingleUserEmbeddingResponse)
+async def embed_single_user(request: SingleUserEmbeddingRequest):
+    """
+    Generate embedding for a single user profile with Redis caching
+    
+    Caching strategy:
+    1. Check Redis cache (TTL: 24h)
+    2. If cache miss or profile changed -> Generate new
+    3. Cache result in Redis
+    
+    Use force_regenerate=true to bypass cache
+    """
+    try:
+        if inference_engine is None:
+            raise HTTPException(status_code=503, detail="Model not loaded")
+        
+        from services.user_embedding_service import get_user_embedding_service
+        import redis
+        
+        # Get embedding service
+        embedding_service = get_user_embedding_service(inference_engine)
+        
+        # Setup Redis client (optional, will work without it)
+        redis_client = None
+        try:
+            redis_client = redis.Redis(
+                host=os.getenv('REDIS_HOST', 'localhost'),
+                port=int(os.getenv('REDIS_PORT', 6379)),
+                db=int(os.getenv('REDIS_DB', 0)),
+                password=os.getenv('REDIS_PASSWORD'),
+                decode_responses=False
+            )
+            redis_client.ping()  # Test connection
+        except Exception as e:
+            logger.warning(f"[Embed] Redis not available, will generate without caching: {e}")
+            redis_client = None
+        
+        # Prepare user data
+        user_data = {
+            'major': request.major,
+            'faculty': request.faculty,
+            'courses': request.courses or [],
+            'skills': request.skills or [],
+            'bio': request.bio
+        }
+        
+        # Get embedding with caching
+        result = embedding_service.get_embedding(
+            user_id=request.user_id,
+            user_data=user_data,
+            redis_client=redis_client,
+            force_regenerate=request.force_regenerate
+        )
+        
+        logger.info(f"[Embed] User {request.user_id} embedding: source={result['source']}")
+        
+        return SingleUserEmbeddingResponse(
+            user_id=request.user_id,
+            embedding=result['embedding'].tolist(),
+            dimension=len(result['embedding']),
+            source=result['source'],
+            profile_hash=result['profile_hash']
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[Embed] Error generating user embedding: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/similarity/users", response_model=UserSimilarityBatchResponse)
+async def compute_user_similarities(request: UserSimilarityBatchRequest):
+    """
+    Compute similarities between current user and multiple candidates
+    
+    This is an optimized endpoint that:
+    1. Gets/generates embeddings for all users (with caching)
+    2. Computes batch similarities efficiently
+    3. Returns similarity scores
+    
+    Faster than calling /embed/user multiple times + /similarity/batch
+    """
+    try:
+        if inference_engine is None:
+            raise HTTPException(status_code=503, detail="Model not loaded")
+        
+        from services.user_embedding_service import get_user_embedding_service
+        import redis
+        
+        # Get embedding service
+        embedding_service = get_user_embedding_service(inference_engine)
+        
+        # Setup Redis
+        redis_client = None
+        try:
+            redis_client = redis.Redis(
+                host=os.getenv('REDIS_HOST', 'localhost'),
+                port=int(os.getenv('REDIS_PORT', 6379)),
+                db=int(os.getenv('REDIS_DB', 0)),
+                password=os.getenv('REDIS_PASSWORD'),
+                decode_responses=False
+            )
+            redis_client.ping()
+        except:
+            redis_client = None
+        
+        # Get current user embedding
+        current_user_data = {
+            'major': request.current_user_data.major,
+            'faculty': request.current_user_data.faculty,
+            'courses': request.current_user_data.courses or [],
+            'skills': request.current_user_data.skills or [],
+            'bio': request.current_user_data.bio
+        }
+        
+        current_result = embedding_service.get_embedding(
+            user_id=request.current_user_id,
+            user_data=current_user_data,
+            redis_client=redis_client
+        )
+        current_embedding = current_result['embedding']
+        
+        # Get candidate embeddings
+        candidate_embeddings = []
+        for idx, (cand_id, cand_data) in enumerate(zip(request.candidate_user_ids, request.candidate_users_data)):
+            cand_profile = {
+                'major': cand_data.major,
+                'faculty': cand_data.faculty,
+                'courses': cand_data.courses or [],
+                'skills': cand_data.skills or [],
+                'bio': cand_data.bio
+            }
+            
+            cand_result = embedding_service.get_embedding(
+                user_id=cand_id,
+                user_data=cand_profile,
+                redis_client=redis_client
+            )
+            candidate_embeddings.append(cand_result['embedding'])
+        
+        # Compute batch similarities
+        candidates_array = np.array(candidate_embeddings)
+        similarities = inference_engine.compute_batch_similarity(current_embedding, candidates_array)
+        
+        # Build response
+        similarity_results = [
+            {
+                "user_id": user_id,
+                "similarity": float(sim)
+            }
+            for user_id, sim in zip(request.candidate_user_ids, similarities)
+        ]
+        
+        logger.info(f"[Similarity] Computed {len(similarity_results)} user similarities")
+        
+        return UserSimilarityBatchResponse(
+            current_user_id=request.current_user_id,
+            similarities=similarity_results,
+            count=len(similarity_results)
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[Similarity] Error computing user similarities: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ==================== Academic Classification Endpoints ====================
 
 class AcademicClassifyRequest(BaseModel):

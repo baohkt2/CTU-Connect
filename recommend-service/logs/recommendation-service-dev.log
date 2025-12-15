@@ -16110,3 +16110,764 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 2025-12-15 10:23:59 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-3, groupId=recommendation-service-group] Node -1 disconnected.
 2025-12-15 10:23:59 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-2, groupId=recommendation-service-group] Node -1 disconnected.
 2025-12-15 10:23:59 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  o.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-recommendation-service-group-1, groupId=recommendation-service-group] Node -1 disconnected.
+2025-12-15 10:24:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:11779df157c57facf8172a72f8e79459?status=UP&lastDirtyTimestamp=1765768497938
+2025-12-15 10:24:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:24:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-15 10:24:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:24:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:24:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:24:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-15 10:24:57 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2025-12-15 10:24:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:11779df157c57facf8172a72f8e79459?status=UP&lastDirtyTimestamp=1765768497938
+2025-12-15 10:24:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:24:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-15 10:24:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:24:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:24:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:24:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/recommendations/feed?userId=aa9a97e0-e3da-4857-bd42-446520947f26&page=0&size=10", parameters={masked}
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to vn.ctu.edu.recommend.controller.RecommendationController#getFeed(String, Integer, Integer, String)
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - 📥 API REQUEST: GET /api/recommendations/feed
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    User ID: aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Page: 0, Size: 10, Exclude: 0 posts
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.RecommendationController - 🔄 Calling hybrid recommendation service for feed generation
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - Getting feed for user: aa9a97e0-e3da-4857-bd42-446520947f26, size: 10, pagination: false
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.client.UserServiceClient - Fetching academic profile for user: aa9a97e0-e3da-4857-bd42-446520947f26 from http://localhost:8081
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG o.s.w.r.f.client.ExchangeFunctions - [23c0999e] HTTP GET http://localhost:8081/api/users/aa9a97e0-e3da-4857-bd42-446520947f26/academic-profile
+2025-12-15 10:25:23 [reactor-http-nio-8] DEBUG o.s.w.r.f.client.ExchangeFunctions - [23c0999e] [ae0e7c70-1] Response 200 OK
+2025-12-15 10:25:23 [reactor-http-nio-8] DEBUG org.springframework.web.HttpLogging - [23c0999e] [ae0e7c70-1] Decoded [UserAcademicProfile(userId=aa9a97e0-e3da-4857-bd42-446520947f26, major=Khoa học Máy tính, faculty=Cô (truncated)...]
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.s.HybridRecommendationService - User profile: major=Khoa học Máy tính, faculty=Công nghệ Thông tin & Truyền thông
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        uf 
+    FROM
+        UserFeedback uf 
+    WHERE
+        uf.userId = :userId 
+        AND uf.timestamp >= :since */ select
+            uf1_0.id,
+            uf1_0.context,
+            uf1_0.feedback_type,
+            uf1_0.feedback_value,
+            uf1_0.post_id,
+            uf1_0.session_id,
+            uf1_0.timestamp,
+            uf1_0.user_id 
+        from
+            user_feedback uf1_0 
+        where
+            uf1_0.user_id=? 
+            and uf1_0.timestamp>=?
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.s.HybridRecommendationService - User has 30 interactions in last 30 days
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🚫 Total exclusions: 27 posts (30 from history, 0 from client)
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        pe 
+    FROM
+        PostEmbedding pe 
+    WHERE
+        pe.createdAt >= :since 
+    ORDER BY
+        pe.popularityScore DESC */ select
+            pe1_0.id,
+            pe1_0.academic_category,
+            pe1_0.academic_score,
+            pe1_0.author_faculty,
+            pe1_0.author_id,
+            pe1_0.author_major,
+            pe1_0.comment_count,
+            pe1_0.content,
+            pe1_0.content_similarity_score,
+            pe1_0.created_at,
+            pe1_0.embedding_updated_at,
+            pe1_0.embedding_vector,
+            pe1_0.faculty,
+            pe1_0.graph_relation_score,
+            pe1_0.like_count,
+            pe1_0.major,
+            pe1_0.media_description,
+            pe1_0.popularity_score,
+            pe1_0.post_id,
+            pe1_0.share_count,
+            pe1_0.tags,
+            pe1_0.updated_at,
+            pe1_0.view_count 
+        from
+            post_embeddings pe1_0 
+        where
+            pe1_0.created_at>=? 
+        order by
+            pe1_0.popularity_score desc
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 📦 Found 27 total posts in database
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🔍 Post filtering breakdown for user aa9a97e0-e3da-4857-bd42-446520947f26:
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    - Total posts: 27
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    - Excluded by interaction history: 27
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    - Excluded (user's own posts): 0
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    - Available for recommendation: 0
+2025-12-15 10:25:23 [http-nio-8095-exec-10] WARN  v.c.e.r.s.HybridRecommendationService - ⚠️ No fresh posts available, falling back to previously viewed posts
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 📦 Fallback: 27 posts available for re-recommendation
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.s.HybridRecommendationService - Found 27 candidate posts after exclusions
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🔍 Python service enabled: true
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Calling Python model service...
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.s.HybridRecommendationService - 📋 Request: 27 candidate posts, 30 user history
+2025-12-15 10:25:23 [http-nio-8095-exec-10] INFO  v.c.e.r.c.PythonModelServiceClient - 🚀 Calling Python model service for user: aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.PythonModelServiceClient -    User academic: major=Khoa học Máy tính, faculty=Công nghệ Thông tin & Truyền thông
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.PythonModelServiceClient -    User history size: 30
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.PythonModelServiceClient -    Candidate posts: 27
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.PythonModelServiceClient -    TopK requested: 20
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG v.c.e.r.c.PythonModelServiceClient -    Sample post: id=693963bfef6e67678ab7d7f8, contentLength=836, likes=1, comments=2, shares=0
+2025-12-15 10:25:23 [http-nio-8095-exec-10] DEBUG o.s.w.r.f.client.ExchangeFunctions - [16be0ab] HTTP POST http://localhost:8000/api/model/predict
+2025-12-15 10:25:23 [reactor-http-nio-9] DEBUG org.springframework.web.HttpLogging - [16be0ab] Encoding [PythonModelRequest(userAcademic=UserAcademicProfile(userId=aa9a97e0-e3da-4857-bd42-446520947f26, maj (truncated)...]
+2025-12-15 10:25:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:11779df157c57facf8172a72f8e79459?status=UP&lastDirtyTimestamp=1765768497938
+2025-12-15 10:25:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-15 10:25:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:25:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:25:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:25:28 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:25:28 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
+2025-12-15 10:25:32 [reactor-http-nio-9] DEBUG o.s.w.r.f.client.ExchangeFunctions - [16be0ab] [328fc1ec-1] Response 200 OK
+2025-12-15 10:25:32 [reactor-http-nio-9] DEBUG org.springframework.web.HttpLogging - [16be0ab] [328fc1ec-1] Decoded [PythonModelResponse(rankedPosts=[PythonModelResponse.RankedPost(postId=693966f6ef6e67678ab7d806, sco (truncated)...]
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.PythonModelServiceClient - ✅ Received 20 ranked posts from Python service
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🤖 Python model returned 20 ranked posts
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 📊 PYTHON MODEL RANKINGS (Top 5):
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693966f6ef6e67678ab7d806 | ML Score: 0.4918 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693962efef6e67678ab7d7f1 | ML Score: 0.4773 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396773ef6e67678ab7d807 | ML Score: 0.4729 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6939642bef6e67678ab7d7fa | ML Score: 0.4575 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396027ef6e67678ab7d7ed | ML Score: 0.4573 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 📦 AFTER PYTHON/FALLBACK (before business rules):
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 20 posts
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693966f6ef6e67678ab7d806 | Score: 0.4918
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693962efef6e67678ab7d7f1 | Score: 0.4773
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396773ef6e67678ab7d807 | Score: 0.4729
+2025-12-15 10:25:32 [http-nio-8095-exec-10] ERROR v.c.e.r.s.HybridRecommendationService - Error fetching friends for aa9a97e0-e3da-4857-bd42-446520947f26: Cannot invoke "org.springframework.transaction.support.TransactionTemplate.execute(org.springframework.transaction.support.TransactionCallback)" because "this.this$0.transactionTemplate" is null
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        pe1_0.id,
+        pe1_0.academic_category,
+        pe1_0.academic_score,
+        pe1_0.author_faculty,
+        pe1_0.author_id,
+        pe1_0.author_major,
+        pe1_0.comment_count,
+        pe1_0.content,
+        pe1_0.content_similarity_score,
+        pe1_0.created_at,
+        pe1_0.embedding_updated_at,
+        pe1_0.embedding_vector,
+        pe1_0.faculty,
+        pe1_0.graph_relation_score,
+        pe1_0.like_count,
+        pe1_0.major,
+        pe1_0.media_description,
+        pe1_0.popularity_score,
+        pe1_0.post_id,
+        pe1_0.share_count,
+        pe1_0.tags,
+        pe1_0.updated_at,
+        pe1_0.view_count 
+    from
+        post_embeddings pe1_0 
+    where
+        pe1_0.post_id=?
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - ⚖️  AFTER BUSINESS RULES:
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 20 posts
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693966f6ef6e67678ab7d806 | Adjusted Score: 0.4918
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693962efef6e67678ab7d7f1 | Adjusted Score: 0.4773
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396773ef6e67678ab7d807 | Adjusted Score: 0.4729
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService - 🎯 FINAL RECOMMENDATIONS:
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    Total: 10 posts
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    Top 5 Posts:
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693966f6ef6e67678ab7d806 | Score: 0.4918 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 693962efef6e67678ab7d7f1 | Score: 0.4773 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396773ef6e67678ab7d807 | Score: 0.4729 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 6939642bef6e67678ab7d7fa | Score: 0.4575 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.s.HybridRecommendationService -    • PostID: 69396027ef6e67678ab7d7ed | Score: 0.4573 | Category: N/A
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG v.c.e.r.r.redis.RedisCacheService - Cached recommendations for user: aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG v.c.e.r.s.HybridRecommendationService - ✅ Cached 10 recommendations for user: aa9a97e0-e3da-4857-bd42-446520947f26, TTL: 30s
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - 📤 API RESPONSE: GET /api/recommendations/feed
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Total Items: 10
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    User ID: aa9a97e0-e3da-4857-bd42-446520947f26
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - 📋 RECOMMENDED POSTS LIST:
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Format: [Rank] PostID -> Score
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 1] 693966f6ef6e67678ab7d806 -> score: 0.4918
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 2] 693962efef6e67678ab7d7f1 -> score: 0.4773
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 3] 69396773ef6e67678ab7d807 -> score: 0.4729
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 4] 6939642bef6e67678ab7d7fa -> score: 0.4575
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 5] 69396027ef6e67678ab7d7ed -> score: 0.4573
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 6] 693962b8ef6e67678ab7d7ef -> score: 0.4522
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 7] 693967b4ef6e67678ab7d809 -> score: 0.4497
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 8] 69396331ef6e67678ab7d7f3 -> score: 0.4332
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [ 9] 69396387ef6e67678ab7d7f6 -> score: 0.4329
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    [10] 693963bfef6e67678ab7d7f8 -> score: 0.4292
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    ----------------------------------------
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - 📊 SCORE STATISTICS:
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Max Score: 0.4918
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Min Score: 0.4292
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController -    Avg Score: 0.4554
+2025-12-15 10:25:32 [http-nio-8095-exec-10] INFO  v.c.e.r.c.RecommendationController - ========================================
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RecommendationResponse(userId=aa9a97e0-e3da-4857-bd42-446520947f26, recommendations=[RecommendationR (truncated)...]
+2025-12-15 10:25:32 [http-nio-8095-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-15 10:25:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP PUT http://localhost:8761/eureka/apps/RECOMMENDATION-SERVICE/recommendation-service:11779df157c57facf8172a72f8e79459?status=UP&lastDirtyTimestamp=1765768497938
+2025-12-15 10:25:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - HTTP GET http://localhost:8761/eureka/apps/delta
+2025-12-15 10:25:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:25:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-12-15 10:25:58 [DiscoveryClient-HeartbeatExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:25:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-12-15 10:25:58 [DiscoveryClient-CacheRefreshExecutor-%d] DEBUG o.s.web.client.RestTemplate - Reading to [org.springframework.cloud.netflix.eureka.http.EurekaApplications]
