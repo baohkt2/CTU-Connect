@@ -269,3 +269,53 @@
 2025-12-15 14:37:24,382 - services.prediction_service - INFO - [BATCH] Generated 27 embeddings in 6159ms
 2025-12-15 14:37:31,797 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 13848.22ms
 2025-12-15 14:37:31,798 - api.routes - INFO - Prediction completed: 20 posts ranked in 13859.37ms
+2025-12-15 14:58:10,322 - server - INFO - 🤝 Ranked 5 friend candidates for user 5676eb4d-da05-41e8-8eaf-484047f7c296
+2025-12-15 14:58:13,843 - server - INFO - 🤝 Ranked 5 friend candidates for user 5676eb4d-da05-41e8-8eaf-484047f7c296
+2025-12-15 15:28:41,390 - server - INFO - ✅ ML prediction routes loaded
+2025-12-15 15:28:41,394 - server - INFO - 🚀 Starting CTU Connect AI Inference Service...
+2025-12-15 15:28:41,394 - server - INFO - 📦 Loading PhoBERT model...
+2025-12-15 15:28:41,394 - inference - INFO - Using device: cpu
+2025-12-15 15:28:53,786 - inference - INFO - PhoBERT model loaded successfully
+2025-12-15 15:28:53,792 - server - INFO - ✅ Model loaded successfully
+2025-12-15 15:35:28,611 - api.routes - INFO - Initializing prediction service singleton...
+2025-12-15 15:35:28,618 - services.prediction_service - INFO - Loading ML models...
+2025-12-15 15:35:28,622 - services.prediction_service - WARNING - [WARN] Vectorizer not found at ./model/academic_posts_model/vectorizer.pkl
+2025-12-15 15:35:28,623 - services.prediction_service - WARNING - [WARN] Ranking model not found at ./model/academic_posts_model/ranking_model.pkl
+2025-12-15 15:35:49,790 - services.prediction_service - INFO - [OK] PhoBERT model loaded
+2025-12-15 15:35:49,810 - services.academic_classifier_service - INFO - [LOAD] Loading academic classifier from: ./model/academic_posts_model
+2025-12-15 15:35:52,064 - services.academic_classifier_service - INFO - [OK] Tokenizer loaded
+2025-12-15 15:36:00,891 - services.academic_classifier_service - INFO - [INFO] Classifier shape: torch.Size([2, 768])
+2025-12-15 15:36:04,157 - services.academic_classifier_service - INFO - [OK] Academic classifier loaded successfully on cpu
+2025-12-15 15:36:04,159 - services.academic_classifier_service - INFO -    - Labels: {0: 'non_academic', 1: 'academic'}
+2025-12-15 15:36:04,159 - services.academic_classifier_service - INFO -    - Num labels: 2
+2025-12-15 15:36:04,159 - services.academic_classifier_service - INFO -    - Max length: 256
+2025-12-15 15:36:04,192 - services.prediction_service - INFO - [OK] Academic classifier loaded (ML-based)
+2025-12-15 15:36:04,192 - services.prediction_service - INFO - [OK] All models loaded successfully
+2025-12-15 15:36:04,193 - api.routes - INFO - ✅ Prediction service initialized
+2025-12-15 16:11:57,758 - services.user_similarity_service - INFO - UserSimilarityService initialized
+2025-12-15 16:12:12,302 - server - INFO - 🤝 Ranked 5 friend candidates for user 22eb83a1-f847-4346-b8fa-e9337d6a75fb
+2025-12-15 16:12:17,239 - server - INFO - 🤝 Ranked 5 friend candidates for user 22eb83a1-f847-4346-b8fa-e9337d6a75fb
+2025-12-15 16:18:55,014 - api.routes - INFO - 🎯 Prediction request for user: 22eb83a1-f847-4346-b8fa-e9337d6a75fb, candidates: 1
+2025-12-15 16:18:55,020 - services.prediction_service - INFO - Generating embedding for user 22eb83a1-f847-4346-b8fa-e9337d6a75fb with text length: 61
+2025-12-15 16:18:57,534 - services.prediction_service - INFO - [BATCH] Processing 1 posts with batch embeddings...
+2025-12-15 16:18:57,867 - services.prediction_service - INFO - [BATCH] Generated 1 embeddings in 330ms
+2025-12-15 16:18:59,198 - services.prediction_service - INFO - Prediction completed: 1 posts ranked in 4177.58ms
+2025-12-15 16:18:59,201 - api.routes - INFO - Prediction completed: 1 posts ranked in 4185.61ms
+2025-12-15 16:20:22,514 - api.routes - INFO - 🎯 Prediction request for user: 22eb83a1-f847-4346-b8fa-e9337d6a75fb, candidates: 1
+2025-12-15 16:20:22,515 - services.prediction_service - INFO - Generating embedding for user 22eb83a1-f847-4346-b8fa-e9337d6a75fb with text length: 61
+2025-12-15 16:20:22,603 - services.prediction_service - INFO - [BATCH] Processing 1 posts with batch embeddings...
+2025-12-15 16:20:22,673 - services.prediction_service - INFO - [BATCH] Generated 1 embeddings in 69ms
+2025-12-15 16:20:22,740 - services.prediction_service - INFO - Prediction completed: 1 posts ranked in 225.48ms
+2025-12-15 16:20:22,741 - api.routes - INFO - Prediction completed: 1 posts ranked in 227.47ms
+2025-12-15 16:23:34,246 - api.routes - INFO - 🎯 Prediction request for user: 22eb83a1-f847-4346-b8fa-e9337d6a75fb, candidates: 1
+2025-12-15 16:23:34,247 - services.prediction_service - INFO - Generating embedding for user 22eb83a1-f847-4346-b8fa-e9337d6a75fb with text length: 61
+2025-12-15 16:23:34,414 - services.prediction_service - INFO - [BATCH] Processing 1 posts with batch embeddings...
+2025-12-15 16:23:34,538 - services.prediction_service - INFO - [BATCH] Generated 1 embeddings in 124ms
+2025-12-15 16:23:34,654 - services.prediction_service - INFO - Prediction completed: 1 posts ranked in 407.57ms
+2025-12-15 16:23:34,656 - api.routes - INFO - Prediction completed: 1 posts ranked in 409.87ms
+2025-12-15 16:31:08,242 - api.routes - INFO - 🎯 Prediction request for user: 5676eb4d-da05-41e8-8eaf-484047f7c296, candidates: 26
+2025-12-15 16:31:08,244 - services.prediction_service - INFO - Generating embedding for user 5676eb4d-da05-41e8-8eaf-484047f7c296 with text length: 66
+2025-12-15 16:31:08,414 - services.prediction_service - INFO - [BATCH] Processing 26 posts with batch embeddings...
+2025-12-15 16:31:17,154 - services.prediction_service - INFO - [BATCH] Generated 26 embeddings in 8740ms
+2025-12-15 16:31:27,588 - services.prediction_service - INFO - Prediction completed: 20 posts ranked in 19344.09ms
+2025-12-15 16:31:27,589 - api.routes - INFO - Prediction completed: 20 posts ranked in 19347.59ms

@@ -8,8 +8,8 @@ spring:
   # PostgreSQL Configuration (Docker)
   datasource:
     url: jdbc:postgresql://localhost:5435/recommend_db
-    username: recommend_user
-    password: recommend_pass
+    username: ${RECOMMEND_DB_USER:recommend_user}
+    password: ${RECOMMEND_DB_PASSWORD:recommend_pass}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -33,8 +33,8 @@ spring:
   neo4j:
     uri: bolt://localhost:7687
     authentication:
-      username: neo4j
-      password: password
+      username: ${NEO4J_USER:neo4j}
+      password: ${NEO4J_PASSWORD:password}
     pool:
       max-connection-pool-size: 10
 
@@ -43,7 +43,7 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6380
-      password: recommend_redis_pass
+      password: ${RECOMMEND_REDIS_PASSWORD:recommend_redis_pass}
       timeout: 3000ms
       lettuce:
         pool:
@@ -101,9 +101,9 @@ eureka:
 
 # JWT Configuration (must match auth-service)
 jwt:
-  secret: XpExu6h1RJoY1qFZyLVzJbor/aYutNR2AD86ZM/tKqc=
-  expiration: 86400000
-  refresh-expiration: 604800000
+  secret: ${JWT_SECRET:change_this_secret_in_production}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
 # Recommendation Service Configuration
 recommendation:
